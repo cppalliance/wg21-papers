@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2025 Vinnie Falco (vinnie dot falco at gmail dot com)
+#
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# Official repository: https://github.com/cppalliance/capy
+#
+
+project capy-bench
+    : requirements
+        <cxxstd>20
+        <warnings>extra
+        <toolset>msvc:<warnings-as-errors>on
+        <toolset>gcc:<warnings-as-errors>on
+        <toolset>clang:<warnings-as-errors>on
+        <toolset>gcc:<cxxflags>-fcoroutines
+        <toolset>clang:<cxxflags>-stdlib=libc++
+        <toolset>clang:<linkflags>-stdlib=libc++
+    ;
+
+exe bench
+    : bench.cpp
+    : <threading>multi
+    ;
