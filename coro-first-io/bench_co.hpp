@@ -16,7 +16,7 @@
 #include <exception>
 #include <memory>
 
-#ifdef __clang__
+#if defined(__clang__) && !defined(__apple_build_version__)
 #define CORO_AWAIT_ELIDABLE [[clang::coro_await_elidable]]
 #else
 #define CORO_AWAIT_ELIDABLE
@@ -226,6 +226,7 @@ private:
 
     void do_read_some(coro h, executor_ref const& ex)
     {
+        ++g_io_count;
         // This definition can go in the TU
         read_op_->h_ = h;
         read_op_->ex_ = ex;

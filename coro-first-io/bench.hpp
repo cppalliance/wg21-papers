@@ -15,6 +15,10 @@
 #include <cstddef>
 #include <utility>
 
+// Global counters for benchmark fairness verification
+extern std::size_t g_io_count;
+extern std::size_t g_work_count;
+
 using coro = std::coroutine_handle<void>;
 
 struct work_queue;
@@ -164,6 +168,7 @@ struct io_context
     {
         while(!q_.empty())
         {
+            ++g_work_count;
             (*q_.pop())();
         }
     }
