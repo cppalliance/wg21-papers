@@ -10,11 +10,22 @@
 #ifndef BENCH_CO_DETAIL_HPP
 #define BENCH_CO_DETAIL_HPP
 
+#include "bench.hpp"
+
+#include <coroutine>
 #include <cstddef>
+#include <exception>
 #include <mutex>
 
 namespace co {
 namespace detail {
+
+// Header stored before coroutine frame for deallocation
+struct alloc_header
+{
+    void (*dealloc)(void* ctx, void* ptr, std::size_t size);
+    void* ctx;
+};
 
 //----------------------------------------------------------
 // Frame pool: thread-local with global overflow
@@ -138,6 +149,118 @@ public:
         return pool;
     }
 };
+
+//----------------------------------------------------------
+
+template<class Executor>
+struct root_task
+{
+    // Embedded starter - no separate allocation needed
+    struct starter : work
+    {
+        coro h_;
+
+        void operator()() override
+        {
+            h_.resume();
+            // Don't delete - we're embedded in the promise
+        }
+    };
+
+    struct promise_type
+    {
+        Executor ex_;
+        starter starter_;  // Embedded in coroutine frame
+
+        // Use global frame pool for allocation
+        static void* operator new(std::size_t size)
+        {
+            static frame_pool alloc(frame_pool::make_global());
+            
+            std::size_t total = size + sizeof(alloc_header);
+            void* raw = alloc.allocate(total);
+            
+            auto* header = static_cast<alloc_header*>(raw);
+            header->dealloc = [](void* ctx, void* p, std::size_t n) {
+                static_cast<frame_pool*>(ctx)->deallocate(p, n);
+            };
+            header->ctx = &alloc;
+            
+            return header + 1;
+        }
+
+        static void operator delete(void* ptr, std::size_t size)
+        {
+            auto* header = static_cast<alloc_header*>(ptr) - 1;
+            std::size_t total = size + sizeof(alloc_header);
+            header->dealloc(header->ctx, header, total);
+        }
+
+        root_task get_return_object()
+        {
+            return {std::coroutine_handle<promise_type>::from_promise(*this)};
+        }
+        std::suspend_always initial_suspend() noexcept { return {}; }
+
+        auto final_suspend() noexcept
+        {
+            struct awaiter
+            {
+                bool await_ready() const noexcept { return false; }
+                std::coroutine_handle<> await_suspend(coro h) const noexcept
+                {
+                    h.destroy();  // self-destruct
+                    return std::noop_coroutine();
+                }
+                void await_resume() const noexcept {}
+            };
+            return awaiter{};
+        }
+
+        void return_void() {}
+        void unhandled_exception() { std::terminate(); }
+
+        template<class Awaitable>
+        struct transform_awaiter
+        {
+            std::decay_t<Awaitable> a_;
+            promise_type* p_;
+            bool await_ready() { return a_.await_ready(); }
+            auto await_resume() { return a_.await_resume(); }
+            template<class Promise>
+            auto await_suspend(std::coroutine_handle<Promise> h)
+            {
+                return a_.await_suspend(h, p_->ex_);
+            }
+        };
+
+        template<class Awaitable>
+        auto await_transform(Awaitable&& a)
+        {
+            return transform_awaiter<Awaitable>{std::forward<Awaitable>(a), this};
+        }
+    };
+
+    std::coroutine_handle<promise_type> h_;
+
+    void release() { h_ = nullptr; }
+
+    ~root_task()
+    {
+        if(h_)
+            h_.destroy();
+    }
+};
+
+} // detail
+
+// Forward declaration
+struct task;
+
+namespace detail {
+
+template<class Executor>
+root_task<Executor> wrapper(task t);
 
 } // detail
 } // co

@@ -11,88 +11,29 @@
 #define BENCH_CB_HPP
 
 #include "bench.hpp"
+#include "bench_cb_detail.hpp"
 
-#include <cstddef>
 #include <utility>
 
 namespace cb {
 
 //----------------------------------------------------------
-// Thread-local cache for operation recycling
 
-struct op_cache
-{
-    static void* allocate(std::size_t n)
-    {
-        auto& c = get();
-        if(c.ptr_ && c.size_ >= n)
-        {
-            void* p = c.ptr_;
-            c.ptr_ = nullptr;
-            return p;
-        }
-        return ::operator new(n);
-    }
+/** A simulated asynchronous socket for benchmarking callback-based I/O.
 
-    static void deallocate(void* p, std::size_t n)
-    {
-        auto& c = get();
-        if(!c.ptr_ || n >= c.size_)
-        {
-            ::operator delete(c.ptr_);
-            c.ptr_ = p;
-            c.size_ = n;
-        }
-        else
-        {
-            ::operator delete(p);
-        }
-    }
+    This class models an asynchronous socket that provides I/O operations
+    accepting completion handlers. It demonstrates the traditional callback
+    pattern where async operations accept a handler that is invoked upon
+    completion.
 
-private:
-    void* ptr_ = nullptr;
-    std::size_t size_ = 0;
+    The socket stores an executor which is used to post I/O completion
+    work items and to dispatch completion handlers.
 
-    static op_cache& get()
-    {
-        static thread_local op_cache c;
-        return c;
-    }
-};
+    @tparam Executor The executor type used for completion dispatch.
 
-//----------------------------------------------------------
-// Native callback operations
-
-template<class Executor, class Handler>
-struct io_op : work
-{
-    Executor ex_;
-    Handler handler_;
-
-    io_op(Executor ex, Handler h)
-        : ex_(ex), handler_(std::move(h)) {}
-
-    static void* operator new(std::size_t n)
-    {
-        return op_cache::allocate(n);
-    }
-
-    static void operator delete(void* p, std::size_t n)
-    {
-        op_cache::deallocate(p, n);
-    }
-
-    void operator()() override
-    {
-        auto h = std::move(handler_);
-        auto ex = ex_;
-        delete this;
-        ex.dispatch(std::move(h));
-    }
-};
-
-//----------------------------------------------------------
-
+    @note This is a simulation for benchmarking purposes. Real implementations
+    would integrate with OS-level async I/O facilities.
+*/
 template<class Executor>
 struct socket
 {
@@ -106,33 +47,12 @@ struct socket
     template<class Handler>
     void async_read_some(Handler&& handler)
     {
-        using op_t = io_op<Executor, std::decay_t<Handler>>;
+        using op_t = detail::io_op<Executor, std::decay_t<Handler>>;
         ex_.post(new op_t(ex_, std::forward<Handler>(handler)));
     }
 };
 
 //----------------------------------------------------------
-
-template<class Stream, class Handler>
-struct read_op
-{
-    Stream* stream_;
-    Handler handler_;
-    int count_ = 0;
-
-    read_op(Stream& stream, Handler h)
-        : stream_(&stream), handler_(std::move(h)) {}
-
-    void operator()()
-    {
-        if(count_++ < 10)
-        {
-            stream_->async_read_some(std::move(*this));
-            return;
-        }
-        stream_->get_executor().dispatch(std::move(handler_));
-    }
-};
 
 /** Performs a composed read operation on a stream.
 
@@ -149,31 +69,10 @@ struct read_op
 template<class Stream, class Handler>
 void async_read(Stream& stream, Handler&& handler)
 {
-    read_op<Stream, std::decay_t<Handler>>(stream, std::forward<Handler>(handler))();
+    detail::read_op<Stream, std::decay_t<Handler>>(stream, std::forward<Handler>(handler))();
 }
 
 //----------------------------------------------------------
-
-template<class Stream, class Handler>
-struct request_op
-{
-    Stream* stream_;
-    Handler handler_;
-    int count_ = 0;
-
-    request_op(Stream& stream, Handler h)
-        : stream_(&stream), handler_(std::move(h)) {}
-
-    void operator()()
-    {
-        if(count_++ < 10)
-        {
-            async_read(*stream_, std::move(*this));
-            return;
-        }
-        stream_->get_executor().dispatch(std::move(handler_));
-    }
-};
 
 /** Performs a composed request operation on a stream.
 
@@ -191,31 +90,10 @@ struct request_op
 template<class Stream, class Handler>
 void async_request(Stream& stream, Handler&& handler)
 {
-    request_op<Stream, std::decay_t<Handler>>(stream, std::forward<Handler>(handler))();
+    detail::request_op<Stream, std::decay_t<Handler>>(stream, std::forward<Handler>(handler))();
 }
 
 //----------------------------------------------------------
-
-template<class Stream, class Handler>
-struct session_op
-{
-    Stream* stream_;
-    Handler handler_;
-    int count_ = 0;
-
-    session_op(Stream& stream, Handler h)
-        : stream_(&stream), handler_(std::move(h)) {}
-
-    void operator()()
-    {
-        if(count_++ < 10)
-        {
-            async_request(*stream_, std::move(*this));
-            return;
-        }
-        stream_->get_executor().dispatch(std::move(handler_));
-    }
-};
 
 /** Performs a composed session operation on a stream.
 
@@ -233,7 +111,32 @@ struct session_op
 template<class Stream, class Handler>
 void async_session(Stream& stream, Handler&& handler)
 {
-    session_op<Stream, std::decay_t<Handler>>(stream, std::forward<Handler>(handler))();
+    detail::session_op<Stream, std::decay_t<Handler>>(stream, std::forward<Handler>(handler))();
+}
+
+//----------------------------------------------------------
+// Deferred definitions for detail ops that call free functions
+
+template<class Stream, class Handler>
+void detail::request_op<Stream, Handler>::operator()()
+{
+    if(count_++ < 10)
+    {
+        async_read(*stream_, std::move(*this));
+        return;
+    }
+    stream_->get_executor().dispatch(std::move(handler_));
+}
+
+template<class Stream, class Handler>
+void detail::session_op<Stream, Handler>::operator()()
+{
+    if(count_++ < 10)
+    {
+        async_request(*stream_, std::move(*this));
+        return;
+    }
+    stream_->get_executor().dispatch(std::move(handler_));
 }
 
 } // cb

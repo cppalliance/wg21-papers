@@ -17,6 +17,7 @@ set(SOURCES
     bench.cpp
     bench.hpp
     bench_cb.hpp
+    bench_cb_detail.hpp
     bench_co.hpp
     bench_co_detail.hpp
 )
