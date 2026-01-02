@@ -1,6 +1,5 @@
-|   |   |
-|---|---|
-| Document:   | D0000
+| Document | D0000 |
+|----------|-------|
 | Date:       | 2026-01-01
 | Reply-to:   | Vinnie Falco \<vinnie.falco@gmail.com\>
 | Audience:   | WG21
