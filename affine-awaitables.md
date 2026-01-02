@@ -1,13 +1,11 @@
-# Affine Awaitables
-## Zero-Overhead Scheduler Affinity for the Rest of Us
-
 **Document number:** PXXXXR0  
 **Date:** 2025-12-30  
-**Author:** Vinnie Falco \<vinnie.falco@gmail.com\>  
+**Reply-to:** Vinnie Falco \<vinnie.falco@gmail.com\>  
 **Audience:** SG1, LEWG  
-**Reply-to:** Vinnie Falco \<vinnie.falco@gmail.com\>
 
 ---
+
+# Affine Awaitables : Zero-Overhead Scheduler Affinity for the Rest of Us
 
 ## Abstract
 
