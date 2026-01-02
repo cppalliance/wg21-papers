@@ -16,6 +16,8 @@
 #include <new>
 
 static std::size_t g_alloc_count = 0;
+std::size_t g_io_count = 0;
+std::size_t g_work_count = 0;
 
 void* operator new(std::size_t size)
 {
@@ -35,18 +37,28 @@ void operator delete(void* p, std::size_t) noexcept
     std::free(p);
 }
 
+struct bench_result
+{
+    long long ns;
+    std::size_t allocs;
+    std::size_t ios;
+    std::size_t works;
+};
+
 struct bench_test
 {
     static constexpr int N = 100000;
 
     template<class Socket, class AsyncOp>
-    static void bench(char const* name, Socket& sock, AsyncOp op)
+    static bench_result bench(Socket& sock, AsyncOp op)
     {
         using clock = std::chrono::high_resolution_clock;
         auto& ioc = *sock.get_executor().ctx_;
         int count = 0;
 
         g_alloc_count = 0;
+        g_io_count = 0;
+        g_work_count = 0;
         auto t0 = clock::now();
         for (int i = 0; i < N; ++i)
         {
@@ -54,19 +66,20 @@ struct bench_test
             ioc.run();
         }
         auto t1 = clock::now();
-        auto allocs = g_alloc_count;
 
         auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        std::cout << name << (ns / N) << " ns/op, " << (allocs / N) << " allocs/op\n";
+        return { ns / N, g_alloc_count / N, g_io_count / N, g_work_count / N };
     }
 
     template<class MakeTask>
-    static void bench_co(char const* name, io_context& ioc, MakeTask make_task)
+    static bench_result bench_co(io_context& ioc, MakeTask make_task)
     {
         using clock = std::chrono::high_resolution_clock;
         int count = 0;
 
         g_alloc_count = 0;
+        g_io_count = 0;
+        g_work_count = 0;
         auto t0 = clock::now();
         for (int i = 0; i < N; ++i)
         {
@@ -74,10 +87,27 @@ struct bench_test
             ioc.run();
         }
         auto t1 = clock::now();
-        auto allocs = g_alloc_count;
 
         auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count();
-        std::cout << name << (ns / N) << " ns/op, " << (allocs / N) << " allocs/op\n";
+        return { ns / N, g_alloc_count / N, g_io_count / N, g_work_count / N };
+    }
+
+    static void print_line(char const* name, char const* type, bench_result const& r, bench_result const& other)
+    {
+        std::cout << name << type << r.ns << " ns/op";
+        if (r.allocs != 0)
+            std::cout << ", " << r.allocs << " allocs/op";
+        if (r.ios != other.ios)
+            std::cout << ", " << r.ios << " io/op";
+        if (r.works != other.works)
+            std::cout << ", " << r.works << " work/op";
+        std::cout << "\n";
+    }
+
+    static void print_results(char const* name, bench_result const& cb, bench_result const& co)
+    {
+        print_line(name, "callback: ", cb, co);
+        print_line(name, "coro:     ", co, cb);
     }
 
     void
@@ -89,35 +119,33 @@ struct bench_test
         cb::socket cb_sock(ioc.get_executor());
         co::socket co_sock;
 
+        bench_result cb, co;
+
         // 1 call
-        bench("read_some        callback: ", cb_sock,
-            [](auto& sock, auto h){ sock.async_read_some(std::move(h)); });
-        bench_co("read_some        coro:     ", ioc,
-            [&](int& count) -> co::task { co_await co_sock.async_read_some(); ++count; });
+        cb = bench(cb_sock, [](auto& sock, auto h){ sock.async_read_some(std::move(h)); });
+        co = bench_co(ioc, [&](int& count) -> co::task { co_await co_sock.async_read_some(); ++count; });
+        print_results("read_some        ", cb, co);
 
         std::cout << "\n";
 
         // 10 calls
-        bench("async_read       callback: ", cb_sock,
-            [](auto& sock, auto h){ cb::async_read(sock, std::move(h)); });
-        bench_co("async_read       coro:     ", ioc,
-            [&](int& count) -> co::task { co_await co::async_read(co_sock); ++count; });
+        cb = bench(cb_sock, [](auto& sock, auto h){ cb::async_read(sock, std::move(h)); });
+        co = bench_co(ioc, [&](int& count) -> co::task { co_await co::async_read(co_sock); ++count; });
+        print_results("async_read       ", cb, co);
 
         std::cout << "\n";
 
         // 100 calls
-        bench("async_request    callback: ", cb_sock,
-            [](auto& sock, auto h){ cb::async_request(sock, std::move(h)); });
-        bench_co("async_request    coro:     ", ioc,
-            [&](int& count) -> co::task { co_await co::async_request(co_sock); ++count; });
+        cb = bench(cb_sock, [](auto& sock, auto h){ cb::async_request(sock, std::move(h)); });
+        co = bench_co(ioc, [&](int& count) -> co::task { co_await co::async_request(co_sock); ++count; });
+        print_results("async_request    ", cb, co);
 
         std::cout << "\n";
 
         // 1000 calls
-        bench("async_session    callback: ", cb_sock,
-            [](auto& sock, auto h){ cb::async_session(sock, std::move(h)); });
-        bench_co("async_session    coro:     ", ioc,
-            [&](int& count) -> co::task { co_await co::async_session(co_sock); ++count; });
+        cb = bench(cb_sock, [](auto& sock, auto h){ cb::async_session(sock, std::move(h)); });
+        co = bench_co(ioc, [&](int& count) -> co::task { co_await co::async_session(co_sock); ++count; });
+        print_results("async_session    ", cb, co);
     }
 };
 

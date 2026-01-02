@@ -47,6 +47,7 @@ struct socket
     template<class Handler>
     void async_read_some(Handler&& handler)
     {
+        ++g_io_count;
         using op_t = detail::io_op<Executor, std::decay_t<Handler>>;
         ex_.post(new op_t(ex_, std::forward<Handler>(handler)));
     }
