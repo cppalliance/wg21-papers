@@ -1,7 +1,8 @@
-**Document number:** PXXXXR0  
-**Date:** 2025-12-30  
-**Reply-to:** Vinnie Falco \<vinnie.falco@gmail.com\>  
-**Audience:** SG1, LEWG  
+|---|---|
+| Document:   | DXXXX
+| Date:       | 2025-12-30
+| Reply-to:   | Vinnie Falco \<vinnie.falco@gmail.com\>
+| Audience:   | SG1, LEWG
 
 ---
 
