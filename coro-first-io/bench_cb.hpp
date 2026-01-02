@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/cppalliance/capy
+// Official repository: https://github.com/cppalliance/wg21-papers/coro-first-io
 //
 
 #ifndef BENCH_CB_HPP
@@ -60,19 +60,16 @@ private:
     }
 };
 
-// Alias for the unified executor type
-using executor = io_context::executor;
-
 //----------------------------------------------------------
 // Native callback operations
 
-template<class Handler>
+template<class Executor, class Handler>
 struct io_op : work
 {
-    executor ex_;
+    Executor ex_;
     Handler handler_;
 
-    io_op(executor ex, Handler h)
+    io_op(Executor ex, Handler h)
         : ex_(ex), handler_(std::move(h)) {}
 
     static void* operator new(std::size_t n)
@@ -94,80 +91,92 @@ struct io_op : work
     }
 };
 
-template<class Handler>
-void async_io(executor ex, Handler&& handler)
+//----------------------------------------------------------
+
+template<class Executor>
+struct socket
 {
-    using op_t = io_op<std::decay_t<Handler>>;
-    ex.post(new op_t(ex, std::forward<Handler>(handler)));
+    Executor ex_;
+
+    explicit socket(Executor ex)
+        : ex_(ex) {}
+
+    Executor get_executor() const { return ex_; }
+
+    template<class Handler>
+    void async_io(Handler&& handler)
+    {
+        using op_t = io_op<Executor, std::decay_t<Handler>>;
+        ex_.post(new op_t(ex_, std::forward<Handler>(handler)));
+    }
+};
+
+//----------------------------------------------------------
+
+template<class Executor, class Handler>
+void async_read_some(socket<Executor>& sock, Handler&& handler)
+{
+    sock.async_io(std::forward<Handler>(handler));
 }
 
 //----------------------------------------------------------
 
-template<class Handler>
-void async_read_some(executor ex, Handler&& handler)
-{
-    // async_read_some is just a wrapper around async_io
-    async_io(ex, std::forward<Handler>(handler));
-}
-
-//----------------------------------------------------------
-
-template<class Handler>
+template<class Executor, class Handler>
 struct read_op
 {
-    executor ex_;
+    socket<Executor>* sock_;
     Handler handler_;
     int count_ = 0;
 
-    read_op(executor ex, Handler h)
-        : ex_(ex), handler_(std::move(h)) {}
+    read_op(socket<Executor>& sock, Handler h)
+        : sock_(&sock), handler_(std::move(h)) {}
 
     void operator()()
     {
         // async_read calls async_read_some 10 times
         if(count_++ < 10)
         {
-            async_read_some(ex_, std::move(*this));
+            async_read_some(*sock_, std::move(*this));
             return;
         }
-        ex_.dispatch(std::move(handler_));
+        sock_->get_executor().dispatch(std::move(handler_));
     }
 };
 
-template<class Handler>
-void async_read(executor ex, Handler&& handler)
+template<class Executor, class Handler>
+void async_read(socket<Executor>& sock, Handler&& handler)
 {
-    read_op<std::decay_t<Handler>>(ex, std::forward<Handler>(handler))();
+    read_op<Executor, std::decay_t<Handler>>(sock, std::forward<Handler>(handler))();
 }
 
 //----------------------------------------------------------
 
-template<class Handler>
+template<class Executor, class Handler>
 struct request_op
 {
-    executor ex_;
+    socket<Executor>* sock_;
     Handler handler_;
     int count_ = 0;
 
-    request_op(executor ex, Handler h)
-        : ex_(ex), handler_(std::move(h)) {}
+    request_op(socket<Executor>& sock, Handler h)
+        : sock_(&sock), handler_(std::move(h)) {}
 
     void operator()()
     {
         // async_request calls async_read 10 times
         if(count_++ < 10)
         {
-            async_read(ex_, std::move(*this));
+            async_read(*sock_, std::move(*this));
             return;
         }
-        ex_.dispatch(std::move(handler_));
+        sock_->get_executor().dispatch(std::move(handler_));
     }
 };
 
-template<class Handler>
-void async_request(executor ex, Handler&& handler)
+template<class Executor, class Handler>
+void async_request(socket<Executor>& sock, Handler&& handler)
 {
-    request_op<std::decay_t<Handler>>(ex, std::forward<Handler>(handler))();
+    request_op<Executor, std::decay_t<Handler>>(sock, std::forward<Handler>(handler))();
 }
 
 } // cb

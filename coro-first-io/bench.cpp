@@ -4,7 +4,7 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-// Official repository: https://github.com/cppalliance/capy
+// Official repository: https://github.com/cppalliance/wg21-papers/coro-first-io
 //
 
 #include "bench_cb.hpp"
@@ -39,19 +39,18 @@ struct bench_test
 {
     static constexpr int N = 1000000;
 
-    template<class AsyncOp>
-    static void bench(char const* name, AsyncOp op)
+    template<class Socket, class AsyncOp>
+    static void bench(char const* name, Socket& sock, AsyncOp op)
     {
         using clock = std::chrono::high_resolution_clock;
-        io_context ioc;  // Unified type works for both
-        auto ex = ioc.get_executor();
+        auto& ioc = *sock.get_executor().ctx_;
         int count = 0;
 
         g_alloc_count = 0;
         auto t0 = clock::now();
         for (int i = 0; i < N; ++i)
         {
-            op(ex, [&count]{ ++count; });
+            op(sock, [&count]{ ++count; });
             ioc.run();
         }
         auto t1 = clock::now();
@@ -65,7 +64,7 @@ struct bench_test
     static void bench_co(char const* name, MakeTask make_task)
     {
         using clock = std::chrono::high_resolution_clock;
-        io_context ioc;  // Same unified type
+        io_context ioc;
         int count = 0;
 
         g_alloc_count = 0;
@@ -87,37 +86,39 @@ struct bench_test
     {
         std::cout << "\n";
 
-        co::socket sock;
+        io_context ioc;
+        cb::socket cb_sock(ioc.get_executor());
+        co::socket co_sock;
 
         // 1 level
-        bench("async_io         callback: ",
-            [](auto ex, auto h){ cb::async_io(ex, std::move(h)); });
+        bench("async_io         callback: ", cb_sock,
+            [](auto& sock, auto h){ sock.async_io(std::move(h)); });
      bench_co("co::async_io     coro:     ",
-            [&](int& count) -> co::task { co_await sock.async_io(); ++count; });
+            [&](int& count) -> co::task { co_await co_sock.async_io(); ++count; });
 
         std::cout << "\n";
 
         // 2 levels
-        bench("async_read_some  callback: ",
-            [](auto ex, auto h){ cb::async_read_some(ex, std::move(h)); });
+        bench("async_read_some  callback: ", cb_sock,
+            [](auto& sock, auto h){ cb::async_read_some(sock, std::move(h)); });
      bench_co("co::read_some    coro:     ",
-            [&](int& count) -> co::task { co_await co::async_read_some(sock); ++count; });
+            [&](int& count) -> co::task { co_await co::async_read_some(co_sock); ++count; });
 
         std::cout << "\n";
 
         // 3 levels
-        bench("async_read       callback: ",
-            [](auto ex, auto h){ cb::async_read(ex, std::move(h)); });
+        bench("async_read       callback: ", cb_sock,
+            [](auto& sock, auto h){ cb::async_read(sock, std::move(h)); });
      bench_co("co::read         coro:     ",
-            [&](int& count) -> co::task { co_await co::async_read(sock); ++count; });
+            [&](int& count) -> co::task { co_await co::async_read(co_sock); ++count; });
 
         std::cout << "\n";
 
         // 100 iterations
-        bench("async_request    callback: ",
-            [](auto ex, auto h){ cb::async_request(ex, std::move(h)); });
+        bench("async_request    callback: ", cb_sock,
+            [](auto& sock, auto h){ cb::async_request(sock, std::move(h)); });
      bench_co("co::request      coro:     ",
-            [&](int& count) -> co::task { co_await co::async_request(sock); ++count; });
+            [&](int& count) -> co::task { co_await co::async_request(co_sock); ++count; });
     }
 };
 
