@@ -17,66 +17,118 @@
 
 using coro = std::coroutine_handle<void>;
 
-//----------------------------------------------------------
-// Work item base and intrusive queue
+struct work_queue;
 
+/** Abstract base class for executable work items.
+
+    Work items are heap-allocated objects that can be queued for later
+    execution. They form the foundation of the async operation model,
+    allowing callbacks and coroutine resumptions to be posted to an
+    executor for deferred invocation.
+
+    Derived classes must implement `operator()` to define the work
+    to be performed when the item is executed.
+
+    @note Work items are typically allocated with custom allocators
+    (such as op_cache or frame_pool) to minimize allocation overhead
+    in high-frequency async operations.
+
+    @see work_queue
+*/
 struct work
 {
     virtual ~work() = default;
     virtual void operator()() = 0;
-    work* next = nullptr;
+
+private:
+    friend struct work_queue;
+    work* next_ = nullptr;
 };
 
-struct queue
-{
-    work* head = nullptr;
-    work* tail = nullptr;
+/** An intrusive FIFO queue of work items.
 
-    ~queue()
+    This queue manages work items using an intrusive singly-linked list,
+    avoiding additional allocations for queue nodes. Work items are
+    executed in the order they were pushed (first-in, first-out).
+
+    The queue takes ownership of pushed work items and will delete
+    any remaining items when destroyed.
+
+    @note This is not thread-safe. External synchronization is required
+    for concurrent access.
+
+    @see work
+*/
+struct work_queue
+{
+    ~work_queue()
     {
-        while(head)
+        while(head_)
         {
-            auto p = head;
-            head = head->next;
+            auto p = head_;
+            head_ = head_->next_;
             delete p;
         }
     }
 
-    bool empty() const noexcept { return head == nullptr; }
+    bool empty() const noexcept { return head_ == nullptr; }
 
     void push(work* p)
     {
-        if(tail)
+        if(tail_)
         {
-            tail->next = p;
-            tail = p;
+            tail_->next_ = p;
+            tail_ = p;
             return;
         }
-        head = p;
-        tail = p;
+        head_ = p;
+        tail_ = p;
     }
 
     work* pop()
     {
-        if(head)
+        if(head_)
         {
-            auto p = head;
-            head = head->next;
-            if(! head)
-                tail = nullptr;
+            auto p = head_;
+            head_ = head_->next_;
+            if(! head_)
+                tail_ = nullptr;
             return p;
         }
         return nullptr;
     }
+
+private:
+    work* head_ = nullptr;
+    work* tail_ = nullptr;
 };
 
-//----------------------------------------------------------
-// I/O context with unified executor
+/** A simple I/O context for running asynchronous operations.
 
+    The io_context provides an execution environment for async operations.
+    It maintains a queue of pending work items and processes them when
+    `run()` is called.
+
+    The nested `executor` type provides the interface for dispatching
+    coroutines and posting work items. It implements both synchronous
+    dispatch (for symmetric transfer) and deferred posting.
+
+    @par Example
+    @code
+    io_context ioc;
+    auto ex = ioc.get_executor();
+    async_run(ex, my_coroutine());
+    ioc.run();  // Process all queued work
+    @endcode
+
+    @note This is a simplified implementation for benchmarking purposes.
+    Production implementations would integrate with OS-level async I/O.
+
+    @see work
+    @see work_queue
+*/
 struct io_context
 {
-    queue q_;
-
     struct executor
     {
         io_context* ctx_;
@@ -115,6 +167,9 @@ struct io_context
             (*q_.pop())();
         }
     }
+
+private:
+    work_queue q_;
 };
 
 #endif
