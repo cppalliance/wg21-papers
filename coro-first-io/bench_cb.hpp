@@ -56,11 +56,10 @@ struct socket
 //----------------------------------------------------------
 
 /** A TLS stream adapter that wraps another stream.
-    
+
     This class wraps a stream and provides an async_read_some
     operation that invokes the wrapped stream's async_read_some
-    twice, simulating TLS record layer behavior where data may
-    be split across multiple reads.
+    once, simulating TLS record layer behavior.
 
     @tparam Stream The stream type to wrap.
 */
@@ -86,12 +85,12 @@ struct tls_stream
 
 /** Performs a composed read operation on a stream.
 
-    This function performs 10 sequential read_some operations on the
+    This function performs 5 sequential read_some operations on the
     stream, simulating a composed read that continues until a complete
     message or buffer has been received.
 
     This demonstrates a 2-level composed operation: async_read calls
-    the stream's async_read_some member function 10 times.
+    the stream's async_read_some member function 5 times.
 
     @param stream The stream to read from.
     @param handler The completion handler to invoke when done.
@@ -106,13 +105,12 @@ void async_read(Stream& stream, Handler&& handler)
 
 /** Performs a composed request operation on a stream.
 
-    This function performs 10 sequential async_read operations,
+    This function performs 10 sequential read_some operations,
     simulating a higher-level protocol operation such as reading
     an HTTP request with headers and body.
 
-    This demonstrates a 3-level composed operation: async_request
-    calls async_read 10 times, each of which performs 10 read_some
-    operations, for a total of 100 I/O operations.
+    This demonstrates a 2-level composed operation: async_request
+    calls the stream's async_read_some member function 10 times.
 
     @param stream The stream to read from.
     @param handler The completion handler to invoke when done.
@@ -127,12 +125,12 @@ void async_request(Stream& stream, Handler&& handler)
 
 /** Performs a composed session operation on a stream.
 
-    This function performs 10 sequential async_request operations,
+    This function performs 100 sequential async_request operations,
     simulating a complete session that handles multiple requests
     over a persistent connection.
 
-    This demonstrates a 4-level composed operation: async_session
-    calls async_request 10 times, each of which performs 100 I/O
+    This demonstrates a 3-level composed operation: async_session
+    calls async_request 100 times, each of which performs 10 I/O
     operations, for a total of 1000 I/O operations.
 
     @param stream The stream to use for the session.
@@ -152,7 +150,7 @@ void detail::request_op<Stream, Handler>::operator()()
 {
     if(count_++ < 10)
     {
-        async_read(*stream_, std::move(*this));
+        stream_->async_read_some(std::move(*this));
         return;
     }
     handler_();
@@ -161,7 +159,7 @@ void detail::request_op<Stream, Handler>::operator()()
 template<class Stream, class Handler>
 void detail::session_op<Stream, Handler>::operator()()
 {
-    if(count_++ < 10)
+    if(count_++ < 100)
     {
         async_request(*stream_, std::move(*this));
         return;

@@ -102,7 +102,7 @@ struct read_op
 
     void operator()()
     {
-        if(count_++ < 10)
+        if(count_++ < 5)
         {
             stream_->async_read_some(std::move(*this));
             return;
@@ -149,7 +149,7 @@ struct tls_read_op
 
     void operator()()
     {
-        if(count_++ < 2)
+        if(count_++ < 1)
         {
             stream_->async_read_some(std::move(*this));
             return;
