@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  push:
+    paths: ['coro-first-io/**']
+  pull_request:
+    paths: ['coro-first-io/**']
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -B build -S coro-first-io -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build --config Release
+      - run: ctest --test-dir build -C Release -V
