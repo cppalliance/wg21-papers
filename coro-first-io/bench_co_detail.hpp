@@ -11,6 +11,7 @@
 #define BENCH_CO_DETAIL_HPP
 
 #include "bench.hpp"
+#include "bench_traits.hpp"
 
 #include <coroutine>
 #include <cstddef>
@@ -24,17 +25,8 @@ struct task;
 
 namespace detail {
 
-// Header stored before coroutine frame for deallocation
-struct alloc_header
-{
-    void (*dealloc)(void* ctx, void* ptr, std::size_t size);
-    void* ctx;
-};
-
-//----------------------------------------------------------
 // Frame pool: thread-local with global overflow
 // Tracks block sizes to avoid returning undersized blocks
-
 class frame_pool
 {
     struct block
@@ -71,7 +63,9 @@ class frame_pool
             block** pp = &head;
             while(*pp)
             {
-                if((*pp)->size >= n)
+                // block->size stores total allocated size (including header), so we must
+                // check against n + sizeof(block) to ensure the block can satisfy the request
+                if((*pp)->size >= n + sizeof(block))
                 {
                     block* p = *pp;
                     *pp = p->next;
@@ -98,7 +92,9 @@ class frame_pool
             block** pp = &head;
             while(*pp)
             {
-                if((*pp)->size >= n)
+                // block->size stores total allocated size (including header), so we must
+                // check against n + sizeof(block) to ensure the block can satisfy the request
+                if((*pp)->size >= n + sizeof(block))
                 {
                     block* p = *pp;
                     *pp = p->next;
@@ -110,56 +106,107 @@ class frame_pool
         }
     };
 
-    global_pool& global_;
-
-    static local_pool& get_local()
+    static local_pool& local()
     {
         static thread_local local_pool local;
         return local;
     }
 
 public:
-    explicit frame_pool(global_pool& g) : global_(g) {}
-
     void* allocate(std::size_t n)
     {
-        // First try thread-local (with size check)
-        if(auto* b = get_local().pop(n))
-            return b;
+        std::size_t total = n + sizeof(block);
+        
+        if(auto* b = local().pop(n))
+            return static_cast<char*>(static_cast<void*>(b)) + sizeof(block);
 
-        // Then try global (with size check)
-        if(auto* b = global_.pop(n))
-            return b;
+        if(auto* b = global().pop(n))
+            return static_cast<char*>(static_cast<void*>(b)) + sizeof(block);
 
-        // Fall back to heap
-        auto* b = static_cast<block*>(::operator new(n));
-        b->size = n;
-        return b;
+        auto* b = static_cast<block*>(::operator new(total));
+        b->next = nullptr;
+        b->size = total;
+        return static_cast<char*>(static_cast<void*>(b)) + sizeof(block);
     }
 
-    void deallocate(void* p, std::size_t n)
+    void deallocate(void* p, std::size_t)
     {
-        // Restore the size (was overwritten by alloc_header::ctx)
-        auto* b = static_cast<block*>(p);
-        b->size = n;
-        // Return to thread-local pool
-        get_local().push(b);
+        // p points to the requested area; we need the block header to access size
+        auto* b = static_cast<block*>(static_cast<void*>(
+            static_cast<char*>(p) - sizeof(block)));
+        // block->size already contains the true allocated size, so we ignore parameter n
+        b->next = nullptr;
+        local().push(b);
     }
 
-    // Factory for creating a global pool
-    static global_pool& make_global()
+    static global_pool& global()
     {
         static global_pool pool;
         return pool;
     }
-};
 
-//----------------------------------------------------------
+    // Shared pool instance for all coroutine frames
+    static frame_pool& shared()
+    {
+        static frame_pool pool;
+        return pool;
+    }
+
+    // Mixin for promise types to provide frame allocation
+    struct promise_allocator
+    {
+        struct header
+        {
+            void (*dealloc)(void* ctx, void* ptr, std::size_t size);
+            void* ctx;
+        };
+
+        template<class Allocator>
+        static void* allocate_with(std::size_t size, Allocator& alloc)
+        {
+            std::size_t total = size + sizeof(header);
+            void* raw = alloc.allocate(total);
+            
+            auto* p = static_cast<header*>(raw);
+            p->dealloc = [](void* ctx, void* p, std::size_t n) {
+                static_cast<Allocator*>(ctx)->deallocate(p, n);
+            };
+            p->ctx = &alloc;
+            
+            return p + 1;
+        }
+
+        static void* operator new(std::size_t size)
+        {
+            return allocate_with(size, frame_pool::shared());
+        }
+
+        template<has_frame_allocator Arg0, class... ArgN>
+        static void* operator new(std::size_t size, Arg0& arg0, ArgN&...)
+        {
+            return allocate_with(size, arg0.get_frame_allocator());
+        }
+
+        template<class Arg0, has_frame_allocator Arg1, class... ArgN>
+        static void* operator new(std::size_t size, Arg0&, Arg1& arg1, ArgN&...)
+            requires (!has_frame_allocator<Arg0>)
+        {
+            return allocate_with(size, arg1.get_frame_allocator());
+        }
+
+        static void operator delete(void* ptr, std::size_t size)
+        {
+            // ptr points to the coroutine frame; we need the header to access the type-erased deallocation callback
+            auto* p = static_cast<header*>(ptr) - 1;
+            std::size_t total = size + sizeof(header);
+            p->dealloc(p->ctx, p, total);
+        }
+    };
+};
 
 template<class Executor>
 struct root_task
 {
-    // Embedded starter - no separate allocation needed
     struct starter : work
     {
         coro h_;
@@ -167,38 +214,14 @@ struct root_task
         void operator()() override
         {
             h_.resume();
-            // Don't delete - we're embedded in the promise
+            // Not deleted here because starter is embedded in promise_type's frame
         }
     };
 
-    struct promise_type
+    struct promise_type : frame_pool::promise_allocator
     {
         Executor ex_;
-        starter starter_;  // Embedded in coroutine frame
-
-        // Use global frame pool for allocation
-        static void* operator new(std::size_t size)
-        {
-            static frame_pool alloc(frame_pool::make_global());
-            
-            std::size_t total = size + sizeof(alloc_header);
-            void* raw = alloc.allocate(total);
-            
-            auto* header = static_cast<alloc_header*>(raw);
-            header->dealloc = [](void* ctx, void* p, std::size_t n) {
-                static_cast<frame_pool*>(ctx)->deallocate(p, n);
-            };
-            header->ctx = &alloc;
-            
-            return header + 1;
-        }
-
-        static void operator delete(void* ptr, std::size_t size)
-        {
-            auto* header = static_cast<alloc_header*>(ptr) - 1;
-            std::size_t total = size + sizeof(alloc_header);
-            header->dealloc(header->ctx, header, total);
-        }
+        starter starter_;
 
         root_task get_return_object()
         {
@@ -213,7 +236,7 @@ struct root_task
                 bool await_ready() const noexcept { return false; }
                 std::coroutine_handle<> await_suspend(coro h) const noexcept
                 {
-                    h.destroy();  // self-destruct
+                    h.destroy();
                     return std::noop_coroutine();
                 }
                 void await_resume() const noexcept {}

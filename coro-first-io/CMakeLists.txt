@@ -46,8 +46,14 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(bench PRIVATE -stdlib=libc++ -Wall -Wextra -Wpedantic -O3 -march=native -flto -DNDEBUG)
     target_link_options(bench PRIVATE -stdlib=libc++ -flto)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    target_compile_options(bench PRIVATE /W4 /permissive- /O2 /Ob2 /GL)
-    target_link_options(bench PRIVATE /LTCG)
+    target_compile_options(bench PRIVATE /W4 /permissive-)
+    # Optimization flags for Release and RelWithDebInfo builds
+    target_compile_options(bench PRIVATE 
+        $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:/O2 /Ob2 /GL>
+    )
+    target_link_options(bench PRIVATE 
+        $<$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>:/LTCG>
+    )
 endif()
 
 # Threading support

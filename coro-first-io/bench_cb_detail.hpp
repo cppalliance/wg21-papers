@@ -154,7 +154,7 @@ struct tls_read_op
             stream_->async_read_some(std::move(*this));
             return;
         }
-        stream_->get_executor().dispatch(std::move(handler_));
+        handler_();
     }
 };
 

@@ -107,6 +107,21 @@ private:
     work* tail_ = nullptr;
 };
 
+/** Abstract base class for executors.
+
+    Executors provide the interface for dispatching coroutines and posting
+    work items. This abstract base enables type-erased storage of executors
+    in coroutine promises via `any_executor const*`.
+
+    @see io_context::executor
+*/
+struct any_executor
+{
+    virtual ~any_executor() = default;
+    virtual coro dispatch(coro h) const = 0;
+    virtual void post(work* w) const = 0;
+};
+
 /** A simple I/O context for running asynchronous operations.
 
     The io_context provides an execution environment for async operations.
@@ -130,15 +145,19 @@ private:
 
     @see work
     @see work_queue
+    @see any_executor
 */
 struct io_context
 {
-    struct executor
+    struct executor : any_executor
     {
         io_context* ctx_;
 
+        executor() : ctx_(nullptr) {}
+        executor(io_context* ctx) : ctx_(ctx) {}
+
         // For coroutines: return handle for symmetric transfer
-        coro dispatch(coro h) const
+        coro dispatch(coro h) const override
         {
             return h;
         }
@@ -151,7 +170,7 @@ struct io_context
             std::forward<F>(f)();
         }
 
-        void post(work* w) const
+        void post(work* w) const override
         {
             ctx_->q_.push(w);
         }

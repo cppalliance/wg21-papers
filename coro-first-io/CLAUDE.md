@@ -20,6 +20,51 @@ Compares dispatch overhead for composed async operations.
 - Continuations almost always perform another async operation
 - Recycling is essential for both models
 
+## Build Directory Policy
+
+**All build artifacts MUST go to `build*/` directories.** Never create executables, object files, or other artifacts in the source directory. The `.gitignore` is configured to ignore `build*/` directories and common artifact patterns, but the primary defense is always using proper build directories.
+
+## Building with MSVC (Visual Studio)
+
+### Using CMake (Recommended)
+
+```powershell
+# Configure and build
+cmake -B build-vs2026 -G "Visual Studio 18 2026" -A x64
+cmake --build build-vs2026 --config Release
+
+# Run the benchmark
+.\build-vs2026\Release\bench.exe
+```
+
+### Direct Compilation (Alternative)
+
+```powershell
+# Ensure build directory exists
+New-Item -ItemType Directory -Force -Path build-msvc
+
+# Build with MSVC
+cl /std:c++20 /EHsc /O2 /Ob2 /GL /W4 /permissive- bench.cpp /Fe:build-msvc\bench.exe /link /LTCG
+
+# Run
+.\build-msvc\bench.exe
+```
+
+## Building with Clang
+
+### Direct Compilation
+
+```powershell
+# Ensure build directory exists
+New-Item -ItemType Directory -Force -Path build-clang
+
+# Build with Clang
+clang++ -std=c++20 -Wall -Wextra -Wpedantic -O3 -march=native -DNDEBUG bench.cpp -o build-clang\bench.exe
+
+# Run
+.\build-clang\bench.exe
+```
+
 ## Building with GCC (Windows/MSYS2)
 
 ### Quick Build Command
@@ -27,6 +72,9 @@ Compares dispatch overhead for composed async operations.
 **Use `bash -c` wrapper** to avoid PowerShell parsing issues and ensure proper MSYS2 environment:
 
 ```bash
+# Ensure build directory exists
+mkdir -p build-gcc
+
 # Build with full optimizations (including LTO)
 bash -c "g++ -std=c++20 -fcoroutines -Wall -Wextra -Wpedantic -O3 -march=native -flto -funroll-loops -DNDEBUG -ffast-math -fno-stack-protector -fno-unwind-tables -fno-asynchronous-unwind-tables -pthread bench.cpp -o build-gcc/bench.exe -flto -s -Wl,--as-needed"
 
@@ -62,8 +110,9 @@ bash -c "./build-gcc/bench.exe"
    - Link: `-flto -s -Wl,--as-needed`
 
 6. **Build directory:**
-   - Output goes to `build-gcc/` directory (enforced by CMakeLists.txt check)
-   - CMakeLists.txt validates GCC builds are in `build-gcc` directory
+   - **Always use `build-gcc/` directory** for output
+   - Never create executables in the source directory
+   - CMakeLists.txt validates builds are in `build*` directory
 
 ### Recommended Workflow
 
@@ -90,3 +139,25 @@ bash -c "./build-gcc/bench.exe"
 - ✅ Faster iteration (single command)
 - ✅ Avoids PowerShell command parsing issues
 - ✅ Works reliably in MSYS2/bash environment
+
+## Running All Benchmarks
+
+To run benchmarks with all available compilers:
+
+```powershell
+# MSVC
+cmake --build build-vs2026 --config Release
+.\build-vs2026\Release\bench.exe
+
+# Clang
+New-Item -ItemType Directory -Force -Path build-clang
+clang++ -std=c++20 -Wall -Wextra -Wpedantic -O3 -march=native -DNDEBUG bench.cpp -o build-clang\bench.exe
+.\build-clang\bench.exe
+
+# GCC (via MSYS2)
+bash -c "mkdir -p build-gcc"
+bash -c "g++ -std=c++20 -fcoroutines -Wall -Wextra -Wpedantic -O3 -march=native -flto -funroll-loops -DNDEBUG -ffast-math -fno-stack-protector -fno-unwind-tables -fno-asynchronous-unwind-tables -pthread bench.cpp -o build-gcc/bench.exe -flto -s -Wl,--as-needed"
+bash -c "./build-gcc/bench.exe"
+```
+
+**Remember:** All executables must be in `build*/` directories, never in the source directory.

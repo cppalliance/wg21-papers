@@ -129,7 +129,7 @@ The Networking TS remains the right choice when:
 - Maximum performance with zero abstraction is required
 - Standardization timeline matters for your project
 
-**Caution:** The "zero abstraction" advantage erodes with composition depth. Our [Cost Analysis](https://github.com/cppalliance/wg21-papers/blob/master/coro-first-io/COST.md) shows that callbacks outperform coroutines at shallow nesting (1-2 levels), but the relationship inverts at deeper levels—by Level 4 (1000 operations), callbacks can be 3× slower than coroutines on some compilers due to nested move-construction overhead.
+**Caution:** The "zero abstraction" advantage erodes with composition depth. Our [Cost Analysis](https://github.com/cppalliance/wg21-papers/blob/master/coro-first-io/COST.md) shows that callbacks outperform coroutines at shallow nesting (1-2 levels), but the relationship inverts at deeper levels—by Level 4 (1000 operations), callbacks can be 3.4× slower than coroutines on Clang due to nested move-construction overhead. MSVC achieves near-parity (1.11×), while GCC shows intermediate results (1.77×).
 
 Our framework is better suited when:
 - Coroutines are the primary programming model
@@ -885,8 +885,8 @@ With recycling enabled for both models, we achieve zero steady-state allocations
 | Operation | Callback (recycling) | Coroutine (pooled) |
 |-----------|---------------------|-------------------|
 | Level 1 (read_some) | 0 | 0 |
-| Level 2 (read, 10×) | 0 | 0 |
-| Level 3 (request, 100×) | 0 | 0 |
+| Level 2 (read, 5×) | 0 | 0 |
+| Level 3 (request, 10×) | 0 | 0 |
 | Level 4 (session, 1000×) | 0 | 0 |
 
 ### 8.1 Recycling Matters for Both Models
@@ -954,7 +954,7 @@ This ensures that *all* coroutines—including lambdas, wrappers, and tasks with
 
 | ⚠️ **Benchmark Scope** |
 |:--|
-| These benchmarks measure **dispatch overhead only**—the cost of the async machinery itself, not actual I/O operations. No network or disk I/O is performed. Real I/O operations take 10,000–100,000+ ns; dispatch overhead (4–12,504 ns) is a small fraction of total operation time. Ratios like "3.2× faster" apply to dispatch cost, not end-to-end throughput. |
+| These benchmarks measure **dispatch overhead only**—the cost of the async machinery itself, not actual I/O operations. No network or disk I/O is performed. Real I/O operations take 10,000–100,000+ ns; dispatch overhead (4–12,194 ns) is a small fraction of total operation time. Ratios like "3.4× faster" apply to dispatch cost, not end-to-end throughput. |
 
 ### 9.1 Clang with Frame Elision
 
@@ -963,11 +963,11 @@ Benchmarks compiled with Clang 20.1, `-O3`, Windows x64, with `[[clang::coro_awa
 | Operation | Callback | Coroutine | Ratio |
 |-----------|----------|-----------|-------|
 | Level 1 (read_some) | 4 ns | 22 ns | 5.5× (cb faster) |
-| Level 2 (read, 10×) | 47 ns | 60 ns | 1.3× (cb faster) |
-| Level 3 (request, 100×) | 677 ns | 425 ns | **0.63× (co faster)** |
-| Level 4 (session, 1000×) | 12504 ns | 3868 ns | **0.31× (co 3.2× faster)** |
+| Level 2 (read, 5×) | 24 ns | 37 ns | 1.5× (cb faster) |
+| Level 3 (request, 10×) | 47 ns | 58 ns | 1.2× (cb faster) |
+| Level 4 (session, 1000×) | 12194 ns | 3576 ns | **0.29× (co 3.4× faster)** |
 
-**Key observation:** At shallow abstraction levels, callbacks outperform coroutines. However, at deep abstraction levels (Level 4), callbacks become **3.2× slower** than coroutines due to nested move constructor chains that Clang's optimizer cannot eliminate.
+**Key observation:** At shallow abstraction levels, callbacks outperform coroutines. However, at deep abstraction levels (Level 4), callbacks become **3.4× slower** than coroutines due to nested move constructor chains that Clang's optimizer cannot eliminate.
 
 ### 9.2 MSVC Comparison
 
@@ -975,23 +975,23 @@ The same benchmarks compiled with MSVC 19.x, RelWithDebInfo, Windows x64:
 
 | Operation | Callback | Coroutine | Ratio |
 |-----------|----------|-----------|-------|
-| Level 1 (read_some) | 4 ns | 24 ns | 6.0× |
-| Level 2 (read, 10×) | 61 ns | 89 ns | 1.5× |
-| Level 3 (request, 100×) | 674 ns | 701 ns | **1.04× (essentially equal)** |
-| Level 4 (session, 1000×) | 7172 ns | 6611 ns | **0.92× (co slightly faster)** |
+| Level 1 (read_some) | 5 ns | 26 ns | 5.2× (cb faster) |
+| Level 2 (read, 5×) | 32 ns | 58 ns | 1.8× (cb faster) |
+| Level 3 (request, 10×) | 66 ns | 92 ns | 1.4× (cb faster) |
+| Level 4 (session, 1000×) | 7247 ns | 6536 ns | **0.90× (co slightly faster)** |
 
-**Key observation:** MSVC's optimizer successfully eliminates the callback abstraction penalty that Clang cannot. At Level 4, callbacks and coroutines perform nearly equally (1.08× ratio), demonstrating that the callback slowdown on Clang is compiler-specific rather than inherent to the model.
+**Key observation:** MSVC's optimizer successfully eliminates the callback abstraction penalty that Clang cannot. At Level 4, callbacks and coroutines perform nearly equally (1.11× ratio), demonstrating that the callback slowdown on Clang is compiler-specific rather than inherent to the model.
 
 ### 9.3 Analysis
 
 **Performance is compiler-dependent.** The callback/coroutine ratio varies dramatically:
 
-| Depth | Clang Ratio | MSVC Ratio |
-|-------|-------------|------------|
-| Level 1 (1 op) | 5.5× (cb faster) | 6.0× (cb faster) |
-| Level 2 (10 ops) | 1.3× (cb faster) | 1.5× (cb faster) |
-| Level 3 (100 ops) | 0.63× (co faster) | 1.04× (near parity) |
-| Level 4 (1000 ops) | 0.31× (co faster) | 0.92× (co faster) |
+| Depth | Clang Ratio | MSVC Ratio | GCC Ratio |
+|-------|-------------|------------|-----------|
+| Level 1 (1 op) | 5.5× (cb faster) | 5.2× (cb faster) | 3.4× (cb faster) |
+| Level 2 (5 ops) | 1.5× (cb faster) | 1.8× (cb faster) | 1.1× (cb faster) |
+| Level 3 (10 ops) | 1.2× (cb faster) | 1.4× (cb faster) | 0.76× (co faster) |
+| Level 4 (1000 ops) | 0.29× (co faster) | 0.90× (co faster) | 0.57× (co faster) |
 
 At shallow levels, callbacks win. At deep levels, coroutines win on Clang (dramatically) and GCC (modestly); MSVC achieves near-parity. Section 10.2 explains why: nested move constructor chains that some compilers optimize away and others don't.
 
@@ -1001,16 +1001,16 @@ Benchmarks compiled with GCC 15.2, `-O3`, Windows x64:
 
 | Operation | Callback | Coroutine | Ratio |
 |-----------|----------|-----------|-------|
-| Level 1 (read_some) | 5 ns | 20 ns | 4.0× |
-| Level 2 (read, 10×) | 50 ns | 66 ns | 1.3× |
-| Level 3 (request, 100×) | 473 ns | 560 ns | 1.2× |
-| Level 4 (session, 1000×) | 6613 ns | 5681 ns | **0.86× (co 1.16× faster)** |
+| Level 1 (read_some) | 5 ns | 17 ns | 3.4× (cb faster) |
+| Level 2 (read, 5×) | 32 ns | 35 ns | 1.1× (cb faster) |
+| Level 3 (request, 10×) | 66 ns | 50 ns | 0.76× (co faster) |
+| Level 4 (session, 1000×) | 7774 ns | 4405 ns | **0.57× (co 1.77× faster)** |
 
 **Key observations:** GCC shows an intermediate optimization profile between Clang and MSVC:
-- **Better than Clang**: GCC achieves callback performance closer to coroutines (1.16× ratio vs Clang's 3.2×)
-- **Worse than MSVC**: GCC doesn't achieve MSVC's near-parity (1.16× vs MSVC's 1.08×)
-- **Callbacks excel at shallow levels**: GCC's callback implementation is faster than coroutines for levels 1-3
-- **Coroutines faster at deep levels**: At Level 4, coroutines are 1.16× faster than callbacks
+- **Better than Clang**: GCC achieves callback performance closer to coroutines (1.77× ratio vs Clang's 3.4×)
+- **Worse than MSVC**: GCC doesn't achieve MSVC's near-parity (1.77× vs MSVC's 1.11×)
+- **Callbacks excel at shallow levels**: GCC's callback implementation is faster than coroutines for levels 1-2
+- **Coroutines faster at deep levels**: At Level 4, coroutines are 1.77× faster than callbacks
 
 GCC optimizes shallow callback chains well but shows some penalty at deeper abstraction levels, falling between Clang's conservative approach and MSVC's aggressive optimization.
 
@@ -1019,7 +1019,7 @@ GCC optimizes shallow callback chains well but shows some penalty at deeper abst
 For I/O-bound workloads:
 - Network RTT: 100,000+ ns
 - Disk access: 10,000+ ns  
-- Dispatch overhead: 4–12,504 ns (compiler and depth dependent)
+- Dispatch overhead: 4–12,194 ns (compiler and depth dependent)
 
 Even the largest dispatch overhead (~12 µs for 1000 nested callbacks on Clang) is ~12% of a typical network round-trip. For most applications, the choice between callbacks and coroutines should be driven by code clarity and maintainability rather than dispatch microbenchmarks.
 
@@ -1069,18 +1069,18 @@ This optimization is Clang-specific. MSVC and GCC do not currently support corou
 | `[[coro_await_elidable]]` | ✓ | ✗ | ✗ |
 | Frame elision (HALO) | Aggressive | Conservative | Moderate |
 | Symmetric transfer | Optimized | Less optimized | Moderate |
-| Coroutine speed (Level 4) | Fastest (3868 ns) | Moderate (6611 ns) | Fast (5681 ns) |
+| Coroutine speed (Level 4) | Fastest (3576 ns) | Moderate (6536 ns) | Fast (4405 ns) |
 | Callback optimization | Conservative | Aggressive | Moderate |
-| Callback speed (Level 4) | Slow (12504 ns) | Fast (7172 ns) | Moderate (6613 ns) |
-| Callback/coroutine ratio (Level 4) | 3.2× (co faster) | 1.08× (near parity) | 1.16× (co faster) |
+| Callback speed (Level 4) | Slow (12194 ns) | Fast (7247 ns) | Moderate (7774 ns) |
+| Callback/coroutine ratio (Level 4) | 3.4× (co faster) | 1.11× (near parity) | 1.77× (co faster) |
 
 **Callback performance differences:**
 
-- **Clang**: Conservative optimizer cannot eliminate nested move constructor chains (~280 bytes moved per I/O). Callbacks become 3.2× slower than coroutines at deep abstraction levels due to template type growth and temporary object churn.
+- **Clang**: Conservative optimizer cannot eliminate nested move constructor chains (~280 bytes moved per I/O). Callbacks become 3.4× slower than coroutines at deep abstraction levels due to template type growth and temporary object churn.
 
-- **MSVC**: Aggressive optimizer inlines deeply nested move constructors through 3-4 template layers, eliminates stack temporaries, and optimizes across template instantiations. Achieves near-parity between callbacks and coroutines (1.08× ratio).
+- **MSVC**: Aggressive optimizer inlines deeply nested move constructors through 3-4 template layers, eliminates stack temporaries, and optimizes across template instantiations. Achieves near-parity between callbacks and coroutines (1.11× ratio).
 
-- **GCC**: Intermediate optimization profile. Better than Clang at eliminating callback overhead (1.16× ratio vs Clang's 3.2×) but doesn't achieve MSVC's near-parity. Callbacks excel at shallow levels; coroutines faster at deep levels.
+- **GCC**: Intermediate optimization profile. Better than Clang at eliminating callback overhead (1.77× ratio vs Clang's 3.4×) but doesn't achieve MSVC's near-parity. Callbacks excel at shallow levels; coroutines faster at deep levels.
 
 For performance-critical coroutine code, Clang currently provides superior optimization. However, callback performance is highly compiler-dependent—MSVC demonstrates that aggressive optimization can eliminate the callback abstraction penalty entirely.
 
@@ -1120,9 +1120,9 @@ This raises a broader concern: C++20 coroutines are now five years post-standard
 | API Complexity | High (templates everywhere) | Low (uniform `task` type) |
 | Compile Time | Poor (deep template instantiation) | Good (type erasure at boundaries) |
 | Runtime (shallow, Clang) | Excellent (~4 ns) | Moderate (~22 ns) |
-| Runtime (deep, Clang) | ~12504 ns for 1000 ops | ~3868 ns for 1000 ops (**co 3.2× faster**) |
-| Runtime (deep, MSVC) | ~7172 ns for 1000 ops | ~6611 ns for 1000 ops (**near parity**) |
-| Runtime (deep, GCC) | ~6613 ns for 1000 ops | ~5681 ns for 1000 ops (**co 1.16× faster**) |
+| Runtime (deep, Clang) | ~12194 ns for 1000 ops | ~3576 ns for 1000 ops (**co 3.4× faster**) |
+| Runtime (deep, MSVC) | ~7247 ns for 1000 ops | ~6536 ns for 1000 ops (**near parity**) |
+| Runtime (deep, GCC) | ~7774 ns for 1000 ops | ~4405 ns for 1000 ops (**co 1.77× faster**) |
 | Allocations (optimized) | 0 (recycling allocator) | 0 (frame pooling) |
 | Handle overhead | N/A | Zero (`handle<void>` = `handle<T>`) |
 | Sender compatibility | N/A | Native (`dispatch().resume()` pattern) |

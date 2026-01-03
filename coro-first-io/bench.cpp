@@ -63,7 +63,8 @@ struct bench_test
         auto t0 = clock::now();
         for (int i = 0; i < N; ++i)
         {
-            op(sock, [&count]{ ++count; });
+            cb::callback cb(count);
+            op(sock, cb);
             ioc.run();
         }
         auto t1 = clock::now();

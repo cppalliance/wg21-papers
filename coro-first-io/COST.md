@@ -2,7 +2,7 @@
 
 ## Benchmark Results
 
-This document analyzes performance differences between callback and coroutine implementations for composed asynchronous I/O operations. The benchmarks measure four abstraction levels, comparing both plain `socket` and `tls_stream` (which doubles I/O operations to simulate TLS overhead).
+This document analyzes performance differences between callback and coroutine implementations for composed asynchronous I/O operations. The benchmarks measure four abstraction levels, comparing both plain `socket` and `tls_stream` (which wraps a socket with an additional layer to simulate TLS overhead).
 
 **Output format:**
 - **Level** (1-4): Abstraction depth (1=read_some, 2=read, 3=request, 4=session)
@@ -16,88 +16,88 @@ This document analyzes performance differences between callback and coroutine im
 ```
 1 socket     read_some  cb :     4 ns/op, 1 work/op
 1 socket     read_some  co :    22 ns/op, 2 work/op
-1 tls_stream read_some  cb :    26 ns/op, 2 work/op
-1 tls_stream read_some  co :    37 ns/op, 3 work/op
+1 tls_stream read_some  cb :     4 ns/op, 1 work/op
+1 tls_stream read_some  co :    21 ns/op, 2 work/op
 
-2 socket     read       cb :    47 ns/op, 10 work/op
-2 socket     read       co :    60 ns/op, 11 work/op
-2 tls_stream read       cb :   159 ns/op, 20 work/op
-2 tls_stream read       co :   141 ns/op, 21 work/op
+2 socket     read       cb :    24 ns/op, 5 work/op
+2 socket     read       co :    37 ns/op, 6 work/op
+2 tls_stream read       cb :    74 ns/op, 5 work/op
+2 tls_stream read       co :    58 ns/op, 6 work/op
 
-3 socket     request    cb :   677 ns/op, 100 work/op
-3 socket     request    co :   425 ns/op, 101 work/op
-3 tls_stream request    cb :  2942 ns/op, 200 work/op
-3 tls_stream request    co :  1152 ns/op, 201 work/op
+3 socket     request    cb :    47 ns/op, 10 work/op
+3 socket     request    co :    58 ns/op, 11 work/op
+3 tls_stream request    cb :   158 ns/op, 10 work/op
+3 tls_stream request    co :    87 ns/op, 11 work/op
 
-4 socket     session    cb : 12504 ns/op, 1000 work/op
-4 socket     session    co :  3868 ns/op, 1001 work/op
-4 tls_stream session    cb : 16728 ns/op, 2000 work/op
-4 tls_stream session    co : 11409 ns/op, 2001 work/op
+4 socket     session    cb : 12194 ns/op, 1000 work/op
+4 socket     session    co :  3576 ns/op, 1001 work/op
+4 tls_stream session    cb : 11105 ns/op, 1000 work/op
+4 tls_stream session    co :  6527 ns/op, 1001 work/op
 ```
 
-**The Problem:** At level 4 (`session`), callbacks are **3.2x slower** than coroutines (12504 ns vs 3868 ns). Same work count, same I/O operations, but dramatically different performance. This document explains why Clang struggles where MSVC succeeds.
+**The Problem:** At level 4 (`session`), callbacks are **3.4x slower** than coroutines (12194 ns vs 3576 ns). Same work count, same I/O operations, but dramatically different performance. This document explains why Clang struggles where MSVC succeeds.
 
 ### MSVC Results
 
 ```
-1 socket     read_some  cb :     4 ns/op, 1 work/op
-1 socket     read_some  co :    24 ns/op, 2 work/op
-1 tls_stream read_some  cb :    12 ns/op, 2 work/op
-1 tls_stream read_some  co :    50 ns/op, 3 work/op
+1 socket     read_some  cb :     5 ns/op, 1 work/op
+1 socket     read_some  co :    26 ns/op, 2 work/op
+1 tls_stream read_some  cb :     7 ns/op, 1 work/op
+1 tls_stream read_some  co :    44 ns/op, 2 work/op
 
-2 socket     read       cb :    61 ns/op, 10 work/op
-2 socket     read       co :    89 ns/op, 11 work/op
-2 tls_stream read       cb :   172 ns/op, 20 work/op
-2 tls_stream read       co :   361 ns/op, 21 work/op
+2 socket     read       cb :    32 ns/op, 5 work/op
+2 socket     read       co :    58 ns/op, 6 work/op
+2 tls_stream read       cb :    57 ns/op, 5 work/op
+2 tls_stream read       co :   166 ns/op, 6 work/op
 
-3 socket     request    cb :   674 ns/op, 100 work/op
-3 socket     request    co :   701 ns/op, 101 work/op
-3 tls_stream request    cb :  1766 ns/op, 200 work/op
-3 tls_stream request    co :  3182 ns/op, 201 work/op
+3 socket     request    cb :    66 ns/op, 10 work/op
+3 socket     request    co :    92 ns/op, 11 work/op
+3 tls_stream request    cb :   126 ns/op, 10 work/op
+3 tls_stream request    co :   313 ns/op, 11 work/op
 
-4 socket     session    cb :  7172 ns/op, 1000 work/op
-4 socket     session    co :  6611 ns/op, 1001 work/op
-4 tls_stream session    cb : 19221 ns/op, 2000 work/op
-4 tls_stream session    co : 30290 ns/op, 2001 work/op
+4 socket     session    cb :  7247 ns/op, 1000 work/op
+4 socket     session    co :  6536 ns/op, 1001 work/op
+4 tls_stream session    cb : 13281 ns/op, 1000 work/op
+4 tls_stream session    co : 26387 ns/op, 1001 work/op
 ```
 
-**Key observation:** At level 4 (`session`), callbacks and coroutines perform nearly equally (7172 ns vs 6611 ns, **1.08x ratio**). MSVC's optimizer successfully eliminates the abstraction penalty that Clang cannot.
+**Key observation:** At level 4 (`session`), callbacks and coroutines perform nearly equally (7247 ns vs 6536 ns, **1.11x ratio**). MSVC's optimizer successfully reduces the abstraction penalty that Clang cannot.
 
 ### GCC Results
 
 ```
 1 socket     read_some  cb :     5 ns/op, 1 work/op
-1 socket     read_some  co :    20 ns/op, 2 work/op
-1 tls_stream read_some  cb :    10 ns/op, 2 work/op
-1 tls_stream read_some  co :    29 ns/op, 3 work/op
+1 socket     read_some  co :    17 ns/op, 2 work/op
+1 tls_stream read_some  cb :     5 ns/op, 1 work/op
+1 tls_stream read_some  co :    28 ns/op, 2 work/op
 
-2 socket     read       cb :    50 ns/op, 10 work/op
-2 socket     read       co :    66 ns/op, 11 work/op
-2 tls_stream read       cb :   101 ns/op, 20 work/op
-2 tls_stream read       co :   212 ns/op, 21 work/op
+2 socket     read       cb :    32 ns/op, 5 work/op
+2 socket     read       co :    35 ns/op, 6 work/op
+2 tls_stream read       cb :    49 ns/op, 5 work/op
+2 tls_stream read       co :    84 ns/op, 6 work/op
 
-3 socket     request    cb :   473 ns/op, 100 work/op
-3 socket     request    co :   560 ns/op, 101 work/op
-3 tls_stream request    cb :   982 ns/op, 200 work/op
-3 tls_stream request    co :  2071 ns/op, 201 work/op
+3 socket     request    cb :    66 ns/op, 10 work/op
+3 socket     request    co :    50 ns/op, 11 work/op
+3 tls_stream request    cb :   104 ns/op, 10 work/op
+3 tls_stream request    co :   147 ns/op, 11 work/op
 
-4 socket     session    cb :  6613 ns/op, 1000 work/op
-4 socket     session    co :  5681 ns/op, 1001 work/op
-4 tls_stream session    cb : 13904 ns/op, 2000 work/op
-4 tls_stream session    co : 20120 ns/op, 2001 work/op
+4 socket     session    cb :  7774 ns/op, 1000 work/op
+4 socket     session    co :  4405 ns/op, 1001 work/op
+4 tls_stream session    cb : 13825 ns/op, 1000 work/op
+4 tls_stream session    co : 13733 ns/op, 1001 work/op
 ```
 
 **Key observations:**
-- **Callbacks faster for simpler operations** (levels 1-3): Callbacks outperform coroutines at shallow abstraction depths.
-- **Coroutines faster for complex operations** (level 4 socket): At level 4 socket operations, coroutines are **1.16x faster** than callbacks (5681 ns vs 6613 ns).
-- **TLS overhead favors callbacks**: For TLS operations, callbacks consistently outperform coroutines across all levels (13904 ns vs 20120 ns at level 4, **1.45x faster**).
+- **Callbacks faster for simpler operations** (levels 1-2): Callbacks outperform coroutines at shallow abstraction depths.
+- **Coroutines faster for complex operations** (level 4 socket): At level 4 socket operations, coroutines are **1.77x faster** than callbacks (4405 ns vs 7774 ns).
+- **TLS overhead nearly equal**: For TLS operations at level 4, callbacks and coroutines perform nearly equally (13825 ns vs 13733 ns, **1.01x ratio**).
 
 ## The Root Cause
 
 **Nested move constructor chains** that Clang cannot optimize away.
 
 Each I/O operation moves a handler chain through 3-4 levels:
-- `io_op` move ctor → moves `read_op` → moves `request_op` → moves `session_op` → moves lambda
+- `io_op` move ctor → moves `read_op` → moves `request_op` → moves `session_op` → moves callback
 - **~280 bytes moved per I/O** vs **~24 bytes assigned** for coroutines
 - **11.7x more data movement**, but that alone doesn't explain 3x slowdown
 
@@ -105,15 +105,15 @@ The real issue: **Clang generates conservative code** for complex nested templat
 
 ### Callback Model Issues (Clang)
 
-- ✅ **Recycling possible** via `op_cache`
+- ✅ **Recycling possible** via `op_cache` - memory is recycled after first allocation (benchmark shows 0 allocs/op)
 - ❌ **Nested moves** required per I/O operation (~280 bytes moved)
-- ❌ **Template type growth** inhibits optimization (`read_op<request_op<session_op<lambda>>>`)
+- ❌ **Template type growth** inhibits optimization (`read_op<request_op<session_op<callback>>>`)
 - ❌ **Temporary object churn** on stack (3 levels: `session_op`, `request_op`, `read_op`)
 - ❌ **Clang doesn't inline** deeply nested move constructors
-- ❌ **Allocation per I/O** - `io_op` allocated even with recycling
+- ❌ **Object construction per I/O** - new `io_op` object constructed each time (memory recycled, but object construction overhead remains)
 
 **Why callbacks suffer:**
-1. **Template type growth** - Handler type grows: `read_op<request_op<session_op<lambda>>>`
+1. **Template type growth** - Handler type grows: `read_op<request_op<session_op<callback>>>`
 2. **Separate code paths** - Each template instantiation creates different code
 3. **Temporary object churn** - Stack temporaries created/destroyed at 3 levels
 4. **Defensive code generation** - Clang can't prove moves are safe to optimize
@@ -137,9 +137,9 @@ The real issue: **Clang generates conservative code** for complex nested templat
 
 The callback abstraction penalty is **compiler-dependent**. Benchmark results show:
 
-- **Clang**: Level 4 session → callback **12504 ns** vs coroutine **3868 ns** (**3.2x slower**)
-- **MSVC**: Level 4 session → callback **7172 ns** vs coroutine **6611 ns** (**1.08x slower**, essentially equal)
-- **GCC**: Level 4 session → callback **6613 ns** vs coroutine **5681 ns** (**1.16x slower**)
+- **Clang**: Level 4 session → callback **12194 ns** vs coroutine **3576 ns** (**3.4x slower**)
+- **MSVC**: Level 4 session → callback **7247 ns** vs coroutine **6536 ns** (**1.11x slower**)
+- **GCC**: Level 4 session → callback **7774 ns** vs coroutine **4405 ns** (**1.77x slower**)
 
 **Why MSVC outperforms Clang:**
 
@@ -150,28 +150,27 @@ The callback abstraction penalty is **compiler-dependent**. Benchmark results sh
 
 **GCC's performance characteristics:**
 
-GCC shows an intermediate optimization profile between Clang and MSVC:
-- **Better than Clang**: GCC achieves callback performance closer to coroutines (1.16x ratio vs Clang's 3.2x)
-- **Worse than MSVC**: GCC doesn't achieve MSVC's near-parity (1.16x vs MSVC's 1.08x)
-- **Callbacks excel at shallow levels**: GCC's callback implementation is faster than coroutines for levels 1-3
-- **TLS overhead favors callbacks**: GCC callbacks handle TLS operations more efficiently than coroutines across all levels
+GCC shows a mixed optimization profile:
+- **Better than Clang**: GCC achieves callback performance closer to coroutines (1.77x ratio vs Clang's 3.4x)
+- **Worse than MSVC**: GCC doesn't achieve MSVC's near-parity (1.77x vs MSVC's 1.11x)
+- **Callbacks excel at shallow levels**: GCC's callback implementation is faster than coroutines for levels 1-2
+- **TLS overhead nearly equal**: GCC callbacks and coroutines perform nearly equally for TLS operations at level 4
 
-**The core issue:** Clang's optimizer is more conservative with deeply nested template types and move operations, generating more function calls and data movement. MSVC's optimizer is more aggressive and can see through the abstraction layers, making callbacks nearly as fast as coroutines. GCC falls between these extremes, optimizing shallow callback chains well but showing some penalty at deeper levels.
+**The core issue:** Clang's optimizer is more conservative with deeply nested template types and move operations, generating more function calls and data movement. MSVC's optimizer is more aggressive and can see through the abstraction layers, making callbacks closer to coroutines. GCC shows strong coroutine optimization at deeper levels but struggles with callback optimization compared to MSVC.
 
 ## TLS Stream Overhead Analysis
 
-The benchmark results include `tls_stream` measurements, which wrap a `socket` and double I/O operations to simulate TLS overhead. Since `tls_stream` doubles I/O operations, we expect ~2x time if overhead is linear.
+The benchmark results include `tls_stream` measurements, which wrap a `socket` with an additional layer to simulate TLS overhead. The `tls_stream` adds a wrapper operation (`tls_read_op`) that calls the underlying stream's `async_read_some` once, adding an extra layer of indirection without changing the number of I/O operations.
 
 **Key findings:**
 
-1. **Clang callbacks achieve sublinear scaling** at Level 4 - fixed costs dominate, making doubling I/O operations relatively cheap
-2. **MSVC callbacks scale consistently** - aggressive optimization prevents overhead spikes
-3. **GCC callbacks show near-perfect linear scaling** - optimal handling of TLS overhead across all levels (1.0-1.05x factors)
-4. **Clang coroutines scale better** than MSVC coroutines (1.2-1.7x better overhead factors)
-5. **MSVC and GCC coroutines show superlinear overhead** at deeper levels - potential coroutine frame allocation overhead
-6. **GCC callbacks outperform coroutines for TLS** - consistent advantage across all abstraction levels
+1. **Clang callbacks show improved performance with TLS wrapper** at Level 4 - `tls_stream` is actually faster than plain `socket` (11105 ns vs 12194 ns, 0.91x ratio). The simpler `tls_read_op` wrapper type enables better compiler optimization than the deeply nested handler chains.
+2. **MSVC callbacks show overhead with TLS wrapper** - `tls_stream` is slower than plain `socket` (13281 ns vs 7247 ns, 1.83x ratio), suggesting the wrapper layer adds overhead that MSVC's optimizer cannot eliminate.
+3. **GCC callbacks show overhead with TLS wrapper** - `tls_stream` is slower than plain `socket` (13825 ns vs 7774 ns, 1.78x ratio), similar to MSVC.
+4. **Coroutines show consistent overhead with TLS wrapper** across all compilers - the wrapper layer adds overhead for coroutines (Clang: 1.83x, MSVC: 4.04x, GCC: 3.12x ratios).
+5. **Clang's callback optimization benefits from simpler types** - The `tls_read_op` wrapper creates a simpler handler type that Clang can optimize better than deeply nested compositions.
 
-The `tls_stream` analysis reveals that overhead scaling depends on abstraction depth, compiler optimizations, and continuation model - there's no universal winner. GCC demonstrates that callbacks can achieve near-optimal scaling for TLS operations, while coroutines may introduce overhead at deeper abstraction levels.
+The `tls_stream` analysis reveals that the wrapper layer's impact depends on compiler optimizations and the complexity of handler types. Clang benefits from the simpler `tls_read_op` type structure, while MSVC and GCC show overhead from the additional indirection layer.
 
 ## Experimental Validation
 
