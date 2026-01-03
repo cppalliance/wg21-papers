@@ -446,11 +446,10 @@ struct CORO_AWAIT_ELIDABLE task
 //----------------------------------------------------------
 
 /** A TLS stream adapter that wraps another stream.
-    
+
     This class wraps a stream and provides an async_read_some
     operation that invokes the wrapped stream's async_read_some
-    twice, simulating TLS record layer behavior where data may
-    be split across multiple reads.
+    once, simulating TLS record layer behavior.
 
     @tparam Stream The stream type to wrap.
 */
@@ -467,7 +466,6 @@ struct tls_stream
 
     task async_read_some()
     {
-        co_await stream_.async_read_some();
         co_await stream_.async_read_some();
     }
 
@@ -551,12 +549,12 @@ void async_run(Executor ex, task t)
 
 /** Performs a composed read operation on a stream.
 
-    This coroutine performs 10 sequential read_some operations on the
+    This coroutine performs 5 sequential read_some operations on the
     stream, simulating a composed read that continues until a complete
     message or buffer has been received.
 
     This demonstrates a 2-level composed operation: async_read calls
-    the stream's async_read_some member function 10 times.
+    the stream's async_read_some member function 5 times.
 
     @param stream The stream to read from.
 
@@ -565,19 +563,18 @@ void async_run(Executor ex, task t)
 template<class Stream>
 task async_read(Stream& stream)
 {
-    for(int i = 0; i < 10; ++i)
+    for(int i = 0; i < 5; ++i)
         co_await stream.async_read_some();
 }
 
 /** Performs a composed request operation on a stream.
 
-    This coroutine performs 10 sequential async_read operations,
+    This coroutine performs 10 sequential read_some operations,
     simulating a higher-level protocol operation such as reading
     an HTTP request with headers and body.
 
-    This demonstrates a 3-level composed operation: async_request
-    calls async_read 10 times, each of which performs 10 read_some
-    operations, for a total of 100 I/O operations.
+    This demonstrates a 2-level composed operation: async_request
+    calls the stream's async_read_some member function 10 times.
 
     @param stream The stream to read from.
 
@@ -587,17 +584,17 @@ template<class Stream>
 task async_request(Stream& stream)
 {
     for(int i = 0; i < 10; ++i)
-        co_await async_read(stream);
+        co_await stream.async_read_some();
 }
 
 /** Performs a composed session operation on a stream.
 
-    This coroutine performs 10 sequential async_request operations,
+    This coroutine performs 100 sequential async_request operations,
     simulating a complete session that handles multiple requests
     over a persistent connection.
 
-    This demonstrates a 4-level composed operation: async_session
-    calls async_request 10 times, each of which performs 100 I/O
+    This demonstrates a 3-level composed operation: async_session
+    calls async_request 100 times, each of which performs 10 I/O
     operations, for a total of 1000 I/O operations.
 
     @param stream The stream to use for the session.
@@ -607,7 +604,7 @@ task async_request(Stream& stream)
 template<class Stream>
 task async_session(Stream& stream)
 {
-    for(int i = 0; i < 10; ++i)
+    for(int i = 0; i < 100; ++i)
         co_await async_request(stream);
 }
 
