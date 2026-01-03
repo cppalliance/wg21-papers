@@ -509,6 +509,26 @@ void async_run(Executor ex, task t)
 
 //----------------------------------------------------------
 
+/** Performs a single read operation on a stream.
+
+    This coroutine wraps the stream's async_read_some member function,
+    providing a reusable coroutine that can be composed into higher-level
+    operations.
+
+    This wrapper ensures fair benchmarking by creating an intermediate
+    coroutine frame for each I/O operation, mirroring how callbacks
+    allocate an io_op for each I/O operation.
+
+    @param stream The stream to read from.
+
+    @return A task that completes when the read operation finishes.
+*/
+template<class Stream>
+task async_read_some(Stream& stream)
+{
+    co_await stream.async_read_some();
+}
+
 /** Performs a composed read operation on a stream.
 
     This coroutine performs 10 sequential read_some operations on the
@@ -516,7 +536,7 @@ void async_run(Executor ex, task t)
     message or buffer has been received.
 
     This demonstrates a 2-level composed operation: async_read calls
-    the stream's async_read_some member function 10 times.
+    async_read_some 10 times.
 
     @param stream The stream to read from.
 
@@ -526,7 +546,7 @@ template<class Stream>
 task async_read(Stream& stream)
 {
     for(int i = 0; i < 10; ++i)
-        co_await stream.async_read_some();
+        co_await async_read_some(stream);
 }
 
 /** Performs a composed request operation on a stream.
