@@ -43,3 +43,7 @@ endif()
 # Threading support
 find_package(Threads REQUIRED)
 target_link_libraries(bench PRIVATE Threads::Threads)
+
+# Register as test for ctest
+enable_testing()
+add_test(NAME bench COMMAND bench)

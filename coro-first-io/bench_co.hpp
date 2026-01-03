@@ -16,7 +16,7 @@
 #include <exception>
 #include <memory>
 
-#ifdef __clang__
+#if defined(__clang__) && !defined(__apple_build_version__)
 #define CORO_AWAIT_ELIDABLE [[clang::coro_await_elidable]]
 #else
 #define CORO_AWAIT_ELIDABLE
@@ -226,6 +226,7 @@ private:
 
     void do_read_some(coro h, executor_ref const& ex)
     {
+        ++g_io_count;
         // This definition can go in the TU
         read_op_->h_ = h;
         read_op_->ex_ = ex;
@@ -509,6 +510,26 @@ void async_run(Executor ex, task t)
 
 //----------------------------------------------------------
 
+/** Performs a single read operation on a stream.
+
+    This coroutine wraps the stream's async_read_some member function,
+    providing a reusable coroutine that can be composed into higher-level
+    operations.
+
+    This wrapper ensures fair benchmarking by creating an intermediate
+    coroutine frame for each I/O operation, mirroring how callbacks
+    allocate an io_op for each I/O operation.
+
+    @param stream The stream to read from.
+
+    @return A task that completes when the read operation finishes.
+*/
+template<class Stream>
+task async_read_some(Stream& stream)
+{
+    co_await stream.async_read_some();
+}
+
 /** Performs a composed read operation on a stream.
 
     This coroutine performs 10 sequential read_some operations on the
@@ -516,7 +537,7 @@ void async_run(Executor ex, task t)
     message or buffer has been received.
 
     This demonstrates a 2-level composed operation: async_read calls
-    the stream's async_read_some member function 10 times.
+    async_read_some 10 times.
 
     @param stream The stream to read from.
 
@@ -526,7 +547,7 @@ template<class Stream>
 task async_read(Stream& stream)
 {
     for(int i = 0; i < 10; ++i)
-        co_await stream.async_read_some();
+        co_await async_read_some(stream);
 }
 
 /** Performs a composed request operation on a stream.
