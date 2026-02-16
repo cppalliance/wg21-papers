@@ -165,14 +165,27 @@ inline constexpr allocator_tag allocator{};
 } // namespace this_coro
 
 // ============================================================
-// current_frame_allocator (thread-local)
+// get/set_current_frame_allocator (thread-local)
 // ============================================================
 
-inline std::pmr::memory_resource*&
-current_frame_allocator() noexcept
+namespace detail {
+inline std::pmr::memory_resource*& tls_frame_allocator() noexcept
 {
     static thread_local std::pmr::memory_resource* mr = nullptr;
     return mr;
+}
+} // namespace detail
+
+inline std::pmr::memory_resource*
+get_current_frame_allocator() noexcept
+{
+    return detail::tls_frame_allocator();
+}
+
+inline void
+set_current_frame_allocator(std::pmr::memory_resource* mr) noexcept
+{
+    detail::tls_frame_allocator() = mr;
 }
 
 // ============================================================
@@ -197,12 +210,16 @@ template<typename T>
 concept IoRunnable =
     IoAwaitable<T> &&
     requires { typename T::promise_type; } &&
-    requires(T& t, T const& ct, typename T::promise_type const& cp)
+    requires(T& t, T const& ct,
+             typename T::promise_type const& cp,
+             typename T::promise_type& p)
     {
         { ct.handle() } noexcept
             -> std::same_as<std::coroutine_handle<typename T::promise_type>>;
         { cp.exception() } noexcept -> std::same_as<std::exception_ptr>;
         { t.release() } noexcept;
+        { p.set_continuation(std::coroutine_handle<>{}) } noexcept;
+        { p.set_environment(static_cast<io_env const*>(nullptr)) } noexcept;
     } &&
     (std::is_void_v<decltype(std::declval<T&>().await_resume())> ||
      requires(typename T::promise_type& p) {
@@ -210,11 +227,11 @@ concept IoRunnable =
      });
 
 // ============================================================
-// io_awaitable_support CRTP mixin
+// io_awaitable_promise_base CRTP mixin
 // ============================================================
 
 template<typename Derived>
-class io_awaitable_support
+class io_awaitable_promise_base
 {
     io_env const* env_ = nullptr;
     mutable std::coroutine_handle<> cont_{std::noop_coroutine()};
@@ -231,9 +248,9 @@ public:
     static void*
     operator new(std::size_t size)
     {
-        auto* mr = current_frame_allocator();
+        auto* mr = get_current_frame_allocator();
         if(!mr)
-            mr = std::pmr::get_default_resource();
+            mr = std::pmr::new_delete_resource();
 
         std::size_t ptr_offset = aligned_offset(size);
         std::size_t total = ptr_offset + sizeof(std::pmr::memory_resource*);
@@ -258,7 +275,7 @@ public:
         mr->deallocate(ptr, total, alignof(std::max_align_t));
     }
 
-    ~io_awaitable_support()
+    ~io_awaitable_promise_base()
     {
         if(cont_ != std::noop_coroutine())
             cont_.destroy();
@@ -374,7 +391,7 @@ template<typename T = void>
 struct [[nodiscard]] task
 {
     struct promise_type
-        : io_awaitable_support<promise_type>
+        : io_awaitable_promise_base<promise_type>
         , detail::task_return_base<T>
     {
         std::exception_ptr ep_;
@@ -400,9 +417,7 @@ struct [[nodiscard]] task
 
                 void await_resume() const noexcept
                 {
-                    auto* fa = p_->environment()->allocator;
-                    if(fa && fa != current_frame_allocator())
-                        current_frame_allocator() = fa;
+                    set_current_frame_allocator(p_->environment()->allocator);
                 }
             };
             return awaiter{this};
@@ -441,9 +456,7 @@ struct [[nodiscard]] task
 
             decltype(auto) await_resume()
             {
-                auto* fa = p_->environment()->allocator;
-                if(fa && fa != current_frame_allocator())
-                    current_frame_allocator() = fa;
+                set_current_frame_allocator(p_->environment()->allocator);
                 return a_.await_resume();
             }
 
@@ -578,8 +591,8 @@ auto run_sync(executor_ref ex, std::stop_token token, Task t)
     auto h = t.handle();
     auto& p = h.promise();
     io_env env{ex, token};
+    p.set_continuation(std::noop_coroutine());
     p.set_environment(&env);
-    // No continuation — cont_ defaults to noop_coroutine()
     t.release();
     h.resume();
 

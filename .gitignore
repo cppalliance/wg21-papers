@@ -1,7 +1,11 @@
 # Downloaded fonts (auto-fetched by Makefile)
 tools/fonts/
 
+# Node.js local install (pagedjs-cli and dependencies)
+node_modules/
+
 # Build artefacts
-*.latex
 mermaid-filter.err
 .mermaid-config.json
+
+/reports/
