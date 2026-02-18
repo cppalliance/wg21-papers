@@ -874,7 +874,7 @@ del .variable {
   margin: 20mm;
 
   @top-center {
-    content: "WG21 Proposal";
+    content: "";
     font-family: "Roboto Flex", sans-serif;
     font-size: 10pt;
     color: #666;
