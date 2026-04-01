@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>P4163R0: What Civilizations Remember</title>
+  <title>D4166R0: Info: Benefits of Frame-Visible Coroutines for
+Senders</title>
   <style type="text/css">
 
 @font-face {
@@ -842,14 +843,15 @@ outline: none;
   <div class="header-text">WG21 Proposal</div>
 </header>
 
-<h1>What Civilizations Remember</h1>
+<h1>Info: Benefits of Frame-Visible Coroutines for Senders</h1>
 
 <!-- Document Metadata -->
 <div class="document-info">
-  <p><strong>Document Number:</strong> P4163R0</p>
-  <p><strong>Date:</strong> 2026-03-27</p>
-  <p><strong>Audience:</strong> WG21</p>
-  <p><strong>Reply-to:</strong> Vinnie Falco <a href="mailto:vinnie.falco@gmail.com" class="email">vinnie.falco@gmail.com</a></p>
+  <p><strong>Document Number:</strong> D4166R0</p>
+  <p><strong>Date:</strong> 2026-03-29</p>
+  <p><strong>Audience:</strong> LEWG</p>
+  <p><strong>Reply-to:</strong> Vinnie Falco <a href="mailto:vinnie.falco@gmail.com" class="email">vinnie.falco@gmail.com</a><br><strong></strong> C++
+Alliance Proposal Team</p>
 </div>
 
 <!-- Table of Contents -->
@@ -864,41 +866,44 @@ outline: none;
   (post-Croydon mailing)</a></li>
   </ul></li>
   <li><a href="#disclosure" id="toc-disclosure">1. Disclosure</a></li>
-  <li><a href="#the-record" id="toc-the-record">2. The Record</a></li>
-  <li><a href="#what-civilizations-remember" id="toc-what-civilizations-remember">3. What Civilizations
-  Remember</a>
-  <ul>
-  <li><a href="#the-evolutionary-foundation" id="toc-the-evolutionary-foundation">3.1 The Evolutionary
-  Foundation</a></li>
-  <li><a href="#the-longest-civilizations" id="toc-the-longest-civilizations">3.2 The Longest
-  Civilizations</a></li>
-  <li><a href="#governance-through-elder-councils" id="toc-governance-through-elder-councils">3.3 Governance Through
-  Elder Councils</a></li>
-  <li><a href="#what-happens-when-it-erodes" id="toc-what-happens-when-it-erodes">3.4 What Happens When It
-  Erodes</a></li>
-  <li><a href="#the-structural-principle" id="toc-the-structural-principle">3.5 The Structural
-  Principle</a></li>
-  </ul></li>
-  <li><a href="#the-founding-vision" id="toc-the-founding-vision">4. The
-  Founding Vision</a></li>
-  <li><a href="#the-clock" id="toc-the-clock">5. The Clock</a></li>
-  <li><a href="#the-ask" id="toc-the-ask">6. The Ask</a></li>
-  <li><a href="#conclusion" id="toc-conclusion">7. Conclusion</a></li>
-  <li><a href="#acknowledgements" id="toc-acknowledgements">Acknowledgements</a></li>
+  <li><a href="#the-three-channel-achievement" id="toc-the-three-channel-achievement">2. The Three-Channel
+  Achievement</a></li>
+  <li><a href="#compound-results-in-the-three-channel-model" id="toc-compound-results-in-the-three-channel-model">3. Compound
+  Results in the Three-Channel Model</a></li>
+  <li><a href="#the-forward-mapping" id="toc-the-forward-mapping">4. The
+  Forward Mapping</a></li>
+  <li><a href="#the-reverse-mapping" id="toc-the-reverse-mapping">5. The
+  Reverse Mapping</a></li>
+  <li><a href="#the-frame-opacity-cost" id="toc-the-frame-opacity-cost">6. The Frame Opacity Cost</a></li>
+  <li><a href="#frame-visible-coroutines" id="toc-frame-visible-coroutines">7. Frame-Visible Coroutines</a></li>
+  <li><a href="#what-each-model-gains" id="toc-what-each-model-gains">8.
+  What Each Model Gains</a></li>
+  <li><a href="#conclusion" id="toc-conclusion">9. Conclusion</a></li>
+  <li><a href="#acknowledgments" id="toc-acknowledgments">Acknowledgments</a></li>
   <li><a href="#references" id="toc-references">References</a></li>
   </ul>
 </nav>
 
 <h2 id="abstract">Abstract</h2>
-<p>The committee endorsed profiles by 47 to 2. Then by 18 to 1. Then by
-white paper. Profiles are not in C++26.</p>
-<p>This paper examines the gap between consensus and action through a
-lens that predates C++ by several millennia. The historical record on
-institutions that honor their foundational knowledge - and institutions
-that do not - is clear, documented, and not encouraging. The paper
-presents the committee’s own voting record, places it alongside that
-historical record, and proposes a single poll: WG21 honors its own
-votes.</p>
+<p>Frame-visible coroutines would eliminate
+<code>std::execution::task</code>’s heap allocation and give
+sender-based coroutine algorithms full optimizer visibility.</p>
+<p>The sender three-channel completion model is a genuine achievement:
+compile-time verification of async completion paths and generic
+algorithms that dispatch on completion disposition without knowing the
+concrete sender type. A structural constraint exists - compound I/O
+results cannot round-trip through three mutually exclusive channels -
+and two of the three properties that senders currently provide beyond
+the coroutine model trace to one language choice: the coroutine frame is
+opaque. <a href="https://wg21.link/p1492r0">P1492R0</a><sup>[1]</sup>
+documented a Known-Layout Type model where the frame becomes a
+first-class type with <code>constexpr</code> size and alignment. If C++
+added frame-visible coroutines alongside the existing opaque-frame
+model, <code>std::execution::task</code> eliminates its heap allocation,
+coroutine-based sender algorithms gain full optimizer visibility, and
+both async models that C++26 ships improve. Compile-time work graphs -
+the type-level encoding of dependency topology - remain the unique
+sender contribution.</p>
 <hr />
 <h2 id="revision-history">Revision History</h2>
 <h3 id="r0-march-2026-post-croydon-mailing">R0: March 2026 (post-Croydon
@@ -909,285 +914,459 @@ mailing)</h3>
 <hr />
 <h2 id="disclosure">1. Disclosure</h2>
 <p>The author provides information and serves at the pleasure of the
-committee.</p>
-<p>The author is the founder of the C++ Alliance and the author of <a href="https://wg21.link/p4137r0">P4137R0</a><sup>[1]</sup>, “PAVE:
-Profile Analysis and Verification Evidence.” <a href="https://wg21.link/p3984r0">P3984R0</a><sup>[2]</sup>
-cross-references PAVE. The author has a stake in the profiles effort
-succeeding. The author is telling you this so you can calibrate
-everything that follows.</p>
-<p>The author is not a historian, anthropologist, or governance scholar.
-The civilizational evidence in this paper is drawn from published
-research in evolutionary biology, anthropology, and comparative history.
-It stands or falls on the sources, not on who assembled them. But the
-reader should know that one person chose which sources to assemble and
-in what order. That choice is itself a framing.</p>
+chair.</p>
+<p>This paper is part of the Network Endeavor (<a href="https://wg21.link/p4100r0">P4100R0</a><sup>[2]</sup> “The Network
+Endeavor: Coroutine-Native I/O for C++29”). The author developed and
+maintains <a href="https://github.com/cppalliance/corosio">Corosio</a><sup>[3]</sup>
+and <a href="https://github.com/cppalliance/capy">Capy</a><sup>[4]</sup>
+and believes coroutine-native I/O is the correct foundation for
+networking in C++.</p>
+<p>The author regards <code>std::execution</code> as an important
+contribution to C++ and supports its standardization for the domains it
+serves well - GPU dispatch, heterogeneous execution, and compile-time
+work-graph composition among them. The three-channel completion model
+enables generic algorithms that dispatch on completion disposition
+without knowing the concrete sender type. Compile-time work graphs - the
+type-level encoding of dependency topology in the sender operation state
+- are a sender property the coroutine model does not replicate.</p>
+<p>The author believes that C++ would benefit from having all three
+coroutine models in the language simultaneously: fibers (stackful),
+frame-opaque coroutines (C++20), and frame-visible coroutines
+(previously proposed in <a href="https://wg21.link/p1492r0">P1492R0</a><sup>[1]</sup> and <a href="https://wg21.link/p1342r0">P1342R0</a><sup>[6]</sup>). Each covers
+non-overlapping use cases, and users are better served by having access
+to all of them. Frame-visible coroutines would benefit both async models
+that C++26 ships.</p>
+<p>The author asks for nothing.</p>
 <hr />
-<h2 id="the-record">2. The Record</h2>
-<p>In 2023, the WG21 Direction Group - Wong, Hinnant, Orr, Stroustrup,
-and Vandevoorde - unanimously endorsed profiles as the mechanism for C++
-to address safety concerns. They wrote in <a href="https://wg21.link/p2759r1">P2759R1</a><sup>[3]</sup>: “We now
-support the idea that the changes for safety need to be not just in
-tooling, but visible in the language/compiler and library.”</p>
-<p>In February 2023, Stroustrup presented the profiles direction to SG23
-and EWG at Issaquah (<a href="https://wg21.link/p2816r0">P2816R0</a><sup>[4]</sup>). The
-resulting vote was 47 for and 2 against<sup>[2]</sup>.</p>
-<p>In November 2024, SG23 at Wroclaw gave strong consensus (18-1-0) to
-the initialization profile and forwarded <a href="https://wg21.link/p3081r0">P3081R0</a><sup>[5]</sup> to EWG for
-C++26<sup>[2, 6]</sup>.</p>
-<p>In November 2024, Microsoft stated in <a href="https://wg21.link/p3498r0">P3498R0</a><sup>[7]</sup>: “We consider
-that the proposals along the lines of C++ Profiles are promising.”</p>
-<p>In February 2025, EWG at Hagenberg voted to “pursue a language safety
-white paper in the C++26 timeframe containing systematic treatment of
-core language Undefined Behavior in C++, covering Erroneous Behavior,
-Profiles, and Contracts”<sup>[8]</sup>. The minutes note: “Many people
-felt that what profiles are trying to address (security, safety) is
-hugely critical”<sup>[8]</sup>.</p>
-<p>In January 2026, six senior committee members - Vandevoorde, Garland,
-McKenney, Orr, Stroustrup, and Wong - co-signed <a href="https://wg21.link/p3970r0">P3970R0</a><sup>[9]</sup>, a call to
-action urging the committee to build on the profiles framework. They
-wrote: “SG23 and EWG have repeatedly (by massive votes) pointed to
-‘Profiles’ as the direction for addressing these urgent needs.”</p>
-<p>Profiles are not in C++26.</p>
-<hr />
-<h2 id="what-civilizations-remember">3. What Civilizations Remember</h2>
-<p>The committee’s voting record raises a question about institutional
-coherence. The historical record has an answer.</p>
-<h3 id="the-evolutionary-foundation">3.1 The Evolutionary
-Foundation</h3>
-<p>Human beings are the only primates whose females outlive their
-reproductive years by decades. In 2012, a computer simulation at the
-University of Utah demonstrated why: introducing menopause and
-grandmothering into a hypothetical primate species model produced
-evolution toward human-like lifespans over 60,000 years<sup>[10]</sup>.
-Grandmothers caring for grandchildren enabled mothers to have more
-offspring at shorter intervals. Extended longevity correlates with
-extended brain development, enabling the larger brains characteristic of
-humans<sup>[11]</sup>.</p>
-<p>The traits that make civilization possible - longer lifespans, larger
-brains, pair bonding, cooperative behavior - are downstream of elder
-care<sup>[10, 11]</sup>. The evolutionary argument is simple. Elder care
-is not charity. It is the mechanism that produced the species.</p>
-<h3 id="the-longest-civilizations">3.2 The Longest Civilizations</h3>
-<p>Chinese civilization is the longest continuously existing
-civilization in the historical record. It is also the civilization with
-the most deeply codified system of elder respect. Filial piety was
-systematic thought by the Warring States period, a governing principle
-by the Han dynasty, and embedded in law by the Tang
-dynasty<sup>[12]</sup>. Historian Hugh D.R. Baker identifies respect for
-the family as “the one element common to almost all Chinese
-people”<sup>[13]</sup>. The principle outlasted every dynasty. It
-survived invasions, revolutions, and the Cultural Revolution.</p>
-<p>Ancient Egypt venerated its elders for three thousand years. The
-Instruction of Ani prescribes: “Never remain seated if a man older than
-yourself is standing”<sup>[14]</sup>. Reaching old age was seen as
-evidence of divine favor<sup>[14]</sup>. The ideal lifespan in Egyptian
-culture was 110 years.</p>
-<p>These are the two longest-lived civilizations in the historical
-record. Both structurally embedded respect for accumulated knowledge
-into their institutions.</p>
-<h3 id="governance-through-elder-councils">3.3 Governance Through Elder
-Councils</h3>
-<p>Sub-Saharan Africa before colonial rule was governed by
-gerontocracies - elder councils operating through consensus rather than
-coercion<sup>[15]</sup>. The Giriama kambi system in Kenya functioned
-from approximately 1700 through the nineteenth century without
-centralized authority<sup>[16]</sup>. The Igbo village councils in
-Nigeria combined elders, age grades, and deliberative
-bodies<sup>[17]</sup>. Authority was horizontal. No hereditary rulers
-emerged.</p>
-<p>The mechanism worked because every younger member knew they would
-eventually become an elder. The system’s stability was built on that
-inevitability<sup>[15]</sup>.</p>
-<h3 id="what-happens-when-it-erodes">3.4 What Happens When It
-Erodes</h3>
-<p>Modernization theory documents the pattern when elder status erodes.
-As societies transition from agrarian to industrial economies, the
-extended family fragments into nuclear families. Accumulated knowledge
-becomes less relevant. Social roles diminish. The theory’s proposition -
-that familial support for older people declines with industrialization -
-has been “the principal and most common framework” for explaining this
-shift, in both the industrialized and the developing
-worlds<sup>[18]</sup>.</p>
-<p>Three-quarters of 71 surveyed hunter-gatherer tribes venerated their
-elders<sup>[19]</sup>. The respect was near-universal when institutional
-survival depended on accumulated knowledge. It declined when the
-institution stopped depending on what the elders carried.</p>
-<h3 id="the-structural-principle">3.5 The Structural Principle</h3>
-<p>These systems worked because respect for elders was respect for
-principles, not for individuals. The elder embodied the accumulated
-knowledge. Honoring the elder meant honoring the continuity of the
-institution itself.</p>
-<p>The civilizations that remembered this persisted. The institutions
-that forgot it fragmented.</p>
-<hr />
-<h2 id="the-founding-vision">4. The Founding Vision</h2>
-<p>Stroustrup writes in <a href="https://wg21.link/p3984r0">P3984R0</a><sup>[2]</sup>:</p>
-<blockquote>
-<p>My initial motivation to develop C++ was to combine the best of C and
-Simula:</p>
+<h2 id="the-three-channel-achievement">2. The Three-Channel
+Achievement</h2>
+<p>The sender model provides a universal completion protocol. Every
+sender completes through exactly one of three channels (<a href="https://wg21.link/p2300r10">P2300R10</a><sup>[5]</sup> Section
+5.1):</p>
 <ul>
-<li>C’s ability to access hardware and manipulate data without
-overhead.</li>
-<li>Simula’s ability to organize programs and guarantee type
-safety.</li>
+<li><code>set_value(Ts...)</code> signals successful completion with
+zero or more result values.</li>
+<li><code>set_error(E)</code> signals that an error occurred during
+scheduling, execution, or at an earlier point in the sender chain.</li>
+<li><code>set_stopped()</code> signals that the operation completed
+without succeeding and without failing - typically because cancellation
+was requested.</li>
 </ul>
-</blockquote>
-<p>Type safety was the founding aspiration. Compatibility concerns and
-the zero-overhead principle prevented its enforcement<sup>[2]</sup>.
-Forty years later, profiles are the mechanism to deliver that
-enforcement without abandoning either constraint.</p>
-<p>The question is whether C++ can evolve toward its own founding
-aspirations - type safety, resource safety, compatibility, and zero
-overhead - or whether the committee’s process has become structurally
-incapable of executing on principles it has repeatedly endorsed.</p>
-<p>Stroustrup first responded to the safety crisis in 2022 with <a href="https://wg21.link/p2739r0">P2739R0</a><sup>[20]</sup>: “A call to
-action: Think seriously about ‘safety’; then do something sensible about
-it.” The committee did think seriously. It voted. It endorsed. It
-directed. It co-signed.</p>
-<p>It has not shipped.</p>
+<p>Completion signatures declare these channels as type-level contracts.
+A sender that declares
+<code>completion_signatures&lt;set_value_t(int), set_error_t(error_code), set_stopped_t()&gt;</code>
+has told the compiler every way it can complete. A type mismatch between
+pipeline stages is a compile error. This is a genuine achievement:
+compile-time verification of async completion paths.</p>
 <hr />
-<h2 id="the-clock">5. The Clock</h2>
-<p>Beginning in November 2022, a series of government actions created an
-external timeline that operates independently of the committee’s
-internal process<sup>[2]</sup>:</p>
-<ul>
-<li><strong>November 2022</strong>: The NSA published “Software Memory
-Safety,” recommending that organizations shift to memory-safe
-languages<sup>[21]</sup>.</li>
-<li><strong>December 2023</strong>: CISA, NSA, FBI, and Five Eyes allies
-published “The Case for Memory Safe Roadmaps,” urging software
-manufacturers to create transition plans away from C and
-C++<sup>[22]</sup>.</li>
-<li><strong>February 2024</strong>: The White House ONCD published “Back
-to the Building Blocks,” explicitly naming C and C++ as
-memory-unsafe<sup>[23]</sup>.</li>
-<li><strong>October 2024</strong>: CISA’s “Product Security Bad
-Practices” guidance set a January 1, 2026 deadline for manufacturers to
-publish memory-safety roadmaps<sup>[24]</sup>.</li>
-</ul>
-<p>Executive Order 14028 remains in force<sup>[25]</sup>. The underlying
-policy documents remain published. The enforcement mechanism was
-rescinded in January 2026; the direction was not. A future
-administration can reinstate or strengthen the mandate overnight.</p>
-<p>The committee’s deliberative process is designed for careful,
-considered language evolution. The regulatory threat operates on a
-political calendar. Without the profiles framework, every future safety
-response requires a new multi-year standardization effort. With it, the
-committee has a standing instrument: new safety guarantees can be
-defined, named, and enforced without further language
-changes<sup>[2]</sup>.</p>
-<p>The committee has voted for the instrument. The instrument has not
-been built.</p>
-<hr />
-<h2 id="the-ask">6. The Ask</h2>
-<p>The committee has endorsed profiles by supermajority at Issaquah. By
-near-unanimity at Wroclaw. By white paper at Hagenberg. By Direction
-Group consensus. By corporate endorsement from Microsoft. By a co-signed
-call to action from six of its most senior members.</p>
-<p>The evidence in Sections 2 through 5 is public. The conclusions are
-the reader’s.</p>
-<p><strong>Proposed poll:</strong></p>
+<h2 id="compound-results-in-the-three-channel-model">3. Compound Results
+in the Three-Channel Model</h2>
+<p>Route A passes the compound result through the value channel.
+P2300R10 writes:</p>
 <blockquote>
-<p>WG21 honors its own votes.</p>
+<p>“Often in the case of partial success, the error condition is not
+fatal nor does it mean the API has failed to satisfy its
+post-conditions. It is merely an extra piece of information about the
+nature of the completion. In those cases, ‘partial success’ is another
+way of saying ‘success’. As a result, it is sensible to pass both the
+error code and the result (if any) through the value channel.”</p>
 </blockquote>
+<p>The specification provides a code example:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">return</span> read_socket_async<span class="op">(</span>socket<span class="op">,</span> span<span class="op">{</span>buff<span class="op">})</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> execution<span class="op">::</span>let_value<span class="op">(</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">[](</span>error_code err<span class="op">,</span> <span class="dt">size_t</span> bytes_read<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>err <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                <span class="co">// partial success</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                <span class="co">// full success</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span></code></pre></div>
+<p>The <code>error_code</code> travels on <code>set_value</code>.
+<code>upon_error</code> does not see it. Generic error-handling
+algorithms are unreachable for this error.</p>
+<p>Route B passes the compound result through the error channel.
+P2300R10 writes:</p>
+<blockquote>
+<p>“In other cases, the partial success is more of a partial
+<em>failure</em>. … In those cases, sending the error through the value
+channel loses valuable contextual information. It’s possible that
+bundling the error and the incomplete results into an object and passing
+it through the error channel makes more sense. In that way, generic
+algorithms will not miss the fact that a post-condition has not been met
+and react inappropriately.”</p>
+</blockquote>
+<p>The byte count is now inside an object on the error channel.
+Value-channel algorithms cannot see it.</p>
+<p>P2300R10 also proposes a third workaround - returning a
+<em>range</em> of senders:</p>
+<blockquote>
+<p>“Another possibility is for an async API to return a <em>range</em>
+of senders: if the API completes with full success, full error, or
+cancellation, the returned range contains just one sender with the
+result. Otherwise, if the API partially fails … the returned range would
+have <em>two</em> senders.”</p>
+</blockquote>
+<p>Two senders for one I/O operation.</p>
+<p>The normative text (<a href="https://wg21.link/p2300r10">P2300R10</a><sup>[5]</sup> Section
+34.2) defines the constraint:</p>
+<blockquote>
+<p>“once started, eventually completes exactly once with a (possibly
+empty) set of result datums and in exactly one of three dispositions:
+success, failure, or cancellation.”</p>
+</blockquote>
+<p>A socket read that transfers 500 bytes and then encounters
+<code>ECONNRESET</code> has both an error condition and a byte count.
+Both are produced. Both are meaningful. One disposition does not
+describe the completion.</p>
+<p>The C++26 working draft ships <code>stopped_as_error</code> (<a href="https://wg21.link/p2300r10">P2300R10</a><sup>[5]</sup> Section
+4.20.8), an adaptor that collapses the stopped channel into the error
+channel. The standard provides a mechanism to reduce three channels to
+two.</p>
 <hr />
-<h2 id="conclusion">7. Conclusion</h2>
-<p>Civilizations that honor their foundational knowledge persist.
-Institutions that endorse principles and then fail to execute them lose
-coherence - first externally, then internally.</p>
-<p>WG21 has endorsed profiles at every opportunity for three years. The
-regulatory clock runs whether the committee acts or not. The founding
-vision of C++ - type safety, resource safety, compatibility, and zero
-overhead - is precisely what profiles deliver.</p>
-<p><strong>The committee’s own record is the evidence. The committee’s
-own votes are the precedent.</strong></p>
+<h2 id="the-forward-mapping">4. The Forward Mapping</h2>
+<p>An awaitable return type is a type that supports structured bindings
+through the tuple protocol (<code>std::tuple_size</code>,
+<code>std::tuple_element</code>, and <code>get</code>). <a href="https://github.com/cppalliance/capy/blob/p4088r0/include/boost/capy/io_result.hpp">io_result</a><sup>[4]</sup>
+is an example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">class</span><span class="op">...</span> Ts<span class="op">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> io_result</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>error_code ec<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>tuple<span class="op">&lt;</span>Ts<span class="op">...&gt;</span> values<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>With <code>std::tuple_element&lt;0, io_result&lt;Ts...&gt;&gt;</code>
+specialized to <code>std::error_code</code>.</p>
+<p>A compile-time trait maps any such return type to the sender
+three-channel routing:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">typename</span> Result<span class="op">&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> has_error_channel <span class="op">:</span> <span class="bu">std::</span>false_type <span class="op">{};</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">typename</span> Result<span class="op">&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">requires</span> <span class="op">(</span><span class="bu">std::</span>tuple_size_v<span class="op">&lt;</span>Result<span class="op">&gt;</span> <span class="op">&gt;=</span> <span class="dv">1</span><span class="op">)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">&amp;&amp;</span> <span class="bu">std::</span>is_same_v<span class="op">&lt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            <span class="bu">std::</span>tuple_element_t<span class="op">&lt;</span><span class="dv">0</span><span class="op">,</span> Result<span class="op">&gt;,</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            <span class="bu">std::</span>error_code<span class="op">&gt;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> has_error_channel<span class="op">&lt;</span>Result<span class="op">&gt;</span> <span class="op">:</span> <span class="bu">std::</span>true_type <span class="op">{};</span></span></code></pre></div>
+<p>The trait inspects the return type’s first element at compile time.
+If it is <code>std::error_code</code>, the return type carries an error
+channel. The remaining elements are the value payload. Cancellation
+propagates through <code>io_env</code>’s stop token, out of band.</p>
+<p>The mapping covers every case:</p>
+<table>
+<colgroup>
+<col style="width: 41%" />
+<col style="width: 16%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th>Awaitable return type</th>
+<th>Error channel</th>
+<th>Value channel</th>
+<th>Stopped channel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>io_result&lt;size_t&gt;</code></td>
+<td><code>ec</code></td>
+<td><code>size_t</code></td>
+<td>stop token</td>
+</tr>
+<tr>
+<td><code>io_result&lt;size_t, metadata&gt;</code></td>
+<td><code>ec</code></td>
+<td><code>size_t, metadata</code></td>
+<td>stop token</td>
+</tr>
+<tr>
+<td><code>io_result&lt;&gt;</code></td>
+<td><code>ec</code></td>
+<td>(none)</td>
+<td>stop token</td>
+</tr>
+<tr>
+<td><code>T</code> (no <code>error_code</code> at index 0)</td>
+<td>(none)</td>
+<td><code>T</code></td>
+<td>stop token</td>
+</tr>
+</tbody>
+</table>
+<p>Every row maps to a sender <code>completion_signatures</code>. The
+trait compiles. The mapping is total.</p>
 <hr />
-<h2 id="acknowledgements">Acknowledgements</h2>
-<p>Thanks to Bjarne Stroustrup for the profiles vision and forty years
-of C++. Thanks to Gabriel Dos Reis for <a href="https://wg21.link/p3589r2">P3589R2</a> and the framework
-specification. Thanks to the Direction Group - Michael Wong, Howard
-Hinnant, Roger Orr, Bjarne Stroustrup, and Daveed Vandevoorde - for
-endorsing the direction unanimously. Thanks to Daveed Vandevoorde, Jeff
-Garland, Paul E. McKenney, Roger Orr, Bjarne Stroustrup, and Michael
-Wong for co-signing <a href="https://wg21.link/p3970r0">P3970R0</a>.
-Thanks to Kristen Hawkes for the grandmother hypothesis research that
-informed the evolutionary argument in Section 3.</p>
+<h2 id="the-reverse-mapping">5. The Reverse Mapping</h2>
+<p>Given sender completion signatures, reconstruct the awaitable return
+type:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Given:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">//   completion_signatures&lt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">//       set_value_t(size_t),</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">//       set_error_t(error_code),</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">//       set_stopped_t()&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Reconstruct: io_result&lt;size_t&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">//   where ec and n are BOTH always produced</span></span></code></pre></div>
+<p>The reconstruction requires that when <code>set_error(ec)</code>
+fires, the <code>size_t</code> from <code>set_value</code> is also
+available. It is not. The three-channel model guarantees exactly one
+channel fires per completion. When the error channel fires, the value
+channel’s data does not exist.</p>
+<p>An I/O read that transfers 500 bytes and then encounters a connection
+reset produces both an <code>error_code</code> and a byte count. In the
+awaitable model:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">auto</span> <span class="op">[</span>ec<span class="op">,</span> n<span class="op">]</span> <span class="op">=</span> <span class="cf">co_await</span> stream<span class="op">.</span>read_some<span class="op">(</span>buf<span class="op">);</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">// ec == connection_reset, n == 500</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">// both values present, both inspectable</span></span></code></pre></div>
+<p>In the sender model, the operation must choose:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Option A: set_value(ec, n)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">//   upon_error cannot see ec</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">//   retry does not trigger</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">//   the error is invisible to generic algorithms</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Option B: set_error(ec)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">//   n is lost</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">//   the 500 bytes are gone</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">//   the caller cannot use partial data</span></span></code></pre></div>
+<p>Neither option preserves the compound result. The mutual exclusion of
+channels is the structural cause. The forward mapping (Section 4) is
+injective: distinct awaitable return types map to distinct channel
+configurations. The reverse mapping is not a function: multiple
+awaitable return types (one with compound results, one without) map to
+the same channel configuration, and the channel configuration cannot
+distinguish them.</p>
+<p>The round-trip <code>awaitable -&gt; channels -&gt; awaitable</code>
+loses data. The mapping works one direction.</p>
+<hr />
+<h2 id="the-frame-opacity-cost">6. The Frame Opacity Cost</h2>
+<p>The sender model currently provides three properties that coroutines
+do not:</p>
+<ul>
+<li><p><strong>Full pipeline visibility to the optimizer.</strong> The
+sender operation state is parameterized on the receiver type. The
+compiler sees the full pipeline before <code>start()</code> is called.
+It can inline across operation boundaries, eliminate dead code, and
+propagate constants. The coroutine frame is opaque behind
+<code>coroutine_handle&lt;&gt;</code>. The optimizer cannot see through
+<code>resume()</code>.</p></li>
+<li><p><strong>Zero-allocation composition.</strong> The sender
+operation state can be stack-allocated or embedded in the parent’s
+operation state because its type is fully known at compile time. The
+coroutine frame must be heap-allocated because its size is determined
+after inlining and optimization passes. No compiler guarantees HALO. <a href="https://wg21.link/p3552r3">P3552R3</a><sup>[7]</sup>
+<code>std::execution::task</code> heap-allocates for this reason - the
+sender operation state cannot embed a coroutine frame whose size is
+unknown at compile time.</p></li>
+<li><p><strong>Compile-time work graphs.</strong> The sender pipeline
+type encodes the dependency topology at the type level.
+<code>when_all(s1, s2) | then(f)</code> produces a type from which a
+scheduler can determine at compile time that <code>s1</code> and
+<code>s2</code> run concurrently and <code>f</code> depends on both. A
+coroutine’s internal control flow is imperative. No type-level
+inspection can recover the dependency structure from sequential
+<code>co_await</code> statements.</p></li>
+</ul>
+<p>The first two properties trace to one cause: the coroutine frame is
+opaque. <code>coroutine_handle&lt;&gt;</code> erases the frame’s type.
+The sender model stamps the receiver into the operation state, making
+the type visible. This is a design choice made in C++20, not a permanent
+constraint.</p>
+<p>The third property traces to the composition model itself. Sender
+composition is declarative: the programmer describes a computation
+graph, and the type system encodes it. Coroutine composition is
+imperative: the programmer writes sequential statements, and the control
+flow executes them. Making the frame visible does not make the control
+flow declarative.</p>
+<hr />
+<h2 id="frame-visible-coroutines">7. Frame-Visible Coroutines</h2>
+<p><a href="https://wg21.link/p1492r0">P1492R0</a><sup>[1]</sup>
+“Coroutines: Language and Implementation Impact” (Smith, Vandevoorde,
+Romer, Nishanov, Sidwell, Sandoe, Baker, 2019) documented three
+competing coroutine frame models during the C++20 standardization. The
+committee chose the opaque-frame model. The Known-Layout Type model was
+documented but not adopted. It provides:</p>
+<blockquote>
+<p>“<code>sizeof(T)</code>, <code>alignof(T)</code> and
+<code>offsetof(T, member)</code> are all <code>constexpr</code>. …
+Allows stable ABI/layout for inline coroutine functions. Can allow
+coroutine frame objects to be passed between TUs.”</p>
+</blockquote>
+<p><a href="https://wg21.link/p1342r0">P1342R0</a><sup>[6]</sup>
+“Unifying Coroutines TS and Core Coroutines” (Baker, 2018) described the
+concrete mechanism: a coroutine lambda whose frame is a first-class type
+in the type system, allowing the caller to <code>sizeof</code> it,
+stack-allocate it, or embed it in a struct.</p>
+<p>If C++ added a frame-visible coroutine type alongside the existing
+opaque-frame coroutines, <code>std::execution::task</code> would no
+longer need to heap-allocate. The sender operation state could embed the
+coroutine frame directly, because <code>sizeof(frame)</code> is now
+<code>constexpr</code>. The compiler sees through the coroutine boundary
+- the same optimizer visibility that sender pipelines provide today.
+Both models improve:</p>
+<table>
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 16%" />
+<col style="width: 18%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr>
+<th>Property</th>
+<th>Opaque-frame</th>
+<th>Frame-visible</th>
+<th>Senders</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full pipeline visibility to optimizer</td>
+<td></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Zero-allocation composition</td>
+<td></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Compile-time work graphs</td>
+<td></td>
+<td></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Language control flow (<code>for</code>, <code>if</code>, …)</td>
+<td>Yes</td>
+<td>Yes</td>
+<td></td>
+</tr>
+<tr>
+<td>User-defined N-channel return types</td>
+<td>Yes</td>
+<td>Yes</td>
+<td></td>
+</tr>
+<tr>
+<td>Compound result preservation</td>
+<td>Yes</td>
+<td>Yes</td>
+<td></td>
+</tr>
+<tr>
+<td>Type-erased streams at zero per-op cost</td>
+<td>Yes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Separate compilation</td>
+<td>Yes</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ABI stability</td>
+<td>Yes</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The sender column gains two properties it currently lacks when
+coroutine-based sender algorithms are written with frame-visible
+coroutines: language control flow and compound result preservation. The
+frame-visible column gains two properties that only senders provide
+today: optimizer visibility and zero-allocation composition.
+Compile-time work graphs - the type-level encoding of dependency
+topology - remain unique to senders. Making the frame visible does not
+make imperative control flow declarative.</p>
+<hr />
+<h2 id="what-each-model-gains">8. What Each Model Gains</h2>
+<p><strong>Senders gain coroutine control flow without losing
+performance.</strong> A sender algorithm implemented as a frame-visible
+coroutine has <code>for</code>, <code>if</code>, <code>break</code>,
+<code>return</code>, structured bindings, and <code>co_await</code> -
+language constructs that today require choosing between coroutine
+ergonomics and sender performance properties. Frame-visible coroutines
+remove that choice. <code>std::execution::task</code> eliminates its
+heap allocation because the sender operation state can embed the frame.
+Coroutine-based sender algorithms gain optimizer visibility because the
+compiler sees through the frame boundary.</p>
+<p><strong>Coroutines gain optimizer visibility without surrendering
+their properties.</strong> Frame-visible coroutines preserve language
+control flow, user-defined return types (Section 4), and compound result
+preservation (Section 5). They add the two properties that only senders
+provide today: full pipeline visibility to the optimizer and
+zero-allocation composition. Opaque-frame coroutines remain available
+for the properties they uniquely provide - type-erased streams, separate
+compilation, and ABI stability.</p>
+<p><strong>Compile-time work graphs remain the unique sender
+contribution.</strong> The programmer describes a computation graph and
+the type system encodes it.
+<code>when_all(s1, s2) | then(f) | transfer(gpu_scheduler)</code>
+produces a type from which a scheduler can determine - at compile time,
+before any work begins - that <code>s1</code> and <code>s2</code> run
+concurrently, that <code>f</code> depends on both, and that the result
+transfers to a GPU context. The scheduler sees the full dependency
+topology because the pipeline type is the dependency topology. Making
+the frame visible does not make imperative control flow declarative.
+This property is irreducible to the sender composition model and defines
+the domain where declarative lazy composition is the right tool.</p>
+<hr />
+<h2 id="conclusion">9. Conclusion</h2>
+<p>Frame-visible coroutines would eliminate
+<code>std::execution::task</code>’s heap allocation and give both async
+models optimizer visibility. The forward mapping (Section 4) and reverse
+mapping (Section 5) identify a structural constraint in the
+three-channel model - compound results cannot round-trip through
+mutually exclusive channels - that frame-visible coroutines help bridge
+by allowing coroutine-based sender algorithms to preserve compound
+results while retaining the performance properties of sender
+composition. Compile-time work graphs remain unique to senders and
+define the sender model’s irreducible contribution. <a href="https://wg21.link/p1492r0">P1492R0</a><sup>[1]</sup> deserves
+renewed attention because the language addition it documented would
+improve both async models that C++26 ships.</p>
+<hr />
+<h2 id="acknowledgments">Acknowledgments</h2>
+<p>The author thanks Eric Niebler, Kirk Shoop, Lewis Baker, and their
+collaborators for <code>std::execution</code> and the three-channel
+completion model; Andrzej Krzemieński for identifying compound success
+as a general programming problem; Ville Voutilainen for confirming the
+dispatch gap on the LEWG reflector; Peter Dimov for the refined channel
+mapping; Gor Nishanov for the coroutine model’s explicit support for
+task type diversity; and the authors of <a href="https://wg21.link/p1492r0">P1492R0</a><sup>[1]</sup> for
+documenting the design space that includes frame-visible coroutines.</p>
 <hr />
 <h2 id="references">References</h2>
 <ol type="1">
-<li><p><a href="https://wg21.link/p4137r0">P4137R0</a> - “PAVE: Profile
-Analysis and Verification Evidence” (Vinnie Falco, 2026).
-https://wg21.link/p4137r0</p></li>
-<li><p><a href="https://wg21.link/p3984r0">P3984R0</a> - “A type-safety
-profile” (Bjarne Stroustrup, 2026). https://wg21.link/p3984r0</p></li>
-<li><p><a href="https://wg21.link/p2759r1">P2759R1</a> - “DG Opinion on
-Safety for ISO C++” (Michael Wong, Howard Hinnant, Roger Orr, Bjarne
-Stroustrup, Daveed Vandevoorde, 2023).
-https://wg21.link/p2759r1</p></li>
-<li><p><a href="https://wg21.link/p2816r0">P2816R0</a> - “Safety
-Profiles: Type-and-resource Safe programming in ISO Standard C++”
-(Bjarne Stroustrup, Gabriel Dos Reis, 2023).
-https://wg21.link/p2816r0</p></li>
-<li><p><a href="https://wg21.link/p3081r0">P3081R0</a> - “Core safety
-Profiles: Specification, adoptability, and impact” (2024).
-https://wg21.link/p3081r0</p></li>
-<li><p><a href="https://wg21.link/n5000">N5000</a> - “WG21 November 2024
-Wroclaw Minutes of Meeting” (Nina Ranns, 2024).
-https://wg21.link/n5000</p></li>
-<li><p><a href="https://wg21.link/p3498r0">P3498R0</a> - “Stop the
-Bleeding but, First, Do No Harm” (Gabriel Dos Reis, Thomas Wise, Zachary
-Henkel, 2024). https://wg21.link/p3498r0</p></li>
-<li><p><a href="https://wg21.link/n5007">N5007</a> - “WG21 February 2025
-Hagenberg Minutes of Meeting” (Nina Ranns, 2025).
-https://wg21.link/n5007</p></li>
-<li><p><a href="https://wg21.link/p3970r0">P3970R0</a> - “Profiles and
-Safety: a call to action” (Daveed Vandevoorde, Jeff Garland, Paul E.
-McKenney, Roger Orr, Bjarne Stroustrup, Michael Wong, 2026).
-https://wg21.link/p3970r0</p></li>
-<li><p>P. S. Kim, J. E. Coxworth, K. Hawkes. “Increased longevity
-evolves from grandmothering.” Proceedings of the Royal Society B,
-279(1749), 2012.
-https://royalsocietypublishing.org/doi/10.1098/rspb.2012.1751</p></li>
-<li><p>Smithsonian Magazine. “New Evidence That Grandmothers Were
-Crucial for Human Evolution.” October 2012.
-https://www.smithsonianmag.com/science-nature/new-evidence-that-grandmothers-were-crucial-for-human-evolution-88972191/</p></li>
-<li><p>Britannica. “Confucianism: Filial Piety.”
-https://www.britannica.com/topic/Confucianism/Filial-piety</p></li>
-<li><p>H. D. R. Baker. “Chinese Family and Kinship.” Columbia University
-Press, 1979.</p></li>
-<li><p>TourEgypt. “Old Age in Ancient Egypt.”
-https://www.touregypt.net/featurestories/oldage.htm</p></li>
-<li><p>H. Ahmanson Jr. “The Gerontocratic Democracy of Old Africa, and
-Gerontocracy in Our Own Time.” 2020.
-https://howardahmansonjr.com/2020/05/the-gerontocratic-democracy-of-old-africa-and-gerontocracy-in-our-own-time/</p></li>
-<li><p>“Gerontocratic Government: Age-Sets in Pre-Colonial Giriama.”
-Africa (Cambridge University Press).
-https://www.cambridge.org/core/journals/africa/article/abs/gerontocratic-government-agesets-in-precolonial-giriama/D4CE5CF481C15AFA6813C48EF579D60E</p></li>
-<li><p>“The Pre-Colonial Traditional Political Institution.” Journal of
-Humanities and Social Science Practice. Vol. 10, No. 4, 2024.
-https://iiardjournals.org/get/JHSP/VOL.%2010%20NO.%204%202024/THE%20PRE-COLONIAL%20TRADITIONAL%2050-57.pdf</p></li>
-<li><p>“Status of Older People: Modernization.” Encyclopedia.com.
-https://www.encyclopedia.com/education/encyclopedias-almanacs-transcripts-and-maps/status-older-people-modernization</p></li>
-<li><p>J. Simmons. “The Role of the Aged in Primitive Society.” Yale
-University Press, 1945. Cited via Harvard DASH.
-https://dash.harvard.edu/bitstreams/f447e015-3f01-4469-91e4-de39cc43980b/download</p></li>
-<li><p><a href="https://wg21.link/p2739r0">P2739R0</a> - “A call to
-action: Think seriously about ‘safety’; then do something sensible about
-it” (Bjarne Stroustrup, 2022). https://wg21.link/p2739r0</p></li>
-<li><p>NSA. “Software Memory Safety.” Cybersecurity Information Sheet.
-November 2022.
-https://media.defense.gov/2022/Nov/10/2003112742/-1/-1/0/CSI_SOFTWARE_MEMORY_SAFETY.PDF</p></li>
-<li><p>CISA, NSA, FBI, and international partners. “The Case for Memory
-Safe Roadmaps.” December 2023.
-https://www.cisa.gov/case-memory-safe-roadmaps</p></li>
-<li><p>White House ONCD. “Back to the Building Blocks: A Path Toward
-Secure and Measurable Software.” February 2024.
-https://bidenwhitehouse.archives.gov/oncd/briefing-room/2024/02/26/press-release-technical-report/</p></li>
-<li><p>CISA. “Product Security Bad Practices.” October 2024.
-https://www.cisa.gov/resources-tools/resources/product-security-bad-practices</p></li>
-<li><p>Executive Order 14028. “Improving the Nation’s Cybersecurity.”
-May 2021.
-https://nist.gov/itl/executive-order-14028-improving-nations-cybersecurity</p></li>
+<li><p><a href="https://wg21.link/p1492r0">P1492R0</a> - “Coroutines:
+Language and Implementation Impact” (Richard Smith, Daveed Vandevoorde,
+Geoffrey Romer, Gor Nishanov, Nathan Sidwell, Iain Sandoe, Lewis Baker,
+2019). https://wg21.link/p1492r0</p></li>
+<li><p><a href="https://wg21.link/p4100r0">P4100R0</a> - “The Network
+Endeavor: Coroutine-Native I/O for C++29” (Vinnie Falco, Steve Gerbino,
+Michael Vandeberg, Mungo Gill, Mohammad Nejati, 2026).
+https://wg21.link/p4100r0</p></li>
+<li><p><a href="https://github.com/cppalliance/corosio">cppalliance/corosio</a> -
+Coroutine-native networking library.
+https://github.com/cppalliance/corosio</p></li>
+<li><p><a href="https://github.com/cppalliance/capy">cppalliance/capy</a> -
+Coroutine I/O primitives library.
+https://github.com/cppalliance/capy</p></li>
+<li><p><a href="https://wg21.link/p2300r10">P2300R10</a> -
+“<code>std::execution</code>” (Eric Niebler, Michał Dominiak, Lewis
+Baker, Kirk Shoop, Lucian Radu Teodorescu, Lee Howes, 2024).
+https://wg21.link/p2300r10</p></li>
+<li><p><a href="https://wg21.link/p1342r0">P1342R0</a> - “Unifying
+Coroutines TS and Core Coroutines” (Lewis Baker, 2018).
+https://wg21.link/p1342r0</p></li>
+<li><p><a href="https://wg21.link/p3552r3">P3552R3</a> - “Add a
+Coroutine Task Type” (Lewis Baker, 2025).
+https://wg21.link/p3552r3</p></li>
 </ol>
 
 </body>
