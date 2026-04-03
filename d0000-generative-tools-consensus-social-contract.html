@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>P4045R0: Response to P4043R0</title>
+  <title>D0000R0: Info: Generative Tools and the Social Contract of
+Consensus Standards</title>
   <style type="text/css">
 
 @font-face {
@@ -842,13 +843,14 @@ outline: none;
   <div class="header-text">WG21 Proposal</div>
 </header>
 
-<h1>Response to P4043R0</h1>
+<h1>Info: Generative Tools and the Social Contract of Consensus
+Standards</h1>
 
 <!-- Document Metadata -->
 <div class="document-info">
-  <p><strong>Document Number:</strong> P4045R0</p>
-  <p><strong>Date:</strong> 2026-03-09</p>
-  <p><strong>Audience:</strong> EWG</p>
+  <p><strong>Document Number:</strong> D0000R0</p>
+  <p><strong>Date:</strong> 2026-04-02</p>
+  <p><strong>Audience:</strong> WG21</p>
   <p><strong>Reply-to:</strong> Vinnie Falco <a href="mailto:vinnie.falco@gmail.com" class="email">vinnie.falco@gmail.com</a></p>
 </div>
 
@@ -860,403 +862,411 @@ outline: none;
   <li><a href="#revision-history" id="toc-revision-history">Revision
   History</a>
   <ul>
-  <li><a href="#r0-march-2026-pre-croydon" id="toc-r0-march-2026-pre-croydon">R0: March 2026
-  (pre-Croydon)</a></li>
+  <li><a href="#r0-april-2026" id="toc-r0-april-2026">R0: April
+  2026</a></li>
   </ul></li>
-  <li><a href="#introduction" id="toc-introduction">1.
-  Introduction</a></li>
-  <li><a href="#design-changes-since-adoption" id="toc-design-changes-since-adoption">2. Design Changes Since
-  Adoption</a>
+  <li><a href="#disclosure" id="toc-disclosure">1. Disclosure</a></li>
+  <li><a href="#why-this-paper-exists" id="toc-why-this-paper-exists">2.
+  Why this paper exists</a></li>
+  <li><a href="#act-1---what-consensus-work-already-asks-of-people" id="toc-act-1---what-consensus-work-already-asks-of-people">3. Act 1 -
+  What consensus work already asks of people</a>
   <ul>
-  <li><a href="#routine-nb-comment-resolutions" id="toc-routine-nb-comment-resolutions">2.1 Routine NB Comment
-  Resolutions</a></li>
-  <li><a href="#the-romanian-nb-comment-ro-2-056" id="toc-the-romanian-nb-comment-ro-2-056">2.2 The Romanian NB Comment
-  (RO 2-056)</a></li>
-  <li><a href="#core-design" id="toc-core-design">2.3 Core
-  Design</a></li>
-  <li><a href="#assessment" id="toc-assessment">2.4 Assessment</a></li>
+  <li><a href="#legitimacy-trust-and-cost" id="toc-legitimacy-trust-and-cost">3.1 Legitimacy, trust, and
+  cost</a></li>
+  <li><a href="#six-forces-from-the-permanent-record" id="toc-six-forces-from-the-permanent-record">3.2 Six forces (from the
+  permanent record)</a></li>
   </ul></li>
-  <li><a href="#prior-deliberation-on-each-concern" id="toc-prior-deliberation-on-each-concern">3. Prior Deliberation on
-  Each Concern</a></li>
-  <li><a href="#outstanding-nb-comments" id="toc-outstanding-nb-comments">4. Outstanding NB Comments</a></li>
-  <li><a href="#deferral-and-deployment-experience" id="toc-deferral-and-deployment-experience">5. Deferral and Deployment
-  Experience</a></li>
-  <li><a href="#the-committee-record" id="toc-the-committee-record">6.
-  The Committee Record</a></li>
-  <li><a href="#procedural-concerns" id="toc-procedural-concerns">7.
-  Procedural Concerns</a></li>
+  <li><a href="#act-2---six-conditional-predictions" id="toc-act-2---six-conditional-predictions">4. Act 2 - Six
+  conditional predictions</a>
+  <ul>
+  <li><a href="#from-goal-displacement" id="toc-from-goal-displacement">4.1 From goal displacement</a></li>
+  <li><a href="#from-professional-socialization" id="toc-from-professional-socialization">4.2 From professional
+  socialization</a></li>
+  <li><a href="#from-representational-capture" id="toc-from-representational-capture">4.3 From representational
+  capture</a></li>
+  <li><a href="#from-the-iron-law" id="toc-from-the-iron-law">4.4 From
+  the iron law</a></li>
+  <li><a href="#from-shifting-baseline-syndrome" id="toc-from-shifting-baseline-syndrome">4.5 From shifting baseline
+  syndrome</a></li>
+  <li><a href="#from-going-native" id="toc-from-going-native">4.6 From
+  going native</a></li>
+  </ul></li>
+  <li><a href="#strong-objections-stated-fairly" id="toc-strong-objections-stated-fairly">5. Strong objections, stated
+  fairly</a></li>
+  <li><a href="#act-3---observation-table-partial-intentional-gaps" id="toc-act-3---observation-table-partial-intentional-gaps">6. Act 3 -
+  Observation table (partial, intentional gaps)</a></li>
+  <li><a href="#properties-of-possible-responses-no-ranking" id="toc-properties-of-possible-responses-no-ranking">7. Properties of
+  possible responses (no ranking)</a></li>
   <li><a href="#conclusion" id="toc-conclusion">8. Conclusion</a></li>
-  <li><a href="#acknowledgements" id="toc-acknowledgements">Acknowledgements</a></li>
+  <li><a href="#acknowledgements" id="toc-acknowledgements">9.
+  Acknowledgements</a></li>
   <li><a href="#references" id="toc-references">References</a></li>
   </ul>
 </nav>
 
 <h2 id="abstract">Abstract</h2>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> (“Are
-C++ Contracts Ready to Ship in C++26?”) asks EWG to reconsider the
-shipping vehicle for C++ Contracts. The paper cites 15 prior papers,
-raises no concern the committee has not already deliberated on, and
-proposes deferral as a remedy whose precondition - deployment experience
-- deferral itself prevents. Every argument in <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> was before
-the committee when it adopted <a href="https://wg21.link/p2900r14">P2900R14</a><sup>[2]</sup> with strong
-consensus and when it subsequently rejected every proposal to reverse
-that decision.</p>
+<p>Generative tools meet consensus standardization first as a problem of
+trust and provenance, not only as a problem of technical
+correctness.</p>
+<p>This paper begins from a personal observation in a public C++
+discussion venue, then places the resulting questions against published
+institutional theory and against WG21’s own recent documentary record.
+It restates six forces already collected in D4171R0, derives six
+conditional predictions at the interface between generative tools and
+consensus practice, and supplies a partially filled observation table
+with intentional empty cells. The empty cells are an invitation to the
+record, not an accusation.</p>
 <hr />
 <h2 id="revision-history">Revision History</h2>
-<h3 id="r0-march-2026-pre-croydon">R0: March 2026 (pre-Croydon)</h3>
+<h3 id="r0-april-2026">R0: April 2026</h3>
 <ul>
 <li>Initial version.</li>
 </ul>
 <hr />
-<h2 id="introduction">1. Introduction</h2>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup>
-proposes three polls asking EWG to reconsider, defer, or change the
-shipping vehicle for C++ Contracts. The paper was posted on 2026-03-07,
-two weeks before Croydon, outside any official WG21 mailing.</p>
-<p>The question this paper addresses is narrow: does <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> present
-information or analysis that the committee has not already
-considered?</p>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup>
-advances five claims:</p>
-<ol type="1">
-<li>The Contracts design continues to evolve (“design churn”).</li>
-<li>Papers raising concerns about Contracts have not reached
-consensus.</li>
-<li>NB comments remain unresolved.</li>
-<li>Deferral would allow implementation and deployment experience.</li>
-<li>The committee should reconsider the shipping vehicle.</li>
-</ol>
-<p>Claims 1 through 4 are offered as evidence for claim 5. Sections 2
-through 6 examine each claim in order. Section 7 addresses procedural
-concerns.</p>
-<p>The author has no involvement in the C++ Contracts facility and holds
-no position on its design.</p>
+<h2 id="disclosure">1. Disclosure</h2>
+<p>The author provides information and serves at the pleasure of the
+committee.</p>
+<p>The author is the founder of the <a href="https://cppalliance.org/">C++ Alliance</a><sup>[1]</sup> and
+maintains proposals in the <code>std::execution</code> and coroutine I/O
+design space. The author has attended WG21 meetings since 2018. This
+paper documents how consensus institutions process novelty in authorship
+and tooling. The same institutional forces apply whether the reader
+welcomes generative tools, rejects them, or sits undecided.</p>
+<p>The author has used generative tools in drafting and revision of
+technical work, including assistance with routine prose in this paper.
+The substantive judgments, structure, and claims remain the author’s
+responsibility.</p>
+<p>The author asks for nothing.</p>
 <hr />
-<h2 id="design-changes-since-adoption">2. Design Changes Since
-Adoption</h2>
-<p><strong>Claim 1: The Contracts design continues to
-evolve.</strong></p>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup>
-characterizes post-adoption activity as evidence that “the design
-continues to evolve.” The changes since adoption fall into three
-categories.</p>
-<h3 id="routine-nb-comment-resolutions">2.1 Routine NB Comment
-Resolutions</h3>
-<p>Two changes have been applied to the Working Draft since <a href="https://wg21.link/p2900r14">P2900R14</a><sup>[2]</sup> was
-adopted:</p>
-<ul>
-<li><a href="https://wg21.link/p3819r0">P3819R0</a><sup>[4]</sup>
-removed <code>evaluation_exception()</code>. Three identical NB comments
-(NL 17.10, US 69-125, GB 04-124) identified the function as syntactic
-sugar that turned out to be unimplementable without significant
-complexity. EWG applied the fix at Kona 2025.</li>
-<li><a href="https://wg21.link/p3886r0">P3886R0</a><sup>[5]</sup> added
-a feature-test macro that was missed. EWG applied the fix at Kona
-2025.</li>
-</ul>
-<p>Both are exactly the kind of fix the NB comment process exists to
-produce. Neither changes the design.</p>
-<h3 id="the-romanian-nb-comment-ro-2-056">2.2 The Romanian NB Comment
-(RO 2-056)</h3>
-<p>NB comment RO 2-056 proposed new design for enforcement semantics.
-Seven of the 15 papers <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> cites are
-entirely about this one comment:</p>
+<h2 id="why-this-paper-exists">2. Why this paper exists</h2>
+<p>In a public C++ chat venue whose operators state that many
+participants are implementers, WG21 members, and paper authors, the
+author watched a conversation turn quickly toward provenance when
+synthetic or tool-assisted material was disclosed. Technical content
+that would ordinarily draw design questions instead drew questions about
+how the text was produced. The pattern was familiar from committee
+culture, but the speed and the temperature of the shift caught the
+author’s attention.</p>
+<p>That observation is not evidence of how WG21 will vote. Informal chat
+is not a sample of a plenary. It is not a measure of implementer opinion
+across the ecosystem. It is simply the reason the author opened the
+books again.</p>
+<p><strong>The thread was a question, not a verdict.</strong></p>
+<hr />
+<h2 id="act-1---what-consensus-work-already-asks-of-people">3. Act 1 -
+What consensus work already asks of people</h2>
+<p>Consensus standardization is a remarkable human achievement. It
+produces portable specifications under competing interests, finite
+attention, and genuine uncertainty. The committee’s craft - reading
+papers, running polls, reconciling national body comments, preserving
+continuity across releases - is difficult work done mostly by volunteers
+and specialists who care about the language. Nothing in this paper is
+offered to diminish that craft.</p>
+<p>Generative tools still land awkwardly inside the social system that
+craft built.</p>
+<h3 id="legitimacy-trust-and-cost">3.1 Legitimacy, trust, and cost</h3>
+<p>Deliberative legitimacy rests on reasons that participants can
+examine. In a large body, full independent review of every claim is
+impossible. Members reasonably lean on authorship reputation, coalition
+signals, prior polls, and the procedural history of a proposal. Those
+shortcuts are not laziness. They are how humans scale cooperation.</p>
+<p>They also mean that <strong>provenance is never a neutral
+footnote</strong>. When a reader cannot place a paragraph in a known
+human trajectory - apprenticeship in the community, a track record of
+shipped work, a face in the room - the paragraph enters through a
+different gate. The gate is social before it is technical.</p>
+<p>That is uncomfortable. It is still predictable.</p>
+<h3 id="six-forces-from-the-permanent-record">3.2 Six forces (from the
+permanent record)</h3>
+<p><a href="https://wg21.link/d4171r0">D4171R0</a><sup>[2]</sup>
+collects six documented forces from six disciplines that act on
+consensus-driven institutions. The full exposition and primary citations
+live there. This paper uses only the names and the intuition:</p>
 <table>
 <colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
+<col style="width: 24%" />
+<col style="width: 75%" />
 </colgroup>
 <thead>
 <tr>
-<th>Paper</th>
-<th>Title</th>
+<th>Force</th>
+<th>Short intuition</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><a href="https://wg21.link/p3911r2">P3911R2</a><sup>[6]</sup></td>
-<td>Make Contracts Reliably Non-Ignorable</td>
+<td>Goal displacement</td>
+<td>Procedure becomes easier to reward than outcomes.</td>
 </tr>
 <tr>
-<td><a href="https://wg21.link/p3912r0">P3912R0</a><sup>[7]</sup></td>
-<td>Design considerations for always-enforced assertions</td>
+<td>Professional socialization</td>
+<td>Newcomers learn what “serious” means from the community they
+join.</td>
 </tr>
 <tr>
-<td><a href="https://wg21.link/p3919r0">P3919R0</a><sup>[8]</sup></td>
-<td>Guaranteed-(quick-)enforced contracts</td>
+<td>Representational capture</td>
+<td>Who shows up shapes what gets built.</td>
 </tr>
 <tr>
-<td><a href="https://wg21.link/p3946r0">P3946R0</a><sup>[9]</sup></td>
-<td>Designing enforced assertions</td>
+<td>Iron law</td>
+<td>Navigation of internal process becomes a competitive skill.</td>
 </tr>
 <tr>
-<td><a href="https://wg21.link/p4005r0">P4005R0</a><sup>[10]</sup></td>
-<td>A proposal for guaranteed-(quick-)enforced contracts</td>
+<td>Shifting baseline</td>
+<td>Each cohort calibrates “normal” against what it inherited.</td>
 </tr>
 <tr>
-<td><a href="https://wg21.link/p4009r0">P4009R0</a><sup>[11]</sup></td>
-<td>A proposal for solving all of the contracts concerns</td>
-</tr>
-<tr>
-<td><a href="https://wg21.link/p4015r0">P4015R0</a><sup>[12]</sup></td>
-<td>Enforcing Contract Conditions with Statements</td>
+<td>Going native</td>
+<td>Sustained peer deliberation moves preferences toward institutional
+frames.</td>
 </tr>
 </tbody>
 </table>
-<p>The discussion was extensive. No design change resulted. The
-committee rejected each specific proposal; it did not poll against
-guaranteed enforcement as a goal. The outcome reinforced consensus for
-the adopted design.</p>
-<h3 id="core-design">2.3 Core Design</h3>
-<p>Unchanged. <a href="https://wg21.link/p2900r14">P2900R14</a><sup>[2]</sup> (published
-2025-02-13) remains the latest revision. Zero design changes have been
-applied since adoption.</p>
-<h3 id="assessment">2.4 Assessment</h3>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup>
-conflates two routine NB fixes and one NB comment that generated
-extensive discussion but no design change with design instability. Two
-small fixes and a resolved NB comment are not churn. They are the NB
-comment process working as intended.</p>
+<p>Generative tools do not erase those forces. They press on them. A
+tool that can produce fluent technical prose in seconds changes the
+relative cost of drafting, review, suspicion, and disclosure. The
+institution still runs on trust.</p>
+<p><strong>Trust scales; attention does not.</strong></p>
 <hr />
-<h2 id="prior-deliberation-on-each-concern">3. Prior Deliberation on
-Each Concern</h2>
-<p><strong>Claim 2: Papers raising concerns about Contracts have not
-reached consensus.</strong></p>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> cites
-15 papers. Every one was published before <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup>. The
-arguments they contain were before the committee in EWG telecons and at
-the Kona 2025 and Hagenberg 2025 meetings. The paper does not cite any
-new implementation result, deployment observation, or design
-analysis.</p>
-<p>The following table maps each claim to the prior papers that raised
-it and the committee action that disposed of it:</p>
+<h2 id="act-2---six-conditional-predictions">4. Act 2 - Six conditional
+predictions</h2>
+<p>Each prediction below is conditional. It says what the author expects
+to observe <strong>if</strong> the forces in Section 3.2 apply to WG21’s
+social system as they apply to other consensus bodies. Each prediction
+is paired with a disconfirmation - a pattern that would show the model
+is wrong or incomplete.</p>
+<p>The predictions are guesses about incentives and observable signals
+in public artifacts and public speech.</p>
+<h3 id="from-goal-displacement">4.1 From goal displacement</h3>
+<p><strong>Prediction A.</strong> Formal rules and standing documents
+about document format, copyright, and tool use will receive sustained
+attention even while technical disagreement about a feature continues.
+Observers will sometimes argue procedure when substantive resolution
+feels costly.</p>
+<p><strong>Disconfirmation.</strong> Procedure rarely appears in public
+debate about generative tools; only technical merits are discussed.</p>
+<h3 id="from-professional-socialization">4.2 From professional
+socialization</h3>
+<p><strong>Prediction B.</strong> Long-tenured participants and
+newcomers will use different language to evaluate tool-assisted papers -
+“process,” “serious,” “respect for the room” on one side; “shipping
+evidence,” “field experience,” “implementation cost” on the other. The
+same split will appear around AI that appeared around other
+flashpoints.</p>
+<p><strong>Disconfirmation.</strong> Homogeneous vocabulary across
+tenure levels in published statements.</p>
+<h3 id="from-representational-capture">4.3 From representational
+capture</h3>
+<p><strong>Prediction C.</strong> Public debate about generative tools
+will overrepresent participants whose employers fund standards
+engagement and underrepresent developers who consume the standard but
+never travel to a meeting.</p>
+<p><strong>Disconfirmation.</strong> Documented participation in the
+debate proportional to the global developer population.</p>
+<h3 id="from-the-iron-law">4.4 From the iron law</h3>
+<p><strong>Prediction D.</strong> Authors and coalitions skilled at
+navigating document requirements and mailing norms will adapt faster
+than isolated contributors, independent of the underlying technical
+quality of their engineering.</p>
+<p><strong>Disconfirmation.</strong> Adoption of tool-assisted workflows
+spreads evenly across resource levels with no correlation to procedural
+experience.</p>
+<h3 id="from-shifting-baseline-syndrome">4.5 From shifting baseline
+syndrome</h3>
+<p><strong>Prediction E.</strong> What counts as “normal authorship”
+will drift across cohorts. Participants who entered before wide tool use
+will apply a different default than participants whose professional
+lives always included assistants.</p>
+<p><strong>Disconfirmation.</strong> Stable, cohort-independent
+definitions of authorship in public statements over several years.</p>
+<h3 id="from-going-native">4.6 From going native</h3>
+<p><strong>Prediction F.</strong> Participants whose careers are tied to
+committee standing will internalize institutional discomfort with opaque
+provenance and will express that discomfort as personal priority, not
+only as institutional compliance.</p>
+<p><strong>Disconfirmation.</strong> No correlation between career
+embedding in the committee process and public intensity of provenance
+concern.</p>
+<hr />
+<h2 id="strong-objections-stated-fairly">5. Strong objections, stated
+fairly</h2>
+<p><strong>Objection 1 - “You are calling skeptics
+backward.”</strong><br />
+Reasonable skeptics fear noise, misattribution, and unequal access to
+powerful tools. Those fears deserve respect. The predictions above
+describe incentives and history.</p>
+<p><strong>Objection 2 - “Informal chat should not appear in a committee
+paper.”</strong><br />
+Agreed as proof. Section 2 is motivation only. The table in Section 6
+relies on published sources or honest blanks.</p>
+<p><strong>Objection 3 - “The committee only needs technical
+criteria.”</strong><br />
+Technical criteria remain necessary. They are not sufficient for how
+humans actually read under time pressure. The gap is the subject
+here.</p>
+<hr />
+<h2 id="act-3---observation-table-partial-intentional-gaps">6. Act 3 -
+Observation table (partial, intentional gaps)</h2>
+<p>The table is the spine. Empty cells are deliberate. They mark
+questions the mailing may answer next.</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 19%" />
+<col style="width: 28%" />
+<col style="width: 39%" />
+<col style="width: 3%" />
+</colgroup>
+<thead>
+<tr>
+<th>Prediction</th>
+<th>Expected public signal</th>
+<th>Observed to date (dated source)</th>
+<th>Property of a healthy practice (not ranked)</th>
+<th>Open</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>Updates to standing documents; procedural debate alongside technical
+debate</td>
+<td><a href="https://wg21.link/p3702r1">P3702R1</a><sup>[3]</sup>
+(2025-08-14) quotes ISO guidance: do not use generative images or text
+in ISO content; WG21 submission rules moving toward alignment</td>
+<td>Disclosure that matches actual risk; human accountability for
+claims</td>
+<td>Whether draft assistance without publication of raw model output
+satisfies evolving norms</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Split vocabulary in papers and polls</td>
+<td><a href="https://wg21.link/p3962r0">P3962R0</a><sup>[4]</sup> (2026)
+documents implementers describing outcome feedback reframed as
+obstruction; <a href="https://wg21.link/p2138r4">P2138R4</a><sup>[5]</sup> (2021)
+deployment gate failed LEWG poll per <a href="https://wg21.link/p2435r0">P2435R0</a><sup>[6]</sup></td>
+<td>Same respect for implementation cost whether the author used tools
+or not</td>
+<td>Tool disclosure as substitute for or supplement to technical
+engagement</td>
+</tr>
+<tr>
+<td>C</td>
+<td>Affiliation-skewed participation in debate</td>
+<td>(no published affiliation census located for this row)</td>
+<td>Invite voices without travel budgets into written record</td>
+<td></td>
+</tr>
+<tr>
+<td>D</td>
+<td>Faster adaptation by resourced coalitions</td>
+<td></td>
+<td>Pair procedural help for newcomers with clear, written guidance</td>
+<td></td>
+</tr>
+<tr>
+<td>E</td>
+<td>Cohort drift in “normal authorship”</td>
+<td></td>
+<td>Teachable norms anchored in examples, not nostalgia</td>
+<td></td>
+</tr>
+<tr>
+<td>F</td>
+<td>Embedded participants echo institutional provenance priority</td>
+<td></td>
+<td>Separate institutional compliance from personal stigma toward
+individuals</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The author repeats: informal observation motivated the paper. It does
+not fill the table.</p>
+<hr />
+<h2 id="properties-of-possible-responses-no-ranking">7. Properties of
+possible responses (no ranking)</h2>
+<p>Different communities will adopt different bundles. The following
+properties are described side by side without recommendation.</p>
 <table>
 <colgroup>
-<col style="width: 11%" />
-<col style="width: 49%" />
 <col style="width: 38%" />
+<col style="width: 38%" />
+<col style="width: 23%" />
 </colgroup>
 <thead>
 <tr>
-<th>Claim</th>
-<th>Raised by</th>
-<th>Disposition</th>
+<th>Property</th>
+<th>Provides</th>
+<th>Costs</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1. Design continues to evolve</td>
-<td><a href="https://wg21.link/p3573r0">P3573R0</a><sup>[13]</sup>, <a href="https://wg21.link/p3829r0">P3829R0</a><sup>[14]</sup>, <a href="https://wg21.link/p3835r0">P3835R0</a><sup>[15]</sup></td>
-<td>See Section 2. Zero design changes since adoption.</td>
+<td>Strict prohibition of generative text in submitted papers</td>
+<td>Clear bright line for reviewers</td>
+<td>Drafting burden; edge cases in grammar tools and translation
+assistance</td>
 </tr>
 <tr>
-<td>2. Concern papers lack consensus</td>
-<td><a href="https://wg21.link/p3851r0">P3851R0</a><sup>[16]</sup>, <a href="https://wg21.link/p3853r0">P3853R0</a><sup>[17]</sup>, <a href="https://wg21.link/p3909r0">P3909R0</a><sup>[18]</sup></td>
-<td>Each proposal to modify or remove Contracts was rejected (<a href="https://wg21.link/p3846r0">P3846R0</a><sup>[3]</sup>).</td>
+<td>Disclosure of tool use in paper metadata</td>
+<td>Transparency; reduces guessing games</td>
+<td>Disclosure can dominate discussion if readers skip technical
+content</td>
 </tr>
 <tr>
-<td>3. NB comments remain unresolved</td>
-<td><a href="https://wg21.link/p3911r2">P3911R2</a><sup>[6]</sup>, <a href="https://wg21.link/p3912r0">P3912R0</a><sup>[7]</sup>, <a href="https://wg21.link/p3919r0">P3919R0</a><sup>[8]</sup>, et al.</td>
-<td>RO 2-056 is the one outstanding comment. <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> proposes no
-solution.</td>
+<td>Blinded review of technical claims independent of provenance</td>
+<td>Focus on mathematics and wording</td>
+<td>Hard to operate in a public mailing culture</td>
 </tr>
 <tr>
-<td>4. Deferral enables deployment</td>
-<td><a href="https://wg21.link/p3909r0">P3909R0</a><sup>[18]</sup></td>
-<td>See Section 5. Deferral prevents the deployment it claims to
-enable.</td>
-</tr>
-<tr>
-<td>5. Reconsider the shipping vehicle</td>
-<td>EWG poll, 2025-02-11</td>
-<td>Consensus against removal (<a href="https://wg21.link/p2899r1">P2899R1</a><sup>[19]</sup>).</td>
+<td>Heavy reliance on implementation and deployment evidence</td>
+<td>Grounds decisions in user-visible outcomes</td>
+<td>Slower cycles; burdens implementers</td>
 </tr>
 </tbody>
 </table>
-<p><a href="https://wg21.link/p4020r0">P4020R0</a><sup>[20]</sup>
-(“Concerns about contract assertions”) appeared in the 2026-02
-pre-Croydon mailing and has not yet been discussed. It recommends no
-specific action beyond observing that “there are just 2 coherent
-actions” - keep Contracts or remove them. <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> cites it but
-does not engage with its analysis.</p>
-<p>A note on terminology: a committee poll produces one of three
-outcomes - consensus for, consensus against, or no consensus - and these
-are not interchangeable. Consensus against a proposal is an affirmative
-decision; no consensus means the committee did not reach a decision in
-either direction. <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> states that
-proposals “have not yet achieved consensus” and that “none has yet
-reached consensus.” The EWG poll on removing Contracts from C++26 was
-not “no consensus.” It was consensus against removal. The proposals to
-modify the adopted design were not merely unsuccessful - they were
-rejected. Characterizing consensus against as the absence of consensus
-erases the committee’s decision.</p>
-<hr />
-<h2 id="outstanding-nb-comments">4. Outstanding NB Comments</h2>
-<p><strong>Claim 3: NB comments remain unresolved.</strong></p>
-<p>Of the NB comments related to Contracts, all have been resolved
-except RO 2-056. Section 2.2 documents the seven papers written in
-response to that comment and the outcome: extensive discussion, no
-design change, consensus for the current design reinforced.</p>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> cites
-the outstanding status of RO 2-056 as evidence of instability but
-proposes no solution to it. The paper recommends deferral or a White
-Paper - neither of which addresses the technical question RO 2-056
-raises.</p>
-<hr />
-<h2 id="deferral-and-deployment-experience">5. Deferral and Deployment
-Experience</h2>
-<p><strong>Claim 4: Deferral would allow implementation and deployment
-experience.</strong></p>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup>
-recommends deferral to allow “implementation and deployment experience.”
-Language features do not receive widespread deployment outside
-standards. The Concepts TS (ISO/IEC TS 19217:2015<sup>[21]</sup>)
-demonstrated this: the TS was withdrawn, and Concepts were redesigned
-and shipped directly in C++20. Deferral does not produce deployment
-experience. Deferral prevents it.</p>
-<p>The question of whether to ship Contracts as a TS rather than in the
-IS has been litigated. <a href="https://wg21.link/p3265r3">P3265R3</a><sup>[22]</sup> (“Ship
-Contracts in a TS”) proposed exactly this. <a href="https://wg21.link/p3276r0">P3276R0</a><sup>[23]</sup> (“P2900 Is
-Superior to a Contracts TS”) responded that no evidence supports the
-claim that a TS would resolve open questions, and that the established
-process for a TS requires listing specific goals, exit criteria, and a
-viable path through which answers will be acquired. The Direction Group
-addressed the same question in <a href="https://wg21.link/p4000r0">P4000R0</a><sup>[24]</sup> (“To TS or
-not to TS: that is the question”). SG21 polled on the question and
-reached consensus against shipping Contracts as a TS (<a href="https://wg21.link/p2899r1">P2899R1</a><sup>[19]</sup>).</p>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup>
-suggests a White Paper as an alternative vehicle. A White Paper carries
-the same structural requirement as a TS: it must answer a clear set of
-questions through a viable process. <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> identifies no
-such questions and proposes no such process.</p>
-<p><code>constexpr</code> shipped as a minimal language feature in C++11
-(<a href="https://open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2235.pdf">N2235</a><sup>[25]</sup>).
-C++14 relaxed its constraints dramatically (<a href="https://open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3652.html">N3652</a><sup>[26]</sup>).
-The MVP model - ship a minimal feature, expand it in the next standard -
-is established WG21 practice.</p>
-<hr />
-<h2 id="the-committee-record">6. The Committee Record</h2>
-<p><strong>Claim 5: The committee should reconsider the shipping
-vehicle.</strong></p>
-<p>On 2025-02-11, EWG polled on whether to remove <a href="https://wg21.link/p2900r14">P2900</a><sup>[2]</sup> (“Contracts
-for C++”) from consideration for C++26 and find a different shipping
-vehicle. The result was consensus against removal (<a href="https://wg21.link/p2899r1">P2899R1</a><sup>[19]</sup>).</p>
-<p>On 2025-02-13, LWG forwarded <a href="https://wg21.link/p2900r14">P2900R14</a><sup>[2]</sup> to plenary
-with consensus (<a href="https://wg21.link/p2899r1">P2899R1</a><sup>[19]</sup>).</p>
-<p>On 2025-02-16, plenary adopted <a href="https://wg21.link/p2900r14">P2900R14</a><sup>[2]</sup> into the
-C++26 Working Paper with strong consensus (<a href="https://wg21.link/p2899r1">P2899R1</a><sup>[19]</sup>).</p>
-<p>Since adoption, multiple proposals to modify the design have been
-presented; each was rejected (<a href="https://wg21.link/p3846r0">P3846R0</a><sup>[3]</sup>). The burden
-of proof lies with the paper proposing to reverse a decision taken with
-strong consensus. <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> does not meet
-that burden.</p>
-<hr />
-<h2 id="procedural-concerns">7. Procedural Concerns</h2>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> (dated
-2026-03-07) does not appear in any official WG21 mailing. The 2026-02
-pre-Croydon mailing (released 2026-02-23) contains papers through <a href="https://wg21.link/p4032r0">P4032R0</a><sup>[27]</sup>. The paper
-was simultaneously posted to Reddit. The paper presents no proposed
-solution to the one outstanding NB comment (RO 2-056).</p>
+<p>The reader chooses the tradeoffs. The paper does not choose for
+them.</p>
 <hr />
 <h2 id="conclusion">8. Conclusion</h2>
-<p><a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup>
-presents no new implementation result, no new deployment observation,
-and no new design analysis. The two post-adoption changes to the Working
-Draft are routine NB comment resolutions. The extensive discussion
-around RO 2-056 produced no design change and reinforced consensus for
-the adopted design. The alternative vehicles the paper suggests - C++29,
-a TS, a White Paper - have been considered and rejected, and <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> provides no
-new basis for revisiting those decisions. The committee adopted <a href="https://wg21.link/p2900r14">P2900R14</a><sup>[2]</sup> with strong
-consensus. Nothing in <a href="https://wg21.link/p4043r0">P4043R0</a><sup>[1]</sup> warrants
-reversing that decision.</p>
+<p>The committee is not a model zoo. It is a room full of people who
+carry reputations, friendships, grudges, and pride in craft. Generative
+tools enter that room as a question about <strong>whose voice</strong>
+the reader hears. That question arrives before the reader finishes the
+technical paragraph.</p>
+<p>If the predictions misfire, the table will show it. If they land, the
+cost is still measured in <strong>patience</strong> with one another,
+not in victory over a model.</p>
+<p><strong>We can disagree about tools and still recognize the same
+humanity across the aisle.</strong></p>
 <hr />
-<h2 id="acknowledgements">Acknowledgements</h2>
-<p>The author thanks Joshua Berne for detailed feedback on the structure
-and content of this paper, and Darius Neaţu for factual corrections on
-the reflector.</p>
+<h2 id="acknowledgements">9. Acknowledgements</h2>
+<p>The author thanks every committee member who has ever explained a
+procedural rule patiently to a newcomer; that labor is easy to overlook
+and hard to forget.</p>
 <hr />
 <h2 id="references">References</h2>
 <ol type="1">
-<li><a href="https://wg21.link/p4043r0">P4043R0</a> - “Are C++ Contracts
-Ready to Ship in C++26?” (Darius Neaţu, 2026).
-https://wg21.link/p4043r0</li>
-<li><a href="https://wg21.link/p2900r14">P2900R14</a> - “Contracts for
-C++” (Joshua Berne, Timur Doumler, Andrzej Krzemieński, et al., 2025).
-https://wg21.link/p2900r14</li>
-<li><a href="https://wg21.link/p3846r0">P3846R0</a> - “C++26 Contracts,
-reasserted” (Timur Doumler, Joshua Berne, 2025).
-https://wg21.link/p3846r0</li>
-<li><a href="https://wg21.link/p3819r0">P3819R0</a> - “Remove
-evaluation_exception from Contracts” (Timur Doumler, Joshua Berne,
-2025). https://wg21.link/p3819r0</li>
-<li><a href="https://wg21.link/p3886r0">P3886R0</a> - “Contract
-violation handler replaceability” (Timur Doumler, Joshua Berne, 2025).
-https://wg21.link/p3886r0</li>
-<li><a href="https://wg21.link/p3911r2">P3911R2</a> - “Make Contracts
-Reliably Non-Ignorable” (Darius Neaţu, Andrei Alexandrescu, et al.,
-2026). https://wg21.link/p3911r2</li>
-<li><a href="https://wg21.link/p3912r0">P3912R0</a> - “Design
-considerations for always-enforced contract assertions” (Timur Doumler,
-et al., 2025). https://wg21.link/p3912r0</li>
-<li><a href="https://wg21.link/p3919r0">P3919R0</a> -
-“Guaranteed-(quick-)enforced contracts” (Ville Voutilainen, 2025).
-https://wg21.link/p3919r0</li>
-<li><a href="https://wg21.link/p3946r0">P3946R0</a> - “Designing
-enforced assertions” (Andrzej Krzemieński, 2025).
-https://wg21.link/p3946r0</li>
-<li><a href="https://wg21.link/p4005r0">P4005R0</a> - “A proposal for
-guaranteed-(quick-)enforced contracts” (Ville Voutilainen, 2026).
-https://wg21.link/p4005r0</li>
-<li><a href="https://wg21.link/p4009r0">P4009R0</a> - “A proposal for
-solving all of the contracts concerns” (Ville Voutilainen, 2026).
-https://wg21.link/p4009r0</li>
-<li><a href="https://wg21.link/p4015r0">P4015R0</a> - “Enforcing
-Contract Conditions with Statements” (Lisa Lippincott, 2026).
-https://wg21.link/p4015r0</li>
-<li><a href="https://wg21.link/p3573r0">P3573R0</a> - “Contract
-concerns” (Michael Hava, J. Daniel Garcia Sanchez, et al., 2025).
-https://wg21.link/p3573r0</li>
-<li><a href="https://wg21.link/p3829r0">P3829R0</a> - “Contracts do not
-belong in the language” (David Chisnall, John Spicer, et al., 2025).
-https://wg21.link/p3829r0</li>
-<li><a href="https://wg21.link/p3835r0">P3835R0</a> - “Contracts make
-C++ less safe - full stop!” (John Spicer, Ville Voutilainen, Jose Daniel
-Garcia Sanchez, 2025). https://wg21.link/p3835r0</li>
-<li><a href="https://wg21.link/p3851r0">P3851R0</a> - “Position on
-contract assertions for C++26” (J. Daniel Garcia, et al., 2025).
-https://wg21.link/p3851r0</li>
-<li><a href="https://wg21.link/p3853r0">P3853R0</a> - “A
-thesis+antithesis=synthesis rumination on Contracts” (Ville Voutilainen,
-2025). https://wg21.link/p3853r0</li>
-<li><a href="https://wg21.link/p3909r0">P3909R0</a> - “Contracts should
-go into a White Paper” (Ville Voutilainen, 2025).
-https://wg21.link/p3909r0</li>
-<li><a href="https://wg21.link/p2899r1">P2899R1</a> - “Contracts for C++
-- Rationale” (Timur Doumler, Joshua Berne, Andrzej Krzemieński,
-Rostislav Khlebnikov, 2025). https://wg21.link/p2899r1</li>
-<li><a href="https://wg21.link/p4020r0">P4020R0</a> - “Concerns about
-contract assertions” (Andrzej Krzemieński, 2026).
-https://wg21.link/p4020r0</li>
-<li>ISO/IEC TS 19217:2015 - “C++ Extensions for Concepts” (ISO, 2015).
-Withdrawn.</li>
-<li><a href="https://wg21.link/p3265r3">P3265R3</a> - “Ship Contracts in
-a TS” (Ville Voutilainen, 2024). https://wg21.link/p3265r3</li>
-<li><a href="https://wg21.link/p3276r0">P3276R0</a> - “P2900 Is Superior
-to a Contracts TS” (Joshua Berne, Steve Downey, Jake Fevold, Mungo Gill,
-Rostislav Khlebnikov, John Lakos, Alisdair Meredith, 2024).
-https://wg21.link/p3276r0</li>
-<li><a href="https://wg21.link/p4000r0">P4000R0</a> - “To TS or not to
-TS: that is the question” (Michael Wong, H. Hinnant, R. Orr, B.
-Stroustrup, D. Vandevoorde, 2024). https://wg21.link/p4000r0</li>
-<li><a href="https://open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2235.pdf">N2235</a>
-- “Generalized Constant Expressions” (Gabriel Dos Reis, Bjarne
-Stroustrup, Jens Maurer, 2007).
-https://open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2235.pdf</li>
-<li><a href="https://open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3652.html">N3652</a>
-- “Relaxing constraints on constexpr functions” (Richard Smith, 2013).
-https://open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3652.html</li>
-<li><a href="https://wg21.link/p4032r0">P4032R0</a> - last paper in the
-2026-02 pre-Croydon mailing.</li>
+<li><p><a href="https://cppalliance.org/">C++ Alliance</a> - nonprofit
+supporting C++ open-source libraries and standards engagement.
+https://cppalliance.org/</p></li>
+<li><p><a href="https://wg21.link/d4171r0">D4171R0</a> - Vinnie Falco.
+“Info: Institutional-Theory Predictions About Standards Bodies.”
+2026-03-30. https://wg21.link/d4171r0</p></li>
+<li><p><a href="https://wg21.link/p3702r1">P3702R1</a> - Jan Schultke.
+“Stricter requirements for document submissions (SD-7).” 2025-08-14.
+https://wg21.link/p3702r1</p></li>
+<li><p><a href="https://wg21.link/p3962r0">P3962R0</a> - Nina Ranns et
+al. “Implementation reality of WG21 standardization.” 2026.
+https://wg21.link/p3962r0</p></li>
+<li><p><a href="https://wg21.link/p2138r4">P2138R4</a> - Ville
+Voutilainen. “Rules of Design and Specification engagement.” 2021.
+https://wg21.link/p2138r4</p></li>
+<li><p><a href="https://wg21.link/p2435r0">P2435R0</a> - Bryce Adelstein
+Lelbach. “2021 Summer Library Evolution Poll Outcomes.” 2021.
+https://wg21.link/p2435r0</p></li>
 </ol>
 
 </body>

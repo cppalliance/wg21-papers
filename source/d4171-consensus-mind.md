@@ -1,6 +1,6 @@
 ---
 title: "Info: Institutional-Theory Predictions About Standards Bodies"
-document: D4171R0
+document: P4171R0
 date: 2026-03-30
 reply-to:
   - "Vinnie Falco <vinnie.falco@gmail.com>"

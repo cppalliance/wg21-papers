@@ -1,6 +1,6 @@
 ---
 title: "To boldly suggest an overall plan for C++29"
-document: D4162R0
+document: P4162R0
 date: 2026-03-27
 reply-to:
   - "Vinnie Falco <vinnie.falco@gmail.com>"

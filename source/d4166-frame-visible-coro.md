@@ -1,6 +1,6 @@
 ---
 title: "Info: Benefits of Frame-Visible Coroutines for Senders"
-document: D4166R0
+document: P4166R0
 date: 2026-03-29
 reply-to:
   - "Vinnie Falco <vinnie.falco@gmail.com>"
