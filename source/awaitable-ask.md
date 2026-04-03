@@ -19,30 +19,30 @@ Together, these two changes make coroutines and senders both first-class citizen
 |                | A: awaitable (bridge) |          | B: sender (native)    |          |
 |----------------|----------------------:|---------:|----------------------:|---------:|
 |                | ns/op                 | al/op    | ns/op                 | al/op    |
-| Native         | 46.0 +/- 0.1         | 1        | **32.8 +/- 0.2**     | **0**    |
-| Abstract       | 46.0 +/- 0.1         | 1        | **45.1 +/- 0.2**     | **1**    |
-| Type-erased    | 55.7 +/- 0.2         | 1        | **57.1 +/- 0.3**     | **1**    |
-| Synchronous    | N/A                   |          | N/A                   |          |
+| Native         | 46.3 +/- 0.0         | 1        | **34.3 +/- 0.1**     | **0**    |
+| Abstract       | 46.4 +/- 0.0         | 1        | **47.1 +/- 0.2**     | **1**    |
+| Type-erased    | 54.1 +/- 0.1         | 1        | **57.5 +/- 0.0**     | **1**    |
+| Synchronous    | 5.1 +/- 0.1          | 0        | **2.6 +/- 0.3**      | **0**    |
 
 #### Table 2: `capy::task`
 
 |                | A: awaitable (native)  |          | B: sender (bridge) |          |
 |----------------|-----------------------:|---------:|--------------------:|---------:|
 |                | ns/op                  | al/op    | ns/op               | al/op    |
-| Native         | **31.4 +/- 0.0**      | **0**    | 48.3 +/- 0.5       | 0        |
-| Abstract       | **32.4 +/- 0.4**      | **0**    | 72.1 +/- 0.1       | 1        |
-| Type-erased    | **36.3 +/- 0.0**      | **0**    | 72.3 +/- 0.1       | 1        |
-| Synchronous    | **1.0 +/- 0.1**       | **0**    | 19.7 +/- 0.2       | 0        |
+| Native         | **31.4 +/- 0.2**      | **0**    | 48.1 +/- 0.3       | 0        |
+| Abstract       | **32.3 +/- 0.2**      | **0**    | 72.2 +/- 0.2       | 1        |
+| Type-erased    | **36.4 +/- 0.1**      | **0**    | 72.1 +/- 0.0       | 1        |
+| Synchronous    | **1.0 +/- 0.2**       | **0**    | 19.0 +/- 0.0       | 0        |
 
 #### Table 3: `beman::execution::task`
 
 |                | A: awaitable (bridge) |          | B: sender (native)    |          |
 |----------------|----------------------:|---------:|----------------------:|---------:|
 |                | ns/op                 | al/op    | ns/op                 | al/op    |
-| Native         | 43.5 +/- 0.2         | 1        | **32.2 +/- 0.2**     | **0**    |
-| Abstract       | 43.3 +/- 0.3         | 1        | **55.3 +/- 0.2**     | **1**    |
-| Type-erased    | 48.8 +/- 0.1         | 1        | **55.3 +/- 0.2**     | **1**    |
-| Synchronous    | 2.7 +/- 0.3          | 0        | **1.1 +/- 0.3**      | **0**    |
+| Native         | 43.5 +/- 0.1         | 1        | **31.9 +/- 0.0**     | **0**    |
+| Abstract       | 43.4 +/- 0.0         | 1        | **55.2 +/- 0.0**     | **1**    |
+| Type-erased    | 48.7 +/- 0.1         | 1        | **55.2 +/- 0.0**     | **1**    |
+| Synchronous    | 2.9 +/- 0.2          | 0        | **1.0 +/- 0.2**      | **0**    |
 
 #### Per-operation allocations (native column)
 
@@ -58,14 +58,14 @@ Together, these two changes make coroutines and senders both first-class citizen
 
 | Property                          | IoAwaitable (Col A)                   | sender/receiver (Col B)                       |
 |-----------------------------------|---------------------------------------|-----------------------------------------------|
-| Native concrete performance       | ~31 ns/op, 0 al/op                   | ~32 ns/op, 0 al/op                           |
-| Type erasure cost (with recycler) | +5 ns/op, 0 al/op                    | +23-24 ns/op, 1 al/op                        |
+| Native concrete performance       | ~31 ns/op, 0 al/op                   | ~32-34 ns/op, 0 al/op                        |
+| Type erasure cost (with recycler) | +5 ns/op, 0 al/op                    | +21-23 ns/op, 1 al/op                        |
 | Type erasure mechanism            | Preallocated awaitable                | Recycled op_state (factory + virtual dispatch)|
 | Why the gap persists              | No allocator path, no allocation call | Allocator fast path + factory + unique_ptr [3]|
-| Synchronous completion            | ~1 ns/op (symmetric transfer)         | N/A (stack overflow without trampoline)       |
+| Synchronous completion            | ~1 ns/op (symmetric transfer)         | ~2.6 ns/op (trampoline [6])                  |
 | Inline completion (await_ready)   | I/O in `await_ready`, no suspend      | No equivalent; `start()` is post-suspend      |
-| Looping                           | Native `for` loop                     | Requires `repeat_effect_until`                |
-| Bridge to other model (native)    | ~10-11 ns/op, 1 al/op                | ~17 ns/op, 0 al/op                           |
+| Looping                           | Native `for` loop                     | `repeat_until` with trampoline [6]            |
+| Bridge to other model (native)    | ~10-11 ns/op, 1 al/op                | ~16 ns/op, 0 al/op                           |
 | Bridge to other model (erased)    | Faster in bex::task, equal in pipeline| ~36 ns/op, 1 al/op                           |
 | `as_awaitable` bypass             | N/A (native protocol)                 | Only leaf senders with explicit member [7]    |
 | Compile-time env safety           | Structural (in function signature)    | Opt-in (per-sender constraint) [11, 12]       |
@@ -73,9 +73,9 @@ Together, these two changes make coroutines and senders both first-class citizen
 
 #### Gaps in the sender model for I/O
 
-- **No synchronous completion path.** `start()` is void - it cannot signal that the operation completed inline. Without a trampoline, synchronous completions cause stack overflow.
-- **Per-operation allocation under type erasure.** `connect` produces a type-dependent `op_state` that must be heap-allocated when either side is erased. A recycling allocator reduces the cost but cannot eliminate the allocation call.
-- **No looping primitive.** There is no standard sender algorithm for a read loop. The benchmark uses `repeat_effect_until` adapted from an example implementation.
+- **Synchronous completions require a trampoline.** `start()` is void - it cannot signal that the operation completed inline. stdexec's `repeat_until` [6] wraps each iteration with a `trampoline_scheduler` that bounds recursion depth, preventing stack overflow at ~2.6 ns/op vs ~1 ns/op for coroutine symmetric transfer.
+- **Per-operation allocation under type erasure.** `connect` produces a type-dependent `op_state` that must be heap-allocated when either side is erased. A recycling allocator reduces the cost but cannot eliminate the allocation call. stdexec's `any_sender` mitigates with a 64-byte SBO [6]; libunifex's `any_sender_of` always heap-allocates [15].
+- **No standard looping primitive.** There is no standard sender algorithm for a read loop. The benchmark uses stdexec's `repeat_until` [6], which integrates a `trampoline_scheduler` for stack safety. This algorithm is not part of P2300.
 - **No awaitable-to-sender customization point.** `as_awaitable` lets senders optimize for coroutines, but there is no equivalent for awaitables entering the sender model. `connect-awaitable` allocates a bridge coroutine frame [3].
 - **`as_awaitable` is leaf-only.** Only senders that explicitly provide an `as_awaitable` member bypass `connect`/`start`. Composed senders (`let_value`, `then`, `when_all`) go through the full protocol.
 
@@ -95,7 +95,7 @@ Without IoAwaitable, standard I/O returns senders. Three consequences follow.
 
 **Coroutines pay a compounding tax.** Every `co_await` of a sender inside a P2300 task goes through `connect`/`start`/`state<Rcvr>` on top of the frame allocation. The cost is in the tables.
 
-**The teachable model carries a penalty.** A `for` loop reading from a socket is something a student can follow. The sender equivalent - `repeat_effect_until` composed with `let_value` - works, but most developers will not write or maintain it. If the model developers can learn is slower, new users conclude C++ async is slow.
+**The teachable model carries a penalty.** A `for` loop reading from a socket is something a student can follow. The sender equivalent - `repeat_until` composed with `let_value` - works, but most developers will not write or maintain it. If the model developers can learn is slower, new users conclude C++ async is slow.
 
 **The domain partition goes unserved.** Senders excel at compile-time work graphs and heterogeneous dispatch. Coroutines excel at serial byte-oriented I/O and type-erased streams. The current path optimizes one side and taxes the other.
 
@@ -125,7 +125,7 @@ Twenty-one years is long enough.
 
 **Execution models** (one per table):
 
-- **sender/receiver pipeline** - Pure sender pipeline using `repeat_effect_until` + `let_value`. Driven by `sender_thread_pool` via `sync_wait`.
+- **sender/receiver pipeline** - Pure sender pipeline using `repeat_until` [6] + `let_value`. Driven by `sender_thread_pool` via `sync_wait`. `repeat_until` interposes a `trampoline_scheduler` on each iteration, bounding recursion depth and stack consumption.
 - **capy::task** - Capy's coroutine task, driven by `capy::thread_pool`. Natively consumes IoAwaitables.
 - **beman::execution::task** - Beman's P2300 coroutine task [1], driven by `sender_thread_pool`. Natively consumes senders. `bex::task`'s `await_transform` checks `as_awaitable` on the sender (first-priority dispatch per [exec.as.awaitable]). When the sender provides an `as_awaitable` member, the task calls it directly, bypassing `connect`/`start` entirely. Table 3's native sender column therefore measures the `as_awaitable` path, not the full sender protocol.
 
@@ -170,27 +170,27 @@ The 1 al/op in all Col A cells comes from the `scheduled_resume` operation state
 
 #### Baseline
 
-Both models achieve ~31-33 ns/op with zero allocations on concrete streams. The baseline is equivalent.
+Both models achieve ~31-34 ns/op with zero allocations on concrete streams. The sender pipeline (34.3 ns/op) is ~2-3 ns higher than the coroutine models (~31-32 ns/op) due to the `trampoline_scheduler` interposed by `repeat_until` on every iteration. The baseline is otherwise equivalent.
 
 #### Type erasure
 
-Under type erasure, costs diverge. `capy::any_read_stream` adds ~5 ns and zero allocations - the awaitable is preallocated at stream construction because `coroutine_handle<>` is already type-erased. `sndr_any_read_stream` adds ~23-24 ns and one allocation per operation - `connect`'s template-dependent `op_state` must be heap-allocated when either side is erased, even with a recycling allocator. This asymmetry is structural [3].
+Under type erasure, costs diverge. `capy::any_read_stream` adds ~5 ns and zero allocations - the awaitable is preallocated at stream construction because `coroutine_handle<>` is already type-erased. `sndr_any_read_stream` adds ~21-23 ns and one allocation per operation - `connect`'s template-dependent `op_state` must be heap-allocated when either side is erased, even with a recycling allocator. This asymmetry is structural [3]. stdexec's `any_sender` mitigates with a 64-byte SBO [6] - if the operation state fits, no heap allocation occurs. libunifex's `any_sender_of` always heap-allocates with no SBO [15], confirming the structural cost across implementations.
 
 #### Synchronous completions
 
-In real networking, many operations complete without waiting: reads from a socket with data in the receive buffer, writes to a non-full send buffer, DNS cache hits. The Synchronous row measures this. Both coroutine models achieve ~1 ns/op through symmetric transfer. The sender pipeline cannot run this benchmark - `start()` is void and cannot signal synchronous completion; the only delivery path recurses through the receiver, causing stack overflow without a trampoline.
+In real networking, many operations complete without waiting: reads from a socket with data in the receive buffer, writes to a non-full send buffer, DNS cache hits. The Synchronous row measures this. Both coroutine models achieve ~1 ns/op through symmetric transfer. The sender pipeline achieves 2.6 ns/op using `repeat_until` with `trampoline_scheduler` [6] - the trampoline detects inline completions and defers to an iterative queue when recursion limits are reached, keeping the stack bounded. Without the trampoline, `start()` is void and the only delivery path recurses through the receiver, causing stack overflow.
 
-Coroutines handle this through `await_ready` (complete inline, never suspend) and `await_suspend` return value (symmetric transfer). Neither has a sender equivalent.
+Coroutines handle this more efficiently through two mechanisms: `await_ready` (complete inline, never suspend) and `await_suspend` return value (symmetric transfer). Neither has a sender equivalent - `start()` is void and post-suspend.
 
 #### Bridges
 
-Both bridges are competitive. `await_sender` adds ~17 ns with zero bridge allocations. `as_sender` adds ~10-11 ns with zero bridge allocations. Allocations in bridged columns come from the target model's own machinery.
+Both bridges are competitive. `await_sender` adds ~16 ns with zero bridge allocations. `as_sender` adds ~10-11 ns with zero bridge allocations. Allocations in bridged columns come from the target model's own machinery.
 
-In Table 3, the bridged awaitable (Col A) is faster than the native sender (Col B) for abstract and type-erased streams - 43.3 ns vs 55.3 ns at 1 al/op each. The bridge cost is constant across abstraction levels while sender machinery scales with abstraction.
+In Table 3, the bridged awaitable (Col A) is faster than the native sender (Col B) for abstract and type-erased streams - 43.4 ns vs 55.2 ns at 1 al/op each. The bridge cost is constant across abstraction levels while sender machinery scales with abstraction.
 
 #### Table 3 and `as_awaitable`
 
-Table 3's native sender column benefits from `bex::task`'s `as_awaitable` dispatch - the sender's `connect` and `start` are never invoked. This is why Table 3 native sender (32.2 ns) matches Table 2 native awaitable (31.4 ns) - both measure the awaitable path.
+Table 3's native sender column benefits from `bex::task`'s `as_awaitable` dispatch - the sender's `connect` and `start` are never invoked. This is why Table 3 native sender (31.9 ns) matches Table 2 native awaitable (31.4 ns) - both measure the awaitable path.
 
 The existing P2300 networking implementation in beman::net [13] does not use `bex::task`. Its `demo::task` always creates a `sender_awaiter` that calls `connect` + `start` with no `as_awaitable` check. For beman::net users, Table 1 is more representative. Senders produced by P2300 algorithms (`let_value`, `then`, `when_all`, etc.) also go through the full path - the `as_awaitable` optimization is only available to leaf senders that implement it explicitly.
 
@@ -198,7 +198,7 @@ The existing P2300 networking implementation in beman::net [13] does not use `be
 
 **Sender to Awaitable:** `as_awaitable` [2, 7] lets senders provide optimized awaitable representations, completely bypassing `connect`/`start`.
 
-**Awaitable to Sender:** No equivalent customization. `connect-awaitable` creates a bridge coroutine whose frame is "not generally eligible for HALO" [3]. Capy's `as_sender` avoids this with a synthetic `frame_cb`. P4126R0 [10] proposes standardizing the technique.
+**Awaitable to Sender:** No equivalent customization. `connect-awaitable` creates a bridge coroutine whose frame is "not generally eligible for HALO" [3]. stdexec mitigates this by pre-allocating 64 bytes of storage inline in the operation state [6]. libunifex's `connect_awaitable` uses a bridge coroutine without this optimization [15]. Capy's `as_sender` avoids the coroutine frame entirely with a synthetic `frame_cb`. P4126R0 [10] proposes standardizing the technique.
 
 #### Compile-time safety
 
@@ -241,3 +241,5 @@ This benchmark is the subject of ongoing optimization. Absolute numbers will cha
 [13] Beman Project. *net: Beman.Net - P2300-based networking*. https://github.com/bemanproject/net
 
 [14] Gerbino, S. *I/O Read Stream Benchmark source*. https://github.com/cppalliance/capy/tree/develop/bench/beman
+
+[15] Meta. *libunifex: Meta's prototype sender/receiver implementation*. https://github.com/facebookexperimental/libunifex
