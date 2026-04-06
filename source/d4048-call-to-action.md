@@ -281,7 +281,7 @@ Steve Gerbino, Mohammad Nejati, Mungo Gill, and Michael Vandeberg co-authored th
 
 3. [P2453R0](https://wg21.link/p2453r0) - "2021 October Library Evolution Poll Outcomes" (Bryce Adelstein Lelbach, Fabio Fracassi, Ben Craig, 2022). https://wg21.link/p2453r0
 
-4. [P4088R0](https://wg21.link/p4088r0) - "The Case for Coroutines" (Vinnie Falco, 2026). https://wg21.link/p4088r0
+4. [P4088R0](https://wg21.link/p4088r0) - "What C++20 Coroutines Already Buy The Standard" (Vinnie Falco, 2026). https://wg21.link/p4088r0
 
 5. [P4099R0](https://wg21.link/p4099r0) - "Twenty-One Years: The Arc of Networking in C++" (Vinnie Falco, 2026). https://wg21.link/p4099r0
 

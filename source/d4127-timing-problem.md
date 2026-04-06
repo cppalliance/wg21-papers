@@ -384,7 +384,7 @@ struct promise_type {
     static void* operator new(std::size_t sz)
     {
         auto* mr =
-            get_current_frame_allocator();
+            get_cached_frame_allocator();
         if (!mr)
             mr = std::pmr::new_delete_resource();
         return allocate_frame(sz, mr);

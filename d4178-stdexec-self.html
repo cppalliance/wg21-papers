@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>P4048R0: Networking for C++29: A Call to Action</title>
+  <title>P4178R0: History: Trade-offs in Asynchronous Abstraction
+Design</title>
   <style type="text/css">
 
 @font-face {
@@ -842,551 +843,633 @@ outline: none;
   <div class="header-text">WG21 Proposal</div>
 </header>
 
-<h1>Networking for C++29: A Call to Action</h1>
+<h1>History: Trade-offs in Asynchronous Abstraction Design</h1>
 
 <!-- Document Metadata -->
 <div class="document-info">
-  <p><strong>Document Number:</strong> P4048R0</p>
-  <p><strong>Date:</strong> 2026-03-16</p>
+  <p><strong>Document Number:</strong> P4178R0</p>
+  <p><strong>Date:</strong> 2026-04-05</p>
   <p><strong>Audience:</strong> WG21</p>
-  <p><strong>Reply-to:</strong> Vinnie Falco <a href="mailto:vinnie.falco@gmail.com" class="email">vinnie.falco@gmail.com</a><br><strong></strong> C++
-Alliance Proposal Team</p>
+  <p><strong>Reply-to:</strong> Vinnie Falco <a href="mailto:vinnie.falco@gmail.com" class="email">vinnie.falco@gmail.com</a></p>
 </div>
 
 <!-- Table of Contents -->
 <nav class="toc">
   <h2 class="toc-title">Table of Contents</h2>
   <ul>
-  <li><a href="#networking-for-c29-a-call-to-action" id="toc-networking-for-c29-a-call-to-action">Networking for C++29: A
-  Call to Action</a>
-  <ul>
   <li><a href="#abstract" id="toc-abstract">Abstract</a></li>
-  <li><a href="#revision-history" id="toc-revision-history">Revision
-  History</a>
+  <li><a href="#disclosure" id="toc-disclosure">1. Disclosure</a></li>
+  <li><a href="#four-patterns" id="toc-four-patterns">2. Four
+  Patterns</a></li>
+  <li><a href="#the-record" id="toc-the-record">3. The Record</a>
   <ul>
-  <li><a href="#r0-march-2026-post-croydon-mailing" id="toc-r0-march-2026-post-croydon-mailing">R0: March 2026
-  (post-Croydon mailing)</a></li>
+  <li><a href="#yes---but---actually" id="toc-yes---but---actually">Yes
+  - But - Actually</a></li>
+  <li><a href="#this-way-then-that-way" id="toc-this-way-then-that-way">This Way, Then That Way</a></li>
+  <li><a href="#dismiss-then-adopt" id="toc-dismiss-then-adopt">Dismiss,
+  Then Adopt</a></li>
+  <li><a href="#first-yes-then-no" id="toc-first-yes-then-no">First Yes,
+  Then No</a></li>
   </ul></li>
-  <li><a href="#the-moment" id="toc-the-moment">1. The Moment</a></li>
-  <li><a href="#prerequisites" id="toc-prerequisites">2.
-  Prerequisites</a>
+  <li><a href="#example-code" id="toc-example-code">4. Example Code</a>
   <ul>
-  <li><a href="#domain-partition" id="toc-domain-partition">2.1 Domain
-  Partition</a></li>
-  <li><a href="#interoperability-commitment" id="toc-interoperability-commitment">2.2 Interoperability
-  Commitment</a></li>
-  <li><a href="#architectural-coherence" id="toc-architectural-coherence">2.3 Architectural Coherence</a></li>
+  <li><a href="#the-retry-algorithm" id="toc-the-retry-algorithm">The
+  <code>retry</code> algorithm</a></li>
+  <li><a href="#the-receiver-is-a-callback" id="toc-the-receiver-is-a-callback">The receiver is a
+  callback</a></li>
   </ul></li>
-  <li><a href="#a-new-way-of-working" id="toc-a-new-way-of-working">3. A
-  New Way of Working</a>
-  <ul>
-  <li><a href="#communication" id="toc-communication">3.1
-  Communication</a></li>
-  <li><a href="#artifacts" id="toc-artifacts">3.2 Artifacts</a></li>
-  <li><a href="#implementation" id="toc-implementation">3.3
-  Implementation</a></li>
-  <li><a href="#knowledge-preservation" id="toc-knowledge-preservation">3.4 Knowledge Preservation</a></li>
-  </ul></li>
-  <li><a href="#the-pipeline" id="toc-the-pipeline">4. The Pipeline</a>
-  <ul>
-  <li><a href="#implementation-team" id="toc-implementation-team">4.1
-  Implementation Team</a></li>
-  <li><a href="#design-team" id="toc-design-team">4.2 Design
-  Team</a></li>
-  <li><a href="#wording-team" id="toc-wording-team">4.3 Wording
-  Team</a></li>
-  <li><a href="#testing-team" id="toc-testing-team">4.4 Testing
-  Team</a></li>
-  <li><a href="#vision-integrity-team" id="toc-vision-integrity-team">4.5 Vision Integrity Team</a></li>
-  <li><a href="#stdexecution-compatibility-team" id="toc-stdexecution-compatibility-team">4.6
-  <code>std::execution</code> Compatibility Team</a></li>
-  <li><a href="#continuous-production" id="toc-continuous-production">4.7 Continuous Production</a></li>
-  </ul></li>
-  <li><a href="#the-people" id="toc-the-people">5. The People</a>
-  <ul>
-  <li><a href="#vision-integrity-team-1" id="toc-vision-integrity-team-1">5.1 Vision Integrity Team</a></li>
-  <li><a href="#stdexecution-compatibility-team-1" id="toc-stdexecution-compatibility-team-1">5.2
-  <code>std::execution</code> Compatibility Team</a></li>
-  <li><a href="#implementation-team-1" id="toc-implementation-team-1">5.3 Implementation Team</a></li>
-  <li><a href="#design-team-1" id="toc-design-team-1">5.4 Design
-  Team</a></li>
-  <li><a href="#wording-team-1" id="toc-wording-team-1">5.5 Wording
-  Team</a></li>
-  <li><a href="#testing-team-1" id="toc-testing-team-1">5.6 Testing
-  Team</a></li>
-  </ul></li>
-  <li><a href="#corporate-stakeholders" id="toc-corporate-stakeholders">6. Corporate Stakeholders</a></li>
-  <li><a href="#the-pipeline-in-motion" id="toc-the-pipeline-in-motion">7. The Pipeline in Motion</a></li>
-  <li><a href="#the-stakes" id="toc-the-stakes">8. The Stakes</a></li>
+  <li><a href="#conclusion" id="toc-conclusion">5. Conclusion</a></li>
   <li><a href="#acknowledgments" id="toc-acknowledgments">Acknowledgments</a></li>
   <li><a href="#references" id="toc-references">References</a></li>
-  </ul></li>
   </ul>
 </nav>
 
-<h1 id="networking-for-c29-a-call-to-action">Networking for C++29: A
-Call to Action</h1>
 <h2 id="abstract">Abstract</h2>
-<p>Twenty-one years is long enough.</p>
-<p>The Network Endeavor (<a href="https://wg21.link/p4100r0">P4100R0</a><sup>[1]</sup>) defines the
-work: eleven papers, two stages, two libraries shipping today. This
-paper proposes how to do the work - a production pipeline, a continuous
-workflow, and an open invitation to the people whose expertise can make
-it succeed. The committee has the talent. The implementations exist. The
-only missing ingredient is coordination.</p>
+<p>Sections of P2300R10 are compared to other sections of P2300R10 and
+entered into the historical record.</p>
+<p>This paper reviews <a href="https://wg21.link/p2300r10">P2300R10</a>
+for internal consistency using only the specification’s own text. Each
+finding pairs two passages from the same paper that appear to be in
+tension. Four recurring patterns organize the findings. Where a
+charitable reading resolves the tension, it is noted. No external
+sources are cited.</p>
 <hr />
-<h2 id="revision-history">Revision History</h2>
-<h3 id="r0-march-2026-post-croydon-mailing">R0: March 2026 (post-Croydon
-mailing)</h3>
-<ul>
-<li>Initial version.</li>
-</ul>
+<h2 id="disclosure">1. Disclosure</h2>
+<p>The author provides information and serves at the pleasure of the
+committee.</p>
+<p>The author believes coroutine-native I/O is the correct foundation
+for networking in C++.</p>
+<p>This paper asks for nothing.</p>
 <hr />
-<h2 id="the-moment">1. The Moment</h2>
-<p>The committee has been trying to standardize networking since <a href="https://wg21.link/n1925">N1925</a><sup>[2]</sup> (2005). The
-Networking TS reached publication in 2018. It was not merged. The
-executor unification effort consumed a decade. Networking waited.</p>
-<p>The committee polled twice on whether a single async model should
-govern the entire standard library. Neither poll achieved consensus (<a href="https://wg21.link/p2453r0">P2453R0</a><sup>[3]</sup>). The
-committee has two async models - <code>std::execution</code> ships in
-C++26, and <code>std::execution::task</code> is both a coroutine and a
-sender. The price of two models has already been paid.</p>
-<p>C++29 is the target. The Network Endeavor (<a href="https://wg21.link/p4100r0">P4100R0</a><sup>[1]</sup>) defines the
-work: eleven papers backed by two shipping libraries - Capy and Corosio
-- with three independent adopters. The companion papers document the
-technical foundations: coroutine properties (<a href="https://wg21.link/p4088r0">P4088R0</a><sup>[4]</sup>), domain
-separation (<a href="https://wg21.link/p4099r0">P4099R0</a><sup>[5]</sup>), and
-sender-coroutine bridges (<a href="https://wg21.link/p4092r0">P4092R0</a><sup>[6]</sup>, <a href="https://wg21.link/p4093r0">P4093R0</a><sup>[7]</sup>).</p>
-<p>The work is defined. What remains is the question every large
-institution eventually faces: can we organize ourselves to deliver?</p>
-<p>This paper is the Network Endeavor’s organizational proposal. It is
-authored by the endeavor’s architects. The pipeline, the teams, and the
-workflow are our design. The invitation to the
-<code>std::execution</code> architects and to the broader committee is
-genuine - the endeavor cannot succeed without their expertise, and their
-requirements must be addressed. But this is our proposal, not a jointly
-authored plan. We are asking the committee to let us do the work, with
-every stakeholder’s requirements visible, documented, and addressed at
-every stage.</p>
-<hr />
-<h2 id="prerequisites">2. Prerequisites</h2>
-<p>Two agreements must hold before the pipeline described in this paper
-can function. Both are the subject of companion papers. This paper does
-not relitigate them - it assumes they are accepted and builds on
-them.</p>
-<h3 id="domain-partition">2.1 Domain Partition</h3>
-<p>Coroutine-native I/O serves byte-oriented networking.
-<code>std::execution</code> serves GPU dispatch, heterogeneous
-execution, and compile-time work graphs. Two models, each correct for
-its domain. The technical basis is documented in <a href="https://wg21.link/p4088r0">P4088R0</a><sup>[4]</sup> and <a href="https://wg21.link/p4099r0">P4099R0</a><sup>[5]</sup>.</p>
-<p>Domain specialization is not fragmentation. C++ has multiple
-container types, multiple string types, multiple smart pointer types.
-GPU compute has <code>nvexec</code> with CUDA extensions and a separate
-namespace. Two async models for two distinct domains is the same
-principle the committee has applied throughout the standard.</p>
-<h3 id="interoperability-commitment">2.2 Interoperability
-Commitment</h3>
-<p>Both models must interoperate. Coroutine-native code must be able to
-consume senders. Sender-based code must be able to consume awaitables.
-The bridge papers (<a href="https://wg21.link/p4092r0">P4092R0</a><sup>[6]</sup>, <a href="https://wg21.link/p4093r0">P4093R0</a><sup>[7]</sup>) have
-explored the mechanisms. The cost is acknowledged by both sides: the
-coroutine side accepts that interop is a hard requirement; the sender
-side accepts that coroutine-native I/O makes different trade-offs -
-frame allocation, type erasure, ABI stability - that serve networking’s
-specific needs.</p>
-<h3 id="architectural-coherence">2.3 Architectural Coherence</h3>
-<p>The Networking TS was compromised by successive design demands that
-eroded its architectural coherence (<a href="https://wg21.link/p4094r0">P4094R0</a><sup>[8]</sup>). The stream
-model, the buffer sequences, and the executor architecture were each
-sound. The accumulated weight of unification requirements - each
-individually reasonable - produced a design that could not ship.</p>
-<p>This endeavor maintains structural safeguards to prevent that pattern
-from recurring. Section 4 describes them.</p>
-<hr />
-<h2 id="a-new-way-of-working">3. A New Way of Working</h2>
-<p>The committee’s traditional workflow is meeting-centric: papers are
-published in mailings, discussed at plenary meetings three times a year,
-and revised between meetings by their authors. For a single paper, this
-works. For an eleven-paper series with cross-cutting dependencies, it is
-too slow.</p>
-<p>This paper proposes a continuous workflow that operates between
-meetings and delivers visible progress at every stage.</p>
-<h3 id="communication">3.1 Communication</h3>
-<ul>
-<li><strong>Mattermost</strong> - A dedicated instance with channels for
-each team (Section 4). Real-time collaboration, asynchronous by default.
-No mandatory meetings. Synchronous calls when a team needs them, not on
-a fixed schedule.</li>
-<li><strong>SG4 and LEWG mailing lists</strong> - Formal discussion of
-design decisions that affect the committee’s direction.</li>
-<li><strong>The Reflector</strong> - Committee-wide announcements and
-cross-team coordination.</li>
-</ul>
-<h3 id="artifacts">3.2 Artifacts</h3>
-<ul>
-<li><strong>A shared GitHub repository</strong> for papers, design
-documents, specs, and rationale. Every artifact is version-controlled
-and publicly visible.</li>
-<li><strong>Non-WG21 contributors</strong> can participate in testing,
-wording review, and implementation. The repository is open.</li>
-<li><strong>Every design decision</strong> is documented with its
-rationale - including dissenting views and the reasons disagreements
-were resolved. The record is complete.</li>
-</ul>
-<h3 id="implementation">3.3 Implementation</h3>
-<ul>
-<li><strong>The Beman Project</strong> serves as the reference
-implementation vehicle. As papers move through the pipeline, the
-implementation team contributes to Beman continuously.</li>
-<li><strong>Cross-platform CI</strong>, test suites, and benchmarks are
-available to the committee at every stage. The committee can clone the
-repo and run the tests.</li>
-</ul>
-<h3 id="knowledge-preservation">3.4 Knowledge Preservation</h3>
-<ul>
-<li><strong>WG21 SAGE</strong> captures the reasoning behind every
-decision, so future revisits have full context.</li>
-<li>Rationale is documented at every decision point. Not just what was
-decided, but why - and what alternatives were considered and
-rejected.</li>
-<li>Institutional knowledge is a first-class deliverable alongside the
-feature itself. When this endeavor is complete, the committee will have
-not just networking in the standard, but a complete record of how it got
-there.</li>
-</ul>
-<hr />
-<h2 id="the-pipeline">4. The Pipeline</h2>
-<p>Six teams. Four in a sequential production pipeline. Two
-cross-cutting review teams.</p>
-<p><img role="img" aria-label src="data:image/svg+xml;base64,PHN2ZyBhcmlhLXJvbGVkZXNjcmlwdGlvbj0iZmxvd2NoYXJ0LXYyIiByb2xlPSJncmFwaGljcy1kb2N1bWVudCBkb2N1bWVudCIgdmlld0JveD0iLTggLTggMTA1Mi40NzI2NTYyNSA1OTkiIGhlaWdodD0iNTk5IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTA1Mi40NzI2NTYyNSIgaWQ9Im15LXN2ZyIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6IHdoaXRlOyI+PHN0eWxlPiNteS1zdmd7Zm9udC1mYW1pbHk6YXJpYWwsc2Fucy1zZXJpZjtmb250LXNpemU6MTRweDtmaWxsOiMzMzM7fSNteS1zdmcgLmVycm9yLWljb257ZmlsbDojNTUyMjIyO30jbXktc3ZnIC5lcnJvci10ZXh0e2ZpbGw6IzU1MjIyMjtzdHJva2U6IzU1MjIyMjt9I215LXN2ZyAuZWRnZS10aGlja25lc3Mtbm9ybWFse3N0cm9rZS13aWR0aDoycHg7fSNteS1zdmcgLmVkZ2UtdGhpY2tuZXNzLXRoaWNre3N0cm9rZS13aWR0aDozLjVweDt9I215LXN2ZyAuZWRnZS1wYXR0ZXJuLXNvbGlke3N0cm9rZS1kYXNoYXJyYXk6MDt9I215LXN2ZyAuZWRnZS1wYXR0ZXJuLWRhc2hlZHtzdHJva2UtZGFzaGFycmF5OjM7fSNteS1zdmcgLmVkZ2UtcGF0dGVybi1kb3R0ZWR7c3Ryb2tlLWRhc2hhcnJheToyO30jbXktc3ZnIC5tYXJrZXJ7ZmlsbDojMzMzMzMzO3N0cm9rZTojMzMzMzMzO30jbXktc3ZnIC5tYXJrZXIuY3Jvc3N7c3Ryb2tlOiMzMzMzMzM7fSNteS1zdmcgc3Zne2ZvbnQtZmFtaWx5OmFyaWFsLHNhbnMtc2VyaWY7Zm9udC1zaXplOjE0cHg7fSNteS1zdmcgLmxhYmVse2ZvbnQtZmFtaWx5OmFyaWFsLHNhbnMtc2VyaWY7Y29sb3I6IzMzMzt9I215LXN2ZyAuY2x1c3Rlci1sYWJlbCB0ZXh0e2ZpbGw6IzMzMzt9I215LXN2ZyAuY2x1c3Rlci1sYWJlbCBzcGFuLCNteS1zdmcgcHtjb2xvcjojMzMzO30jbXktc3ZnIC5sYWJlbCB0ZXh0LCNteS1zdmcgc3BhbiwjbXktc3ZnIHB7ZmlsbDojMzMzO2NvbG9yOiMzMzM7fSNteS1zdmcgLm5vZGUgcmVjdCwjbXktc3ZnIC5ub2RlIGNpcmNsZSwjbXktc3ZnIC5ub2RlIGVsbGlwc2UsI215LXN2ZyAubm9kZSBwb2x5Z29uLCNteS1zdmcgLm5vZGUgcGF0aHtmaWxsOiNFQ0VDRkY7c3Ryb2tlOiM5MzcwREI7c3Ryb2tlLXdpZHRoOjFweDt9I215LXN2ZyAuZmxvd2NoYXJ0LWxhYmVsIHRleHR7dGV4dC1hbmNob3I6bWlkZGxlO30jbXktc3ZnIC5ub2RlIC5rYXRleCBwYXRoe2ZpbGw6IzAwMDtzdHJva2U6IzAwMDtzdHJva2Utd2lkdGg6MXB4O30jbXktc3ZnIC5ub2RlIC5sYWJlbHt0ZXh0LWFsaWduOmNlbnRlcjt9I215LXN2ZyAubm9kZS5jbGlja2FibGV7Y3Vyc29yOnBvaW50ZXI7fSNteS1zdmcgLmFycm93aGVhZFBhdGh7ZmlsbDojMzMzMzMzO30jbXktc3ZnIC5lZGdlUGF0aCAucGF0aHtzdHJva2U6IzMzMzMzMztzdHJva2Utd2lkdGg6Mi4wcHg7fSNteS1zdmcgLmZsb3djaGFydC1saW5re3N0cm9rZTojMzMzMzMzO2ZpbGw6bm9uZTt9I215LXN2ZyAuZWRnZUxhYmVse2JhY2tncm91bmQtY29sb3I6I2U4ZThlODt0ZXh0LWFsaWduOmNlbnRlcjt9I215LXN2ZyAuZWRnZUxhYmVsIHJlY3R7b3BhY2l0eTowLjU7YmFja2dyb3VuZC1jb2xvcjojZThlOGU4O2ZpbGw6I2U4ZThlODt9I215LXN2ZyAubGFiZWxCa2d7YmFja2dyb3VuZC1jb2xvcjpyZ2JhKDIzMiwgMjMyLCAyMzIsIDAuNSk7fSNteS1zdmcgLmNsdXN0ZXIgcmVjdHtmaWxsOiNmZmZmZGU7c3Ryb2tlOiNhYWFhMzM7c3Ryb2tlLXdpZHRoOjFweDt9I215LXN2ZyAuY2x1c3RlciB0ZXh0e2ZpbGw6IzMzMzt9I215LXN2ZyAuY2x1c3RlciBzcGFuLCNteS1zdmcgcHtjb2xvcjojMzMzO30jbXktc3ZnIGRpdi5tZXJtYWlkVG9vbHRpcHtwb3NpdGlvbjphYnNvbHV0ZTt0ZXh0LWFsaWduOmNlbnRlcjttYXgtd2lkdGg6MjAwcHg7cGFkZGluZzoycHg7Zm9udC1mYW1pbHk6YXJpYWwsc2Fucy1zZXJpZjtmb250LXNpemU6MTJweDtiYWNrZ3JvdW5kOmhzbCg4MCwgMTAwJSwgOTYuMjc0NTA5ODAzOSUpO2JvcmRlcjoxcHggc29saWQgI2FhYWEzMztib3JkZXItcmFkaXVzOjJweDtwb2ludGVyLWV2ZW50czpub25lO3otaW5kZXg6MTAwO30jbXktc3ZnIC5mbG93Y2hhcnRUaXRsZVRleHR7dGV4dC1hbmNob3I6bWlkZGxlO2ZvbnQtc2l6ZToxOHB4O2ZpbGw6IzMzMzt9I215LXN2ZyA6cm9vdHstLW1lcm1haWQtZm9udC1mYW1pbHk6InRyZWJ1Y2hldCBtcyIsdmVyZGFuYSxhcmlhbCxzYW5zLXNlcmlmO308L3N0eWxlPjxnPjxtYXJrZXIgb3JpZW50PSJhdXRvIiBtYXJrZXJIZWlnaHQ9IjEyIiBtYXJrZXJXaWR0aD0iMTIiIG1hcmtlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgcmVmWT0iNSIgcmVmWD0iNiIgdmlld0JveD0iMCAwIDEwIDEwIiBjbGFzcz0ibWFya2VyIGZsb3djaGFydCIgaWQ9Im15LXN2Z19mbG93Y2hhcnQtcG9pbnRFbmQiPjxwYXRoIHN0eWxlPSJzdHJva2Utd2lkdGg6IDE7IHN0cm9rZS1kYXNoYXJyYXk6IDEsIDA7IiBjbGFzcz0iYXJyb3dNYXJrZXJQYXRoIiBkPSJNIDAgMCBMIDEwIDUgTCAwIDEwIHoiLz48L21hcmtlcj48bWFya2VyIG9yaWVudD0iYXV0byIgbWFya2VySGVpZ2h0PSIxMiIgbWFya2VyV2lkdGg9IjEyIiBtYXJrZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIHJlZlk9IjUiIHJlZlg9IjQuNSIgdmlld0JveD0iMCAwIDEwIDEwIiBjbGFzcz0ibWFya2VyIGZsb3djaGFydCIgaWQ9Im15LXN2Z19mbG93Y2hhcnQtcG9pbnRTdGFydCI+PHBhdGggc3R5bGU9InN0cm9rZS13aWR0aDogMTsgc3Ryb2tlLWRhc2hhcnJheTogMSwgMDsiIGNsYXNzPSJhcnJvd01hcmtlclBhdGgiIGQ9Ik0gMCA1IEwgMTAgMTAgTCAxMCAwIHoiLz48L21hcmtlcj48bWFya2VyIG9yaWVudD0iYXV0byIgbWFya2VySGVpZ2h0PSIxMSIgbWFya2VyV2lkdGg9IjExIiBtYXJrZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIHJlZlk9IjUiIHJlZlg9IjExIiB2aWV3Qm94PSIwIDAgMTAgMTAiIGNsYXNzPSJtYXJrZXIgZmxvd2NoYXJ0IiBpZD0ibXktc3ZnX2Zsb3djaGFydC1jaXJjbGVFbmQiPjxjaXJjbGUgc3R5bGU9InN0cm9rZS13aWR0aDogMTsgc3Ryb2tlLWRhc2hhcnJheTogMSwgMDsiIGNsYXNzPSJhcnJvd01hcmtlclBhdGgiIHI9IjUiIGN5PSI1IiBjeD0iNSIvPjwvbWFya2VyPjxtYXJrZXIgb3JpZW50PSJhdXRvIiBtYXJrZXJIZWlnaHQ9IjExIiBtYXJrZXJXaWR0aD0iMTEiIG1hcmtlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgcmVmWT0iNSIgcmVmWD0iLTEiIHZpZXdCb3g9IjAgMCAxMCAxMCIgY2xhc3M9Im1hcmtlciBmbG93Y2hhcnQiIGlkPSJteS1zdmdfZmxvd2NoYXJ0LWNpcmNsZVN0YXJ0Ij48Y2lyY2xlIHN0eWxlPSJzdHJva2Utd2lkdGg6IDE7IHN0cm9rZS1kYXNoYXJyYXk6IDEsIDA7IiBjbGFzcz0iYXJyb3dNYXJrZXJQYXRoIiByPSI1IiBjeT0iNSIgY3g9IjUiLz48L21hcmtlcj48bWFya2VyIG9yaWVudD0iYXV0byIgbWFya2VySGVpZ2h0PSIxMSIgbWFya2VyV2lkdGg9IjExIiBtYXJrZXJVbml0cz0idXNlclNwYWNlT25Vc2UiIHJlZlk9IjUuMiIgcmVmWD0iMTIiIHZpZXdCb3g9IjAgMCAxMSAxMSIgY2xhc3M9Im1hcmtlciBjcm9zcyBmbG93Y2hhcnQiIGlkPSJteS1zdmdfZmxvd2NoYXJ0LWNyb3NzRW5kIj48cGF0aCBzdHlsZT0ic3Ryb2tlLXdpZHRoOiAyOyBzdHJva2UtZGFzaGFycmF5OiAxLCAwOyIgY2xhc3M9ImFycm93TWFya2VyUGF0aCIgZD0iTSAxLDEgbCA5LDkgTSAxMCwxIGwgLTksOSIvPjwvbWFya2VyPjxtYXJrZXIgb3JpZW50PSJhdXRvIiBtYXJrZXJIZWlnaHQ9IjExIiBtYXJrZXJXaWR0aD0iMTEiIG1hcmtlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgcmVmWT0iNS4yIiByZWZYPSItMSIgdmlld0JveD0iMCAwIDExIDExIiBjbGFzcz0ibWFya2VyIGNyb3NzIGZsb3djaGFydCIgaWQ9Im15LXN2Z19mbG93Y2hhcnQtY3Jvc3NTdGFydCI+PHBhdGggc3R5bGU9InN0cm9rZS13aWR0aDogMjsgc3Ryb2tlLWRhc2hhcnJheTogMSwgMDsiIGNsYXNzPSJhcnJvd01hcmtlclBhdGgiIGQ9Ik0gMSwxIGwgOSw5IE0gMTAsMSBsIC05LDkiLz48L21hcmtlcj48ZyBjbGFzcz0icm9vdCI+PGcgY2xhc3M9ImNsdXN0ZXJzIj48ZyBpZD0icGlwZWxpbmUiIGNsYXNzPSJjbHVzdGVyIGRlZmF1bHQgZmxvd2NoYXJ0LWxhYmVsIj48cmVjdCBoZWlnaHQ9IjQzNiIgd2lkdGg9IjgzOC41OTc2NTYyNSIgeT0iMTQ3IiB4PSIwIiByeT0iMCIgcng9IjAiIHN0eWxlPSIiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzNTguOTc4NTE1NjI1LCAxNDcpIiBjbGFzcz0iY2x1c3Rlci1sYWJlbCI+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIxNiIgd2lkdGg9IjEyMC42NDA2MjUiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0ibm9kZUxhYmVsIj5Qcm9kdWN0aW9uIFBpcGVsaW5lPC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIGlkPSJjcm9zc0N1dHRpbmciIGNsYXNzPSJjbHVzdGVyIGRlZmF1bHQgZmxvd2NoYXJ0LWxhYmVsIj48cmVjdCBoZWlnaHQ9IjgxIiB3aWR0aD0iODA0LjQ2NDg0Mzc1IiB5PSIwIiB4PSIxNy45NzI2NTYyNSIgcnk9IjAiIHJ4PSIwIiBzdHlsZT0iIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzUyLjUxNzU3ODEyNSwgMCkiIGNsYXNzPSJjbHVzdGVyLWxhYmVsIj48Zm9yZWlnbk9iamVjdCBoZWlnaHQ9IjE2IiB3aWR0aD0iMTM1LjM3NSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJub2RlTGFiZWwiPkNyb3NzLUN1dHRpbmcgUmV2aWV3PC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjwvZz48ZyBjbGFzcz0iZWRnZVBhdGhzIj48cGF0aCBtYXJrZXItZW5kPSJ1cmwoI215LXN2Z19mbG93Y2hhcnQtcG9pbnRFbmQpIiBzdHlsZT0iZmlsbDpub25lOyIgY2xhc3M9ImVkZ2UtdGhpY2tuZXNzLW5vcm1hbCBlZGdlLXBhdHRlcm4tc29saWQgZmxvd2NoYXJ0LWxpbmsgTFMtSU1QIExFLURFUyIgaWQ9IkwtSU1QLURFUy0wIiBkPSJNNzAwLjcwOCwyMTlMNjk1LjAwMSwyMjQuNUM2ODkuMjk1LDIzMCw2NzcuODgyLDI0MSw2NjYuMTc3LDI1MS40MzlDNjU0LjQ3MywyNjEuODc3LDY0Mi40NzcsMjcxLjc1NCw2MzYuNDc5LDI3Ni42OTNMNjMwLjQ4MSwyODEuNjMxIi8+PHBhdGggbWFya2VyLWVuZD0idXJsKCNteS1zdmdfZmxvd2NoYXJ0LXBvaW50RW5kKSIgc3R5bGU9ImZpbGw6bm9uZTsiIGNsYXNzPSJlZGdlLXRoaWNrbmVzcy1ub3JtYWwgZWRnZS1wYXR0ZXJuLXNvbGlkIGZsb3djaGFydC1saW5rIExTLURFUyBMRS1XUkQiIGlkPSJMLURFUy1XUkQtMCIgZD0iTTU0My42OTEsMzMyTDUzMS4wMTYsMzM3LjVDNTE4LjM0MSwzNDMsNDkyLjk5MSwzNTQsNDY3LjI3NiwzNjQuNjc0QzQ0MS41NjEsMzc1LjM0OCw0MTUuNDgyLDM4NS42OTcsNDAyLjQ0MywzOTAuODcxTDM4OS40MDMsMzk2LjA0NSIvPjxwYXRoIG1hcmtlci1lbmQ9InVybCgjbXktc3ZnX2Zsb3djaGFydC1wb2ludEVuZCkiIHN0eWxlPSJmaWxsOm5vbmU7IiBjbGFzcz0iZWRnZS10aGlja25lc3Mtbm9ybWFsIGVkZ2UtcGF0dGVybi1zb2xpZCBmbG93Y2hhcnQtbGluayBMUy1XUkQgTEUtVFNUIiBpZD0iTC1XUkQtVFNULTAiIGQ9Ik0zMjUuMjU0LDQ0NUwzMjUuMjU0LDQ1MC41QzMyNS4yNTQsNDU2LDMyNS4yNTQsNDY3LDMwNy4xNzUsNDc3Ljc2MUMyODkuMDk2LDQ4OC41MjMsMjUyLjkzOCw0OTkuMDQ2LDIzNC44NTksNTA0LjMwN0wyMTYuNzgsNTA5LjU2OSIvPjxwYXRoIG1hcmtlci1lbmQ9InVybCgjbXktc3ZnX2Zsb3djaGFydC1wb2ludEVuZCkiIHN0eWxlPSJmaWxsOm5vbmU7IiBjbGFzcz0iZWRnZS10aGlja25lc3Mtbm9ybWFsIGVkZ2UtcGF0dGVybi1zb2xpZCBmbG93Y2hhcnQtbGluayBMUy1UU1QgTEUtV1JEIiBpZD0iTC1UU1QtV1JELTAiIGQ9Ik0xMDcuMDc3LDUxMUwxMDEuNDUyLDUwNS41Qzk1LjgyNiw1MDAsODQuNTc1LDQ4OSwxMDIuNjEyLDQ3OC4xOTNDMTIwLjY0OSw0NjcuMzg3LDE2Ny45NzMsNDU2Ljc3MywxOTEuNjM1LDQ1MS40NjdMMjE1LjI5Nyw0NDYuMTYiLz48cGF0aCBtYXJrZXItZW5kPSJ1cmwoI215LXN2Z19mbG93Y2hhcnQtcG9pbnRFbmQpIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZS13aWR0aDoycHg7c3Ryb2tlLWRhc2hhcnJheTozOyIgY2xhc3M9ImVkZ2UtdGhpY2tuZXNzLW5vcm1hbCBlZGdlLXBhdHRlcm4tZG90dGVkIGZsb3djaGFydC1saW5rIExTLVZJVCBMRS1JTVAiIGlkPSJMLVZJVC1JTVAtMCIgZD0iTTYzNC42MjUsNTUuMzkyTDY1NS4zMjUsNTkuNjZDNjc2LjAyNSw2My45MjgsNzE3LjQyNCw3Mi40NjQsNzM4LjEyNCw4Mi4yMzJDNzU4LjgyNCw5Miw3NTguODI0LDEwMyw3NTguODI0LDExNEM3NTguODI0LDEyNSw3NTguODI0LDEzNiw3NTYuNDMsMTQ0Ljk0MkM3NTQuMDM3LDE1My44ODMsNzQ5LjI0OSwxNjAuNzY2LDc0Ni44NTUsMTY0LjIwOEw3NDQuNDYyLDE2Ny42NDkiLz48cGF0aCBtYXJrZXItZW5kPSJ1cmwoI215LXN2Z19mbG93Y2hhcnQtcG9pbnRFbmQpIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZS13aWR0aDoycHg7c3Ryb2tlLWRhc2hhcnJheTozOyIgY2xhc3M9ImVkZ2UtdGhpY2tuZXNzLW5vcm1hbCBlZGdlLXBhdHRlcm4tZG90dGVkIGZsb3djaGFydC1saW5rIExTLVZJVCBMRS1ERVMiIGlkPSJMLVZJVC1ERVMtMCIgZD0iTTU3Mi4xMzgsNTZMNTc0Ljc1Niw2MC4xNjdDNTc3LjM3NSw2NC4zMzMsNTgyLjYxMSw3Mi42NjcsNTg1LjIyOSw4Mi4zMzNDNTg3Ljg0OCw5Miw1ODcuODQ4LDEwMyw1ODcuODQ4LDExNEM1ODcuODQ4LDEyNSw1ODcuODQ4LDEzNiw1ODcuODQ4LDE0OS41ODNDNTg3Ljg0OCwxNjMuMTY3LDU4Ny44NDgsMTc5LjMzMyw1ODcuODQ4LDE5Ni44MzNDNTg3Ljg0OCwyMTQuMzMzLDU4Ny44NDgsMjMzLjE2Nyw1ODguNjY3LDI0Ny4yMTRDNTg5LjQ4NywyNjEuMjYsNTkxLjEyNiwyNzAuNTIxLDU5MS45NDUsMjc1LjE1MUw1OTIuNzY1LDI3OS43ODEiLz48cGF0aCBtYXJrZXItZW5kPSJ1cmwoI215LXN2Z19mbG93Y2hhcnQtcG9pbnRFbmQpIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZS13aWR0aDoycHg7c3Ryb2tlLWRhc2hhcnJheTozOyIgY2xhc3M9ImVkZ2UtdGhpY2tuZXNzLW5vcm1hbCBlZGdlLXBhdHRlcm4tZG90dGVkIGZsb3djaGFydC1saW5rIExTLVZJVCBMRS1XUkQiIGlkPSJMLVZJVC1XUkQtMCIgZD0iTTQ5OC43MDMsNTZMNDgxLjU4MSw2MC4xNjdDNDY0LjQ1OCw2NC4zMzMsNDMwLjIxNCw3Mi42NjcsNDEzLjA5MSw4Mi4zMzNDMzk1Ljk2OSw5MiwzOTUuOTY5LDEwMywzOTUuOTY5LDExNEMzOTUuOTY5LDEyNSwzOTUuOTY5LDEzNiwzOTUuOTY5LDE0OS41ODNDMzk1Ljk2OSwxNjMuMTY3LDM5NS45NjksMTc5LjMzMywzOTUuOTY5LDE5Ni44MzNDMzk1Ljk2OSwyMTQuMzMzLDM5NS45NjksMjMzLjE2NywzOTUuOTY5LDI1MkMzOTUuOTY5LDI3MC44MzMsMzk1Ljk2OSwyODkuNjY3LDM5NS45NjksMzA4LjVDMzk1Ljk2OSwzMjcuMzMzLDM5NS45NjksMzQ2LjE2NywzODkuNzc1LDM2MC41MzJDMzgzLjU4MSwzNzQuODk3LDM3MS4xOTQsMzg0Ljc5NCwzNjUuMDAxLDM4OS43NDNMMzU4LjgwNywzOTQuNjkyIi8+PHBhdGggbWFya2VyLWVuZD0idXJsKCNteS1zdmdfZmxvd2NoYXJ0LXBvaW50RW5kKSIgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2Utd2lkdGg6MnB4O3N0cm9rZS1kYXNoYXJyYXk6MzsiIGNsYXNzPSJlZGdlLXRoaWNrbmVzcy1ub3JtYWwgZWRnZS1wYXR0ZXJuLWRvdHRlZCBmbG93Y2hhcnQtbGluayBMUy1WSVQgTEUtVFNUIiBpZD0iTC1WSVQtVFNULTAiIGQ9Ik00OTAuMTcyLDQ4LjA4N0w0MzcuOTUyLDUzLjU3M0MzODUuNzMzLDU5LjA1OCwyODEuMjk0LDcwLjAyOSwyMjkuMDc1LDgxLjAxNUMxNzYuODU1LDkyLDE3Ni44NTUsMTAzLDE3Ni44NTUsMTE0QzE3Ni44NTUsMTI1LDE3Ni44NTUsMTM2LDE3Ni44NTUsMTQ5LjU4M0MxNzYuODU1LDE2My4xNjcsMTc2Ljg1NSwxNzkuMzMzLDE3Ni44NTUsMTk2LjgzM0MxNzYuODU1LDIxNC4zMzMsMTc2Ljg1NSwyMzMuMTY3LDE3Ni44NTUsMjUyQzE3Ni44NTUsMjcwLjgzMywxNzYuODU1LDI4OS42NjcsMTc2Ljg1NSwzMDguNUMxNzYuODU1LDMyNy4zMzMsMTc2Ljg1NSwzNDYuMTY3LDE3Ni44NTUsMzY1QzE3Ni44NTUsMzgzLjgzMywxNzYuODU1LDQwMi42NjcsMTc2Ljg1NSw0MjEuNUMxNzYuODU1LDQ0MC4zMzMsMTc2Ljg1NSw0NTkuMTY3LDE3Mi45NTksNDczLjM5N0MxNjkuMDYyLDQ4Ny42MjcsMTYxLjI2OCw0OTcuMjU0LDE1Ny4zNzEsNTAyLjA2N0wxNTMuNDc0LDUwNi44ODEiLz48cGF0aCBtYXJrZXItZW5kPSJ1cmwoI215LXN2Z19mbG93Y2hhcnQtcG9pbnRFbmQpIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZS13aWR0aDoycHg7c3Ryb2tlLWRhc2hhcnJheTozOyIgY2xhc3M9ImVkZ2UtdGhpY2tuZXNzLW5vcm1hbCBlZGdlLXBhdHRlcm4tZG90dGVkIGZsb3djaGFydC1saW5rIExTLVNDVCBMRS1JTVAiIGlkPSJMLVNDVC1JTVAtMCIgZD0iTTQ0MC4xNzIsNTMuNDI2TDQ3OS44NjYsNTguMDIyQzUxOS41Niw2Mi42MTcsNTk4Ljk0OCw3MS44MDksNjM4LjY0Miw4MS45MDRDNjc4LjMzNiw5Miw2NzguMzM2LDEwMyw2NzguMzM2LDExNEM2NzguMzM2LDEyNSw2NzguMzM2LDEzNiw2ODEuNzQsMTQ1LjAzMUM2ODUuMTQzLDE1NC4wNjEsNjkxLjk1LDE2MS4xMjMsNjk1LjM1NCwxNjQuNjU0TDY5OC43NTgsMTY4LjE4NCIvPjxwYXRoIG1hcmtlci1lbmQ9InVybCgjbXktc3ZnX2Zsb3djaGFydC1wb2ludEVuZCkiIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlLXdpZHRoOjJweDtzdHJva2UtZGFzaGFycmF5OjM7IiBjbGFzcz0iZWRnZS10aGlja25lc3Mtbm9ybWFsIGVkZ2UtcGF0dGVybi1kb3R0ZWQgZmxvd2NoYXJ0LWxpbmsgTFMtU0NUIExFLURFUyIgaWQ9IkwtU0NULURFUy0wIiBkPSJNMzczLjA4MSw1NkwzODUuMDU5LDYwLjE2N0MzOTcuMDM3LDY0LjMzMyw0MjAuOTkzLDcyLjY2Nyw0MzIuOTcxLDgyLjMzM0M0NDQuOTQ5LDkyLDQ0NC45NDksMTAzLDQ0NC45NDksMTE0QzQ0NC45NDksMTI1LDQ0NC45NDksMTM2LDQ0NC45NDksMTQ5LjU4M0M0NDQuOTQ5LDE2My4xNjcsNDQ0Ljk0OSwxNzkuMzMzLDQ0NC45NDksMTk2LjgzM0M0NDQuOTQ5LDIxNC4zMzMsNDQ0Ljk0OSwyMzMuMTY3LDQ1OS4wMDUsMjQ3Ljc3N0M0NzMuMDYsMjYyLjM4OCw1MDEuMTcxLDI3Mi43NzUsNTE1LjIyNiwyNzcuOTY5TDUyOS4yODEsMjgzLjE2MyIvPjxwYXRoIG1hcmtlci1lbmQ9InVybCgjbXktc3ZnX2Zsb3djaGFydC1wb2ludEVuZCkiIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlLXdpZHRoOjJweDtzdHJva2UtZGFzaGFycmF5OjM7IiBjbGFzcz0iZWRnZS10aGlja25lc3Mtbm9ybWFsIGVkZ2UtcGF0dGVybi1kb3R0ZWQgZmxvd2NoYXJ0LWxpbmsgTFMtU0NUIExFLVdSRCIgaWQ9IkwtU0NULVdSRC0wIiBkPSJNMzA3LjI0NCw1NkwzMDEuNTI0LDYwLjE2N0MyOTUuODAzLDY0LjMzMywyODQuMzYzLDcyLjY2NywyNzguNjQyLDgyLjMzM0MyNzIuOTIyLDkyLDI3Mi45MjIsMTAzLDI3Mi45MjIsMTE0QzI3Mi45MjIsMTI1LDI3Mi45MjIsMTM2LDI3Mi45MjIsMTQ5LjU4M0MyNzIuOTIyLDE2My4xNjcsMjcyLjkyMiwxNzkuMzMzLDI3Mi45MjIsMTk2LjgzM0MyNzIuOTIyLDIxNC4zMzMsMjcyLjkyMiwyMzMuMTY3LDI3Mi45MjIsMjUyQzI3Mi45MjIsMjcwLjgzMywyNzIuOTIyLDI4OS42NjcsMjcyLjkyMiwzMDguNUMyNzIuOTIyLDMyNy4zMzMsMjcyLjkyMiwzNDYuMTY3LDI3Ny40MTYsMzYwLjQzNUMyODEuOTEsMzc0LjcwNCwyOTAuODk4LDM4NC40MDgsMjk1LjM5MiwzODkuMjZMMjk5Ljg4NiwzOTQuMTEyIi8+PHBhdGggbWFya2VyLWVuZD0idXJsKCNteS1zdmdfZmxvd2NoYXJ0LXBvaW50RW5kKSIgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2Utd2lkdGg6MnB4O3N0cm9rZS1kYXNoYXJyYXk6MzsiIGNsYXNzPSJlZGdlLXRoaWNrbmVzcy1ub3JtYWwgZWRnZS1wYXR0ZXJuLWRvdHRlZCBmbG93Y2hhcnQtbGluayBMUy1TQ1QgTEUtVFNUIiBpZD0iTC1TQ1QtVFNULTAiIGQ9Ik0yNDQuMDE5LDU2TDIyMS4zMDMsNjAuMTY3QzE5OC41ODcsNjQuMzMzLDE1My4xNTUsNzIuNjY3LDEzMC40MzksODIuMzMzQzEwNy43MjMsOTIsMTA3LjcyMywxMDMsMTA3LjcyMywxMTRDMTA3LjcyMywxMjUsMTA3LjcyMywxMzYsMTA3LjcyMywxNDkuNTgzQzEwNy43MjMsMTYzLjE2NywxMDcuNzIzLDE3OS4zMzMsMTA3LjcyMywxOTYuODMzQzEwNy43MjMsMjE0LjMzMywxMDcuNzIzLDIzMy4xNjcsMTA3LjcyMywyNTJDMTA3LjcyMywyNzAuODMzLDEwNy43MjMsMjg5LjY2NywxMDcuNzIzLDMwOC41QzEwNy43MjMsMzI3LjMzMywxMDcuNzIzLDM0Ni4xNjcsMTA3LjcyMywzNjVDMTA3LjcyMywzODMuODMzLDEwNy43MjMsNDAyLjY2NywxMDcuNzIzLDQyMS41QzEwNy43MjMsNDQwLjMzMywxMDcuNzIzLDQ1OS4xNjcsMTA5LjY2Miw0NzMuMjY3QzExMS42MDEsNDg3LjM2OCwxMTUuNDc5LDQ5Ni43MzUsMTE3LjQxOCw1MDEuNDE5TDExOS4zNTcsNTA2LjEwMyIvPjxwYXRoIG1hcmtlci1lbmQ9InVybCgjbXktc3ZnX2Zsb3djaGFydC1wb2ludEVuZCkiIHN0eWxlPSJmaWxsOm5vbmU7IiBjbGFzcz0iZWRnZS10aGlja25lc3Mtbm9ybWFsIGVkZ2UtcGF0dGVybi1zb2xpZCBmbG93Y2hhcnQtbGluayBMUy1JTVAgTEUtQkVNIiBpZD0iTC1JTVAtQkVNLTAiIGQ9Ik03NDAuOTc1LDIxOUw3NDQuNjkzLDIyNC41Qzc0OC40MSwyMzAsNzU1Ljg0NiwyNDEsNzc4LjUzMSwyNTMuMDQ1QzgwMS4yMTYsMjY1LjA5LDgzOS4xNSwyNzguMTgxLDg1OC4xMTcsMjg0LjcyNkw4NzcuMDg0LDI5MS4yNzEiLz48cGF0aCBtYXJrZXItZW5kPSJ1cmwoI215LXN2Z19mbG93Y2hhcnQtcG9pbnRFbmQpIiBzdHlsZT0iZmlsbDpub25lOyIgY2xhc3M9ImVkZ2UtdGhpY2tuZXNzLW5vcm1hbCBlZGdlLXBhdHRlcm4tc29saWQgZmxvd2NoYXJ0LWxpbmsgTFMtREVTIExFLVNBRyIgaWQ9IkwtREVTLVNBRy0wIiBkPSJNNjQwLjI1MSwzMzJMNjUwLjE3NiwzMzcuNUM2NjAuMSwzNDMsNjc5Ljk0OCwzNTQsNzE5Ljg4LDM2Ni4xNDJDNzU5LjgxMSwzNzguMjg1LDgxOS44MjUsMzkxLjU3LDg0OS44MzIsMzk4LjIxMkw4NzkuODM5LDQwNC44NTUiLz48cGF0aCBtYXJrZXItZW5kPSJ1cmwoI215LXN2Z19mbG93Y2hhcnQtcG9pbnRFbmQpIiBzdHlsZT0iZmlsbDpub25lOyIgY2xhc3M9ImVkZ2UtdGhpY2tuZXNzLW5vcm1hbCBlZGdlLXBhdHRlcm4tc29saWQgZmxvd2NoYXJ0LWxpbmsgTFMtV1JEIExFLVdEIiBpZD0iTC1XUkQtV0QtMCIgZD0iTTQzNi42MjQsNDQ1TDQ2Mi42ODksNDUwLjVDNDg4Ljc1NCw0NTYsNTQwLjg4NSw0NjcsNjEyLjg0Miw0NzkuOTk2QzY4NC43OTksNDkyLjk5MSw3NzYuNTgzLDUwNy45ODMsODIyLjQ3NSw1MTUuNDc4TDg2OC4zNjcsNTIyLjk3NCIvPjwvZz48ZyBjbGFzcz0iZWRnZUxhYmVscyI+PGcgY2xhc3M9ImVkZ2VMYWJlbCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCwgMCkiIGNsYXNzPSJsYWJlbCI+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIwIiB3aWR0aD0iMCI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJlZGdlTGFiZWwiPjwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48ZyBjbGFzcz0iZWRnZUxhYmVsIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLCAwKSIgY2xhc3M9ImxhYmVsIj48Zm9yZWlnbk9iamVjdCBoZWlnaHQ9IjAiIHdpZHRoPSIwIj48ZGl2IHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHdoaXRlLXNwYWNlOiBub3dyYXA7IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCI+PHNwYW4gY2xhc3M9ImVkZ2VMYWJlbCI+PC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIGNsYXNzPSJlZGdlTGFiZWwiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAsIDApIiBjbGFzcz0ibGFiZWwiPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMCIgd2lkdGg9IjAiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0iZWRnZUxhYmVsIj48L3NwYW4+PC9kaXY+PC9mb3JlaWduT2JqZWN0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNzMuMzI0MjE4NzUsIDQ3OCkiIGNsYXNzPSJlZGdlTGFiZWwiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNC4zOTg0Mzc1LCAtOCkiIGNsYXNzPSJsYWJlbCI+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIxNiIgd2lkdGg9IjI4Ljc5Njg3NSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJlZGdlTGFiZWwiPmZpeGVzPC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDc1OC44MjQyMTg3NSwgMTE0KSIgY2xhc3M9ImVkZ2VMYWJlbCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIzLjczNDM3NSwgLTgpIiBjbGFzcz0ibGFiZWwiPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMTYiIHdpZHRoPSI0Ny40Njg3NSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJlZGdlTGFiZWwiPnJldmlld3M8L3NwYW4+PC9kaXY+PC9mb3JlaWduT2JqZWN0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTg3Ljg0NzY1NjI1LCAxOTUuNSkiIGNsYXNzPSJlZGdlTGFiZWwiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMy43MzQzNzUsIC04KSIgY2xhc3M9ImxhYmVsIj48Zm9yZWlnbk9iamVjdCBoZWlnaHQ9IjE2IiB3aWR0aD0iNDcuNDY4NzUiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0iZWRnZUxhYmVsIj5yZXZpZXdzPC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM5NS45Njg3NSwgMjUyKSIgY2xhc3M9ImVkZ2VMYWJlbCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIzLjczNDM3NSwgLTgpIiBjbGFzcz0ibGFiZWwiPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMTYiIHdpZHRoPSI0Ny40Njg3NSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJlZGdlTGFiZWwiPnJldmlld3M8L3NwYW4+PC9kaXY+PC9mb3JlaWduT2JqZWN0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTc2Ljg1NTQ2ODc1LCAzMDguNSkiIGNsYXNzPSJlZGdlTGFiZWwiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMy43MzQzNzUsIC04KSIgY2xhc3M9ImxhYmVsIj48Zm9yZWlnbk9iamVjdCBoZWlnaHQ9IjE2IiB3aWR0aD0iNDcuNDY4NzUiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0iZWRnZUxhYmVsIj5yZXZpZXdzPC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDY3OC4zMzU5Mzc1LCAxMTQpIiBjbGFzcz0iZWRnZUxhYmVsIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjMuNzM0Mzc1LCAtOCkiIGNsYXNzPSJsYWJlbCI+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIxNiIgd2lkdGg9IjQ3LjQ2ODc1Ij48ZGl2IHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHdoaXRlLXNwYWNlOiBub3dyYXA7IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCI+PHNwYW4gY2xhc3M9ImVkZ2VMYWJlbCI+cmV2aWV3czwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NDQuOTQ5MjE4NzUsIDE5NS41KSIgY2xhc3M9ImVkZ2VMYWJlbCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIzLjczNDM3NSwgLTgpIiBjbGFzcz0ibGFiZWwiPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMTYiIHdpZHRoPSI0Ny40Njg3NSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJlZGdlTGFiZWwiPnJldmlld3M8L3NwYW4+PC9kaXY+PC9mb3JlaWduT2JqZWN0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjcyLjkyMTg3NSwgMjUyKSIgY2xhc3M9ImVkZ2VMYWJlbCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTIzLjczNDM3NSwgLTgpIiBjbGFzcz0ibGFiZWwiPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMTYiIHdpZHRoPSI0Ny40Njg3NSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJlZGdlTGFiZWwiPnJldmlld3M8L3NwYW4+PC9kaXY+PC9mb3JlaWduT2JqZWN0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTA3LjcyMjY1NjI1LCAzMDguNSkiIGNsYXNzPSJlZGdlTGFiZWwiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMy43MzQzNzUsIC04KSIgY2xhc3M9ImxhYmVsIj48Zm9yZWlnbk9iamVjdCBoZWlnaHQ9IjE2IiB3aWR0aD0iNDcuNDY4NzUiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0iZWRnZUxhYmVsIj5yZXZpZXdzPC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDc2My4yODEyNSwgMjUyKSIgY2xhc3M9ImVkZ2VMYWJlbCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE3LjEyNSwgLTgpIiBjbGFzcz0ibGFiZWwiPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMTYiIHdpZHRoPSIzNC4yNSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJlZGdlTGFiZWwiPmZlZWRzPC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDY5OS43OTY4NzUsIDM2NSkiIGNsYXNzPSJlZGdlTGFiZWwiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NTE1NjI1LCAtOCkiIGNsYXNzPSJsYWJlbCI+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIxNiIgd2lkdGg9IjUzLjcwMzEyNSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJlZGdlTGFiZWwiPnJhdGlvbmFsZTwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1OTMuMDE1NjI1LCA0NzgpIiBjbGFzcz0iZWRnZUxhYmVsIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjQuNTE1NjI1LCAtOCkiIGNsYXNzPSJsYWJlbCI+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIxNiIgd2lkdGg9IjQ5LjAzMTI1Ij48ZGl2IHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHdoaXRlLXNwYWNlOiBub3dyYXA7IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCI+PHNwYW4gY2xhc3M9ImVkZ2VMYWJlbCI+d29yZGluZzwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48L2c+PGcgY2xhc3M9Im5vZGVzIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg3MjUuMDg5ODQzNzUsIDE5NS41KSIgZGF0YS1pZD0iSU1QIiBkYXRhLW5vZGU9InRydWUiIGlkPSJmbG93Y2hhcnQtSU1QLTIiIGNsYXNzPSJub2RlIGRlZmF1bHQgZGVmYXVsdCBmbG93Y2hhcnQtbGFiZWwiPjxyZWN0IGhlaWdodD0iNDciIHdpZHRoPSIxNTcuMDE1NjI1IiB5PSItMjMuNSIgeD0iLTc4LjUwNzgxMjUiIHJ5PSIwIiByeD0iMCIgc3R5bGU9IiIgY2xhc3M9ImJhc2ljIGxhYmVsLWNvbnRhaW5lciIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC03MS4wMDc4MTI1LCAtMTYpIiBzdHlsZT0iIiBjbGFzcz0ibGFiZWwiPjxyZWN0Lz48Zm9yZWlnbk9iamVjdCBoZWlnaHQ9IjMyIiB3aWR0aD0iMTQyLjAxNTYyNSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJub2RlTGFiZWwiPkltcGxlbWVudGF0aW9uIFRlYW08YnIgLz5DYXB5L0Nvcm9zaW8gLS0mZ3Q7IFNwZWM8L3NwYW4+PC9kaXY+PC9mb3JlaWduT2JqZWN0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTk3Ljg0NzY1NjI1LCAzMDguNSkiIGRhdGEtaWQ9IkRFUyIgZGF0YS1ub2RlPSJ0cnVlIiBpZD0iZmxvd2NoYXJ0LURFUy0zIiBjbGFzcz0ibm9kZSBkZWZhdWx0IGRlZmF1bHQgZmxvd2NoYXJ0LWxhYmVsIj48cmVjdCBoZWlnaHQ9IjQ3IiB3aWR0aD0iMTczLjM5MDYyNSIgeT0iLTIzLjUiIHg9Ii04Ni42OTUzMTI1IiByeT0iMCIgcng9IjAiIHN0eWxlPSIiIGNsYXNzPSJiYXNpYyBsYWJlbC1jb250YWluZXIiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNzkuMTk1MzEyNSwgLTE2KSIgc3R5bGU9IiIgY2xhc3M9ImxhYmVsIj48cmVjdC8+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIzMiIgd2lkdGg9IjE1OC4zOTA2MjUiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0ibm9kZUxhYmVsIj5EZXNpZ24gVGVhbTxiciAvPlNwZWMgLS0mZ3Q7IFN0YW5kYXJkIFNoYXBlPC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMyNS4yNTM5MDYyNSwgNDIxLjUpIiBkYXRhLWlkPSJXUkQiIGRhdGEtbm9kZT0idHJ1ZSIgaWQ9ImZsb3djaGFydC1XUkQtNCIgY2xhc3M9Im5vZGUgZGVmYXVsdCBkZWZhdWx0IGZsb3djaGFydC1sYWJlbCI+PHJlY3QgaGVpZ2h0PSI0NyIgd2lkdGg9IjIyNi43OTY4NzUiIHk9Ii0yMy41IiB4PSItMTEzLjM5ODQzNzUiIHJ5PSIwIiByeD0iMCIgc3R5bGU9IiIgY2xhc3M9ImJhc2ljIGxhYmVsLWNvbnRhaW5lciIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMDUuODk4NDM3NSwgLTE2KSIgc3R5bGU9IiIgY2xhc3M9ImxhYmVsIj48cmVjdC8+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIzMiIgd2lkdGg9IjIxMS43OTY4NzUiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0ibm9kZUxhYmVsIj5Xb3JkaW5nIFRlYW08YnIgLz5TdGFuZGFyZCBTaGFwZSAtLSZndDsgV29ya2luZyBEcmFmdDwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMzEuMTEzMjgxMjUsIDUzNC41KSIgZGF0YS1pZD0iVFNUIiBkYXRhLW5vZGU9InRydWUiIGlkPSJmbG93Y2hhcnQtVFNULTUiIGNsYXNzPSJub2RlIGRlZmF1bHQgZGVmYXVsdCBmbG93Y2hhcnQtbGFiZWwiPjxyZWN0IGhlaWdodD0iNDciIHdpZHRoPSIxNjEuMTU2MjUiIHk9Ii0yMy41IiB4PSItODAuNTc4MTI1IiByeT0iMCIgcng9IjAiIHN0eWxlPSIiIGNsYXNzPSJiYXNpYyBsYWJlbC1jb250YWluZXIiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNzMuMDc4MTI1LCAtMTYpIiBzdHlsZT0iIiBjbGFzcz0ibGFiZWwiPjxyZWN0Lz48Zm9yZWlnbk9iamVjdCBoZWlnaHQ9IjMyIiB3aWR0aD0iMTQ2LjE1NjI1Ij48ZGl2IHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHdoaXRlLXNwYWNlOiBub3dyYXA7IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCI+PHNwYW4gY2xhc3M9Im5vZGVMYWJlbCI+VGVzdGluZyBUZWFtPGJyIC8+V29yZGluZyAtLSZndDsgVGVzdCBDYXNlczwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1NjIuMzk4NDM3NSwgNDAuNSkiIGRhdGEtaWQ9IlZJVCIgZGF0YS1ub2RlPSJ0cnVlIiBpZD0iZmxvd2NoYXJ0LVZJVC0wIiBjbGFzcz0ibm9kZSBkZWZhdWx0IGRlZmF1bHQgZmxvd2NoYXJ0LWxhYmVsIj48cmVjdCBoZWlnaHQ9IjMxIiB3aWR0aD0iMTQ0LjQ1MzEyNSIgeT0iLTE1LjUiIHg9Ii03Mi4yMjY1NjI1IiByeT0iMCIgcng9IjAiIHN0eWxlPSIiIGNsYXNzPSJiYXNpYyBsYWJlbC1jb250YWluZXIiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNjQuNzI2NTYyNSwgLTgpIiBzdHlsZT0iIiBjbGFzcz0ibGFiZWwiPjxyZWN0Lz48Zm9yZWlnbk9iamVjdCBoZWlnaHQ9IjE2IiB3aWR0aD0iMTI5LjQ1MzEyNSI+PGRpdiBzdHlsZT0iZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aGl0ZS1zcGFjZTogbm93cmFwOyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPjxzcGFuIGNsYXNzPSJub2RlTGFiZWwiPlZpc2lvbiBJbnRlZ3JpdHkgVGVhbTwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzMjguNTIzNDM3NSwgNDAuNSkiIGRhdGEtaWQ9IlNDVCIgZGF0YS1ub2RlPSJ0cnVlIiBpZD0iZmxvd2NoYXJ0LVNDVC0xIiBjbGFzcz0ibm9kZSBkZWZhdWx0IGRlZmF1bHQgZmxvd2NoYXJ0LWxhYmVsIj48cmVjdCBoZWlnaHQ9IjMxIiB3aWR0aD0iMjIzLjI5Njg3NSIgeT0iLTE1LjUiIHg9Ii0xMTEuNjQ4NDM3NSIgcnk9IjAiIHJ4PSIwIiBzdHlsZT0iIiBjbGFzcz0iYmFzaWMgbGFiZWwtY29udGFpbmVyIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEwNC4xNDg0Mzc1LCAtOCkiIHN0eWxlPSIiIGNsYXNzPSJsYWJlbCI+PHJlY3QvPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMTYiIHdpZHRoPSIyMDguMjk2ODc1Ij48ZGl2IHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHdoaXRlLXNwYWNlOiBub3dyYXA7IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCI+PHNwYW4gY2xhc3M9Im5vZGVMYWJlbCI+c3RkOjpleGVjdXRpb24gQ29tcGF0aWJpbGl0eSBUZWFtPC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkyNy4wMTE3MTg3NSwgMzA4LjUpIiBkYXRhLWlkPSJCRU0iIGRhdGEtbm9kZT0idHJ1ZSIgaWQ9ImZsb3djaGFydC1CRU0tMjkiIGNsYXNzPSJub2RlIGRlZmF1bHQgZGVmYXVsdCBmbG93Y2hhcnQtbGFiZWwiPjxyZWN0IGhlaWdodD0iMzEiIHdpZHRoPSIxMDYuODI4MTI1IiB5PSItMTUuNSIgeD0iLTUzLjQxNDA2MjUiIHJ5PSIwIiByeD0iMCIgc3R5bGU9IiIgY2xhc3M9ImJhc2ljIGxhYmVsLWNvbnRhaW5lciIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00NS45MTQwNjI1LCAtOCkiIHN0eWxlPSIiIGNsYXNzPSJsYWJlbCI+PHJlY3QvPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMTYiIHdpZHRoPSI5MS44MjgxMjUiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0ibm9kZUxhYmVsIj5CZW1hbiBQcm9qZWN0PC9zcGFuPjwvZGl2PjwvZm9yZWlnbk9iamVjdD48L2c+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDk1NS4wMzUxNTYyNSwgNDIxLjUpIiBkYXRhLWlkPSJTQUciIGRhdGEtbm9kZT0idHJ1ZSIgaWQ9ImZsb3djaGFydC1TQUctMzEiIGNsYXNzPSJub2RlIGRlZmF1bHQgZGVmYXVsdCBmbG93Y2hhcnQtbGFiZWwiPjxyZWN0IGhlaWdodD0iMzEiIHdpZHRoPSIxNjIuODc1IiB5PSItMTUuNSIgeD0iLTgxLjQzNzUiIHJ5PSIwIiByeD0iMCIgc3R5bGU9IiIgY2xhc3M9ImJhc2ljIGxhYmVsLWNvbnRhaW5lciIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC03My45Mzc1LCAtOCkiIHN0eWxlPSIiIGNsYXNzPSJsYWJlbCI+PHJlY3QvPjxmb3JlaWduT2JqZWN0IGhlaWdodD0iMTYiIHdpZHRoPSIxNDcuODc1Ij48ZGl2IHN0eWxlPSJkaXNwbGF5OiBpbmxpbmUtYmxvY2s7IHdoaXRlLXNwYWNlOiBub3dyYXA7IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCI+PHNwYW4gY2xhc3M9Im5vZGVMYWJlbCI+U0FHRSBLbm93bGVkZ2UgQmFzZTwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5MzguOTMzNTkzNzUsIDUzNC41KSIgZGF0YS1pZD0iV0QiIGRhdGEtbm9kZT0idHJ1ZSIgaWQ9ImZsb3djaGFydC1XRC0zMyIgY2xhc3M9Im5vZGUgZGVmYXVsdCBkZWZhdWx0IGZsb3djaGFydC1sYWJlbCI+PHJlY3QgaGVpZ2h0PSIzMSIgd2lkdGg9IjEzMC42NzE4NzUiIHk9Ii0xNS41IiB4PSItNjUuMzM1OTM3NSIgcnk9IjAiIHJ4PSIwIiBzdHlsZT0iIiBjbGFzcz0iYmFzaWMgbGFiZWwtY29udGFpbmVyIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTU3LjgzNTkzNzUsIC04KSIgc3R5bGU9IiIgY2xhc3M9ImxhYmVsIj48cmVjdC8+PGZvcmVpZ25PYmplY3QgaGVpZ2h0PSIxNiIgd2lkdGg9IjExNS42NzE4NzUiPjxkaXYgc3R5bGU9ImRpc3BsYXk6IGlubGluZS1ibG9jazsgd2hpdGUtc3BhY2U6IG5vd3JhcDsiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIj48c3BhbiBjbGFzcz0ibm9kZUxhYmVsIj5DKysgV29ya2luZyBEcmFmdDwvc3Bhbj48L2Rpdj48L2ZvcmVpZ25PYmplY3Q+PC9nPjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=" alt /></p>
-<h3 id="implementation-team">4.1 Implementation Team</h3>
-<p>Examines Capy and Corosio - the working code. Writes a spec: what the
-libraries do, how they do it, what the interfaces are, what the
-invariants are. The spec is a faithful description of deployed behavior,
-not a design document. The spec is the input to the Design Team.</p>
-<h3 id="design-team">4.2 Design Team</h3>
-<p>Takes the spec and determines the standard shape. What belongs in
-<code>std</code>? What are the concepts, the type requirements, the
-customization points? Where does the design differ from the
-implementation and why? Sender interop, allocator policy, error model,
-and ABI boundaries are decided here.</p>
-<h3 id="wording-team">4.3 Wording Team</h3>
-<p>Takes the standard shape and produces formal wording for the C++
-Working Draft. Clause structure, stable names, cross-references,
-editorial conventions. This is LWG-quality prose.</p>
-<h3 id="testing-team">4.4 Testing Team</h3>
-<p>Takes the wording and debugs it. Writes test cases against the
-wording - not the implementation. Finds ambiguities, contradictions, and
-missing edge cases. This team is open to non-WG21 members. Anyone who
-can read a specification and write a test is welcome.</p>
-<h3 id="vision-integrity-team">4.5 Vision Integrity Team</h3>
-<p>Ensures the result preserves the architectural properties that make
-the design work: type erasure, ABI stability, separate compilation, and
-the three-layer architecture documented in <a href="https://wg21.link/p4100r0">P4100R0</a><sup>[1]</sup> Section 6.
-Reviews every output of the pipeline for architectural coherence.</p>
-<p>The Networking TS lost its architectural coherence through successive
-compromises, each individually reasonable (<a href="https://wg21.link/p4094r0">P4094R0</a><sup>[8]</sup>). This team
-exists so that does not happen again. The Capy and Corosio architects
-staff this team.</p>
-<h3 id="stdexecution-compatibility-team">4.6 <code>std::execution</code>
-Compatibility Team</h3>
-<p>Ensures every artifact produced by the pipeline has a clean bridge to
-<code>std::execution</code>. Reviews the spec, the standard shape, and
-the wording at every stage. Guarantees that coroutine-native awaitables
-can be consumed from sender-based code and vice versa. Documents the
-bridge cost at each boundary.</p>
-<p>The reciprocal commitment: the pipeline teams accept that
-interoperability with <code>std::execution</code> is a hard requirement
-and design for it. The Compatibility Team accepts that coroutine-native
-I/O makes different trade-offs and does not require that networking
-adopt sender semantics internally. Both sides acknowledge the cost. Both
-sides get a voice.</p>
-<h3 id="continuous-production">4.7 Continuous Production</h3>
-<p>Each team works paper by paper. The eleven papers flow through the
-pipeline. Multiple papers occupy different stages simultaneously - Paper
-1 in Wording while Paper 2 is in Design while Paper 3 is in
-Implementation. Every handoff produces a visible artifact in the GitHub
-repository.</p>
-<hr />
-<h2 id="the-people">5. The People</h2>
-<p>WG21 has enormous talent. The following teams reflect the work areas.
-The Vision Integrity Team is staffed by the Capy and Corosio architects.
-All other teams are open - anyone whose expertise aligns with the work
-is welcome.</p>
-<h3 id="vision-integrity-team-1">5.1 Vision Integrity Team</h3>
+<h2 id="four-patterns">2. Four Patterns</h2>
 <table>
 <colgroup>
-<col style="width: 22%" />
-<col style="width: 15%" />
-<col style="width: 61%" />
+<col style="width: 40%" />
+<col style="width: 59%" />
 </colgroup>
 <thead>
 <tr>
-<th>Person</th>
-<th>Affiliation</th>
-<th>Demonstrated Strengths</th>
+<th>Pattern</th>
+<th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Vinnie Falco</td>
-<td>C++ Alliance</td>
-<td>Capy/Corosio architect; Network Endeavor author</td>
+<td>1. Yes - But - Actually</td>
+<td>Claim walked back within the same section</td>
 </tr>
 <tr>
-<td>Steve Gerbino</td>
-<td>C++ Alliance</td>
-<td>Corosio co-author; constructed comparisons</td>
+<td>2. This Way, Then That Way</td>
+<td>Different evidentiary standards for the same concern</td>
 </tr>
 <tr>
-<td>Mohammad Nejati</td>
-<td>C++ Alliance</td>
-<td>Corosio co-author; platform backends</td>
+<td>3. Dismiss, Then Adopt</td>
+<td>Prior art condemned, then used as foundation</td>
 </tr>
 <tr>
-<td>Mungo Gill</td>
-<td>C++ Alliance</td>
-<td>Capy co-author; frame allocator propagation</td>
-</tr>
-<tr>
-<td>Michael Vandeberg</td>
-<td>C++ Alliance</td>
-<td>Corosio co-author</td>
-</tr>
-</tbody>
-</table>
-<h3 id="stdexecution-compatibility-team-1">5.2
-<code>std::execution</code> Compatibility Team</h3>
-<table>
-<thead>
-<tr>
-<th>Person</th>
-<th>Affiliation</th>
-<th>Demonstrated Strengths</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TBD</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="implementation-team-1">5.3 Implementation Team</h3>
-<table>
-<thead>
-<tr>
-<th>Person</th>
-<th>Affiliation</th>
-<th>Demonstrated Strengths</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TBD</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="design-team-1">5.4 Design Team</h3>
-<table>
-<thead>
-<tr>
-<th>Person</th>
-<th>Affiliation</th>
-<th>Demonstrated Strengths</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TBD</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="wording-team-1">5.5 Wording Team</h3>
-<table>
-<thead>
-<tr>
-<th>Person</th>
-<th>Affiliation</th>
-<th>Demonstrated Strengths</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TBD</td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<h3 id="testing-team-1">5.6 Testing Team</h3>
-<table>
-<thead>
-<tr>
-<th>Person</th>
-<th>Affiliation</th>
-<th>Demonstrated Strengths</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>TBD</td>
-<td></td>
-<td></td>
+<td>4. First Yes, Then No</td>
+<td>Stated priorities contradicted by the design</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="corporate-stakeholders">6. Corporate Stakeholders</h2>
-<p>Networking in C++ affects every company that deploys C++ at scale.
-This endeavor explicitly invites corporate stakeholders to put their
-requirements on the table - openly, at every stage.</p>
+<h2 id="the-record">3. The Record</h2>
+<h3 id="yes---but---actually">Yes - But - Actually</h3>
+<p>Four consecutive sections about the coroutine/sender interface follow
+the same structure.</p>
 <table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
 <thead>
 <tr>
-<th>Organization</th>
-<th>Stake</th>
+<th></th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.14</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>TBD</td>
-<td></td>
+<td><strong>Yes</strong></td>
+<td>“it is sensible to pass both the error code and the result (if any)
+through the value channel”</td>
+</tr>
+<tr>
+<td><strong>But</strong></td>
+<td>“In other cases, the partial success is more of a partial
+failure.”</td>
+</tr>
+<tr>
+<td><strong>Actually</strong></td>
+<td>“sending the error through the value channel loses valuable
+contextual information”</td>
 </tr>
 </tbody>
 </table>
-<p>If a company needs something from the design, they say so. The
-requirement is documented, visible, and addressed. No hidden agendas.
-Every stakeholder’s cards are on the table.</p>
+<p>The section may be exploring a genuine design tension rather than
+contradicting itself - partial success genuinely admits two reasonable
+framings.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.16</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Yes</strong></td>
+<td>“Many senders can be trivially made awaitable”</td>
+</tr>
+<tr>
+<td><strong>But</strong></td>
+<td>“If the coroutine type opts in to sender support”</td>
+</tr>
+<tr>
+<td><strong>Actually</strong></td>
+<td>“Only some senders can be made awaitable directly because of the
+fact that callbacks are more expressive than coroutines.”</td>
+</tr>
+</tbody>
+</table>
+<p>The progression from “many” to “only some” may reflect an honest
+narrowing of scope as the section develops the details.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.15</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Yes</strong></td>
+<td>“In truth there will be no problem”</td>
+</tr>
+<tr>
+<td><strong>But</strong></td>
+<td>“By ‘generally awaitable’ we mean types that don’t require custom
+<code>await_transform</code> trickery”</td>
+</tr>
+<tr>
+<td><strong>Actually</strong></td>
+<td>“If you are not bothered by the possibility of allocations and
+indirections”</td>
+</tr>
+</tbody>
+</table>
+<p>The intended audience for Section 4.15 may be users who have already
+accepted these costs for the convenience of general awaitability.
+Section 1.9.2 calls these same allocations and indirections a
+“deal-breaker.”</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.17</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Yes</strong></td>
+<td>“Cancellation of a sender can unwind a stack of coroutines”</td>
+</tr>
+<tr>
+<td><strong>But</strong></td>
+<td>“Provided that the promise types of the calling coroutines also
+inherit from <code>with_awaitable_senders</code>”</td>
+</tr>
+<tr>
+<td><strong>Actually</strong></td>
+<td>“Many promise types will not implement
+<code>unhandled_stopped</code>. When an uncatchable stopped exception
+tries to propagate through such a coroutine, it is treated as an
+unhandled exception and <code>terminate</code> is called.”</td>
+</tr>
+</tbody>
+</table>
+<p>The capability is real for promise types that opt in. The failure
+mode affects promise types that do not, and the section documents a
+limitation honestly rather than hiding it.</p>
 <hr />
-<h2 id="the-pipeline-in-motion">7. The Pipeline in Motion</h2>
-<p><a href="https://wg21.link/p4100r0">P4100R0</a><sup>[1]</sup> Section
-11 defines the timeline: all eleven papers through LEWG by end of 2028,
-LWG wording through 2029H1. The pipeline maps onto that timeline.</p>
-<p>Multiple papers occupy different pipeline stages simultaneously.
-While Paper 1 (Coroutines for I/O) is in Wording review, Paper 2 (I/O
-Buffer Ranges) can be in Design, and Paper 3 (Stream Concepts) can be in
-Implementation. The Beman Project receives implementation output
-continuously. Each handoff produces a visible artifact in the GitHub
-repository.</p>
-<p>The eleven papers divide into two stages that mirror the library
-split:</p>
-<p><strong>Stage One</strong> (Papers 1-4) - Pure C++20 abstractions. No
-platform dependency. Coroutine execution protocol, buffer concepts,
-stream concepts, coroutine runtime. These enable sans-I/O protocols in
-the ecosystem.</p>
-<p><strong>Stage Two</strong> (Papers 5-11) - Platform I/O. Timers,
-signals, files, TCP, DNS, UDP, TLS. The first three papers in Stage Two
-have nothing to do with networking. The committee can standardize seven
-papers before anyone says the word “socket.”</p>
-<p>If C++29 proves too aggressive, the Stage One papers deliver
-standalone value for C++32. The committee ships what is ready. Each
-paper that completes the pipeline is a shippable unit - the endeavor
-does not require all eleven papers to succeed for any of them to
-succeed. Partial delivery is still delivery. The ecosystem benefits from
-coroutine execution protocol and buffer concepts whether or not TLS
-makes the same standard.</p>
+<h3 id="this-way-then-that-way">This Way, Then That Way</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2
+(paragraph 2)</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2
+(paragraph 4)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“coroutine frames require an unavoidable dynamic allocation”</td>
+<td>“the HALO optimization…completely eliminating the runtime
+overhead”</td>
+</tr>
+</tbody>
+</table>
+<p>The authors may view HALO as too unreliable to change the fundamental
+cost model, even while acknowledging its existence as a compiler
+optimization.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.9.4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“the extra allocations and indirections are a deal-breaker”</td>
+<td>“concerns related to runtime overhead of the design in
+single-threaded scenarios and these concerns are still being
+investigated”</td>
+</tr>
+</tbody>
+</table>
+<p>Coroutine allocation costs are well-characterized from years of field
+deployment. Sender overhead in single-threaded scenarios is a newer area
+of study. The different treatment may reflect different levels of
+maturity.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 5.6</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“HALO requires a sophisticated compiler, and a fair number of stars
+need to align”</td>
+<td>“the compiler is able to see a chain of work described using senders
+as a tree of tail calls, allowing for inlining and removal of most of
+the sender machinery”</td>
+</tr>
+</tbody>
+</table>
+<p>Sender optimization relies on inlining statically dispatched calls -
+a simpler class of optimization than the alias analysis HALO requires.
+The different confidence levels may reflect this structural
+difference.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2
+(conclusion)</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2
+(sole evidence)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“the extra allocations and indirections are a deal-breaker”</td>
+<td>“In our experience, more often than not”</td>
+</tr>
+</tbody>
+</table>
+<p>The authors’ extensive production experience - documented in Section
+1.10.1 - may justify stronger conclusions than “more often than not”
+would normally support.</p>
 <hr />
-<h2 id="the-stakes">8. The Stakes</h2>
-<p>This is not just about shipping a feature.</p>
-<p>The committee has been perceived - by its own members, by the broader
-C++ community, and by observers in other language ecosystems - as unable
-to coordinate large efforts. Networking is the longest-running example.
-Twenty-one years from first proposal to the present, and the standard
-has no sockets, no DNS, no TLS.</p>
-<p>The talent exists. The implementations exist. The technical
-foundations are documented. The bridge mechanisms are explored. What has
-been missing is a way of working that lets the committee’s collective
-expertise converge on a shared goal instead of diverging into competing
-visions.</p>
-<p>If this endeavor succeeds, the committee will have delivered
-networking for C++29. That alone justifies the effort. But the committee
-will also have demonstrated something larger: that WG21 can organize a
-multi-year, multi-team, cross-faction effort and ship the result. That
-is a model the committee can use again - for reflection, for pattern
-matching, for whatever comes next.</p>
-<p>The work is defined. The people are here. The question is whether we
-choose to do this together.</p>
+<h3 id="dismiss-then-adopt">Dismiss, Then Adopt</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.3</th>
+<th>The receiver concept</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“The lack of a standard callback shape obstructs generic
+design”</td>
+<td><code>set_value</code>, <code>set_error</code>,
+<code>set_stopped</code> - a standardized callback shape with
+cancellation support</td>
+</tr>
+</tbody>
+</table>
+<p>Defining a standard callback shape is arguably the thesis of the
+receiver concept, not a contradiction of the prior-art critique.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.1</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“Futures, as traditionally realized, require the dynamic allocation
+and management of a shared state, synchronization, and typically
+type-erasure of work and continuation… These expenses rule out the
+future abstraction for many uses”</td>
+<td><code>split</code> converts single-shot to multi-shot using shared
+state, synchronization, and dynamic allocation</td>
+</tr>
+</tbody>
+</table>
+<p>Unlike futures, where these costs are mandatory, <code>split</code>
+makes them opt-in. Users who do not fork do not pay.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section
+1.10.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“we consider coroutines a poor choice for a basis of all standard
+async”</td>
+<td>“In all the cases mentioned above, developers mix-and-match between
+the sender algorithms in Unifex and Unifex’s coroutine type,
+<code>unifex::task</code>.”</td>
+</tr>
+</tbody>
+</table>
+<p>This mix-and-match usage may reflect the intended design - senders as
+the composable foundation, coroutines as the ergonomic layer.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section
+1.10.1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“we consider coroutines a poor choice for a basis of all standard
+async”</td>
+<td>“Coroutines are easier to understand than chained futures so the
+team was able to meet requirements for certain constrained environments
+that would have been too complicated to maintain with futures.”</td>
+</tr>
+</tbody>
+</table>
+<p>The authors likely intend a distinction between coroutines as a basis
+abstraction and coroutines as a user-facing tool. Production use of
+coroutines alongside senders is consistent with this layered view.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.9.2</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.15</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“we consider coroutines a poor choice for a basis of all standard
+async”</td>
+<td>“we expect that coroutines and awaitables will be how a great many
+will choose to express their asynchronous code”</td>
+</tr>
+</tbody>
+</table>
+<p>If coroutines are understood as a consumer of the sender abstraction
+rather than a competitor to it, this relationship is architectural
+rather than contradictory.</p>
+<hr />
+<h3 id="first-yes-then-no">First Yes, Then No</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.9.4</th>
+<th>Context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“these concerns are still being investigated” / “This paper will be
+updated in the future with any changes that arise from the
+investigations into P2175R0.”</td>
+<td>This is R10, the revision that became C++26.</td>
+</tr>
+</tbody>
+</table>
+<p>All shipped standards contain open questions. The committee may have
+judged the specification ready despite these items, with investigation
+continuing in parallel.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.2</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section
+4.20.11</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“Have clear and concise answers for where things execute.”</td>
+<td>“It completes inline on the execution resource on which the last
+input sender completes”</td>
+</tr>
+</tbody>
+</table>
+<p>The answer may be clear at a different level of abstraction - the
+last child to complete determines the execution context, which is a
+well-defined rule even if the result varies at runtime.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.2</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.17</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“Support cancellation, which is not an error.”</td>
+<td>“the coroutine behaves as if an uncatchable exception had been
+thrown from the <code>co_await</code> expression”</td>
+</tr>
+</tbody>
+</table>
+<p>Implementing cancellation through an exception-like mechanism in
+coroutines may be the least-bad option given the constraints of the
+coroutine specification, even if it blurs the conceptual boundary.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 1.2</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.9.3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“Make it easy to be correct by construction.”</td>
+<td>“A stop-request can be issued concurrently from another thread. This
+means the implementation of <code>execution::start()</code> needs to be
+careful to ensure that, once a stop callback has been registered, that
+there are no data-races”</td>
+</tr>
+</tbody>
+</table>
+<p>Cancellation in concurrent systems is inherently difficult. The
+tension between correctness by construction and the practical complexity
+of stop-request handling may be an honest acknowledgment of a hard
+problem rather than a design failure.</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.8</th>
+<th><a href="https://wg21.link/p2300r10">P2300R10</a> Section 4.7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“Senders are forkable”</td>
+<td>“A single-shot sender can only be connected to a receiver at most
+once.”</td>
+</tr>
+</tbody>
+</table>
+<p>The design may intend single-shot as the zero-overhead default, with
+<code>split</code> as an explicit opt-in for use cases that genuinely
+require shared state.</p>
+<hr />
+<h2 id="example-code">4. Example Code</h2>
+<p>The following code is from <a href="https://wg21.link/p2300r10">P2300R10</a>. No external code is
+shown.</p>
+<h3 id="the-retry-algorithm">The <code>retry</code> algorithm</h3>
+<p>Section 4.16 presents a coroutine implementation of
+<code>retry</code> and calls it “trivial”:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">class</span> S<span class="op">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">requires</span> single<span class="op">-</span>sender<span class="op">&lt;</span>S<span class="op">&amp;&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>task<span class="op">&lt;</span>single<span class="op">-</span>sender<span class="op">-</span>value<span class="op">-</span>type<span class="op">&lt;</span>S<span class="op">&gt;&gt;</span> retry<span class="op">(</span>S s<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(;;)</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      <span class="cf">co_return</span> <span class="cf">co_await</span> s<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">catch</span><span class="op">(...)</span> <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Section 1.5.2 presents the sender implementation of the same
+algorithm. It requires a custom receiver, an operation state with
+optional re-emplacement, a conversion utility for non-movable types, a
+sender with completion signature transforms, and exception handling
+across retry boundaries. The full implementation is approximately 125
+lines.</p>
+<p>The sender implementation provides compile-time composition and type
+safety that the coroutine version does not - library authors write this
+machinery once so that users can write the seven-line version. This is
+the <code>_retry_receiver</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">template</span><span class="op">&lt;</span><span class="kw">class</span> S<span class="op">,</span> <span class="kw">class</span> R<span class="op">&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> _retry_receiver <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  _retry_op<span class="op">&lt;</span>S<span class="op">,</span> R<span class="op">&gt;*</span> <span class="va">o_</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> set_value<span class="op">(</span><span class="kw">auto</span><span class="op">&amp;&amp;...</span> as<span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="kw">noexcept</span> <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    stdexec<span class="op">::</span>set_value<span class="op">(</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">std::</span>move<span class="op">(</span><span class="va">o_</span><span class="op">-&gt;</span><span class="va">r_</span><span class="op">),</span> <span class="op">(</span><span class="kw">decltype</span><span class="op">(</span>as<span class="op">)&amp;&amp;)</span> as<span class="op">...);</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> set_error<span class="op">(</span><span class="kw">auto</span><span class="op">&amp;&amp;)</span> <span class="op">&amp;&amp;</span> <span class="kw">noexcept</span> <span class="op">{</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="va">o_</span><span class="op">-&gt;</span>_retry<span class="op">();</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">void</span> set_stopped<span class="op">()</span> <span class="op">&amp;&amp;</span> <span class="kw">noexcept</span> <span class="op">{</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    stdexec<span class="op">::</span>set_stopped<span class="op">(</span><span class="bu">std::</span>move<span class="op">(</span><span class="va">o_</span><span class="op">-&gt;</span><span class="va">r_</span><span class="op">));</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="the-receiver-is-a-callback">The receiver is a callback</h3>
+<p>Section 1.9.3 states: “The lack of a standard callback shape
+obstructs generic design” and “few of these possibilities accommodate
+cancellation signals.”</p>
+<p>The <code>_retry_receiver</code> above has three entry points:</p>
+<ul>
+<li><code>set_value</code> - success callback</li>
+<li><code>set_error</code> - error callback</li>
+<li><code>set_stopped</code> - cancellation callback</li>
+</ul>
+<p>This is a standard callback shape that accommodates cancellation
+signals. Standardizing this shape may be precisely the solution the
+prior-art section envisions.</p>
+<hr />
+<h2 id="conclusion">5. Conclusion</h2>
+<p>A sprawling asynchronous library grounded in continuation-passing
+style inevitably confronts trade-offs at every level of the design - the
+specification serves the committee best where it confronts them too.</p>
 <hr />
 <h2 id="acknowledgments">Acknowledgments</h2>
-<p>The authors of <code>std::execution</code> - Eric Niebler, Kirk
-Shoop, Lewis Baker, Lee Howes, Michał Dominiak, Michael Garland, Bryce
-Adelstein Lelbach, and their collaborators - invested years in a
-principled async framework for C++. Their work on sender/receiver serves
-domains where compile-time composition and heterogeneous dispatch
-matter. This endeavor builds alongside that work and depends on their
-expertise for interoperability.</p>
-<p>Chris Kohlhoff designed Asio’s stream model, buffer sequences, and
-executor architecture. Twenty years of production deployment is the
-foundation this work builds on.</p>
-<p>The committee designed C++20 coroutines. Gor Nishanov, Lewis Baker,
-and their collaborators gave C++ the language mechanisms that make
-coroutine-native I/O possible.</p>
-<p>Dietmar Kühl’s work on sender-based networking (<a href="https://wg21.link/p2762">P2762</a><sup>[9]</sup>) and the
-coroutine task type (<a href="https://wg21.link/p3552">P3552</a><sup>[10]</sup>) explored the
-design space from the sender side. That exploration informs the bridge
-design.</p>
-<p>Mark Hoemmen’s stewardship of <code>std::execution</code> through
-C++26 demonstrated the sustained effort required to shepherd a large
-proposal through the committee process.</p>
-<p>The Beman Project, led by David Sankel, provides the reference
-implementation infrastructure that makes continuous production
-possible.</p>
-<p>Peter Dimov, Andrzej Krzemieński, John Lakos, Howard Hinnant, Nina
-Ranns, Nicolai Josuttis, Jonathan Müller, Ville Voutilainen, and Inbal
-Levi bring decades of library design, wording, and process expertise
-that this endeavor cannot succeed without.</p>
-<p>Ruben Perez, Marcelo Zimbres Silva, Klemens Morgenstern, and the
-Boost.Postgres team adopted Capy and Corosio independently. Their
-experience is evidence that cannot be manufactured.</p>
-<p>Steve Gerbino, Mohammad Nejati, Mungo Gill, and Michael Vandeberg
-co-authored the libraries that make this proposal concrete rather than
-aspirational.</p>
+<p>The author thanks Alexander Stepanov for participating in the Boost
+documentary and for laying the foundation for modern C++.</p>
 <hr />
 <h2 id="references">References</h2>
 <ol type="1">
-<li><p><a href="https://wg21.link/p4100r0">P4100R0</a> - “The Network
-Endeavor: Coroutine-Native I/O for C++29” (Vinnie Falco, Steve Gerbino,
-Michael Vandeberg, Mungo Gill, Mohammad Nejati, 2026).
-https://wg21.link/p4100r0</p></li>
-<li><p><a href="https://wg21.link/n1925">N1925</a> - “A Proposal to Add
-Networking Utilities to the C++ Standard Library” (Chris Kohlhoff,
-2005). https://wg21.link/n1925</p></li>
-<li><p><a href="https://wg21.link/p2453r0">P2453R0</a> - “2021 October
-Library Evolution Poll Outcomes” (Bryce Adelstein Lelbach, Fabio
-Fracassi, Ben Craig, 2022). https://wg21.link/p2453r0</p></li>
-<li><p><a href="https://wg21.link/p4088r0">P4088R0</a> - “What C++20
-Coroutines Already Buy The Standard” (Vinnie Falco, 2026).
-https://wg21.link/p4088r0</p></li>
-<li><p><a href="https://wg21.link/p4099r0">P4099R0</a> - “Twenty-One
-Years: The Arc of Networking in C++” (Vinnie Falco, 2026).
-https://wg21.link/p4099r0</p></li>
-<li><p><a href="https://wg21.link/p4092r0">P4092R0</a> - “Consuming
-Senders from Coroutine-Native Code” (Vinnie Falco, Steve Gerbino, 2026).
-https://wg21.link/p4092r0</p></li>
-<li><p><a href="https://wg21.link/p4093r0">P4093R0</a> - “Producing
-Senders from Coroutine-Native Code” (Vinnie Falco, Steve Gerbino, 2026).
-https://wg21.link/p4093r0</p></li>
-<li><p><a href="https://wg21.link/p4094r0">P4094R0</a> - “The Cost of
-Unification” (Vinnie Falco, 2026). https://wg21.link/p4094r0</p></li>
-<li><p><a href="https://wg21.link/p2762">P2762</a> -
-“Sender/Receiver-based Networking” (Dietmar Kühl, 2023).
-https://wg21.link/p2762</p></li>
-<li><p><a href="https://wg21.link/p3552">P3552</a> - “Add a Coroutine
-Task Type” (Dietmar Kühl, Maikel Nadolski, 2025).
-https://wg21.link/p3552</p></li>
-<li><p><a href="https://wg21.link/p2300r10">P2300R10</a> -
-“<code>std::execution</code>” (Michał Dominiak, Lewis Baker, Lee Howes,
-Kirk Shoop, Michael Garland, Eric Niebler, Bryce Adelstein Lelbach,
-2024). https://wg21.link/p2300r10</p></li>
-<li><p><a href="https://wg21.link/p4003r0">P4003R0</a> - “Coroutines for
-I/O” (Vinnie Falco, Steve Gerbino, Mungo Gill, 2026).
-https://wg21.link/p4003r0</p></li>
+<li><a href="https://wg21.link/p2300r10">P2300R10</a> - “std::execution”
+(Michał Dominiak et al., 2024). https://wg21.link/p2300r10</li>
 </ol>
 
 </body>

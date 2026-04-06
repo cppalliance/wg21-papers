@@ -382,7 +382,7 @@ independently adopting the coroutine-native I/O stack.
 
 4. [P4014R0](https://wg21.link/p4014r0) - "The Sender Sub-Language," Falco et al. https://wg21.link/p4014r0
 
-5. [P4088R0](https://wg21.link/p4088r0) - "The Case for Coroutines," Falco et al. https://wg21.link/p4088r0
+5. [P4088R0](https://wg21.link/p4088r0) - "What C++20 Coroutines Already Buy The Standard," Falco et al. https://wg21.link/p4088r0
 
 6. [P2300R10](https://wg21.link/p2300r10) - "std::execution," Niebler, Baker, Shoop et al. https://wg21.link/p2300r10
 

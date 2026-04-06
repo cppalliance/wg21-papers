@@ -411,7 +411,7 @@ The author thanks Christopher Kohlhoff for the executor model, [N3747](https://w
 
 20. [P4048R0](https://wg21.link/p4048r0) - "Networking for C++29: A Call to Action" (Vinnie Falco, 2026). https://wg21.link/p4048r0
 
-21. [P4088R0](https://wg21.link/p4088r0) - "The Case for Coroutines" (Vinnie Falco, 2026). https://wg21.link/p4088r0
+21. [P4088R0](https://wg21.link/p4088r0) - "What C++20 Coroutines Already Buy The Standard" (Vinnie Falco, 2026). https://wg21.link/p4088r0
 
 22. [P1791R0](https://wg21.link/p1791r0) - "Evolution of the P0443 Unified Executors Proposal to accommodate new requirements" (Christopher Kohlhoff, Jamie Allsop, 2019). https://wg21.link/p1791r0
 

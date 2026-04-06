@@ -463,7 +463,7 @@ The author thanks Bjarne Stroustrup for [P3406R0](https://wg21.link/p3406r0) and
 
 4. [cppalliance/capy](https://github.com/cppalliance/capy) - Coroutine I/O primitives library. https://github.com/cppalliance/capy
 
-5. [P4088R0](https://isocpp.org/files/papers/P4088R0.pdf) - "The Case for Coroutines" (Vinnie Falco, 2026). https://isocpp.org/files/papers/P4088R0.pdf
+5. [P4088R0](https://isocpp.org/files/papers/P4088R0.pdf) - "What C++20 Coroutines Already Buy The Standard" (Vinnie Falco, 2026). https://isocpp.org/files/papers/P4088R0.pdf
 
 6. [P3801R0](https://wg21.link/p3801r0) - "Concerns about the design of `std::execution::task`" (Jonathan M&uuml;ller, 2025). https://wg21.link/p3801r0
 
