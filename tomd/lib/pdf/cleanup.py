@@ -81,10 +81,12 @@ def detect_repeating(all_edge_items: list[list[PageEdgeItem]],
             continue
 
         texts = [it.text for it in items]
-        if len(set(texts)) == 1:
-            repeating.add((y_key, texts[0]))
-            _log.debug("Repeating exact: y=%.1f text=%r", y_key, texts[0])
-            continue
+        entry_count = {k: texts.count(k) for k in texts}
+        for k, v in entry_count.items():
+            if v > total_pages / 2:
+                repeating.add((y_key, k))
+                _log.debug("Repeating exact: y=%.1f text=%r", y_key, k)
+                continue
 
         if all(PAGE_NUM_RE.match(t) for t in texts):
             repeating.add((y_key, "__PAGE_NUM__"))
