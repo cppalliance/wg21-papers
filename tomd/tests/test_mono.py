@@ -1,55 +1,55 @@
 """Tests for lib.pdf.mono."""
 
 from conftest import make_span, make_line, make_block
-from lib.pdf.mono import classify_monospace, propagate_monospace
+from lib.pdf.mono import is_monospace, propagate_monospace
 
 
 def test_keyword_courier():
-    assert classify_monospace("Courier")
+    assert is_monospace("Courier")
 
 
 def test_keyword_menlo():
-    assert classify_monospace("Menlo-Regular")
+    assert is_monospace("Menlo-Regular")
 
 
 def test_keyword_consolas():
-    assert classify_monospace("Consolas")
+    assert is_monospace("Consolas")
 
 
 def test_keyword_source_code_pro():
-    assert classify_monospace("SourceCodePro")
+    assert is_monospace("SourceCodePro")
 
 
 def test_no_keyword_no_data():
-    assert not classify_monospace("Arial")
+    assert not is_monospace("Arial")
 
 
 def test_no_keyword_no_data_unnamed():
-    assert not classify_monospace("Unnamed-T3")
+    assert not is_monospace("Unnamed-T3")
 
 
 def test_uniform_widths_and_spacings():
     widths = [10.0] * 10
     origins = [float(i * 10) for i in range(10)]
-    assert classify_monospace("UnknownFont", widths, origins)
+    assert is_monospace("UnknownFont", widths, origins)
 
 
 def test_non_uniform_widths():
     widths = [5.0, 15.0, 5.0, 15.0, 5.0]
     origins = [0.0, 5.0, 20.0, 25.0, 40.0]
-    assert not classify_monospace("UnknownFont", widths, origins)
+    assert not is_monospace("UnknownFont", widths, origins)
 
 
 def test_fat_thin_reject():
     widths = [20.0, 8.0, 15.0]
     chars = ["M", " ", "a"]
-    assert not classify_monospace("UnknownFont", widths, None, chars=chars)
+    assert not is_monospace("UnknownFont", widths, None, chars=chars)
 
 
 def test_fat_thin_accept():
     widths = [10.0, 10.0, 10.0]
     chars = ["M", " ", "i"]
-    assert classify_monospace("UnknownFont", widths,
+    assert is_monospace("UnknownFont", widths,
                               [0.0, 10.0, 20.0], chars=chars)
 
 

@@ -130,7 +130,7 @@ def convert_pdf(path: Path) -> tuple[str, str | None]:
         all_mupdf_blocks = strip_repeating(all_mupdf_blocks, repeating)
         all_spatial_blocks = strip_repeating(all_spatial_blocks, repeating)
 
-    dominant_font = font_counts.most_common(1)[0][0] if font_counts else ""
+    dominant_font = font_counts.most_common(1)[0][0] if font_counts and len(font_counts) > 0 else ""
     propagate_monospace(all_mupdf_blocks, all_spatial_blocks, dominant_font)
 
     wording_problems = classify_wording(all_mupdf_blocks, page_drawings)

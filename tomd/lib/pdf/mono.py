@@ -115,7 +115,7 @@ def _glyph_spacing_uniform(char_x_origins: list[float]) -> float:
     return _coefficient_of_variation(spacings)
 
 
-def classify_monospace(
+def is_monospace(
     font_name: str,
     char_widths: list[float] | None = None,
     char_x_origins: list[float] | None = None,

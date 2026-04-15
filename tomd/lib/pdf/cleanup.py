@@ -4,6 +4,7 @@ import logging
 import re
 from collections import defaultdict
 from dataclasses import replace
+from extract import _compute_bbox
 
 from .. import strip_format_chars, DOC_NUM_RE
 from .types import (
@@ -163,12 +164,7 @@ def _join_cross_page(blocks: list[Block]) -> list[Block]:
                 and cur_text[0].islower()):
             prev.lines.extend(block.lines)
             bboxes = [ln.bbox for ln in prev.lines]
-            prev.bbox = (
-                min(b[0] for b in bboxes),
-                min(b[1] for b in bboxes),
-                max(b[2] for b in bboxes),
-                max(b[3] for b in bboxes),
-            )
+            prev.bbox = _compute_bbox(bboxes)
         else:
             result.append(replace(block, lines=list(block.lines)))
 

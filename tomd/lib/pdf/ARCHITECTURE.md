@@ -67,7 +67,7 @@ Enums:
 - Characters sorted by y-band (half font height) with stable sort preserving document order within each band
 
 **T3. Monospace classification (4 signals)**
-- `mono.py:classify_monospace`
+- `mono.py:is_monospace`
 - Signal 1 (font name): strip modifiers, split camelCase, check keywords {mono, courier, code, consolas, menlo}
 - Signal 2 (glyph width CV): coefficient of variation of character bbox widths (lower = more uniform)
 - Signal 3 (glyph spacing CV): coefficient of variation of inter-glyph x-origin spacing (strongest - measures the defining property)
@@ -301,7 +301,7 @@ Enums:
 | `__init__.py` | Pipeline orchestration | `convert_pdf` | 169 |
 | `types.py` | Data model, enums, constants | Span, Line, Block, Section, SectionKind, Confidence, is_readable + shared constants | 233 |
 | `extract.py` | Dual-path text extraction | `extract_mupdf`, `extract_spatial`, `collect_links`, `attach_links` | 249 |
-| `mono.py` | Monospace font detection | `classify_monospace`, `propagate_monospace` | 181 |
+| `mono.py` | Monospace font detection | `is_monospace`, `propagate_monospace` | 181 |
 | `wording.py` | Wording section detection (ins/del) | `classify_wording`, `collect_line_drawings` | 222 |
 | `cleanup.py` | Text cleanup, header/footer, hidden regions | `detect_repeating`, `strip_repeating`, `dehyphenate`, `strip_format_chars`, `normalize_whitespace`, `find_hidden_regions`, `strip_hidden_blocks`, `cleanup_text` | 367 |
 | `spans.py` | Style boundary normalization | `normalize_spans` | 143 |

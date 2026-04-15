@@ -106,7 +106,7 @@ Auto-resolution via `--llm` flag is deferred to v2. For v1, the tool produces a 
 - `lib/pdf/__init__.py` - Exports `convert_pdf()`. Orchestrates the full pipeline in order. Includes monospace propagation, wording classification, and page 0 color extraction via space-color proxy.
 - `lib/pdf/wording.py` - Wording section detection via multi-signal HSV color + drawing decoration analysis. Detects ins/del markup. Confidence levels with prompts file for ambiguous cases.
 - `lib/pdf/types.py` - Data classes (`Block`, `Span`, `Line`, `Section`, `PageEdgeItem`), enums (`Confidence`, `SectionKind`), named constants (all public, no underscore prefix), precompiled regex, `is_readable()`.
-- `lib/pdf/extract.py` - Dual extraction: `extract_mupdf()` (dict API) and `extract_spatial()` (rawdict + four spatial threshold branches). Link collection and attachment. Calls `classify_monospace` during span construction.
+- `lib/pdf/extract.py` - Dual extraction: `extract_mupdf()` (dict API) and `extract_spatial()` (rawdict + four spatial threshold branches). Link collection and attachment. Calls `is_monospace` during span construction.
 - `lib/pdf/mono.py` - Triple-signal monospace detection. Font name decomposition (strip modifiers, split camelCase, check keywords), glyph width uniformity, glyph spacing uniformity.
 - `lib/pdf/cleanup.py` - Header/footer detection (edge items per page), repeating strip, span whitespace (NBSP, multi-space on non-mono), dehyphenation, cross-page join, hidden region detection.
 - `lib/pdf/spans.py` - Span normalization. Snaps bold/italic style boundaries to word edges. Monospace exempt.

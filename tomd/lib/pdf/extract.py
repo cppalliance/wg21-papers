@@ -9,13 +9,16 @@ from .types import (
     WORD_GAP_RATIO, LINE_SPACING_RATIO, PARA_SPACING_RATIO,
     FALLBACK_FONT_SIZE,
 )
-from .mono import classify_monospace
+from .mono import is_monospace
 
 _log = logging.getLogger(__name__)
 
 
-def _compute_bbox(bboxes: list[tuple]) -> tuple[float, float, float, float]:
+def _compute_bbox(bboxes: list[tuple]) -> tuple[float, float, float, float] | None:
     """Compute the bounding box enclosing all given bbox tuples."""
+    if len(bboxes) < 4:
+        return None
+
     return (
         min(b[0] for b in bboxes),
         min(b[1] for b in bboxes),
@@ -50,7 +53,7 @@ def extract_mupdf(page, page_num: int) -> list[Block]:
                     font_size=sp.get("size", 0.0),
                     bold=bool(flags & (1 << 4)),
                     italic=bool(flags & (1 << 1)),
-                    monospace=classify_monospace(font),
+                    monospace=is_monospace(font),
                     bbox=tuple(sp.get("bbox", (0, 0, 0, 0))),
                     origin=tuple(sp.get("origin", (0, 0))),
                     color=sp.get("color", 0),
@@ -133,7 +136,7 @@ def extract_spatial(page, page_num: int) -> list[Block]:
             font_size=first[4],
             bold=first[5],
             italic=first[6],
-            monospace=classify_monospace(first[3], char_widths, char_x_origins,
+            monospace=is_monospace(first[3], char_widths, char_x_origins,
                                         chars=chars_list),
             bbox=bbox,
             origin=first[2],
@@ -146,6 +149,8 @@ def extract_spatial(page, page_num: int) -> list[Block]:
         if not cur_spans:
             return
         bbox = _compute_bbox([s.bbox for s in cur_spans])
+        if not bbox:
+            return
         cur_lines.append(Line(
             spans=list(cur_spans),
             bbox=bbox,
@@ -158,6 +163,8 @@ def extract_spatial(page, page_num: int) -> list[Block]:
         if not cur_lines:
             return
         bbox = _compute_bbox([ln.bbox for ln in cur_lines])
+        if not bbox:
+            return
         blocks.append(Block(
             lines=list(cur_lines),
             bbox=bbox,
