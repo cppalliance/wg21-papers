@@ -8,20 +8,11 @@ from .types import (
     Block, Line, Span,
     WORD_GAP_RATIO, LINE_SPACING_RATIO, PARA_SPACING_RATIO,
     FALLBACK_FONT_SIZE,
+    compute_bbox,
 )
 from .mono import classify_monospace
 
 _log = logging.getLogger(__name__)
-
-
-def _compute_bbox(bboxes: list[tuple]) -> tuple[float, float, float, float]:
-    """Compute the bounding box enclosing all given bbox tuples."""
-    return (
-        min(b[0] for b in bboxes),
-        min(b[1] for b in bboxes),
-        max(b[2] for b in bboxes),
-        max(b[3] for b in bboxes),
-    )
 
 
 def extract_mupdf(page, page_num: int) -> list[Block]:
@@ -145,7 +136,7 @@ def extract_spatial(page, page_num: int) -> list[Block]:
         _flush_word()
         if not cur_spans:
             return
-        bbox = _compute_bbox([s.bbox for s in cur_spans])
+        bbox = compute_bbox([s.bbox for s in cur_spans])
         cur_lines.append(Line(
             spans=list(cur_spans),
             bbox=bbox,
@@ -157,7 +148,7 @@ def extract_spatial(page, page_num: int) -> list[Block]:
         _flush_line()
         if not cur_lines:
             return
-        bbox = _compute_bbox([ln.bbox for ln in cur_lines])
+        bbox = compute_bbox([ln.bbox for ln in cur_lines])
         blocks.append(Block(
             lines=list(cur_lines),
             bbox=bbox,

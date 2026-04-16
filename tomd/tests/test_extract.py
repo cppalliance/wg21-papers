@@ -1,8 +1,9 @@
 """Tests for lib.pdf.extract."""
 
+import pytest
 from unittest.mock import MagicMock
 from lib.pdf.extract import extract_spatial, attach_links
-from lib.pdf.types import Span, Line, Block
+from lib.pdf.types import Span, Line, Block, compute_bbox
 
 
 def _make_page(chars_by_span):
@@ -93,6 +94,19 @@ def test_extract_spatial_sorts_across_blocks_in_y_band():
     )
     # The left block's characters must come first in the output.
     assert text.index("L") < text.index("R"), f"got text={text!r}"
+
+
+class TestComputeBbox:
+    def test_single_box(self):
+        assert compute_bbox([(1.0, 2.0, 3.0, 4.0)]) == (1.0, 2.0, 3.0, 4.0)
+
+    def test_multiple_boxes(self):
+        result = compute_bbox([(10, 20, 30, 40), (5, 25, 35, 38)])
+        assert result == (5, 20, 35, 40)
+
+    def test_empty_raises(self):
+        with pytest.raises(ValueError):
+            compute_bbox([])
 
 
 def _make_block_with_span(text, bbox):

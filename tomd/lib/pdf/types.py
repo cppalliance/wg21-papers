@@ -208,6 +208,20 @@ KNOWN_SECTIONS = frozenset({
 
 TERMINAL_PUNCTUATION = frozenset(".?!:")
 
+
+def compute_bbox(bboxes: list[tuple]) -> tuple[float, float, float, float]:
+    """Compute the bounding box enclosing all given bbox tuples.
+
+    Raises ValueError (via min/max) if bboxes is empty. Callers must
+    ensure at least one bbox is present.
+    """
+    return (
+        min(b[0] for b in bboxes),
+        min(b[1] for b in bboxes),
+        max(b[2] for b in bboxes),
+        max(b[3] for b in bboxes),
+    )
+
 FALLBACK_FONT_SIZE = 12.0
 FALLBACK_BODY_SIZE = 11.0
 MIN_UNCERTAIN_WORDS = 10

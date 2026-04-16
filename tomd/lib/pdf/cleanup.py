@@ -11,6 +11,7 @@ from .types import (
     Y_TOLERANCE, REPEATING_THRESHOLD, EDGE_ITEMS_PER_PAGE,
     TERMINAL_PUNCTUATION,
     PAGE_NUM_RE, COMPOUND_PREFIXES,
+    compute_bbox,
 )
 
 _log = logging.getLogger(__name__)
@@ -167,13 +168,7 @@ def _join_cross_page(blocks: list[Block]) -> list[Block]:
                 and prev_text[-1] not in TERMINAL_PUNCTUATION
                 and cur_text[0].islower()):
             prev.lines.extend(block.lines)
-            bboxes = [ln.bbox for ln in prev.lines]
-            prev.bbox = (
-                min(b[0] for b in bboxes),
-                min(b[1] for b in bboxes),
-                max(b[2] for b in bboxes),
-                max(b[3] for b in bboxes),
-            )
+            prev.bbox = compute_bbox([ln.bbox for ln in prev.lines])
         else:
             result.append(replace(block, lines=list(block.lines)))
 

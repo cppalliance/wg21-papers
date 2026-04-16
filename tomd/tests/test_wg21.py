@@ -1,7 +1,7 @@
 """Tests for lib.pdf.wg21."""
 
 from lib.pdf.types import Block, Line, Span
-from lib.pdf.wg21 import extract_metadata_from_blocks
+from lib.pdf.wg21 import extract_metadata_from_blocks, REPLY_TO_CONTINUATION_CAP
 
 
 def _meta_block(lines_text, page_num=0, font_size=9.0):
@@ -95,3 +95,24 @@ def test_reply_to_name_then_email_on_next_line():
     meta, consumed = extract_metadata_from_blocks([b])
     assert "reply-to" in meta
     assert any("Bob Jones" in a for a in meta["reply-to"])
+
+
+def test_reply_to_continuation_capped():
+    """Reply-to loop must stop after REPLY_TO_CONTINUATION_CAP blocks,
+    even if later blocks still contain emails."""
+    reply_block = _meta_block(["Reply-to: Alice <alice@x.com>"])
+    # Generate more continuation blocks than the cap allows
+    extra_count = REPLY_TO_CONTINUATION_CAP + 5
+    extras = [
+        _meta_block([f"Person{n} <p{n}@x.com>"])
+        for n in range(extra_count)
+    ]
+    blocks = [reply_block] + extras
+    meta, consumed = extract_metadata_from_blocks(blocks)
+    # The continuation blocks consumed must not exceed the cap
+    # (block 0 is consumed as the reply-to label block itself)
+    continuation_consumed = consumed - {0}
+    assert len(continuation_consumed) == REPLY_TO_CONTINUATION_CAP
+    # The block just past the cap must not be consumed
+    past_cap_idx = 1 + REPLY_TO_CONTINUATION_CAP
+    assert past_cap_idx not in consumed

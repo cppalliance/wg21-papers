@@ -25,6 +25,9 @@ _DOC_NUM_VALUE_RE = re.compile(
 
 _PARENS_RE = re.compile(r"[()]")
 
+# Maximum number of continuation blocks consumed after a reply-to label.
+REPLY_TO_CONTINUATION_CAP = 5
+
 
 def _clean(text: str) -> str:
     """Strip zero-width chars and whitespace."""
@@ -160,11 +163,14 @@ def extract_metadata_from_blocks(blocks: list[Block],
         if found_any:
             consumed.add(i)
             if "reply" in " ".join(_clean(ln.text) for ln in block.lines).lower():
+                continuation_count = 0
                 for j, next_block in page0_blocks:
                     if j <= i:
                         continue
                     if j in consumed:
                         continue
+                    if continuation_count >= REPLY_TO_CONTINUATION_CAP:
+                        break
                     next_text = _clean(next_block.lines[0].text) if next_block.lines else ""
                     if not next_text or _LABEL_RE.match(next_text):
                         break
@@ -175,6 +181,7 @@ def extract_metadata_from_blocks(blocks: list[Block],
                             existing = metadata.get("reply-to", [])
                             metadata["reply-to"] = existing + extra_authors
                             consumed.add(j)
+                            continuation_count += 1
                     else:
                         break
 
