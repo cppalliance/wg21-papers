@@ -655,7 +655,7 @@ One caveat: the latency table assumes GPU operations in the microsecond-to-secon
 
 The preceding sections argue that senders and IoAwaitables each serve a domain well: senders for GPU kernel dispatch and heterogeneous scheduling, IoAwaitables for byte-oriented I/O and type-erased streams. The bridge is where the domains meet.
 
-Capy provides two bridge functions: `await_sender`<sup>[52]</sup> consumes a sender from within a coroutine, and `as_sender`<sup>[53]</sup> wraps an IoAwaitable for use in a sender pipeline. Both compile and run today.
+Capy ships two demonstration bridges in its examples: `await_sender`<sup>[52]</sup>, which consumes a sender from within a coroutine via `co_await`, and `as_sender`<sup>[53]</sup>, which wraps an IoAwaitable as a P2300 sender for use in a sender pipeline.
 
 An inference pipeline that uses each model in its natural domain:
 
