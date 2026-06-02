@@ -170,7 +170,7 @@ This works. But `resume()` executes on the CUDA driver callback thread. There is
 
 ## 7. `cuda_stream`: Data Movement as IoAwaitables
 
-The `cuda_stream` class wraps a CUDA stream handle and provides data-movement member functions that return IoAwaitables. The class follows the Rule of Five (copy deleted, move implemented, null-guarded destructor). The helper function `make_cuda_error`, defined by the accompanying demonstration rather than by Capy, converts a `cudaError_t` to `std::error_code` via a CUDA error category.
+The `cuda_stream` class wraps a CUDA stream handle and provides data-movement member functions that return IoAwaitables. The class follows the Rule of Five (copy deleted, move implemented, null-guarded destructor). The helper function `make_cuda_error`, defined by the accompanying demonstration<sup>[54]</sup> rather than by Capy, converts a `cudaError_t` to `std::error_code` via a CUDA error category.
 
 The key mechanism is `resume_ctx`: a pre-allocated member that captures the executor and continuation for `cudaLaunchHostFunc`. The `on_complete` callback posts the continuation back to the application's executor, providing the executor-affinity dispatch that the hand-rolled awaitable in Section 6 lacks.
 
@@ -488,7 +488,7 @@ This is the same design trajectory that produced Thrust and C++17 parallel algor
 
 **C++17 parallel algorithms.** Standard interface, hardware-specific implementation. Write `std::sort(std::execution::par, ...)`, link against NVIDIA's implementation or Intel's. The standard owns the interface; the vendor owns the implementation.
 
-**IoAwaitable streams.** Write `ingest(any_write_stream&, payload)`, link against NVIDIA's `cuda_device_stream`, AMD's ROCm transport, an RDMA transport, or TCP. Same pattern, applied to data transport instead of parallel algorithms. The abstraction level rises again; the application code stays the same. A demonstration accompanies this paper in which the same `ingest` handler is compiled once and exercised against both `cuda_device_stream` and an in-memory `WriteStream`.
+**IoAwaitable streams.** Write `ingest(any_write_stream&, payload)`, link against NVIDIA's `cuda_device_stream`, AMD's ROCm transport, an RDMA transport, or TCP. Same pattern, applied to data transport instead of parallel algorithms. The abstraction level rises again; the application code stays the same. A demonstration accompanies this paper<sup>[54]</sup> in which the same `ingest` handler is compiled once and exercised against both `cuda_device_stream` and an in-memory `WriteStream`.
 
 ### Security patching without recompilation
 
@@ -685,7 +685,7 @@ One caveat: the latency table assumes GPU operations in the microsecond-to-secon
 
 The preceding sections argue that senders and IoAwaitables each serve a domain well: senders for GPU kernel dispatch and heterogeneous scheduling, IoAwaitables for byte-oriented I/O and type-erased streams. The bridge is where the domains meet.
 
-Capy provides two bridge functions with working implementations in its bench and example code: `await_sender`<sup>[52]</sup> consumes a sender from within a coroutine via `co_await`, and `as_sender`<sup>[53]</sup> wraps an IoAwaitable as a P2300 sender for use in a sender pipeline. Both compile and run today. One bridge direction currently relies on behavior the standard would need to bless; [P4092R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r1.pdf)<sup>[52]</sup> and [P4093R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r1.pdf)<sup>[53]</sup> are the dedicated design papers for each direction.
+Capy provides two bridge functions with working implementations in its bench and example code<sup>[54]</sup>: `await_sender`<sup>[52]</sup> consumes a sender from within a coroutine via `co_await`, and `as_sender`<sup>[53]</sup> wraps an IoAwaitable as a P2300 sender for use in a sender pipeline. Both compile and run today. One bridge direction currently relies on behavior the standard would need to bless; [P4092R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r1.pdf)<sup>[52]</sup> and [P4093R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r1.pdf)<sup>[53]</sup> are the dedicated design papers for each direction.
 
 `await_sender` is the natural bridge for the common case: a coroutine that performs I/O and dispatches to a GPU scheduler. An inference pipeline that uses each model in its natural domain:
 
@@ -928,3 +928,5 @@ This paper was generated with AI assistance (Claude, via Cursor).
 [52] [P4092R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r1.pdf) - "Consuming Senders from Coroutine-Native Code" (Vinnie Falco, Steve Gerbino, 2026).
 
 [53] [P4093R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r1.pdf) - "Producing Senders from Coroutine-Native Code" (Vinnie Falco, Steve Gerbino, 2026).
+
+[54] [Accompanying examples](https://github.com/cppalliance/capy/tree/98be9fdd59b2099b2f4f3a0f2abd4f3d4034d0a6/example) - the compileable demonstrations for this paper, pinned at commit `98be9fd` of the official repository (C++ Alliance). Sections 6-8 and 14 (`cuda_stream`, `cuda_device_stream`, CUDA Graphs): [`example/cuda/datamovement`](https://github.com/cppalliance/capy/tree/98be9fdd59b2099b2f4f3a0f2abd4f3d4034d0a6/example/cuda/datamovement). Section 16 (the `await_sender` bridge, `handle_request`): [`example/cuda/pipeline/cuda_pipeline.cu`](https://github.com/cppalliance/capy/blob/98be9fdd59b2099b2f4f3a0f2abd4f3d4034d0a6/example/cuda/pipeline/cuda_pipeline.cu). Sections 10-11 (compound results and HPC-fabric signatures): [`example/fabrics/fabrics.cpp`](https://github.com/cppalliance/capy/blob/98be9fdd59b2099b2f4f3a0f2abd4f3d4034d0a6/example/fabrics/fabrics.cpp).
