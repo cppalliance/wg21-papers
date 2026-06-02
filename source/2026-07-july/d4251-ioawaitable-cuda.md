@@ -170,7 +170,7 @@ This works. But `resume()` executes on the CUDA driver callback thread. There is
 
 ## 7. `cuda_stream`: Data Movement as IoAwaitables
 
-The `cuda_stream` class wraps a CUDA stream handle and provides data-movement member functions that return IoAwaitables. The class follows the Rule of Five (copy deleted, move implemented, null-guarded destructor). The helper function `make_cuda_error` converts a `cudaError_t` to `std::error_code` via a CUDA error category.
+The `cuda_stream` class wraps a CUDA stream handle and provides data-movement member functions that return IoAwaitables. The class follows the Rule of Five (copy deleted, move implemented, null-guarded destructor). The helper function `make_cuda_error`, defined by the accompanying demonstration rather than by Capy, converts a `cudaError_t` to `std::error_code` via a CUDA error category.
 
 The key mechanism is `resume_ctx`: a pre-allocated member that captures the executor and continuation for `cudaLaunchHostFunc`. The `on_complete` callback posts the continuation back to the application's executor, providing the executor-affinity dispatch that the hand-rolled awaitable in Section 6 lacks.
 
@@ -300,7 +300,7 @@ NCCL collectives enqueue onto a CUDA stream. The `native_handle()` accessor prov
 ncclAllReduce(
     sendbuf, recvbuf, count,
     ncclFloat, ncclSum,
-    comm.handle(), cs.native_handle());
+    comm, cs.native_handle());
 co_await cs.synchronize();
 ```
 
@@ -409,7 +409,7 @@ public:
             }
         };
         return awaitable{this,
-            *buffer_sequence_begin(buffers)};
+            *capy::begin(buffers)};
     }
 };
 ```
@@ -488,7 +488,7 @@ This is the same design trajectory that produced Thrust and C++17 parallel algor
 
 **C++17 parallel algorithms.** Standard interface, hardware-specific implementation. Write `std::sort(std::execution::par, ...)`, link against NVIDIA's implementation or Intel's. The standard owns the interface; the vendor owns the implementation.
 
-**IoAwaitable streams.** Write `ingest(any_write_stream&, payload)`, link against NVIDIA's `cuda_device_stream`, AMD's ROCm transport, an RDMA transport, or TCP. Same pattern, applied to data transport instead of parallel algorithms. The abstraction level rises again; the application code stays the same. A compileable demonstration accompanies this paper, showing the same protocol handler linking against `cuda_device_stream` and `tcp_socket` without recompilation.
+**IoAwaitable streams.** Write `ingest(any_write_stream&, payload)`, link against NVIDIA's `cuda_device_stream`, AMD's ROCm transport, an RDMA transport, or TCP. Same pattern, applied to data transport instead of parallel algorithms. The abstraction level rises again; the application code stays the same. A demonstration accompanies this paper in which the same `ingest` handler is compiled once and exercised against both `cuda_device_stream` and an in-memory `WriteStream`.
 
 ### Security patching without recompilation
 
@@ -693,30 +693,48 @@ Capy provides two bridge functions with working implementations in its bench and
 task<> handle_request(
     any_read_source& client,
     any_write_sink& response,
-    nvexec::stream_context& gpu_ctx)
+    nvexec::stream_context& gpu_ctx,
+    exec::static_thread_pool::scheduler cpu)
 {
     // receive request (coroutine, type-erased)
     std::array<std::byte, 4096> buf;
     auto [ec, n] = co_await client.read_some(
-        capy::make_buffer(buf));
+        capy::mutable_buffer(
+            buf.data(), buf.size()));
     if (ec) co_return;
 
-    // dispatch to GPU (sender, compile-time)
-    auto sched = gpu_ctx.get_scheduler();
-    auto result = co_await await_sender(
-        stdexec::schedule(sched)
-        | stdexec::then([&] {
-            return run_model(
-                buf.data(), n);
-        }));
+    // dispatch to GPU (sender); continues_on(cpu) hops back to
+    // the host for the host-only bridge
+    auto gpu = gpu_ctx.get_scheduler();
+    constexpr int N = 64;
+    float* d_out = nullptr;
+    cudaMalloc(&d_out, N * sizeof(float));
+    co_await await_sender(
+        stdexec::just(N, d_out)
+        | stdexec::continues_on(gpu)
+        | nvexec::launch(
+            {.grid_size = 1, .block_size = N},
+            [] (cudaStream_t, int len, float* y) {
+                int i = blockIdx.x * blockDim.x
+                    + threadIdx.x;
+                if (i < len)
+                    y[i] = run_model(i);
+            })
+        | stdexec::continues_on(cpu));
 
-    // send result back (coroutine, type-erased)
-    co_await write(response,
-        capy::make_buffer(result));
+    // copy result to host, send it back (type-erased)
+    std::array<float, N> result;
+    cudaMemcpy(result.data(), d_out,
+        N * sizeof(float),
+        cudaMemcpyDeviceToHost);
+    cudaFree(d_out);
+    co_await write(response, capy::make_buffer(
+        result.data(),
+        result.size() * sizeof(float)));
 }
 ```
 
-Network I/O uses `any_read_source` and `any_write_sink` - type-erased, zero per-operation allocation, compound results via structured bindings. GPU dispatch uses `stdexec::schedule` and `stdexec::then` - compile-time composition, scheduler-agnostic portability. The `await_sender` bridge connects the two without requiring either model to subsume the other.
+Network I/O uses `any_read_source` and `any_write_sink` - type-erased, zero per-operation allocation, compound results via structured bindings. GPU dispatch uses `nvexec::launch` on the stream scheduler - compile-time composition, scheduler-agnostic portability. Because nvexec runs the launched work on the device, `run_model` is a `__device__` function and the trailing `stdexec::continues_on(cpu)` returns completion to the host before the host-only `await_sender` bridge resumes the coroutine - so the handler takes a host scheduler alongside the GPU context. The `await_sender` bridge connects the two without requiring either model to subsume the other.
 
 The network transport behind `client` and `response` can be TCP, TLS, RDMA, or any transport that satisfies the stream concepts. The GPU scheduler can be `nvexec::stream_scheduler`, a CPU thread pool, or any scheduler that provides `schedule()`. Neither side needs to know about the other's implementation.
 
