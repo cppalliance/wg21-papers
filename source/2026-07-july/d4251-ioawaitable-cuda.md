@@ -606,7 +606,7 @@ Several independent projects have arrived at the same design: coroutine-based as
 
 **cuda-oxide (NVIDIA Labs, Rust).**<sup>[35]</sup> NVIDIA's own research lab implemented the same mechanism in Rust. Their `DeviceFuture` submits GPU work, enqueues a `cuLaunchHostFunc` callback that sets an `AtomicBool` and wakes a Tokio `Waker`, and the async runtime resumes the task on the next poll. Zero busy-wait. The three-state machine (Idle, Executing, Complete) is structurally identical to a network socket future. When NVIDIA's own research lab arrives at the same `cudaLaunchHostFunc`-to-async-runtime pattern independently, in a different language, the convergence is a data point about where the pattern fits naturally.
 
-**CERN wp1.7-coroutine-tests.**<sup>[34]</sup> The ATLAS and LHCb experiments at CERN developed a coroutine-based scheduler for GPU event processing. Their pattern uses `cudaLaunchHostFunc` to notify the scheduler when a GPU slot completes, and the coroutine suspends via `co_yield` until resumption. The project's documentation references Capy as a candidate for composing async CUDA operations.
+**CERN wp1.7-coroutine-tests.**<sup>[34]</sup> The ATLAS and LHCb experiments at CERN are evaluating C++20 coroutine patterns for task scheduling, including a Gaudi-framework-inspired coroutine hierarchy and CUDA examples. The project's [`StreamIoAwaitable`](https://github.com/cern-nextgen/wp1.7-coroutine-tests/blob/5049a37d7e74b6e2241b39dca5c81ff3aaece0e3/examples/capy_stream_await.hpp) is built directly on Capy's IoAwaitable protocol: `await_suspend(std::coroutine_handle<>, boost::capy::io_env const*)` enqueues a `cudaLaunchHostFunc` callback that, on CUDA-stream completion, posts the coroutine handle back to `env->executor` - the same `cudaLaunchHostFunc`-to-coroutine resumption described here, implemented independently against Capy's `io_env`.
 
 **Taro (University of Wisconsin-Madison).**<sup>[36]</sup> A C++20 coroutine task-graph system for CPU-GPU workloads. GPU tasks suspend the CPU thread via coroutines when waiting for GPU completion, allowing other tasks to run. Uses `cudaLaunchHostFunc` for the callback. Published at Euro-Par 2024 and presented at CppCon 2023. Reported 40-80% speedup over blocking approaches.
 
@@ -817,7 +817,7 @@ Eric Niebler, Micha&lstrok; Dominiak, Lewis Baker, Lucian Radu Teodorescu, Lee H
 
 Richard Smith and Gor Nishanov for P0981R0 (HALO analysis). Chuanqi Xu for the `[[clang::coro_await_elidable]]` attribute and P2477R3 (coroutine allocation elision). Dietmar K&uuml;hl and Maikel Nadolski for P3552R3 (`std::execution::task`). Lewis Baker for cppcoro, the operator `co_await` and symmetric transfer blog posts, and P3425R1 (operation-state sizes). Michael Wong for P4029R0 (SG14 priority list).
 
-Michael Garland and the NVIDIA stdexec team for the nvexec GPU schedulers and the Maxwell FDTD benchmark. The CERN wp1.7 team for their coroutine-based GPU event processing work. Dian-Lun Lin (University of Wisconsin-Madison) for Taro and its CppCon 2023 presentation. The NVIDIA Labs team for cuda-oxide. Jiqun Tu (NVIDIA) and Ellery Russell (Schr&ouml;dinger) for the Desmond coroutine integration presented at GTC 2024. The TTG/PaRSEC team for demonstrating coroutine-based heterogeneous GPU dispatch at DOE Exascale scale.
+Michael Garland and the NVIDIA stdexec team for the nvexec GPU schedulers and the Maxwell FDTD benchmark. The CERN wp1.7 team for their C++20 coroutine task-scheduling experiments and the Capy IoAwaitable integration. Dian-Lun Lin (University of Wisconsin-Madison) for Taro and its CppCon 2023 presentation. The NVIDIA Labs team for cuda-oxide. Jiqun Tu (NVIDIA) and Ellery Russell (Schr&ouml;dinger) for the Desmond coroutine integration presented at GTC 2024. The TTG/PaRSEC team for demonstrating coroutine-based heterogeneous GPU dispatch at DOE Exascale scale.
 
 This paper was generated with AI assistance (Claude, via Cursor).
 
@@ -889,7 +889,7 @@ This paper was generated with AI assistance (Claude, via Cursor).
 
 [33] [std::pmr::memory_resource](https://en.cppreference.com/w/cpp/memory/memory_resource) (cppreference).
 
-[34] [cern-nextgen/wp1.7-coroutine-tests](https://github.com/cern-nextgen/wp1.7-coroutine-tests) - CERN coroutine-based GPU event processing scheduler (2026).
+[34] [cern-nextgen/wp1.7-coroutine-tests](https://github.com/cern-nextgen/wp1.7-coroutine-tests/tree/5049a37d7e74b6e2241b39dca5c81ff3aaece0e3) - CERN C++20 coroutine task-scheduling experiments, including a Capy IoAwaitable that resumes a coroutine from a `cudaLaunchHostFunc` callback ([`examples/capy_stream_await.hpp`](https://github.com/cern-nextgen/wp1.7-coroutine-tests/blob/5049a37d7e74b6e2241b39dca5c81ff3aaece0e3/examples/capy_stream_await.hpp)), pinned at commit `5049a37` (2026).
 
 [35] [cuda-oxide: The DeviceOperation Model](https://nvlabs.github.io/cuda-oxide/async-programming/the-device-operation-model.html) - NVIDIA Labs async GPU programming in Rust (2026).
 
