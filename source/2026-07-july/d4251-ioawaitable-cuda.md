@@ -847,15 +847,15 @@ This paper was generated with AI assistance (Claude, via Cursor).
 
 [12] [DeepWiki: nvexec GPU Execution](https://deepwiki.com/NVIDIA/stdexec/6-gpu-execution-with-nvexec).
 
-[13] [Capy io_env](https://github.com/cppalliance/capy/blob/master/include/boost/capy/ex/io_env.hpp) (C++ Alliance).
+[13] [Capy io_env](https://github.com/cppalliance/capy/blob/98be9fdd59b2099b2f4f3a0f2abd4f3d4034d0a6/include/boost/capy/ex/io_env.hpp) (C++ Alliance).
 
-[14] [Capy executor_ref](https://github.com/cppalliance/capy/blob/master/include/boost/capy/ex/executor_ref.hpp) (C++ Alliance).
+[14] [Capy executor_ref](https://github.com/cppalliance/capy/blob/98be9fdd59b2099b2f4f3a0f2abd4f3d4034d0a6/include/boost/capy/ex/executor_ref.hpp) (C++ Alliance).
 
 [15] [Understanding Symmetric Transfer](https://lewissbaker.github.io/2020/05/11/understanding_symmetric_transfer) (Lewis Baker, 2020).
 
-[16] [Capy continuation](https://github.com/cppalliance/capy/blob/master/include/boost/capy/continuation.hpp) (C++ Alliance).
+[16] [Capy continuation](https://github.com/cppalliance/capy/blob/98be9fdd59b2099b2f4f3a0f2abd4f3d4034d0a6/include/boost/capy/continuation.hpp) (C++ Alliance).
 
-[17] [Capy task](https://github.com/cppalliance/capy/blob/master/include/boost/capy/task.hpp) (C++ Alliance).
+[17] [Capy task](https://github.com/cppalliance/capy/blob/98be9fdd59b2099b2f4f3a0f2abd4f3d4034d0a6/include/boost/capy/task.hpp) (C++ Alliance).
 
 [18] [CUDA Runtime API: Memory Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html) (NVIDIA, 2024).
 
