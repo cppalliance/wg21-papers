@@ -323,6 +323,8 @@ The question is not which model is more powerful. It is which implementation sha
 
 The awaitable column is four zeros. For synchronous I/O, the sender column carries the full eight-step ceremony of Section 6. For asynchronous I/O, the sender protocol adds ceremony - `connect`, receiver wiring, `variant` emplacement, affinity wrapping - atop the inherent suspend. The ceremony is not inherent to the async operation. It is inherent to the sender protocol.
 
+For asynchronous I/O these added steps are a step count, not a separately observable runtime cost: once the operation suspends to a scheduler, the suspension dominates and the steps are not measurable above it. The case this paper isolates is synchronous completion, where no suspension absorbs them.
+
 The sender pipeline cells in the awaitable column depend on P4126R1<sup>[10]</sup> callback handles. Without callback handles, senders consuming an awaitable allocate one coroutine frame per operation. Two of the awaitable column's four zeros require P4126R1.
 
 The awaitable is the implementation shape where neither consumer pays a protocol tax.
@@ -364,6 +366,8 @@ The sender model now carries a readiness query, a direct extraction path, two va
 ### 11.5. Zero-Allocation Type Erasure
 
 `any_sender::connect` produces a type-erased operation state whose size is unknown at compile time. The current implementations use small-buffer optimization (64 bytes in stdexec) or heap allocation.<sup>[3]</sup> The per-operation cost is 0-1 allocations.
+
+Measured in the Capy benchmark suite<sup>[1]</sup> (`bench/beman`) on a type-erased no-op read, single thread, 20,000,000 operations per cell, clang 22.1.5 release build: the type-erased awaitable consumed by a coroutine allocates zero times per operation; the type-erased `any_sender` consumed by a coroutine allocates once. Wall-clock was 37 ns per operation for the awaitable and 55 ns for the sender; that figure spans two coroutine frameworks and is reported for context, while the allocation count is the structural result.
 
 The awaitable model's type erasure is one virtual function call and zero allocations. To match this, the sender needs a base class with a virtual function that returns the value directly - without constructing an operation state, without wiring a receiver, without calling `start`.
 
