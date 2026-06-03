@@ -196,7 +196,7 @@ What happens inside `co_await sink.write(line)`, per the specification:
 
 1. `await_transform` receives the sender.<sup>[5]</sup> The promise type's `await_transform` is constrained to `sender`.<sup>[5]</sup> `[task.promise]` p10.
 
-2. The sender is wrapped with `affine`.<sup>[6]</sup> `[exec.affine.on]`. The wrapping is unconditional when the task has a scheduler type other than `no_scheduler`.
+2. The sender is wrapped with `affine`.<sup>[6]</sup> `[exec.affine.on]`. `await_transform` checks for a member `as_awaitable` first; this sender provides none, so it takes the wrapping branch.<sup>[5]</sup>
 
 3. `as_awaitable` constructs a `sender-awaitable`.<sup>[3]</sup> `[exec.as.awaitable]`.
 
@@ -329,7 +329,7 @@ The awaitable is the implementation shape where neither consumer pays a protocol
 
 ## 11. Closing The Gap
 
-The sender model, as specified, does not match the awaitable model for synchronous I/O. The following modifications would be required to close the gap. Each is presented in order.
+The sender model, as specified, does not match the awaitable model for synchronous I/O through the generic `sender-awaitable` path that every sender inherits. A concrete sender can sidestep that path by hand, by providing its own member `as_awaitable`,<sup>[3]</sup> a manual customization that is lost under type erasure. The modifications below are what would lift the costs from the generic protocol itself, for every sender, type-erased included. Each is presented in order.
 
 ### 11.1. A Readiness Query
 
@@ -355,7 +355,7 @@ The sender model now has two value-delivery mechanisms: channels for asynchronou
 
 ### 11.4. Conditional Affinity Wrapping
 
-`await_transform` wraps every sender in `affine` to enforce scheduler affinity.<sup>[5]</sup> For a sender that completes synchronously - whose bytes are already in the string before `co_await` evaluates - the affinity check serves no purpose.
+`await_transform` wraps every sender that does not customize `as_awaitable` in `affine` to enforce scheduler affinity.<sup>[5]</sup> For a sender that completes synchronously - whose bytes are already in the string before `co_await` evaluates - the affinity check serves no purpose.
 
 [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[5]</sup> contemplates detecting `inline_scheduler` in `await_transform` and bypassing the wrap. But the detection is type-based. Custom senders that complete synchronously need to opt in via the readiness query from Section 11.1 or a new completion-behavior tag.
 
@@ -429,6 +429,28 @@ struct immediate
 **"Awaitables don't compose into work graphs."** They do, through the bridge. Section 9 shows IoAwaitables consumed by sender pipelines via `as_sender`.<sup>[9]</sup> The sender algebra - `when_all`, `let_value`, `upon_error` - works. The bridge cost is eliminable.<sup>[10]</sup>
 
 **"The modifications in Section 11 are natural evolution."** Each modification introduces a new mechanism: a readiness query, a second value-delivery path, conditional affinity wrapping, virtual dispatch for type erasure. The awaitable protocol provides the same capability with three members.
+
+**"A sender can provide a member `as_awaitable` and skip the ceremony. No protocol change is needed."** True. `[exec.as.awaitable]` uses a sender's own `as_awaitable` when the sender provides one, in preference to constructing the generic `sender-awaitable`:<sup>[3]</sup>
+
+```cpp
+// [exec.as.awaitable], reduced to the relevant branch
+template<class Expr, class Promise>
+decltype(auto) as_awaitable(Expr&& e, Promise& p)
+{
+    if constexpr (requires { e.as_awaitable(p); })
+        return e.as_awaitable(p);        // the sender's own awaitable
+    else
+        return sender-awaitable{e, p};   // the eight steps of Section 6
+}
+```
+
+In `execution::task`, `await_transform` makes this same check before it wraps anything in `affine`: a sender that provides `as_awaitable` is used directly, so the affinity wrap of Section 6 is skipped as well.<sup>[5]</sup> A sender whose `as_awaitable` returns a synchronous awaitable then takes the path of Section 7. `connect`, the receiver, `start`, the `variant`, and the affinity wrap are never instantiated. Three protocol steps, not eight.
+
+This is the paper's thesis arrived at from the sender side. The synchronous fast path the sender reaches here is an awaitable: the sender hands one back, and the awaitable does the work. Closing the gap for one concrete sender, awaited from a coroutine, is one existing customization point returning the three-member struct of Section 7.
+
+Two costs remain. The member is manual and per-sender; a sender that omits it inherits the eight-step path. And it is lost under type erasure: `any_sender` erases the concrete sender and the member with it, and `any_sender::connect` materializes the operation state of Section 11.5. Type erasure is the one sender-specific cost no `as_awaitable` member reaches.
+
+The scope is the coroutine consumer. A sender pipeline never enters `as_awaitable`; Section 10 records zero for both synchronous pipeline cells.
 
 **"Senders retarget via scheduler swap; awaitables require recompilation."** Section 4 demonstrates retargeting by relinking. One vtable call, zero allocations. The linker swaps the object file.
 
