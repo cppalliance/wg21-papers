@@ -129,13 +129,15 @@ The full execution model built on this protocol is specified in [P4003R3](https:
 
 CUDA streams are in-order queues where operations execute sequentially.<sup>[14]</sup> When GPU work completes, the host needs notification. Three mechanisms exist, and the IoAwaitable protocol is independent of which one a given awaitable uses:
 
-- **Polling**: a service thread loops `cudaEventQuery` on a recorded event.<sup>[15]</sup> Costs a spinning thread, but stays stable as the number of worker threads grows.
-- **Blocking**: a service thread runs `cudaStreamSynchronize`.<sup>[16]</sup> Costs one parked thread per outstanding wait, but keeps the worker threads free.
+- **Polling**: a thread periodically calls `cudaStreamQuery`.<sup>[15]</sup> The polling can be implemented with a dedicated thread, but it can also be integrated into an existing work loop by interleaving completion checks with other work items. This avoids blocking threads, but requires periodic polling activity.
+- **Blocking**: a service thread runs `cudaStreamSynchronize`.<sup>[15]</sup> Costs one parked thread per outstanding wait, but keeps the worker threads free.
 - **Callback**: `cudaLaunchHostFunc` enqueues a host function into the stream.<sup>[7]</sup> No busy-wait and the simplest to wire up, but a single CUDA-internal worker services every callback across all streams, so it scales poorly as the number of worker threads grows.
 
-`cudaLaunchHostFunc` is the recommended replacement for the deprecated `cudaStreamAddCallback`.<sup>[14]</sup> Its host function fires on a dedicated internal CPU thread created by the CUDA driver, not the application thread.<sup>[17]</sup><sup>[18]</sup> It cannot call CUDA APIs and must not create transitive dependencies on outstanding CUDA work.
+`cudaLaunchHostFunc` is the recommended replacement for the deprecated `cudaStreamAddCallback`.<sup>[14]</sup> Its host function fires on a dedicated internal CPU thread created by the CUDA driver, not the application thread.<sup>[16]</sup><sup>[17]</sup> It cannot call CUDA APIs and must not create transitive dependencies on outstanding CUDA work.
 
-The choice among the three is a scaling tradeoff, not a correctness one. All three satisfy `IoAwaitable` and, driving the same GPU pipeline, produce identical results at runtime; the accompanying notification-strategies example<sup>[19]</sup> demonstrates this directly. A CHEP 2026 report on trigger scheduling<sup>[20]</sup> finds that the callback handler scales poorly as the worker-thread count grows, while event polling and deferred synchronization remain stable. In a multi-threaded framework, prefer polling or deferred synchronization; reach for the callback for its simplicity in low-concurrency settings.
+For cases where waiting for the entire stream is too coarse, CUDA events provide finer-grained completion points. An event can be recorded at a specific position in a stream, and the host can then wait for that event instead of the entire stream. The same polling and blocking approaches apply: `cudaEventQuery` can be used to poll event completion, and `cudaEventSynchronize` can be used to block until the event is complete.<sup>[18]</sup> Unlike streams, events do not support callback-based notification.
+
+The choice among the three  mechanisms is a scaling tradeoff, not a correctness one. All three satisfy `IoAwaitable` and, driving the same GPU pipeline, produce identical results at runtime; the accompanying notification-strategies example<sup>[19]</sup> demonstrates this directly. For example, a report from CERN Next Generation Triggers<sup>[20]</sup> finds that the callback handler scales poorly as the worker-thread count grows, while event polling and deferred synchronization remain stable. In a multi-threaded framework, prefer polling or deferred synchronization; reach for the callback for its simplicity in low-concurrency settings.
 
 This is the same structural pattern as epoll, IOCP, or io_uring completions arriving on arbitrary threads. In all cases, an async operation completes on a thread that is not the application's, and the application must dispatch the result to the correct execution context. This is the exact problem that Capy's executor-affinity dispatch was designed to solve.
 
@@ -649,7 +651,7 @@ The gap between networking ambition and deployed evidence suggests that data mov
 
 ## 14. Independent Validation
 
-Several independent projects have arrived at the same design: coroutine-based async completion for GPU and HPC data movement. The notification mechanism that bridges GPU completion to coroutine resumption varies - a host-function callback (`cudaLaunchHostFunc`, or its driver-level equivalent `cuLaunchHostFunc`), event polling, or deferred stream synchronization - but the coroutine completion model is common to all of them. The callback is the most frequently chosen bridge in the projects below because it is the simplest; it is not the only one in use.
+Several independent projects have arrived at the same design: coroutine-based async completion for GPU and HPC data movement. The notification mechanism that bridges GPU completion to coroutine resumption varies - a host-function callback (`cudaLaunchHostFunc`, or its driver-level equivalent `cuLaunchHostFunc`), event or stream polling, or deferred synchronization - but the coroutine completion model is common to all of them. The callback is the most frequently chosen bridge in the projects below because it is the simplest; it is not the only one in use.
 
 **cuda-oxide (NVIDIA Labs, Rust).**<sup>[36]</sup> NVIDIA's own research lab implemented the same mechanism in Rust. Their `DeviceFuture` submits GPU work, enqueues a `cuLaunchHostFunc` callback that sets an `AtomicBool` and wakes a Tokio `Waker`, and the async runtime resumes the task on the next poll. Zero busy-wait. The three-state machine (Idle, Executing, Complete) is structurally identical to a network socket future. When NVIDIA's own research lab arrives at the same `cudaLaunchHostFunc`-to-async-runtime pattern independently, in a different language, the convergence is a data point about where the pattern fits naturally.
 
@@ -673,7 +675,7 @@ These projects span GPU compute, molecular dynamics, high-energy physics, RDMA n
 
 Sender pipelines provide compile-time `operation_state` fusion. [P3425R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3425r1.html)<sup>[44]</sup> documents 8 bytes saved per nesting level via constant pointer offsets. This is real.
 
-CUDA Graphs<sup>[45]</sup> provide GPU-side work-graph optimization at the driver level. The driver sees SM count, memory bandwidth, occupancy, and hardware topology. Stream capture<sup>[16]</sup> records kernel DAGs:
+CUDA Graphs<sup>[45]</sup> provide GPU-side work-graph optimization at the driver level. The driver sees SM count, memory bandwidth, occupancy, and hardware topology. Stream capture<sup>[15]</sup> records kernel DAGs:
 
 ```c
 cudaStreamBeginCapture(stream,
@@ -898,13 +900,13 @@ This paper was generated with AI assistance (Claude, via Cursor).
 
 [14] [CUDA Programming Guide: Asynchronous Concurrent Execution](https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/asynchronous-execution.html) (NVIDIA, 2024).
 
-[15] [CUDA Runtime API: Event Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html) (NVIDIA, 2024).
+[15] [CUDA Runtime API: Stream Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html) (NVIDIA, 2024).
 
-[16] [CUDA Runtime API: Stream Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__STREAM.html) (NVIDIA, 2024).
+[16] [CUDA Handbook: Stream Callbacks](https://www.cudahandbook.com/2012/09/stream-callbacks/) (Nicholas Wilt, 2012).
 
-[17] [CUDA Handbook: Stream Callbacks](https://www.cudahandbook.com/2012/09/stream-callbacks/) (Nicholas Wilt, 2012).
+[17] [Stack Overflow: Exception Handling in cudaLaunchHostFunc Callbacks](https://stackoverflow.com/questions/75145603/catching-an-exception-thrown-from-a-callback-in-cudalaunchhostfunc) (2023).
 
-[18] [Stack Overflow: Exception Handling in cudaLaunchHostFunc Callbacks](https://stackoverflow.com/questions/75145603/catching-an-exception-thrown-from-a-callback-in-cudalaunchhostfunc) (2023).
+[18] [CUDA Runtime API: Event Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html) (NVIDIA, 2024).
 
 [19] [Accompanying examples](https://github.com/cppalliance/capy/tree/a226b793a3409f07723d2e90dd154e7461fffe89/example) - the compileable demonstrations for this paper, pinned at commit `a226b79` of the official repository (C++ Alliance). Section 5 (the three notification mechanisms, `callback_awaitable`, `poll_awaitable`, `deferred_sync_awaitable`): [`example/cuda/notification-strategies`](https://github.com/cppalliance/capy/tree/a226b793a3409f07723d2e90dd154e7461fffe89/example/cuda/notification-strategies). Sections 6-8 and 14 (`cuda_stream`, `cuda_device_stream`, CUDA Graphs): [`example/cuda/datamovement`](https://github.com/cppalliance/capy/tree/a226b793a3409f07723d2e90dd154e7461fffe89/example/cuda/datamovement). Section 16 (the `await_sender` bridge, `handle_request`): [`example/cuda/pipeline/cuda_pipeline.cu`](https://github.com/cppalliance/capy/blob/a226b793a3409f07723d2e90dd154e7461fffe89/example/cuda/pipeline/cuda_pipeline.cu). Sections 10-11 (compound results and HPC-fabric signatures): [`example/fabrics/fabrics.cpp`](https://github.com/cppalliance/capy/blob/a226b793a3409f07723d2e90dd154e7461fffe89/example/fabrics/fabrics.cpp).
 
