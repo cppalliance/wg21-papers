@@ -9,7 +9,24 @@ reply-to:
   - "Ville Voutilainen <ville.voutilainen@gmail.com>"
 ---
 
-## Abstract
+## Contents
+
+- [Abstract](#abstract)
+- [Revision History](#revision-history)
+1. [Introduction](#introduction)
+2. [Further Reading](#further-reading)
+3. [P3100 Characterizes Profiles as a Preset over Its Machinery](#p3100-characterizes-profiles)
+4. [Seven Polls Advanced the Paper; None Adopted the Architecture](#seven-polls)
+5. [The Claim Decides Who Owns Runtime-Check Configuration](#claim-decides-ownership)
+6. [No Published Paper Contests the Characterization](#no-published-paper-contests)
+7. [Objections](#objections)
+8. [Proposed Resolution](#proposed-resolution)
+9. [Disclosure](#disclosure)
+- [References](#references)
+
+---
+
+## Abstract {#abstract}
 
 This paper asks EWG (the Evolution Working Group) to sever an unadopted architecture claim from the wording it is bundled with, so that the wording proceeds and the claim gets its own paper and poll.
 
@@ -19,48 +36,37 @@ Section 4 reconstructs the proposal's seven-poll history and shows none adopted 
 
 ---
 
-## Revision History
+## Revision History {#revision-history}
 
 ### R0: July 2026
 
 - Initial version. An earlier working draft circulated before publication asked EWG to defer case-by-case wording review pending implementation and deployment experience. This published version withdraws that request. The review proceeds on its merits, and the ask is stated in Section 8 as three polls. This version adds the Brno 2026-06 poll to the poll history (Table 1, row 7, sourced from the public paper tracker) and identifies the foundational wording clauses that carry the architecture (Table 2).
+- Moves the Disclosure section to immediately before the references, so it does not consume valuable initial reading time.
 
 ---
 
-## 1. Disclosure
+## 1. Introduction {#introduction}
 
-The authors provide information and serve at the pleasure of the committee.
-
-Vinnie Falco is the founder of the C++ Alliance, which sponsors a Clang implementation of Profiles. Ville Voutilainen is a longtime WG21 member and a co-author of P3608R0, which Sections 5 and 6 quote, and of other published critiques of the C++26 Contracts process.
-
-This paper takes no position on which architecture is correct. It reports the public deployment record and asks that the ownership question be polled. One of a set in the July 2026 mailing on the runtime checking of core-language undefined behavior, it works only from the published record, and committee-internal documents may contain answers that the record does not. It uses machine-assisted drafting.
+P3100R8 pairs proposed wording for 77 runtime-checkable cases of core-language undefined behavior with an architecture claim: that Profiles are a higher-level feature built on top of that wording's machinery. The wording is headed into case-by-case EWG review. Alongside it, the architecture claim advances without a ballot of its own, and risks becoming an implicit architectural decision. Such a design, settled through accumulated approvals, with no single poll deciding it, is harder to revisit than one decided by an explicit ballot. This paper proposes a set of polls that ask EWG to sever the two, so wording review proceeds and the layering is decided by a ballot written for it. Such polls would not slow down the work on P3100, and would help keep parallel work on Profiles from being impeded.
 
 ---
 
-## 2. Introduction
+## 2. Further Reading {#further-reading}
 
-P3100R8 pairs proposed wording for 77 runtime-checkable cases of core-language undefined behavior with an architecture claim: that Profiles are a higher-level feature built on top of that wording's machinery. The wording is headed into case-by-case EWG review. Alongside it, the architecture claim advances without a ballot of its own. This paper asks EWG to sever the two, so wording review proceeds and the layering is decided by a ballot written for it.
-
-The layering claim sits between two competing bodies of published work: P3100R8's implicit contract assertions, configured through the Labels facility of P3400R3, and the Profiles work of P3984R0, P3081R2, and P3589R2. Section 3 sets both out and shows where P3100R8 places Profiles beneath its own tools. Two companion papers in the July 2026 mailing take up adjacent questions: P4306R0<sup>[1]</sup> supplies the dedicated comparison of the two configuration-ownership models that this paper's Poll 2 contemplates, and P4310R0<sup>[2]</sup> examines the separate question of the response to a detected core-language violation.
-
-This paper contributes three things:
-
-1. It reconstructs the proposal's poll history and classifies what each poll asked (Section 4).
-2. It shows that the layering question is substantive, contested, and grounded in a decade of field evidence (Section 5).
-3. It reports, by a disclosed and re-runnable method, that no published WG21 paper contests the characterization (Section 6).
-
-The concern behind the ask rests on one assumption, stated plainly so a delegate can test it: a design settled through accumulated approvals, with no single poll deciding it, is harder to revisit than one decided by an explicit ballot. Section 4 gives the evidence for it, and the reader who rejects the assumption can weigh the polls in Table 1 directly.
+Two companion papers in the July 2026 mailing take up adjacent questions: P4306R0<sup>[1]</sup> supplies the dedicated comparison of the two configuration-ownership models that this paper's Poll 2 contemplates, and P4310R0<sup>[2]</sup> examines the separate question of the response to a detected core-language violation.
 
 ---
 
-## 3. P3100 Characterizes Profiles as a Preset over Its Machinery
+## 3. P3100 Characterizes Profiles as a Preset over Its Machinery {#p3100-characterizes-profiles}
 
-Section 2 named the two competing bodies of work. On one side, P3100R8's implicit contract assertions - checks the language inserts at each point of undefined behavior - configured through Labels, the in-source facility of [P3400R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3400r3.pdf)<sup>[3]</sup>. On the other, the Profiles work: named, enforceable safety guarantees with the Profiles framework as the feature the user configures directly. They can coexist, but they cannot both be the foundation. Exactly one owns the guarantees and the response to a failed check, and the other is defined in its terms:
+On one side, P3100R8's implicit contract assertions - checks the language inserts at each point of undefined behavior - configured through Labels, the in-source facility of [P3400R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3400r3.pdf)<sup>[3]</sup>.
+
+On the other, the Profiles work: named, enforceable safety guarantees with the Profiles framework as the feature the user configures directly.
+
+They can coexist, but they cannot both be the foundation. Exactly one owns the guarantees and the response to a failed check, and the other is defined in its terms:
 
 - **P3100-first.** P3100's machinery is the foundation. A profile is a named preset that selects from that machinery's settings.
 - **Profiles-first.** The Profiles framework is the foundation. It owns the guarantees and the response to a failed check, and P3100's tools sit underneath it.
-
-P3100R8's Appendix A enumeration of every case of explicit core language undefined behavior (80 cases, classified by diagnosability), its five named evaluation semantics that give existing vendor mechanisms a coherent vocabulary, and its backward-compatible wording that invalidates no existing implementation are real achievements independent of the layering question. What follows is about the architecture claim alone.
 
 P3100R8 characterizes Profiles as a preset layered on top of its own tools. Its Section 4.4 states the characterization in conditional terms, but the paper does not rest on the hedge: as the Figure 4 caption below shows, the same layering is stated declaratively, and Section 5.6 (discussed later) acts on it. Section 4.4, under "Configuration":
 
@@ -86,23 +92,19 @@ The consequence is concrete. P3081R2's proposed wording still adds those enumera
 
 Read together, P3100R8's Section 4.4, Figure 4, Section 5.6, and Section 7.2 make one claim: P3100's machinery is the base, and Profiles are either a preset that configures it or an auditor that checks it. Either way, P3100 is the foundation and Profiles are defined in its terms.
 
-P3100R8 therefore contains two things that can be evaluated separately. The first is wording: 77 runtime-checkable cases of undefined behavior, each with a proposed transformation, each standing on its own technical merits regardless of whether Profiles sit above or below P3100's machinery. The second is the architecture claim, which depends on the wording and cannot advance without it. It is nonetheless separable: it advances alongside the wording review and gains standing from each approval, yet the review never directly examines or polls it.
+P3100R8 therefore contains two things that can be evaluated separately.
+
+The first is wording: 77 runtime-checkable cases of undefined behavior, each with a proposed transformation, each standing on its own technical merits regardless of whether Profiles sit above or below P3100's machinery.
+
+The second is the architecture claim, which depends on the wording and cannot advance without it. It is nonetheless separable: it advances alongside the wording review and gains standing from each approval, yet the review never directly examines or polls it.
 
 In short, reviewable wording travels with an architecture claim that has never been polled on its own. Without explicit input from EWG, approving the outcomes of the case-by-case review may close the evolution path for Profiles. The ask is severance - let the wording proceed on its merits, and require the architecture claim to be decided by its own paper and poll.
 
 ---
 
-## 4. Seven Polls Advanced the Paper; None Adopted the Architecture
+## 4. Seven Polls Advanced the Paper; None Adopted the Architecture {#seven-polls}
 
-We examine the proposal's poll record: first why every poll about the proposal looks low-stakes, then what the polls actually decided.
-
-Because the wording requires nothing of any implementation, the polls look low-stakes. P3100R8's Section 5.2:
-
-> Note that no implementation is actually required to implement these checks: a valid implementation choice is to make all 77 cases always have the ignore semantic. It follows that all existing implementations of C++ are already conforming with this wording transformation.
-
-Every evaluation semantic is implementation-defined per case, and the proposal's own wording states that "There is no requirement that any particular semantic choice be available for the implicit contract assertion"<sup>[4]</sup>. This design has a legitimate engineering rationale - the wording is adoptable without breaking any implementation - and a procedural effect: because a poll about it compels no vendor and breaks no code, each vote is easy to cast and easy to justify. But requiring nothing is not the same as deciding nothing. The votes still accumulate toward something concrete: the layering in P3100R8's Figure 4 and the configuration ownership in its Section 7.2.
-
-P3100R8's Section 2, "History and polls", lists what it presents as the committee history through Croydon (March 2026). At the time of writing, P3100R8 itself, dated July 2026, is the latest revision. Rows 1-6 of Table 1 reproduce every poll from that section, quoted from the paper, with the tallies the paper itself gives. There is no independent public list to check those six against, except as noted below. Row 7 is a later poll, taken at Brno in June 2026, after the period Section 2's history covers. It is absent from P3100R8's self-reported history and is quoted here from the public WG21 paper tracker.
+Rows 1-6 of Table 1 reproduce every poll from that section, quoted from the paper, with the tallies the paper itself gives. Row 7 is a later poll, taken at Brno in June 2026, after the period Section 2's history covers.
 
 Table 1: The six polls in P3100R8's self-reported history (its Section 2, rows 1-6), plus a seventh poll taken at Brno after that history's coverage (row 7, from the public paper tracker). Poll text abridged only by ellipsis. Tallies and result labels as printed in the cited source. The rightmost column classifies what each poll asked for. SG21 is the Contracts study group, SG23 the Safety and Security study group, and EWG the Evolution Working Group.
 
@@ -116,8 +118,6 @@ Table 1: The six polls in P3100R8's self-reported history (its Section 2, rows 1
 | 6 | EWG, Croydon, 2026-03 | "Update P3100R5 by applying the presented rules to all cases of runtime-checkable UB in the standard, as listed in appendix A, and bring it back to EWG for case-by-case wording review" | 39/19/5/2/1 | Strong consensus | A wording update across all 77 cases, and more review |
 | 7 | EWG, Brno, 2026-06 | "EWG Approves of the overall direction of P3100R7, agrees to attend/spend time reviewing every line item in Telecons, and re-consider this in B&uacute;zios." | 16/15/6/2/0 | Consensus | Direction, a telecon commitment, and reconsideration at B&uacute;zios |
 
-The Hagenberg poll and its tally are independently public in [P3656R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3656r1.pdf)<sup>[9]</sup>, the white paper process document by its appointed editors. On the WG21 paper tracker<sup>[10]</sup>, the Brno poll (row 7) and its tally are independently public. The remaining tallies are as self-reported in P3100R8.
-
 Three observations follow from the table:
 
 First, none of the seven polls adopts anything. Two are direction polls, one creates a white paper and appoints its editors, one endorses a diagram as a basis for that white paper, one recommends a target, and one requests a wording update and further review. At Brno, the seventh approves the overall direction and commits EWG to line-item telecon review with reconsideration at B&uacute;zios. The one poll that established a content-approval process - Sofia's per-clause approval in telecons - never ran. The paper itself reports:
@@ -128,9 +128,19 @@ Second, the endorsements were for a white paper that no longer exists. The Hagen
 
 Third, the paper's own characterization of this record is stronger than the poll texts and tallies. Its Section 1 states: "The proposed design has been reviewed and approved by SG21, SG23, and EWG."<sup>[4]</sup> Table 1 records no adoption poll. Within its Section 2, the prose introducing the Kona poll reads "approved it with strong consensus". The poll box directly beneath records "Result: Consensus", with one Against and two Strongly Against, and the poll text asks about direction, which in WG21 procedure does not adopt or approve a design.
 
-The accumulation works in numbered steps. (1) Each recorded consensus becomes the starting point for the next question. (2) Each one raises the cost of objecting later, because a subsequent objection must unseat a standing result rather than address an open one. (3) The Croydon poll routes the proposal into review of 77 cases, one at a time, and each case is a small, technical, reasonable question, none of them the architecture question of P3100R8's Section 4.4. (4) When the last case is approved, the architecture may be settled in effect without ever being polled on its own. This is a ratchet: a series of small forward steps that are individually easy and collectively hard to undo. Nothing here says the outcome is inevitable. The architecture's one ballot appearance was as "a good basis" for the abandoned white paper (Table 1, poll 4).
+The accumulation works in numbered steps.
 
-The review's structure shows where that architecture lives. P3100R8's wording (its Section 6) is not 77 independent edits: it rests on six foundational changes that establish the framework, after which each individual case is a mechanical application of it. Table 2 lists them.
+(1) Each recorded consensus becomes the starting point for the next question.
+
+(2) Each one raises the cost of objecting later, because a subsequent objection must unseat a standing result rather than address an open one.
+
+(3) The Croydon poll routes the proposal into review of 77 cases, one at a time, and each case is a small, technical, reasonable question, none of them the architecture question of P3100R8's Section 4.4.
+
+(4) When the last case is approved, the architecture may be settled in effect without ever being polled on its own.
+
+This is a ratchet: a series of small forward steps that are individually easy and collectively hard to undo. Nothing here says the outcome is inevitable. But requiring nothing is not the same as deciding nothing. The votes still accumulate toward something concrete.
+
+P3100R8's wording rests on six foundational changes that establish the framework, after which each individual case is a mechanical application of it. Table 2 lists them.
 
 Table 2: The six foundational wording changes in P3100R8's Section 6 that carry the architecture. Once these are approved, the remaining individual cases are mechanical applications of the framework they establish.
 
@@ -145,59 +155,59 @@ Table 2: The six foundational wording changes in P3100R8's Section 6 that carry 
 
 These six clauses front-load the ratchet: the architecture is decided when they are approved. Once they stand, each remaining case is the small, technical, reasonable question that step (3) describes - change "the behaviour is undefined" to "there is an implicit precondition assertion that this does not occur." A member reviewing the fortieth case is no longer positioned to reopen the framework, because that decision was made when the foundational clauses passed. The ratchet is not 77 equal steps but six foundational ones followed by the rest as mechanical applications.
 
-To the response that direction polls are only encouragement and the real decision comes later: the defaults arrive earlier. By the time an adoption poll exists, the characterization will have seven recorded consensus results and 77 case approvals behind it, and whoever contests the accumulated record carries the burden of proof. Reversal at that point is possible but expensive. The committee removed the earlier Contracts design from the C++20 working draft after adopting it, once design disagreements surfaced that consensus could not resolve<sup>[11]</sup>. It walked away from [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html)<sup>[12]</sup> after the unified executor design absorbed fourteen revisions of committee direction and was never deployed as designed - a history [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf)<sup>[13]</sup> documents with its costs. Both reversals cost years, and both show the committee can undo even an adopted design once the case is made. The concern here is narrower and earlier: the cost of reversal accrues before any adoption poll, while the record is built case by case. Reversal stays available - what the accumulation removes is the occasion to decide the architecture before that cost is incurred.
+To the response that direction polls are only encouragement and the real decision comes later: the defaults arrive earlier. By the time an adoption poll exists, the characterization will have seven recorded consensus results and 77 case approvals behind it, and whoever contests the accumulated record carries the burden of proof. Reversal at that point is possible but expensive. The committee removed the earlier Contracts design from the C++20 working draft after adopting it, once design disagreements surfaced that consensus could not resolve<sup>[9]</sup>. It walked away from [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html)<sup>[10]</sup> after the unified executor design absorbed fourteen revisions of committee direction and was never deployed as designed - a history [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf)<sup>[11]</sup> documents with its costs. Both reversals cost years, and both show the committee can undo even an adopted design once the case is made. The concern here is narrower and earlier: the cost of reversal accrues before any adoption poll, while the record is built case by case. Reversal stays available - what the accumulation removes is the occasion to decide the architecture before that cost is incurred.
 
 ---
 
-## 5. The Claim Decides Who Owns Runtime-Check Configuration
+## 5. The Claim Decides Who Owns Runtime-Check Configuration {#claim-decides-ownership}
 
 The bundled architecture claim carries real design stakes: this section shows what the layering decides, then what the deployment record says about the two architectures it chooses between.
 
 Four design consequences follow from the layering claim, each taken from the published texts:
 
-- **It decides who writes guarantees.** Under P3984R0's model, a profile writes the guarantee itself: "A profile cannot change the semantics of a program beyond defining the meaning of some forms of undefined behavior", and its overflow example has the profile choose wraparound, saturation, or an exception<sup>[14]</sup>. Under P3100R8's Section 4.4, a profile defines nothing. It selects a configuration of the proposal's semantics. The difference is ownership: the profile author writes the guarantee, or the preset author chooses from the proposal's menu.
+- **It decides who writes guarantees.** Under P3984R0's model, a profile writes the guarantee itself: "A profile cannot change the semantics of a program beyond defining the meaning of some forms of undefined behavior", and its overflow example has the profile choose wraparound, saturation, or an exception<sup>[12]</sup>. Under P3100R8's Section 4.4, a profile defines nothing. It selects a configuration of the proposal's semantics. The difference is ownership: the profile author writes the guarantee, or the preset author chooses from the proposal's menu.
 - **It decides who owns configuration.** P3100R8's Section 7.2 requires that either Labels or the Profiles framework be specified in terms of the other, and the proposal nominates Labels, sketching a profile as "essentially a declaration that expands to [P3400R3] directives". If per-clause review normalizes that arrangement case by case, P3589R2 arrives at its own EWG review already defined as syntax sugar over another proposal's facility.
-- **It decides the scope of Profiles.** The alternative future that Section 7.2 offers - Profiles as "an auditing feature rather than a configuration feature" - removes Profiles from configuration entirely. An auditing profile cannot enable anything. It can only reject programs whose configuration, chosen through P3100R8's mechanisms, violates its guarantees. Such a feature is real and possibly useful, but strictly smaller than the framework the Direction Group endorsed in [P3970R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3970r0.pdf)<sup>[15]</sup>.
+- **It decides the scope of Profiles.** The alternative future that Section 7.2 offers - Profiles as "an auditing feature rather than a configuration feature" - removes Profiles from configuration entirely. An auditing profile cannot enable anything. It can only reject programs whose configuration, chosen through P3100R8's mechanisms, violates its guarantees. Such a feature is real and possibly useful, but strictly smaller than the framework the Direction Group endorsed in [P3970R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3970r0.pdf)<sup>[13]</sup>.
 - **It applies a test to Profiles that the proposal does not apply to itself.** P3100R8's Section 4.3.2 rejects conditional refined behavior: "We also cannot have two different language dialects where the same expression means two different things (overflow or wraparound)."<sup>[4]</sup> Its Section 5.4 then maps signed integer overflow, for the same expression, to wraparound under ignore, a diagnostic under observe or enforce, an abort under quick-enforce, and undefined behavior under assume - selected per case by an implementation-defined mechanism. Whether five implementation-selected meanings for one expression are themselves dialects is a question per-clause review will never ask, because no single clause raises it. The dialect question implicates both models, P3100's implementation-selected semantics and P3984's profile-defined semantics alike, which is one more reason to settle it in a paper of its own rather than as a byproduct of wording review.
 
 The deployment record speaks to which architecture matches existing practice. For a decade, the named-check-set form the Profiles papers describe has shipped under vendor names:
 
-- **Core Guidelines checkers:** clang-tidy since LLVM 3.8 (March 2016)<sup>[16]</sup>; MSVC installed by default from VS 2017<sup>[17]</sup>.
-- **Hardened libc++:** since LLVM 18 (March 2024), four named modes, a failed check "reliably terminated", a build setting in Xcode 16<sup>[18]</sup><sup>[19]</sup>; deployed across Google server-side production at approximately 0.30% average cost<sup>[20]</sup>.
-- **libstdc++ assertions:** since GCC 6 (2016); enabled by default for unoptimized builds since GCC 15<sup>[21]</sup>.
-- **MSVC STL hardening:** since VS 2022 17.14 (May 2025); a failed check calls `__fastfail()` "As C++26 Contracts are not yet implemented"<sup>[22]</sup>.
+- **Core Guidelines checkers:** clang-tidy since LLVM 3.8 (March 2016)<sup>[14]</sup>; MSVC installed by default from VS 2017<sup>[15]</sup>.
+- **Hardened libc++:** since LLVM 18 (March 2024), four named modes, a failed check "reliably terminated", a build setting in Xcode 16<sup>[16]</sup><sup>[17]</sup>; deployed across Google server-side production at approximately 0.30% average cost<sup>[18]</sup>.
+- **libstdc++ assertions:** since GCC 6 (2016); enabled by default for unoptimized builds since GCC 15<sup>[19]</sup>.
+- **MSVC STL hardening:** since VS 2022 17.14 (May 2025); a failed check calls `__fastfail()` "As C++26 Contracts are not yet implemented"<sup>[20]</sup>.
 
-Every one of these is a named, vendor-defined check-set. None routes through the `std::contracts` violation handler adopted for C++26, and none is configured by a Label. libc++ comes closest: as an experimental feature added in LLVM 21 (2025)<sup>[23]</sup>, it lets a translation unit select among four assertion semantics named after the C++26 evaluation semantics (ignore, observe, quick-enforce, enforce), and it lets vendors, though explicitly not users, override the assertion handler<sup>[18]</sup>. Even there, the semantic is chosen for a build through a vendor macro rather than per assertion through a Label, and the handler is the vendor's rather than the replaceable `std::contracts` one.
+Every one of these is a named, vendor-defined check-set. None routes through the `std::contracts` violation handler adopted for C++26, and none is configured by a Label. libc++ comes closest: as an experimental feature added in LLVM 21 (2025)<sup>[21]</sup>, it lets a translation unit select among four assertion semantics named after the C++26 evaluation semantics (ignore, observe, quick-enforce, enforce), and it lets vendors, though explicitly not users, override the assertion handler<sup>[16]</sup>. Even there, the semantic is chosen for a build through a vendor macro rather than per assertion through a Label, and the handler is the vendor's rather than the replaceable `std::contracts` one.
 
-By contrast, the proposal's distinctive machinery ships nowhere. The contract-violation runtime adopted for C++26 ([P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[24]</sup>, adopted February 2025<sup>[25]</sup>) has one compiler implementation: GCC 16.1 (April 2026), opt-in, under GCC's blanket experimental C++26 label<sup>[26]</sup>; Clang reports "No"<sup>[27]</sup>; MSVC reports "not yet implemented"<sup>[22]</sup>. Implicit contract assertions have no implementation, and P3100R8 reports no deployment experience of the proposed machinery: the word "experience" does not appear in it<sup>[4]</sup>. Labels are future tense in the proposal's own text: they "will provide the ability to choose and constrain the evaluation semantic in code"<sup>[4]</sup>. Two symmetries are worth stating. Neither proposed specification is deployed - the Profiles framework syntax of P3589R2 has no implementation either (the Clang Profiles work of Section 1 implements individual profiles, not that syntax). Both forms also have deep lineage: the named check-set in the vendor deployments above and the compiler-inserted check in the sanitizers and `-ftrapv`/`-fwrapv`, which P3100R8 maps into its model. On both sides, what deployment validates is per-build selection through vendor flags and macros. The in-source per-assertion Labels and the replaceable `std::contracts` handler, the parts that distinguish the proposal, have no such validation. C++26 has, on paper, assigned hardening's future to contract terms - [P3471R4](https://open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3471r4.html)<sup>[28]</sup> is the first user of the adopted Contracts feature<sup>[25]</sup> - while every shipping deployment runs the named-guarantee form.
+By contrast, the proposal's distinctive machinery ships nowhere. The contract-violation runtime adopted for C++26 ([P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[22]</sup>, adopted February 2025<sup>[23]</sup>) has one compiler implementation: GCC 16.1 (April 2026), opt-in, under GCC's blanket experimental C++26 label<sup>[24]</sup>; Clang reports "No"<sup>[25]</sup>; MSVC reports "not yet implemented"<sup>[20]</sup>. Implicit contract assertions have no implementation, and P3100R8 reports no deployment experience of the proposed machinery: the word "experience" does not appear in it<sup>[4]</sup>. Labels are future tense in the proposal's own text: they "will provide the ability to choose and constrain the evaluation semantic in code"<sup>[4]</sup>. Two symmetries are worth stating. Neither proposed specification is deployed - the Profiles framework syntax of P3589R2 has no implementation either (the Clang Profiles work of Section 9 implements individual profiles, not that syntax). Both forms also have deep lineage: the named check-set in the vendor deployments above and the compiler-inserted check in the sanitizers and `-ftrapv`/`-fwrapv`, which P3100R8 maps into its model. On both sides, what deployment validates is per-build selection through vendor flags and macros. The in-source per-assertion Labels and the replaceable `std::contracts` handler, the parts that distinguish the proposal, have no such validation. C++26 has, on paper, assigned hardening's future to contract terms - [P3471R4](https://open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3471r4.html)<sup>[26]</sup> is the first user of the adopted Contracts feature<sup>[23]</sup> - while every shipping deployment runs the named-guarantee form.
 
-The governing standard comes from the committee's direction paper, [P2000R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2000r5.pdf)<sup>[29]</sup>: "We change the language and standard library by gradually building on previous work or by providing a better alternative to an existing feature." That standard cuts two ways here, and this analysis does not adjudicate between them: P3100 builds on P2900, the most recently adopted prior work, while the deployed named-guarantee form is the existing practice a Profiles framework would build on. Which reading governs is what Poll 3 asks EWG to weigh. Three committee members applied the existing-practice reading in this exact domain in [P3608R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3608r0.html)<sup>[30]</sup>, writing about what to ship in C++26: "the standard library hardening is existing practice, and comes with very positive field experience reports." The existing practice it names is the named-guarantee form, so the reading transfers to the ownership question. Who wrote this standard matters, so here it is: Stroustrup, an author on one side of the dispute examined here, co-authors P2000R5 and P3970R0, and P3608R0 is co-authored by an author of this paper (Section 1). The deployment facts above stand on vendor documentation and do not depend on those papers. Profiles' own direction lineage - [P2687R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2687r0.pdf)<sup>[31]</sup> (2022) back to the C++ Core Guidelines, announced September 2015<sup>[32]</sup> - is weighed exactly as Table 1 weighs the proposal's polls: direction, not adoption.
+The governing standard comes from the committee's direction paper, [P2000R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2000r5.pdf)<sup>[27]</sup>: "We change the language and standard library by gradually building on previous work or by providing a better alternative to an existing feature." That standard cuts two ways here, and this analysis does not adjudicate between them: P3100 builds on P2900, the most recently adopted prior work, while the deployed named-guarantee form is the existing practice a Profiles framework would build on. Which reading governs is what Poll 3 asks EWG to weigh. Three committee members applied the existing-practice reading in this exact domain in [P3608R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3608r0.html)<sup>[28]</sup>, writing about what to ship in C++26: "the standard library hardening is existing practice, and comes with very positive field experience reports." The existing practice it names is the named-guarantee form, so the reading transfers to the ownership question. Who wrote this standard matters, so here it is: Stroustrup, an author on one side of the dispute examined here, co-authors P2000R5 and P3970R0, and P3608R0 is co-authored by an author of this paper (Section 1). The deployment facts above stand on vendor documentation and do not depend on those papers. Profiles' own direction lineage - [P2687R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2687r0.pdf)<sup>[29]</sup> (2022) back to the C++ Core Guidelines, announced September 2015<sup>[30]</sup> - is weighed exactly as Table 1 weighs the proposal's polls: direction, not adoption.
 
-The layering is a runtime arrangement as well as a diagram. Under P3100R8 a detected core-language violation is routed to the single program-wide contract-violation handler regardless of whether the build selects observe, enforce, or quick-enforce. The log-and-continue shape of the observe semantic already ships at the library level in Bloomberg's `bsls_review`<sup>[33]</sup>. Whoever owns the handler owns the response, and under P3100R8 that owner is neither the operation nor any profile - it is the handler. A profile that must guarantee terminate-or-reject for the categories it covers is then defined over a substrate whose configuration can route the response through a handler the profile does not control. Hence the ownership question needs a ballot of its own, separate from the case-by-case review.
+The layering is a runtime arrangement as well as a diagram. Under P3100R8 a detected core-language violation is routed to the single program-wide contract-violation handler regardless of whether the build selects observe, enforce, or quick-enforce. The log-and-continue shape of the observe semantic already ships at the library level in Bloomberg's `bsls_review`<sup>[31]</sup>. Whoever owns the handler owns the response, and under P3100R8 that owner is neither the operation nor any profile - it is the handler. A profile that must guarantee terminate-or-reject for the categories it covers is then defined over a substrate whose configuration can route the response through a handler the profile does not control. Hence the ownership question needs a ballot of its own, separate from the case-by-case review.
 
 One response holds that the two features are complementary and the layering a detail. But complementarity is not symmetric here, and P3100R8 says so. Its Section 7.2 states that one feature must be specified in terms of the other, and the paper places Labels underneath. P3081R1 took the complementary path - it adopted the proposal's API into its own wording - and P3100R8's Section 5.6 then withdrew that API, as Section 3 showed. Complementarity without settled configuration ownership has already produced one stranded dependency. The layering is the decision, not a detail. With this much contested evidence behind it, the question deserves a dedicated ballot, away from 77 wording cases whose technical merits are independent of it.
 
 ---
 
-## 6. No Published Paper Contests the Characterization
+## 6. No Published Paper Contests the Characterization {#no-published-paper-contests}
 
 The claim of this section is deliberately narrow. Through the 2026-05 pre-Brno mailing (the most recent published mailing at the 2026-07-07 fetch), the search method below found no published WG21 paper that directly contests P3100R8's characterization of Profiles. This is a statement about the public paper record only. It says nothing about whether anyone has objected in committee discussion, which is outside this scope.
 
-Since June 2025, the characterization has been in print - first on slide 53 of [P3754R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3754r0.pdf)<sup>[34]</sup> (headed "Configurable Profiles", reading "Named configuration presets for the features below"), endorsed by the Sofia diagram poll, then in P3100R4 (August 2025) and every revision since.
+Since June 2025, the characterization has been in print - first on slide 53 of [P3754R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3754r0.pdf)<sup>[32]</sup> (headed "Configurable Profiles", reading "Named configuration presets for the features below"), endorsed by the Sofia diagram poll, then in P3100R4 (August 2025) and every revision since.
 
 Why the absence is structural rather than accidental: a paper with no normative effect never forces anyone to respond. No wording changes what any implementation must do, no forwarding poll on the layering is scheduled, and no individual clause in the review asks the Profiles question. Anyone who objects is objecting to something that, today, does nothing, so the claim moves forward because there is never anything to vote against.
 
 The method, so the absence claim can be re-run: we enumerated all papers in the public open-std 2025 and 2026 mailing directories whose titles match profile, safety, harden, undefined behaviour, UB, erroneous, contract, preset, P3100, or P3754, together with every revision of P3100 and P3754 and the P2687/P3274/P3081/P3589/P3970/P3984 lineage - 121 documents, fetched 2026-07-07. We searched the full text of each for the characterization and its layering language (preset, built on top of, higher-level feature, substrate). We also checked the public GitHub paper tracker and the full WG21 paper index, author by author, for 2025-2026 papers by Stroustrup, Dos Reis, Sutter, and Vandevoorde. A contesting paper with a title outside the keyword net would escape the search. The author scan and the tracker check mitigate that risk. They do not close it.
 
-The result: the characterization occurs only in the proposal's own papers and its companions. [P3543R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3543r0.pdf)<sup>[35]</sup> (December 2024, co-authored by Doumler and Berne) states that P3081's runtime checks "are already preconditions introduced as implicit preconditions into the language itself by [P3100]". [P3599R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3599r0.pdf)<sup>[36]</sup> (February 2025) proposes to "restrict [P3081R1] (Profiles) to static checks".
+The result: the characterization occurs only in the proposal's own papers and its companions. [P3543R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3543r0.pdf)<sup>[33]</sup> (December 2024, co-authored by Doumler and Berne) states that P3081's runtime checks "are already preconditions introduced as implicit preconditions into the language itself by [P3100]". [P3599R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3599r0.pdf)<sup>[34]</sup> (February 2025) proposes to "restrict [P3081R1] (Profiles) to static checks".
 
-On the Profiles side, the published papers assert an incompatible architecture and do not engage the characterization. P3589R2 contains no occurrence of "contract", "label", or "preset" in any revision - though its latest revision (May 2025) predates the characterization's first publication, so its silence reflects timing, not agreement<sup>[37]</sup>. P3984R0 post-dates the characterization by eight months and asserts a profile that owns its semantics directly: "For example, signed arithmetic overflow is UB so a profile can define it to be wraparound like unsigned arithmetic (though I wouldn't do that), to be saturated arithmetic, or to throw an exception." The strings "P3100", "contract", and "preset" do not occur anywhere in it<sup>[14]</sup>. P3970R0, the Direction Group's January 2026 statement, comes nearest: it reports "a stream of uncoordinated proposals to address problems from different perspectives, often not even mentioning Profiles" and reasserts the P3589R2 framework as the way forward - without naming P3100<sup>[15]</sup>. Eighteen months ago, in P3608R0, the interaction question itself was identified as open: "We have a very unclear picture on how contracts and profiles should interact and interoperate"<sup>[30]</sup>. That question came first. The characterization is the proposal's answer, and no published response has appeared.
+On the Profiles side, the published papers assert an incompatible architecture and do not engage the characterization. P3589R2 contains no occurrence of "contract", "label", or "preset" in any revision - though its latest revision (May 2025) predates the characterization's first publication, so its silence reflects timing, not agreement<sup>[35]</sup>. P3984R0 post-dates the characterization by eight months and asserts a profile that owns its semantics directly: "For example, signed arithmetic overflow is UB so a profile can define it to be wraparound like unsigned arithmetic (though I wouldn't do that), to be saturated arithmetic, or to throw an exception." The strings "P3100", "contract", and "preset" do not occur anywhere in it<sup>[12]</sup>. P3970R0, the Direction Group's January 2026 statement, comes nearest: it reports "a stream of uncoordinated proposals to address problems from different perspectives, often not even mentioning Profiles" and reasserts the P3589R2 framework as the way forward - without naming P3100<sup>[13]</sup>. Eighteen months ago, in P3608R0, the interaction question itself was identified as open: "We have a very unclear picture on how contracts and profiles should interact and interoperate"<sup>[28]</sup>. That question came first. The characterization is the proposal's answer, and no published response has appeared.
 
 In parallel, the Profiles papers keep asserting the opposite architecture, as if both could be true. Severance fixes this: the wording review continues on its own track, and the architecture question gets its own poll.
 
 ---
 
-## 7. Objections
+## 7. Objections {#objections}
 
 Each heading below is an objection this paper expects, stated in its strongest form. Each response draws only on evidence already presented.
 
@@ -229,9 +239,9 @@ A scheduled discussion, or a reconsideration folded into a broader poll, does no
 
 ---
 
-## 8. Making the Design Commitment Explicit
+## 8. Proposed Resolution {#proposed-resolution}
 
-The concern this paper raises requires no intent on anyone's part. Through the formulations of P3100R8's Sections 4.4 and 7.2, EWG may be unintentionally committing itself to closing the design space for Profiles, one approval at a time. No one needs to choose that outcome for it to arrive - the review only needs to keep running while the claim advances unpolled. The remedy for an unintentional commitment is to make the question intentional: write it out, put it in front of EWG, and let the room decide with open eyes.
+This paper requests that the design commitment, or lack thereof, becomes explicit.
 
 Any one of three things suffices. At the review sessions, a minuted statement that approval of wording cases neither adopts nor endorses the layering. A sentence in a future revision of P3100 placing the Profiles relationship out of scope of the wording review. Or the polls below.
 
@@ -257,7 +267,17 @@ These three polls are themselves small consensus steps - but each names the ques
 
 ---
 
-## References
+## 9. Disclosure {#disclosure}
+
+The authors provide information and serve at the pleasure of the committee.
+
+Vinnie Falco is the founder of the C++ Alliance, which sponsors a Clang implementation of Profiles. Ville Voutilainen is a longtime WG21 member and a co-author of P3608R0, which Sections 4 and 5 quote, and of other published critiques of the C++26 Contracts process.
+
+This paper takes no position on which architecture is correct. It reports the public deployment record and asks that the ownership question be polled. One of a set in the July 2026 mailing on the runtime checking of core-language undefined behavior, it works only from the published record, and committee-internal documents may contain answers that the record does not. It uses machine-assisted drafting.
+
+---
+
+## References {#references}
 
 [1] [P4306R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4306r0.pdf) - "Configuring Runtime Checking: Profiles and Implicit Contract Assertions" (Vinnie Falco, Ville Voutilainen, 2026).
 
@@ -275,60 +295,56 @@ These three polls are themselves small consensus steps - but each names the ques
 
 [8] [P3081R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3081r2.pdf) - "Core safety profiles for C++26" (Herb Sutter, 2025).
 
-[9] [P3656R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3656r1.pdf) - "Initial draft proposal for core language UB white paper: Process and major work items" (Herb Sutter, Ga&scaron;per A&zcaron;man, 2025).
+[9] [Trip report: Summer ISO C++ standards meeting (Cologne)](https://herbsutter.com/2019/07/20/trip-report-summer-iso-c-standards-meeting-cologne/) - "Contracts moved from draft C++20 to a new Study Group" (Herb Sutter, 2019).
 
-[10] [cplusplus/papers issue #1901](https://github.com/cplusplus/papers/issues/1901) - public WG21 paper-tracker issue for P3100; records the EWG Brno straw poll of 2026-06-10 (question text and tally 16/15/6/2/0, result consensus).
+[10] [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html) - "A Unified Executors Proposal for C++" (Jared Hoberock, Michael Garland, Chris Kohlhoff, Chris Mysen, Carter Edwards, Gordon Brown, Daisy Hollman, et al., 2020).
 
-[11] [Trip report: Summer ISO C++ standards meeting (Cologne)](https://herbsutter.com/2019/07/20/trip-report-summer-iso-c-standards-meeting-cologne/) - "Contracts moved from draft C++20 to a new Study Group" (Herb Sutter, 2019).
+[11] [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf) - "Info: The Unification of Executors and P0443" (Vinnie Falco, 2026).
 
-[12] [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html) - "A Unified Executors Proposal for C++" (Jared Hoberock, Michael Garland, Chris Kohlhoff, Chris Mysen, Carter Edwards, Gordon Brown, Daisy Hollman, et al., 2020).
+[12] [P3984R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3984r0.pdf) - "A type-safety profile" (Bjarne Stroustrup, 2026).
 
-[13] [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf) - "Info: The Unification of Executors and P0443" (Vinnie Falco, 2026).
+[13] [P3970R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3970r0.pdf) - "Profiles and Safety: a call to action" (David Vandevoorde, Jeff Garland, Paul E. McKenney, Roger Orr, Bjarne Stroustrup, Michael Wong, 2026).
 
-[14] [P3984R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3984r0.pdf) - "A type-safety profile" (Bjarne Stroustrup, 2026).
+[14] [clang-tidy checks, LLVM 3.8](https://releases.llvm.org/3.8.0/tools/clang/tools/extra/docs/clang-tidy/checks/cppcoreguidelines-pro-bounds-array-to-pointer-decay.html) - "cppcoreguidelines-pro-bounds-array-to-pointer-decay" (LLVM Project, 2016).
 
-[15] [P3970R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3970r0.pdf) - "Profiles and Safety: a call to action" (David Vandevoorde, Jeff Garland, Paul E. McKenney, Roger Orr, Bjarne Stroustrup, Michael Wong, 2026).
+[15] [Using the C++ Core Guidelines checkers](https://learn.microsoft.com/en-us/cpp/code-quality/using-the-cpp-core-guidelines-checkers) - "Use the C++ Core Guidelines checkers" (Microsoft Learn, retrieved 2026).
 
-[16] [clang-tidy checks, LLVM 3.8](https://releases.llvm.org/3.8.0/tools/clang/tools/extra/docs/clang-tidy/checks/cppcoreguidelines-pro-bounds-array-to-pointer-decay.html) - "cppcoreguidelines-pro-bounds-array-to-pointer-decay" (LLVM Project, 2016).
+[16] [libc++ Hardening Modes](https://libcxx.llvm.org/Hardening.html) - "Hardening Modes" (LLVM Project, retrieved 2026).
 
-[17] [Using the C++ Core Guidelines checkers](https://learn.microsoft.com/en-us/cpp/code-quality/using-the-cpp-core-guidelines-checkers) - "Use the C++ Core Guidelines checkers" (Microsoft Learn, retrieved 2026).
+[17] [C++ Language Support](https://developer.apple.com/xcode/cpp/) - "C++ Language Support" (Apple Developer, retrieved 2026).
 
-[18] [libc++ Hardening Modes](https://libcxx.llvm.org/Hardening.html) - "Hardening Modes" (LLVM Project, retrieved 2026).
+[18] [Retrofitting spatial safety to hundreds of millions of lines of C++](https://security.googleblog.com/2024/11/retrofitting-spatial-safety-to-hundreds.html) - "Retrofitting spatial safety to hundreds of millions of lines of C++" (Alex Rebert, Max Shavrick, Kinuko Yasuda, Google Security Blog, 2024).
 
-[19] [C++ Language Support](https://developer.apple.com/xcode/cpp/) - "C++ Language Support" (Apple Developer, retrieved 2026).
+[19] [libstdc++ macros documentation](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_macros.html) - "Macros" (GCC, retrieved 2026); API history at [libstdc++ API evolution](https://gcc.gnu.org/onlinedocs/libstdc++/manual/api.html).
 
-[20] [Retrofitting spatial safety to hundreds of millions of lines of C++](https://security.googleblog.com/2024/11/retrofitting-spatial-safety-to-hundreds.html) - "Retrofitting spatial safety to hundreds of millions of lines of C++" (Alex Rebert, Max Shavrick, Kinuko Yasuda, Google Security Blog, 2024).
+[20] [microsoft/STL VS 2022 changelog](https://github.com/microsoft/STL/wiki/VS-2022-Changelog) - "VS 2022 Changelog" (Microsoft STL team, retrieved 2026); hardening details at [STL Hardening wiki](https://github.com/microsoft/STL/wiki/STL-Hardening).
 
-[21] [libstdc++ macros documentation](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_macros.html) - "Macros" (GCC, retrieved 2026); API history at [libstdc++ API evolution](https://gcc.gnu.org/onlinedocs/libstdc++/manual/api.html).
+[21] [Libc++ 21 Release Notes](https://releases.llvm.org/21.1.0/projects/libcxx/docs/ReleaseNotes.html) - "Libc++ 21.1.0 Release Notes", assertion-semantics section (LLVM Project, 2025).
 
-[22] [microsoft/STL VS 2022 changelog](https://github.com/microsoft/STL/wiki/VS-2022-Changelog) - "VS 2022 Changelog" (Microsoft STL team, retrieved 2026); hardening details at [STL Hardening wiki](https://github.com/microsoft/STL/wiki/STL-Hardening).
+[22] [P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf) - "Contracts for C++" (Joshua Berne, Timur Doumler, Andrzej Krzemie&#324;ski, 2025).
 
-[23] [Libc++ 21 Release Notes](https://releases.llvm.org/21.1.0/projects/libcxx/docs/ReleaseNotes.html) - "Libc++ 21.1.0 Release Notes", assertion-semantics section (LLVM Project, 2025).
+[23] [Trip report: February 2025 ISO C++ standards meeting (Hagenberg, Austria)](https://herbsutter.com/2025/02/17/trip-report-february-2025-iso-c-standards-meeting-hagenberg-austria/) - (Herb Sutter, 2025).
 
-[24] [P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf) - "Contracts for C++" (Joshua Berne, Timur Doumler, Andrzej Krzemie&#324;ski, 2025).
+[24] [GCC 16 release notes](https://gcc.gnu.org/gcc-16/changes.html) - "GCC 16 Release Series: Changes, New Features, and Fixes" (GCC, 2026); flag documentation in the [GCC 16.1 manual](https://gcc.gnu.org/onlinedocs/gcc-16.1.0/gcc/C_002b_002b-Dialect-Options.html); experimental C++26 label at [C++ Standards Support in GCC](https://gcc.gnu.org/projects/cxx-status.html).
 
-[25] [Trip report: February 2025 ISO C++ standards meeting (Hagenberg, Austria)](https://herbsutter.com/2025/02/17/trip-report-february-2025-iso-c-standards-meeting-hagenberg-austria/) - (Herb Sutter, 2025).
+[25] [C++ Support in Clang](https://clang.llvm.org/cxx_status.html) - "C++ Support in Clang" (LLVM Project, retrieved 2026).
 
-[26] [GCC 16 release notes](https://gcc.gnu.org/gcc-16/changes.html) - "GCC 16 Release Series: Changes, New Features, and Fixes" (GCC, 2026); flag documentation in the [GCC 16.1 manual](https://gcc.gnu.org/onlinedocs/gcc-16.1.0/gcc/C_002b_002b-Dialect-Options.html); experimental C++26 label at [C++ Standards Support in GCC](https://gcc.gnu.org/projects/cxx-status.html).
+[26] [P3471R4](https://open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3471r4.html) - "Standard library hardening" (Konstantin Varlamov, Louis Dionne, 2025).
 
-[27] [C++ Support in Clang](https://clang.llvm.org/cxx_status.html) - "C++ Support in Clang" (LLVM Project, retrieved 2026).
+[27] [P2000R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2000r5.pdf) - "Direction for ISO C++" (Jeff Garland, Paul E. McKenney, Roger Orr, Bjarne Stroustrup, David Vandevoorde, Michael Wong, 2026).
 
-[28] [P3471R4](https://open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3471r4.html) - "Standard library hardening" (Konstantin Varlamov, Louis Dionne, 2025).
+[28] [P3608R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3608r0.html) - "Contracts and profiles: what can we reasonably ship in C++26" (Ville Voutilainen, Jonathan Wakely, Gabriel Dos Reis, 2025).
 
-[29] [P2000R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2000r5.pdf) - "Direction for ISO C++" (Jeff Garland, Paul E. McKenney, Roger Orr, Bjarne Stroustrup, David Vandevoorde, Michael Wong, 2026).
+[29] [P2687R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2687r0.pdf) - "Design Alternatives for Type-and-Resource Safe C++" (Bjarne Stroustrup, Gabriel Dos Reis, 2022).
 
-[30] [P3608R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3608r0.html) - "Contracts and profiles: what can we reasonably ship in C++26" (Ville Voutilainen, Jonathan Wakely, Gabriel Dos Reis, 2025).
+[30] [Bjarne Stroustrup announces C++ Core Guidelines](https://isocpp.org/blog/2015/09/bjarne-stroustrup-announces-cpp-core-guidelines) - "Bjarne Stroustrup announces C++ Core Guidelines" (isocpp.org, 2015).
 
-[31] [P2687R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2687r0.pdf) - "Design Alternatives for Type-and-Resource Safe C++" (Bjarne Stroustrup, Gabriel Dos Reis, 2022).
+[31] [bsls_review](https://bloomberg.github.io/bde-resources/doxygen/bde_api_prod/group__bsls__review.html) - "bsls_review component documentation": the default review handler logs and returns rather than aborting, so checks can be added to production software without changing its behavior (Bloomberg BDE, retrieved 2026).
 
-[32] [Bjarne Stroustrup announces C++ Core Guidelines](https://isocpp.org/blog/2015/09/bjarne-stroustrup-announces-cpp-core-guidelines) - "Bjarne Stroustrup announces C++ Core Guidelines" (isocpp.org, 2015).
+[32] [P3754R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3754r0.pdf) - "Slides for P3100R2 presentation to EWG" (Timur Doumler, 2025).
 
-[33] [bsls_review](https://bloomberg.github.io/bde-resources/doxygen/bde_api_prod/group__bsls__review.html) - "bsls_review component documentation": the default review handler logs and returns rather than aborting, so checks can be added to production software without changing its behavior (Bloomberg BDE, retrieved 2026).
+[33] [P3543R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3543r0.pdf) - "Response to Core Safety Profiles (P3081)" (Mungo Gill, Corentin Jabot, John Lakos, Joshua Berne, Timur Doumler, 2024).
 
-[34] [P3754R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3754r0.pdf) - "Slides for P3100R2 presentation to EWG" (Timur Doumler, 2025).
+[34] [P3599R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3599r0.pdf) - "Initial Implicit Contract Assertions" (Joshua Berne, Timur Doumler, 2025).
 
-[35] [P3543R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3543r0.pdf) - "Response to Core Safety Profiles (P3081)" (Mungo Gill, Corentin Jabot, John Lakos, Joshua Berne, Timur Doumler, 2024).
-
-[36] [P3599R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3599r0.pdf) - "Initial Implicit Contract Assertions" (Joshua Berne, Timur Doumler, 2025).
-
-[37] [P3589R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3589r2.pdf) - "C++ Profiles: The Framework" (Gabriel Dos Reis, 2025).
+[35] [P3589R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3589r2.pdf) - "C++ Profiles: The Framework" (Gabriel Dos Reis, 2025).
