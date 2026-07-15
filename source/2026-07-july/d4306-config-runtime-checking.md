@@ -11,9 +11,11 @@ reply-to:
 
 ## Abstract
 
-The named-guarantee form of safety enforcement has a decade of shipped deployment, with its production cost measured in recent years. The machinery proposed to own its configuration has none.
+P3100R8 proposes that implicit contract assertions, configured through Contracts evaluation semantics and Labels, control runtime checking of core-language undefined behavior. The Profiles papers, P3589R2 and P3984R0, instead make a Profile the named mechanism that selects and defines such guarantees.
 
-Two proposals answer one question - how a program configures the runtime checking of core-language undefined behavior - and, as P3100R8's own Section 7.2 states, if both are kept then one must be specified in terms of the other. This paper assembles the public record and measures both against criteria already in the committee's record: existing practice, implementation and deployment experience, systematic coverage of undefined behavior, and freedom from dialects. Taken one by one, those criteria settle configuration ownership for neither candidate: the P3100 model leads on systematic coverage, though that lead does not resolve ownership, because both owners consume the same enumeration. Existing practice reads both ways and names different owners. Under the P3100 menu, the guarantee-and-dialect question - in what an expression means and in what the noexcept operator may assume about it - is configuration-selected across every checkable operation. The record also tests the architectural premise of the proposed layering: one handler slot, one menu of evaluation semantics, one configuration base in whose terms every checking facility is specified. It finds no deployment of that premise, removed or condemned precedents for its nearest standardized relatives, and a first integration already departing from it. On deployment the two are asymmetric: what has field experience is the named-guarantee form, not either proposal's syntax. The Profiles model therefore standardizes the deployed form, and the P3100 model standardizes the undeployed part of its lineage. This comparison is supplied for the explicit decision its companion P4297R0 asks EWG to take, on the evidence.
+Both mechanisms can affect the same check and, as P3100R8's own Section 7.2 states, if both are adopted, one must be specified in terms of the other. This paper calls that decision “configuration ownership.”
+
+This paper assembles the public record and measures both candidate owners against criteria already in the committee's record - existing practice, deployment and field experience, systematic coverage of undefined behavior, and freedom from dialects. This comparison is supplied for the explicit decision its companion P4297R0 asks EWG to take.
 
 ---
 
@@ -22,20 +24,6 @@ Two proposals answer one question - how a program configures the runtime checkin
 ### R0: July 2026
 
 - Initial version. Companion to P4297, which asks EWG to decide the relationship between the two proposals by an explicit poll on a dedicated paper. This is that dedicated comparison.
-
----
-
-## 1. Disclosure
-
-The authors provide information and serve at the pleasure of the committee.
-
-Vinnie Falco is the founder of the C++ Alliance, which funds a Clang implementation and a GCC implementation of the Profiles framework. The Clang implementation is public, with regularly released experimental builds that implement the framework attributes and an initial slice of the `std::init` profile<sup>[105]</sup>, and the GCC implementation is in development. Ville Voutilainen is a longtime WG21 participant and a co-author of P3608R0, which Sections 4 and 7 cite, and of P3878R0, which Section 9 cites.
-
-This paper is a comparison, not a request. It places the public record for two competing proposals in front of EWG (the Evolution Working Group) and measures each against criteria already in the committee's record, with the provenance of each criterion stated, and it rests on published papers and primary vendor documentation. It is a companion to P4297, and that pairing carries a disclosure of its own: read as one act, the pair does ask for something - an explicit decision - and the reader should see that construction plainly rather than discover it.
-
-The authors favor the Profiles direction, and the reader should weigh the paper accordingly. In Section 6, the deployment and implementation facts stand on vendor documentation and the public committee record independent of that preference, save the authors' own Clang implementation, which is disclosed as such. The paper works only from the public record, and committee-internal materials may contain answers the record does not. It uses machine-assisted drafting.
-
-This paper asks for nothing.
 
 ---
 
@@ -519,6 +507,20 @@ The choice of owner is a decision for EWG, taken explicitly, with this record in
 Per the discount rule of Section 6, the findings are falsifiable, and the falsifiers are deployment events, not shipping events. The deployment finding moves the day a Labels implementation reaches production deployment, a replaceable cross-facility violation handler ships in a production configuration, or the observe semantic of the unified model's compiler-inserted implicit assertions runs in production at scale (distinct from a library-assertion family such as BDE's `bsls_review`, whose observe-style continuation is treated in Section 9 and is design lineage rather than deployment of the machinery under comparison). The single-architecture finding of Section 9 moves the day a checking facility outside the contract family ships specified in the unified machinery's terms without departing from it. And the finding cuts the other way on the same rule: a vendor withdrawing hardening, or field failures of the named-guarantee form, would weaken the record this paper assembles. Any of these events belongs in a revision of this comparison, whichever side it favors.
 
 Whoever writes the dedicated ballot proposal builds on the comparison assembled here. If the committee adopts the evidence standard P4297's Poll 3 proposes, this paper is the record that standard asks for. If it prefers another standard, the ledger in Section 6 is organized to be re-weighed under it.
+
+---
+
+## 1. Disclosure
+
+The authors provide information and serve at the pleasure of the committee.
+
+Vinnie Falco is the founder of the C++ Alliance, which funds a Clang implementation and a GCC implementation of the Profiles framework. The Clang implementation is public, with regularly released experimental builds that implement the framework attributes and an initial slice of the `std::init` profile<sup>[105]</sup>, and the GCC implementation is in development. Ville Voutilainen is a longtime WG21 participant and a co-author of P3608R0, which Sections 4 and 7 cite, and of P3878R0, which Section 9 cites.
+
+This paper is a comparison, not a request. It places the public record for two competing proposals in front of EWG (the Evolution Working Group) and measures each against criteria already in the committee's record, with the provenance of each criterion stated, and it rests on published papers and primary vendor documentation. It is a companion to P4297, and that pairing carries a disclosure of its own: read as one act, the pair does ask for something - an explicit decision - and the reader should see that construction plainly rather than discover it.
+
+The authors favor the Profiles direction, and the reader should weigh the paper accordingly. In Section 6, the deployment and implementation facts stand on vendor documentation and the public committee record independent of that preference, save the authors' own Clang implementation, which is disclosed as such. The paper works only from the public record, and committee-internal materials may contain answers the record does not. It uses machine-assisted drafting.
+
+This paper asks for nothing.
 
 ---
 
