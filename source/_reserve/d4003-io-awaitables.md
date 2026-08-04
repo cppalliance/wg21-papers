@@ -34,13 +34,15 @@ This paper asks LEWG to advance the _IoAwaitable_ protocol as a standard corouti
 
 ### R4: July 2026 (post-Brno mailing)
 
+* Added Section 7 "One Operation Type Satisfies Both Protocols": the _AwaitableSender_ concept and `awaitable_sender_base` mixin prototyped in Capy, the completion channel mapping, receiver-environment interop, and the frame-free crossing. Conclusion and straw poll renumbered to Sections 8 and 9.
+* P4092R0 and P4093R2 links in the conclusion promoted to formal references. Added P3164R4 reference.
 * Abstract rewritten. Expanded from a brief committee ask to a full abstract: problem statement, three named concerns, two-argument `await_suspend` as the key mechanism, LEWG ask moved to end.
 * Section 2 commentary replaced with description of the eight standard facilities and what users build against them. Companion protocol description expanded to name four alternatives evaluated in P4172R0.
 * Section 3 introduction replaced with structural overview mapping subsections 3.1-3.5 to their concerns. Section 3.1 reworded from rhetorical questions to specification language.
 * Section 4 introduction replaced with structural overview of six facilities (4.1-4.6). Generic P4172R0 cross-references replaced with specific section citations (5.1, 5.2, 7, 8) and substantive descriptions. Added P4127R0 citation in Section 4.5.
 * Section 5 opening paragraph added defining structured concurrency and the three-phase ownership chain. Bold emphatic conclusion replaced with declarative summary.
 * Section 6: bare superscript references to P4090R0 and P4091R0 expanded to substantive inline descriptions. Added P4172R0 Section 6.2 citation for type erasure analysis.
-* Section 7 conclusion expanded from one sentence to four paragraphs: protocol description, adoption benefits (TAPS, bridge papers P4092R0/P4093R0), consequences of non-adoption, and the LEWG ask.
+* Conclusion expanded from one sentence to four paragraphs: protocol description, adoption benefits (TAPS, bridge papers P4092R0/P4093R2), consequences of non-adoption, and the LEWG ask.
 
 ### R3: May 2026 (pre-Brno mailing)
 
@@ -365,7 +367,7 @@ The execution context holds the default frame allocator. The user can optionally
 
 ### 4.5 Frame Allocator Delivery
 
-[P4127R0](https://isocpp.org/files/papers/P4127R0.pdf) enumerates every C++20 coroutine customization point and identifies two delivery channels for the allocator to reach `operator new`:
+[P4127R0](https://isocpp.org/files/papers/P4127R0.pdf)<sup>[10]</sup> enumerates every C++20 coroutine customization point and identifies two delivery channels for the allocator to reach `operator new`:
 
 1. **The parameter list.** This is `allocator_arg_t` - it always works and is always available as a fallback, but it should not be the only option.
 2. **Out of band.** The allocator is temporarily stashed somewhere the `operator new` can find it.
@@ -542,19 +544,75 @@ structured concurrency constructs are assembled.
 
 Under type erasure, `connect(sndr, rcvr)` produces a type-dependent `op_state` that must be heap-allocated when either side is erased.
 
-The sender composition algebra does not apply to compound results - such as `[ec, n]` - without data loss or shared state; the sender three-channel model is in tension with `error_code` as a value-channel result. [P4090R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4090r0.pdf)<sup>[10]</sup> demonstrates that sender composition under type erasure requires per-operation heap allocation that awaitables avoid. [P4091R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4091r0.pdf)<sup>[11]</sup> shows that the sender three-channel completion model (value/error/stopped) conflicts with C++ functions that return compound results containing `error_code`.
+The sender composition algebra does not apply to compound results - such as `[ec, n]` - without data loss or shared state; the sender three-channel model is in tension with `error_code` as a value-channel result. [P4090R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4090r0.pdf)<sup>[11]</sup> demonstrates that sender composition under type erasure requires per-operation heap allocation that awaitables avoid. [P4091R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4091r0.pdf)<sup>[12]</sup> shows that the sender three-channel completion model (value/error/stopped) conflicts with C++ functions that return compound results containing `error_code`.
 
 [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> Section 6.2 concludes that type erasure through `executor_ref` enables separate compilation and ABI stability at a cost of one vtable indirection per dispatch - bounded, constant, and negligible relative to I/O latency. See [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> for the full analysis.
 
-[P3482R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3482r1.html)<sup>[12]</sup> ("Design for C++ networking based on IETF TAPS") defines a TAPS-shaped networking API surface. The _IoAwaitable_ protocol provides the coroutine execution model beneath it. A TAPS implementation needs coroutines that suspend, resume correctly, cancel, and allocate frames - exactly what this protocol provides. The two are not competing; TAPS is a consumer.
+[P3482R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3482r1.html)<sup>[13]</sup> ("Design for C++ networking based on IETF TAPS") defines a TAPS-shaped networking API surface. The _IoAwaitable_ protocol provides the coroutine execution model beneath it. A TAPS implementation needs coroutines that suspend, resume correctly, cancel, and allocate frames - exactly what this protocol provides. The two are not competing; TAPS is a consumer.
 
 ---
 
-## 7. Conclusion
+## 7. One Operation Type Satisfies Both Protocols
+
+Section 6 compared the cost of awaitable-returning and sender-returning designs. The remaining interoperability question is whether adopting _IoAwaitable_ isolates coroutine I/O from `std::execution`. It does not. The two protocols require no common members, so a single operation type can satisfy both, and a prototype in [Capy](https://github.com/cppalliance/capy)<sup>[2]</sup> (`example/awaitable-sender`) demonstrates the combination. The concept below is the prototype's definition:
+
+```cpp
+template<class S>
+concept AwaitableSender =
+    IoAwaitable<S> &&
+    std::execution::sender<S>;
+```
+
+An operation models the sender half by deriving a CRTP mixin. The excerpt below is the prototype's mock I/O operation, which follows the shape of a real Corosio operation:
+
+```cpp
+struct read_op : awaitable_sender_base<read_op>
+{
+    // usual IoAwaitable members; the completion
+    // signatures follow await_resume()'s result type
+};
+```
+
+The mixin provides `connect` and deduces the completion signatures from `Derived::await_resume()` through the C++26 `get_completion_signatures` static member function ([exec.getcomplsigs]; [P3164R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3164r4.html)<sup>[14]</sup> removed the earlier nested-typedef form). Nothing is stated twice, so the advertised signatures cannot drift from the implementation. The same object is driven by `co_await` inside a coroutine or by `connect`/`start` inside a sender pipeline, and the two drives call the identical awaitable members.
+
+The completion channels follow the operation's result type, with the mapping [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup> establishes for wrapped awaitables:
+
+| `await_resume()` result                         | Completion                                                  |
+|-------------------------------------------------|-------------------------------------------------------------|
+| `void`                                          | `set_value()`                                               |
+| `error_code`, or a one-element tuple-like holding `error_code` | `set_value()` on success, `set_error(ec)` on failure, `set_stopped()` on `operation_canceled` |
+| any other single value `T`                      | `set_value(T)`                                              |
+| tuple-like `(error_code, payload...)`           | rejected at compile time                                    |
+
+For results that carry an `error_code`, the operation's own outcome selects the channel: a completion reporting `operation_canceled` surfaces as `set_stopped()`, and a successful result is delivered even when a stop request lands while the operation is finishing. The rejection in the last row is the abstraction floor from [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup>: completion channels are exclusive, so a partial success - an `error_code` alongside bytes already transferred - cannot cross on any single channel without dropping data. The constraint is structural: the `(error_code, size_t)` result of `read_some` from Section 3.1, `std::tuple<error_code, size_t>`, and any user-defined type of the same shape are refused alike.
+
+The sender half consumes standard receiver environments. At `start()`, the operation state populates `io_env` from sender-side queries: the executor from a `get_io_executor` query when the environment provides one, otherwise from `std::execution::get_scheduler` - so `sync_wait` works unmodified - the stop token from `get_stop_token`, including stoppable tokens other than `std::stop_token`, and the frame allocator from `get_allocator` when the environment supplies a `std::pmr` allocator. The three concerns of Section 3 are filled from the sender vocabulary; `io_env` requires nothing the sender side cannot express.
+
+Crossing into a sender pipeline adds no coroutine frame. The bridge in [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup> Appendix A spends one coroutine frame per crossing; the prototype removes the frame by completing through a callback-shaped handle instead of a coroutine. Receivers that supply an executor through `get_io_executor` cross with zero allocations, and bridging a foreign scheduler costs one small allocation per resumption. The handle synthesis relies on the coroutine frame header layout shared by MSVC, GCC, and Clang - a de-facto convention rather than a guarantee of the standard - and a portable implementation would specify the resumption hook directly.
+
+The example below condenses the prototype's test suite; `read_op` is the mock operation shown above:
+
+```cpp
+namespace ex = std::execution;
+
+// the same operation, both drives
+auto [ec] = co_await read_op{};     // as an IoAwaitable
+
+ex::sync_wait(                      // as a sender
+    ex::then(read_op{}, on_read));
+```
+
+The test suite verifies that the two drives over the identical operation deliver the same result on the value, error, and stopped channels, and covers cancellation through `std::stop_token` and in-place stop tokens, adaptor pipelines, `sync_wait`, and allocator delivery. [P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[16]</sup> demonstrates the opposite direction - consuming senders from coroutine-native code. For generic code, the prototype's `ensure_sender` normalizes either kind of operation: one that already models _AwaitableSender_ passes through unchanged, and an awaitable-only operation is lifted with the `as_sender` wrapper from [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup>.
+
+A type that satisfies _IoAwaitable_ can also satisfy the `std::execution` sender concept, with completion signatures deduced from the members it already has. Adopting the protocol selects a coroutine execution model for I/O while leaving the sender path open, and an operation author can serve both callers with one type.
+
+---
+
+## 8. Conclusion
 
 The _IoAwaitable_ protocol provides a standard coroutine execution model. At every suspension point, the protocol delivers three things: an executor that determines where the coroutine resumes, a stop token that carries cancellation forward, and a frame allocator that controls where frames are allocated. The two-argument `await_suspend` makes protocol violations a compile error. Type erasure through `executor_ref` keeps `task<T>` at one template parameter, enabling separate compilation and ABI stability. The protocol is implemented on three platforms and deployed at a derivatives exchange.
 
-If adopted, C++ gains a shared vocabulary for coroutine-based I/O. Library authors build interoperable tasks, executors, and awaitables against a fixed surface. TAPS-shaped networking ([P3482R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3482r1.html)<sup>[12]</sup>) gains a coroutine execution model beneath it. The protocol complements `std::execution` - each serves the domain where its design choices pay off, and bridge papers ([P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf), [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)) connect them.
+If adopted, C++ gains a shared vocabulary for coroutine-based I/O. Library authors build interoperable tasks, executors, and awaitables against a fixed surface. TAPS-shaped networking ([P3482R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3482r1.html)<sup>[13]</sup>) gains a coroutine execution model beneath it. The protocol complements `std::execution` - each serves the domain where its design choices pay off. Bridge papers ([P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[16]</sup>, [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup>) connect them, and a single operation type can satisfy both protocols (Section 7).
 
 Without a standard protocol, each library continues to invent its own execution model. Tasks from one framework do not compose with executors from another. The higher layers of the abstraction tower - HTTP frameworks, database drivers, RPC stacks that interoperate across vendors - remain blocked on a foundation that is not shared.
 
@@ -562,7 +620,7 @@ This paper asks LEWG to advance the _IoAwaitable_ protocol.
 
 ---
 
-## 8. Suggested Straw Poll
+## 9. Suggested Straw Poll
 
 **Poll.** The _IoAwaitable_ protocol is the minimum vocabulary for coroutines that need executor affinity, a stop token, and a frame allocator.
 
@@ -596,7 +654,7 @@ possible.
 
 [1] [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf) - "Design: IoAwaitable for Coroutine-Native Byte-Oriented I/O" (Vinnie Falco, Steve Gerbino, Mungo Gill, 2026).
 
-[2] [Capy](https://github.com/cppalliance/capy/tree/bf080326659b2a9cc954763da702d15c32eb7085) - _IoAwaitable_ protocol implementation (Vinnie Falco, Steve Gerbino).
+[2] [Capy](https://github.com/cppalliance/capy/tree/de7c94834d640497392530b494fa4b1f74b84e4e) - _IoAwaitable_ protocol implementation (Vinnie Falco, Steve Gerbino).
 
 [3] [Corosio](https://github.com/cppalliance/corosio) - Coroutine-native I/O library (Vinnie Falco, Steve Gerbino).
 
@@ -612,8 +670,16 @@ possible.
 
 [9] [Boost.Asio](https://www.boost.org/doc/libs/release/doc/html/boost_asio.html) - Asynchronous I/O library (Christopher Kohlhoff).
 
-[10] [P4090R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4090r0.pdf) - "Info: Sender I/O: A Constructed Comparison" (Vinnie Falco, Steve Gerbino, 2026).
+[10] [P4127R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4127r0.pdf) - "Info: The Coroutine Frame Allocator Timing Problem" (Vinnie Falco, 2026).
 
-[11] [P4091R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4091r0.pdf) - "Info: Error Models of Regular C++ and the Sender Sub-Language" (Vinnie Falco, 2026).
+[11] [P4090R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4090r0.pdf) - "Info: Sender I/O: A Constructed Comparison" (Vinnie Falco, Steve Gerbino, 2026).
 
-[12] [P3482R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3482r1.html) - "Design for C++ networking based on IETF TAPS" (Thomas Rodgers, Dietmar K&uuml;hl, 2024).
+[12] [P4091R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4091r0.pdf) - "Info: Error Models of Regular C++ and the Sender Sub-Language" (Vinnie Falco, 2026).
+
+[13] [P3482R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3482r1.html) - "Design for C++ networking based on IETF TAPS" (Thomas Rodgers, Dietmar K&uuml;hl, 2024).
+
+[14] [P3164R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3164r4.html) - "Early Diagnostics for Sender Expressions" (Eric Niebler, 2025).
+
+[15] [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf) - "Producing Senders from Coroutine-Native Code" (Vinnie Falco, Steve Gerbino, 2026).
+
+[16] [P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf) - "Consuming Senders from Coroutine-Native Code" (Vinnie Falco, Steve Gerbino, 2026).
