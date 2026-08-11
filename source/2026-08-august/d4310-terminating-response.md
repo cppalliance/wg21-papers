@@ -1,5 +1,5 @@
 ---
-title: "Hasta la Vista, Undefined Behavior: Why std::core_ub Should Terminate by Default"
+title: "Detected Undefined Behaviour Should Terminate"
 document: P4310R1
 date: 2026-08-02
 intent: info
@@ -13,9 +13,9 @@ reply-to:
 
 ## Abstract
 
-`std::core_ub` (P4317R1) guards the runtime-checkable cases of core-language undefined behaviour and, when enforced, guarantees the check runs. It leaves one question open: after a guarded violation is detected, does the program continue or terminate? This paper answers terminate. Whether contracts are the right substrate for these checks at all is argued against them in P4332R0; this paper takes a check that runs and argues only the response.
+There are currently two proposals on how undefined behaviour should be detected: P4317R1's `std::core_ub` profile using the Profiles framework, and P3100R8 expressed in terms of the Contracts facility. This paper does not argue which mechanism should be used. Instead, it argues that the right response, regardless of the underlying check mechanism, is termination.
 
-The evidence is the deployment record: every hardened implementation surveyed that detects such a violation in production terminates or traps, and none defaults to continuation. Two findings confirm it - continuation runs against P3878R1, the adjacent case C++26 already decided, and it executes on the corrupted state the security literature treats as the more dangerous failure. Terminating keeps the handler invocation, so it loses no telemetry. The finding is narrow: a continuing response, if kept at all, is an explicit non-portable opt-in, and for the class that continues into a defined value such as wrapped overflow the question is left open. The `noexcept` and throwing-cost analysis lives in P4308R0. The paper makes no request.
+This paper's claim is limited. If a continuing response is allowed at all, it should be an explicit, non-portable opt-in. For checks that replace the undefined result with a defined value, for example wrapped overflow, this paper takes no position.
 
 ---
 
@@ -38,9 +38,11 @@ The evidence is the deployment record: every hardened implementation surveyed th
 
 P4317R1<sup>[22]</sup> proposes `std::core_ub`, a profile under the P3589R2<sup>[21]</sup> framework that guards the runtime-checkable cases of core-language undefined behaviour and, when enforced over a region, guarantees the check is performed. It leaves one question open (P4317R1 Section 2.3): after a guarded operation's precondition is detected as violated, does execution continue past the violation or does the program terminate?
 
-This paper answers it: terminate. It does not reopen the prior question - whether the C++26 Contracts machinery is the right substrate for these checks, given that a contract assertion may be compiled `ignore` and so may never run - which P4332R0<sup>[23]</sup> argues against. Taking a check guaranteed to run, as the profile's enforcement guarantees, this paper argues only the response. P3878R1<sup>[16]</sup>, adopted into C++26, already settled the same response question for standard-library hardening; P4306R0<sup>[3]</sup> and P4297R0<sup>[4]</sup> cover the configuration and ownership questions, and P4308R0<sup>[24]</sup> the `noexcept` and throwing-response space.
+P3100R8<sup>[2]</sup> proposes guarding the same runtime-checkable cases with implicit contract assertions expressed in terms of the Contracts facility. The same question is relevant here too: after a guarded operation's precondition is detected as violated, should the execution continue past the violation or should the program terminate?
 
-Two terms recur. The hook is the handler invocation: a violation handler is called and logs the violation. The continuation is what a continuing response adds on top of it: after the handler returns, execution proceeds past the violation. Every response discussed here preserves the hook; only the continuation is contested, and only for the class whose continuation is into a state the language does not define. The class that continues into a defined value (Section 4) is left open, and C++26 as ratified is untouched.
+This paper argues that the right thing to do, regardless of the substrate for the UB checks, is to terminate. P3878R1<sup>[16]</sup>, adopted into C++26, already settled the same response question for standard-library hardening; P4306R0<sup>[3]</sup> and P4297R0<sup>[4]</sup> cover the configuration and ownership questions, and P4308R0<sup>[24]</sup> the `noexcept` and throwing-response space.
+
+Continuation is contested only for the class of undefined behaviour whose continuation is into a state the language does not define. The class that continues into a defined value (Section 4) is left open.
 
 ---
 
@@ -76,9 +78,9 @@ Two findings confirm the default beyond the deployment record.
 
 First, the committee has already decided the adjacent case. P3878R1<sup>[16]</sup>, adopted into C++26, established that a standard-library hardened precondition may not be evaluated with a non-terminating semantic, because continuing past such a check "can result in violations of hardened preconditions being undefined behaviour, rather than guaranteed to be diagnosed, which defeats the purpose of using a hardened implementation." For a core-language check whose continuation is likewise undefined - a detected null dereference or out-of-bounds access - the same reasoning applies one level down. Its lead author is a co-author here; the decision was the whole committee's, and the argument stands on the deployment record even if the precedent is set aside.
 
-Second, continuing executes user code on a state the language does not define. The Contracts authors say as much: Doumler and Berne write in P3097R2<sup>[17]</sup> that once a program "is found to be in a possibly corrupted state, executing any user-defined code could result in a vulnerability," and keep `observe` available nonetheless - the agreement is on the danger, the divergence on the default. The security literature draws the same line for any tool: CERT ERR56-CPP<sup>[18]</sup> holds that "a violated invariant leaves the program in a state where graceful continued execution is likely to introduce security vulnerabilities." The hazard is a property of the undefined state these checks produce, not of any security purpose, so it transfers whether the tool was built for correctness or security.
+Second, continuing executes user code on a state the language does not define. Doumler and Berne write in P3097R2<sup>[17]</sup> that once a program "is found to be in a possibly corrupted state, executing any user-defined code could result in a vulnerability." That danger is why this paper argues for terminate as the default. The security literature draws the same line for any tool: CERT ERR56-CPP<sup>[18]</sup> holds that "a violated invariant leaves the program in a state where graceful continued execution is likely to introduce security vulnerabilities." The hazard is a property of the undefined state, not of the tool that detects it. It does not depend on whether that tool was built for correctness or for security.
 
-A continuing response also carries an exception-handling cost the reference implementers decline - they require "no exception-handling code being generated around contract predicates"<sup>[15]</sup> - and, in its throwing form, changes what the `noexcept` operator guarantees. Both are analysed in P4308R0<sup>[24]</sup>; a terminating response avoids them because nothing escapes.
+A continuing response under Contracts-based undefined-behaviour handling also carries an exception-handling cost. The libc++ hardening implementers - the authors of P3191R0<sup>[15]</sup> - require "no exception-handling code being generated around contract predicates," and decline to pay that cost in production. In its throwing form, a continuing response also changes what the `noexcept` operator guarantees. Both points are analysed in P4308R0<sup>[24]</sup>; a terminating response avoids them because nothing escapes.
 
 ---
 
@@ -86,31 +88,21 @@ A continuing response also carries an exception-handling cost the reference impl
 
 The defined-replacement class. Not every core-language check continues into undefined behaviour: for cases such as signed-integer overflow a defined replacement value can be specified, and P4317R1<sup>[22]</sup> Section 2.4 fixes that meaning for the 15 such cases rather than terminating. There continuation is into a defined value, the corrupted-state objection does not apply, and the question is left open. Even there no deployment logs and continues by default - the field's response to signed overflow is `-fwrapv` (silent) or `-ftrapv` (terminate).
 
-The opt-in shape. If a continuing response must exist for the undefined class, the deployed precedents share one shape: an explicit, non-portable, disclaimed opt-in bounded to an adoption period, never the default. libc++ documents its `observe` semantic in exactly those terms: "Continuing execution after a hardening check fails results in undefined behavior; the `observe` semantic is meant to make adopting hardening easier but should not be used outside of the adoption period."<sup>[5]</sup> The migration need that motivates it is already met by the hook, which the terminating response provides: a team sees every violation logged before it enforces, without running past a live one.
+If continuation is allowed at all for cases that continue into an undefined state, deployed practice treats it the same way: the user must turn it on explicitly, it is not the production default, and it is meant only for a short period while checks are being adopted. libc++ documents its `observe` semantic in those terms: "Continuing execution after a hardening check fails results in undefined behavior; the `observe` semantic is meant to make adopting hardening easier but should not be used outside of the adoption period."<sup>[5]</sup> Under libc++ hardening, a terminating response already covers that adoption need. The failure can be logged before the program stops, so a team can find failures without running past them.
 
 The terminating default is not this paper's alone. Berne and Lakos recommend in P3558R1<sup>[19]</sup> "a default evaluation semantic, when nothing else is specified, of `enforce` for all core-language preconditions." Reusing the C++26 `enforce` semantic and the existing rule that an escaping exception at a non-throwing boundary terminates, the response adds no new semantic and leaves `noexcept` unchanged.
 
 ---
 
-## 5. The substrate and ownership questions are separate, and subordinate
+## 5. Conclusion
 
-The finding is stated as the profile's response, but it is independent of two questions this paper does not take up. Whether these checks belong on the Contracts substrate at all is P4332R0<sup>[23]</sup>'s, answered against it; who configures the response, through the Contracts facility (P3400R3<sup>[20]</sup>) or the Profiles framework (P3589R2<sup>[21]</sup>), is the ownership question of P4297R0<sup>[4]</sup> and P4306R0<sup>[3]</sup>. Arguing the response on the profile P4317R1<sup>[22]</sup> specifies, where enforcement guarantees the check runs, avoids the "check that may not run" hazard entirely. And the finding holds subordinately even if, against P4332R0, the committee routes the response through the contract-violation handler: for the undefined class it should still terminate, for the reasons above, and the hook that precedes termination preserves the deployer's ability to observe the violation.
-
----
-
-## 6. Conclusion
-
-Of the responses to a detected core-language violation, the terminating one - invoke the handler, log, terminate - is the production default across every hardened implementation surveyed, and the continuing response is the default in none. It runs against P3878R1<sup>[16]</sup> and executes on a state the language does not define. `std::core_ub` should default to it, reusing the C++26 `enforce` semantic with no new semantic and no change to `noexcept`. A continuing response for the undefined class, if it exists at all, belongs as an explicit non-portable opt-in; for the defined-replacement class the question is left open. The record is placed here for the committee's use; the paper makes no request.
+Of the responses to a detected core-language violation, the terminating one is the production default across every hardened implementation surveyed, and the continuing response is the default in none. Continuation conflicts with P3878R1<sup>[16]</sup> and executes on a state the language does not define. The right default is therefore to terminate.
 
 ---
 
-## 7. Disclosure
+## 6. Disclosure
 
-The authors provide information and serve at the pleasure of the committee.
-
-Vinnie Falco founded the C++ Alliance, which maintains a Clang fork for Profiles work, and co-authors P4317R1<sup>[22]</sup> and P4332R0<sup>[23]</sup>, the profile and substrate findings this paper builds on; he prefers the family of responses in which no exception escapes a checked core-language operation. Ville Voutilainen co-authored the C++26 Contracts facility (P2900R14<sup>[1]</sup>) and led P3878R1<sup>[16]</sup>, the adopted decision reused here. The reader should weigh what follows accordingly.
-
-The intent is `info`: the paper argues a position and requests no poll, and it changes nothing in ratified C++26. In the August 2026 mailing it is one of a set - P4332R0<sup>[23]</sup> on the substrate, P4317R1<sup>[22]</sup> the profile, P4308R0<sup>[24]</sup> the throwing-response space, and P4306R0<sup>[3]</sup> and P4297R0<sup>[4]</sup> the configuration and ownership questions - and it cross-references those rather than repeating them. The profile's checks are not yet implemented (P4317R1 Section 8), so the paper reasons from deployed analogues. It was prepared with the assistance of generative tools; the authors are responsible for its content.
+This paper was prepared with the assistance of generative tools; the authors are responsible for its content.
 
 ---
 
@@ -159,8 +151,6 @@ Timur Doumler and Joshua Berne, whose enumeration and classification of core-lan
 [18] [ERR56-CPP](https://wiki.sei.cmu.edu/confluence/display/cplusplus/ERR56-CPP.+Guarantee+exception+safety) - "ERR56-CPP. Guarantee exception safety" (SEI CERT C++ Coding Standard, 2023).
 
 [19] [P3558R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3558r1.pdf) - "Prevent Undefined Behavior By Default" (Joshua Berne, John Lakos, 2025).
-
-[20] [P3400R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3400r3.pdf) - "Controlling Contract-Assertion Properties" (Joshua Berne, 2026).
 
 [21] [P3589R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3589r2.pdf) - "C++ Profiles: The Framework" (Gabriel Dos Reis, 2025).
 
