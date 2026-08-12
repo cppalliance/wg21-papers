@@ -1,7 +1,7 @@
 ---
 title: "Transient Benefit, Perpetual Cost: Implicit Core-Language Assertions"
-document: P4318R0
-date: 2026-07-14
+document: P4318R1
+date: 2026-08-11
 intent: info
 audience: EWG
 reply-to:
@@ -17,7 +17,7 @@ P3100R8 proposes to guard the runtime-checkable cases of core-language undefined
 
 This paper prices a single slice of that proposal: the observe response for the checks whose continuation runs on a state the language leaves undefined, standardized so that every implementation must provide it. To price it, the paper builds a cost model that adapts ordinary opportunity-cost reasoning to a language feature.
 
-The model rejects the slice on two independent grounds. First, standardizing the slice adds almost nothing over the vendor build option that already delivers the same behavior, so its marginal value is near zero; the model's threshold then ends the analysis, because no other term can rescue it. Second, even if the benefit were positive, it is a benefit that fades: the deployed facilities' own documentation confines it to a codebase's adoption period, while the cost falls on every conforming implementation for as long as the standard exists. Standardization is also the hardest delivery mechanism to reverse, so it locks in the most permanent cost to serve the most temporary need.
+The model rejects the slice on two independent grounds. First, standardizing the slice adds almost nothing over the build options libc++ and Bloomberg's BDE already ship, which deliver the same behavior, so its marginal value is near zero; the marginal-value test then ends the analysis, because no other term can rescue it. Second, even if the benefit were positive, it is a benefit that fades: those facilities' own documentation confines it to a codebase's adoption period, while the cost falls on every conforming implementation for as long as the standard exists. Standardization is also the hardest delivery mechanism to reverse, so it locks in the most permanent cost to serve the most temporary need.
 
 That perpetual cost is not runtime overhead, which the ignore default sets to zero. It sits in implementer maintenance, in coupling to other parts of the standard, and in the concept every programmer must now carry.
 
@@ -37,7 +37,11 @@ The first argument is that vendors already ship this. libc++ provides the observ
 
 The second argument is that the benefit fades but the cost does not. A team turns on continuation while it works through the latent violations in a codebase it is bringing under checking. Once the code is clean, the team promotes the checks to a response that stops the program. The team then stops using continuation. The benefit lasts for that adoption window and then falls away. The cost runs the other way. A semantic written into the standard stays in every compiler for as long as the standard exists.
 
-The cost is not a runtime cost. The default semantic is ignore, so a program that does not select continuation pays nothing when it runs. The cost sits in three other places. First, implementer maintenance: to let an exception leave a checked expression, a compiler must generate exception-handling code around every such expression, and the libc++ team states in P3191R0 that it will not do this. Second, definitional coupling: a handler that may throw changes what the noexcept operator means, so noexcept no longer says an expression cannot throw, only that it cannot throw unless a contract is violated. Third, cognitive load: every C++ programmer now has to know this mode exists, whether or not they ever use it.
+The cost is not a runtime cost. The default semantic is ignore, so a program that does not select continuation pays nothing when it runs. The cost sits in three other places.
+
+- Implementer maintenance: to let an exception leave a checked expression, a compiler must generate exception-handling code around every such expression, and the libc++ team states in P3191R0 that it will not do this.
+- Definitional coupling: a handler that may throw changes what the noexcept operator means, so noexcept no longer says an expression cannot throw, only that it cannot throw unless a contract is violated.
+- Cognitive load: every C++ programmer now has to know this mode exists, whether or not they ever use it.
 
 The conclusion is that this one slice returns less than it costs. A vendor extension already carries the capability for the teams and the time that need it, and the vendor can retire it when the need passes. The standardized portable guarantee would carry it for every implementation and every programmer, permanently.
 
@@ -47,6 +51,10 @@ This slice sets a decaying benefit against a perpetual cost.
 
 ## Revision History
 
+### R1: August 2026
+
+- TBD
+
 ### R0: July 2026
 
 - Initial version.
@@ -55,7 +63,7 @@ This slice sets a decaying benefit against a perpetual cost.
 
 ## 1. Introduction
 
-C++26 Contracts (P2900R14<sup>[1]</sup>) define a fixed set of evaluation semantics and a single, replaceable violation handler. P3100R8<sup>[2]</sup> extends that machinery from assertions the programmer writes to assertions the language inserts at each runtime-checkable case of core-language undefined behavior. Among the semantics that machinery carries is observe: on a detected violation the handler is called, and if it returns, execution continues past the violation. Two companion papers examine the response question on its merits (P4310R0<sup>[3]</sup>) and the full response-option space (P4308R0<sup>[4]</sup>); a third compares the configuration-ownership models (P4306R0<sup>[5]</sup>). None of them prices the standardization decision itself, which is the subject here.
+C++26 Contracts (P2900R14<sup>[1]</sup>) define a fixed set of evaluation semantics and a single, replaceable violation handler. P3100R8<sup>[2]</sup> extends that machinery from assertions the programmer writes to assertions the language inserts at each runtime-checkable case of core-language undefined behavior. Among the semantics that machinery carries is observe: on a detected violation the handler is called, and if it returns, execution continues past the violation. Two companion papers examine the response question on its merits (P4310R1<sup>[3]</sup>) and the full response-option space (P4308R1<sup>[4]</sup>); a third compares the configuration-ownership models (P4306R1<sup>[5]</sup>). None of them prices the standardization decision itself, which is the subject here.
 
 Related work supplies the model's inputs. P2000R5<sup>[6]</sup>, the Direction Group's direction paper, states the change strategy that the model turns into its benefit term. P3608R0<sup>[7]</sup> applied a deployment-experience standard in this exact domain. P3191R0<sup>[8]</sup>, from the libc++ team, records the implementation cost that the model's tax term draws on. The hardening facilities that libc++<sup>[9]</sup> and Bloomberg's BDE<sup>[10]</sup> already ship document the adoption-period scope that bounds the model's benefit stream.
 
@@ -68,7 +76,7 @@ This paper makes three contributions:
 The analysis rests on three assumptions, each stated where it is used and gathered here for the reader who reads only the surface:
 
 - No compiler yet implements implicit contract assertions, so the comparison reasons from deployed analogues rather than from a conforming implementation.
-- The strong result covers the class of core-language checks whose continuation runs on a state the language does not define. The class whose continuation is into a defined replacement value (for example a signed overflow specified to wrap) is treated separately and left open, as in P4310R0<sup>[3]</sup> Section 6.
+- The strong result covers the class of core-language checks whose continuation runs on a state the language does not define. The class whose continuation is into a defined replacement value (for example a signed overflow specified to wrap) is treated separately and left open, as in P4310R1<sup>[3]</sup> Section 6.
 - The model's numbers are rough. They rank the options against each other; they do not measure them.
 
 The scope is one slice, and naming it precisely is the whole of the setup. The priced object is the continuing response: log the violation through the handler, then proceed past it, for the class of checks whose continuation is undefined, offered as a portable guarantee that every conforming implementation must carry. Three larger things are deliberately not priced: P3100R8 as a whole; its enumeration of undefined behavior, which is portable to any mechanism and useful to every safety effort; and its terminating responses. Section 2 fixes that object before the model is applied to it.
@@ -83,7 +91,7 @@ P3100R8<sup>[2]</sup> contributes work that stands on its own. Its Appendix A en
 
 The contested slice is narrower. C++26 defines observe as the semantic under which the handler is called and, on a normal return, execution continues past the point of evaluation (P2900R14<sup>[1]</sup>). P3100R8 makes observe available for implicit assertions on core-language operations. For the class of those operations whose continuation is into a state the language does not define - a dereference of an invalid pointer, an out-of-bounds access, a use after the object's lifetime has ended - continuing means executing on undefined state. The object this paper prices is the decision to standardize that continuing response as a portable guarantee: a semantic every conforming implementation must provide, so that a program written against it behaves the same across vendors.
 
-Two adjacent things are deliberately excluded. The class of checks with a defined replacement value is excluded, because there continuation is into a specified result and the objection does not apply (P4310R0<sup>[3]</sup> Section 6). The handler invocation itself is excluded, because it is preserved by every response this paper would credit, terminating responses included: enforce calls the handler before it terminates, so logging and telemetry survive a terminating response unchanged. What is priced is continuation past undefined state, offered portably, and nothing else.
+Two adjacent things are deliberately excluded. The class of checks with a defined replacement value is excluded, because there continuation is into a specified result and the objection does not apply (P4310R1<sup>[3]</sup> Section 6). The handler invocation itself is excluded, because it is preserved by every response this paper would credit, terminating responses included: enforce calls the handler before it terminates, so logging and telemetry survive a terminating response unchanged. What is priced is continuation past undefined state, offered portably, and nothing else.
 
 The scope discipline is the finding of this section: the model that follows is applied only to the continue-into-undefined slice offered as a portable guarantee, and the enumeration, the terminating semantics, and the handler-as-telemetry-hook are outside it.
 
@@ -91,7 +99,7 @@ The scope discipline is the finding of this section: the model that follows is a
 
 ## 3. A Cost Model for a Language Feature
 
-This section states the model. It adapts the reasoning a committee already applies to a library addition - does the benefit, summed over its reach and net of its ongoing cost, beat the best alternative use of the same finite capacity - to a language feature, and it names where each term comes from so the reader can weigh the inputs independently. The model is the author's own construction; its purpose is to force the standardization decision to state estimates that can be argued about rather than left implicit.
+The model adapts the reasoning a committee already applies to a library addition - does the benefit, summed over its reach and net of its ongoing cost, beat the best alternative use of the same finite capacity - to a language feature. It names where each term comes from, so the reader can weigh the inputs independently. Section 3.1 fixes the terms, Section 3.2 lists the variables, and Section 3.3 states the formulas and each term's provenance. The model is the authors' own construction; its purpose is to force the standardization decision to state estimates that can be argued about rather than left implicit.
 
 ### 3.1 Terms
 
@@ -109,7 +117,7 @@ The recurring terms carry one meaning throughout.
 
 ### 3.2 Variables
 
-The variables below operationalize the model. Each is an order-of-magnitude instrument, estimated from the sources named in Section 3.3.
+The variables below make the model's terms measurable. Each is an order-of-magnitude instrument, estimated from the sources named in Section 3.3.
 
 | Symbol | Meaning |
 |---|---|
@@ -124,7 +132,7 @@ The variables below operationalize the model. Each is an order-of-magnitude inst
 
 ### 3.3 Formulas and their provenance
 
-The threshold condition is the marginal-value test. A language feature earns standardization only when it delivers something a program cannot already obtain without it:
+The first condition is the marginal-value test. A language feature earns standardization only when it delivers something a program cannot already obtain without it:
 
 $$B = B_{\text{in-standard}} - B_{\text{vendor-opt-in}} > 0$$
 
@@ -150,7 +158,7 @@ The model is ordinal. Its quantities are estimated to an order of magnitude, and
 
 ## 4. The Marginal Value Over a Vendor Option Is Near Zero
 
-The first term to estimate is $B$, and it is the one that can end the analysis by itself: if the standardized guarantee delivers nothing beyond a vendor opt-in that already ships, then $B \approx 0$ and the admission rule fails regardless of the other terms. This section estimates $B$ from the deployed record.
+The first term to estimate is $B$, and it is the one that can end the analysis by itself: if the standardized guarantee delivers nothing beyond a vendor opt-in that already ships, then $B \approx 0$ and the admission rule fails regardless of the other terms.
 
 The continuing response already ships as a vendor opt-in. libc++'s hardening documentation describes its observe semantic in exactly these terms<sup>[9]</sup>:
 
@@ -158,7 +166,7 @@ The continuing response already ships as a vendor opt-in. libc++'s hardening doc
 
 Bloomberg's BDE library ships the same capability as a separate facility, bsls_review, whose own documentation frames review mode as "an interim step towards lowering the assertion level threshold for an existing application"<sup>[10]</sup>. Both are opt-in, both are non-portable, and both are documented as bounded to an adoption period. The capability a program obtains by continuing past a detected violation is therefore available today without the standard requiring it.
 
-What standardization would add on top of the vendor opt-in is portability: a guarantee that the continuing response behaves identically across GCC, Clang, and MSVC. For most language features portability is a real benefit, and Section 7 states when it is. For a transitional adoption aid it is close to worthless. A team continues past violations while it drains a backlog of latent findings from a codebase it is bringing under checking; that activity is per-codebase and per-build, expressed by a build setting the team already controls, and it does not require the setting to mean the same thing on a compiler the team is not using. The value of cross-vendor portability for a facility whose documented purpose is a temporary, local rollout is near zero.
+What standardization would add on top of the vendor opt-in is portability: a guarantee that the continuing response behaves identically across GCC, Clang, and MSVC. For most language features portability is a real benefit, and Section 7 states when it is. For a transitional adoption aid it is close to worthless. A team continues past violations while it drains a backlog of latent findings from a codebase it is bringing under checking. That activity is per-codebase and per-build, expressed by a build setting the team already controls. It does not require the setting to mean the same thing on a compiler the team is not using. The value of cross-vendor portability for a facility whose documented purpose is a temporary, local rollout is near zero.
 
 Setting $B \approx 0$ makes the rest of the arithmetic moot: with the benefit near zero the present value $D$ falls to about $-\tau k / r$, a negative number that cannot clear the threshold $\lambda$, whatever the reach. This is the marginal-value test returning the default answer. The finding of this section is that the standardized guarantee delivers, over the deployed vendor opt-in, only a portability whose value for a transitional facility is negligible, so $B \approx 0$ and the admission rule fails on the first term.
 
@@ -190,7 +198,7 @@ For a three-year window at $r = 0.05$ that factor is about seven: the slice's pe
 
 The delivery mechanism compounds the mismatch, because the standard is the least reversible way to ship a response. A vendor opt-in can be retired when the adoption-period rationale for it lapses; a build flag can be deprecated and removed. A standardized evaluation semantic, encoded in the meaning of core-language operations, is effectively permanent: the installed base and the stability expectations of the standard hold it in place. A reversible mechanism caps the cost sum at its retirement date $T$, paying only $\sum_{t=1}^{T} \tau k /(1+r)^t = \frac{\tau k}{r}\left(1 - (1+r)^{-T}\right) < \frac{\tau k}{r}$; the standardized guarantee forgoes that cap and pays the full perpetuity. Its irreversibility is exactly that gap. Using the same $\tau k$ for the vendor mechanism understates the gap: by Section 6 a vendor opt-in avoids the standard-wide coupling and cognitive-load components of the tax. Matching the most permanent, least reversible delivery mechanism to the most transient, adoption-bounded need is the inefficiency stated in one line.
 
-The finding of this section is that the slice fails the model a second time, independently of Section 4: a benefit stream that the deployed facilities themselves scope to an adoption period is set against a perpetual cost carried by every implementation, through the least reversible mechanism available, so $\mathrm{ROC} < \lambda$ even when $B$ is granted to be positive.
+The finding of this section is that the slice fails the model a second time, independently of Section 4. A benefit stream that the deployed facilities themselves scope to an adoption period is set against a perpetual cost carried by every implementation, through the least reversible mechanism available, so $\mathrm{ROC} < \lambda$ even when $B$ is granted to be positive.
 
 ---
 
@@ -198,15 +206,15 @@ The finding of this section is that the slice fails the model a second time, ind
 
 The perpetuity in Section 5 is only decisive if $\tau k$ is real and non-trivial, and the natural objection is that it is neither, because P3100R8's default is ignore and imposes no runtime overhead. This section locates the cost, and it is not in runtime.
 
-The runtime cost on a program that does not select the semantic is indeed near zero, by construction. P3100R8<sup>[2]</sup> states that a conforming implementation may give every case the ignore semantic, so existing programs are unaffected and pay nothing at run time. Siting $\tau$ in runtime overhead would therefore locate it where it does not exist, and the objection would be correct. The cost sits in three other places.
+The runtime cost on a program that does not select the semantic is indeed near zero, by construction. P3100R8<sup>[2]</sup> states that a conforming implementation may give every case the ignore semantic, so existing programs are unaffected and pay nothing at run time. Placing $\tau$ in runtime overhead would locate it where it does not exist, and the objection would be correct. The cost sits in three other places.
 
 The first is implementer maintenance. For an exception to leave a checked core-language expression correctly, an implementation must treat every such expression as a potential throw site and generate the matching exception-handling metadata; P2900R14<sup>[1]</sup> Section 3.6.6 records that the compiler "has to generate the correct instructions for exception handling around every contract assertion." The reference implementers decline this. P3191R0<sup>[8]</sup>, from the libc++ team, sets the production requirement that a contract violation "should generate no code at all beyond the equivalent of a branch and a `__builtin_trap()`," with "no exception-handling code being generated around contract predicates." The committee's own response to this cost was to add the quick-enforce semantic, which skips the handler entirely (P3198R0<sup>[11]</sup>). The machinery the continuing response requires is machinery the implementers who ship hardening have stated they will not carry, and standardizing the portable guarantee obligates every implementation to carry it regardless.
 
-The second is definitional coupling. A continuing handler that may throw shifts what the noexcept operator asserts. P3100R8<sup>[2]</sup> Section 5.5 concludes that "the addition of implicit contract assertions must not affect the result of the noexcept operator," and its Option A preserves the operator's value while changing its meaning, so that a `true` result no longer states that evaluating the expression cannot throw but that it cannot throw "unless there is a contract violation." The noexcept operator has been part of the function type since C++17 (P0012R1<sup>[12]</sup>), and C++26 already spent wording to keep its boundary source-compatible (P3229R1<sup>[13]</sup>). A change to what a core-language operation may do, and to what a type-system operator means over it, is coupling that every later paper writes against.
+The second is definitional coupling. A continuing handler that may throw shifts what the noexcept operator asserts. P3100R8<sup>[2]</sup> Section 5.5 concludes that "the addition of implicit contract assertions must not affect the result of the noexcept operator," and its Option A preserves the operator's value while changing its meaning, so that a `true` result no longer states that evaluating the expression cannot throw but that it cannot throw "unless there is a contract violation." Since C++17 a function's exception specification has been part of its type (P0012R1<sup>[12]</sup>), and the noexcept operator is the standard way to compute one, as in `void f() noexcept(noexcept(g()));`. What the operator reports therefore feeds the type system, and C++26 already spent wording to keep that boundary source-compatible (P3229R1<sup>[13]</sup>). A change to what a core-language operation may do, and to what noexcept means over it, is coupling that every later paper writes against.
 
 The third is cognitive load. A semantic in the standard is a concept every C++ programmer carries, whether or not they use it. The continuing response for implicit core-language assertions adds a mode that a shrinking, adoption-bounded population ever selects, to the conceptual surface of a language used by everyone.
 
-The finding of this section is that $\tau k$ is real and sits in implementer maintenance, definitional coupling, and cognitive load - not in runtime, where the ignore default sets it to zero - and that its maintenance component is a cost the reference implementers have stated on the record they decline to carry.
+The finding of this section is that $\tau k$ is real and sits in implementer maintenance, definitional coupling, and cognitive load. It does not sit in runtime, where the ignore default sets it to zero. Its maintenance component is a cost the reference implementers have stated on the record they decline to carry.
 
 ---
 
@@ -216,7 +224,7 @@ Standardization usually pays off precisely by conscripting every implementation,
 
 For a durable feature the whole installed base uses, conscription is the benefit. When the standard requires a facility, every vendor ships and maintains it, and a program can rely on it everywhere; that is the reasoning by which platform-coupled features that no single author could portably provide entered the library. The benefit scales with reach: a facility used across the whole installed base, indefinitely, recovers its perpetual cost because the benefit is also perpetual and universal.
 
-For the priced slice the same mechanism runs with the opposite sign. Conscription still requires every implementation to carry the semantic, but the reach that is supposed to justify it is absent: the constituency is narrow (codebases with unfixed latent core-language undefined behavior, on an implementing toolchain) and the benefit is bounded (the adoption period the deployed facilities document). A perpetual, universal cost is incurred to serve a reach that is neither perpetual nor universal. The property that makes conscription pay for a durable feature used across the installed base is exactly the property this slice lacks.
+For the priced slice the same mechanism runs with the opposite sign. Conscription still requires every implementation to carry the semantic, but the reach that would justify it is absent: the constituency is narrow (codebases with unfixed latent core-language undefined behavior, on an implementing toolchain) and the benefit is bounded (the adoption period the deployed facilities document). A perpetual, universal cost is incurred to serve a reach that is neither perpetual nor universal. The property that makes conscription pay for a durable feature used across the installed base is exactly the property this slice lacks.
 
 The scaling contrast also explains why the parts excluded in Section 2 are not caught by this argument. The enumeration of undefined behavior and a terminating response have broad, durable reach - every hardened program benefits, indefinitely - so their benefit stream is the kind that recovers a standardization cost. The continuing response for the undefined class does not share that shape, which is why the model separates it out.
 
@@ -226,7 +234,7 @@ The finding of this section is that standardization's usual payoff, conscripting
 
 ## 8. Possible Concerns
 
-Some possible objections to this analysis are addressed below.
+This section answers five possible objections to the analysis.
 
 ### "The default is ignore, so the feature costs nothing"
 
@@ -252,7 +260,7 @@ It does not. Section 2 fixes the priced object as one slice: the continuing resp
 
 ## 9. Questions Worth Considering
 
-The analysis above raises questions readers might wish to consider. They request no poll and no committee action; they are questions to consider.
+The analysis above raises questions readers might wish to consider. They request no poll and no committee action.
 
 - Why does the continuing response need to be a portable standard guarantee rather than a vendor extension? libc++<sup>[9]</sup> and Bloomberg's BDE<sup>[10]</sup> already ship it as an opt-in, and both document it as bounded to an adoption period.
 
@@ -270,9 +278,9 @@ The analysis above raises questions readers might wish to consider. They request
 
 The runtime checking of core-language undefined behavior is worth standardizing, and P3100R8's enumeration and terminating responses are the parts of that work with the reach to earn it. The continuing response for the class whose continuation is into undefined state, offered as a portable guarantee, is a different object, and priced on its own it does not earn standardization.
 
-The model reaches that result twice over. First, standardizing the guarantee adds almost nothing over the vendor build option that already ships, so its marginal value is near zero; the admission rule then ends the analysis, because no other term matters. Second, even granting a positive benefit, that benefit fades: the deployed facilities' own documentation scopes it to an adoption period, while the cost falls on every conforming implementation, through the delivery mechanism that is hardest to reverse. That cost is real. It sits in the implementer maintenance the reference implementers have declined to carry, in the coupling created when the noexcept operator changes meaning, and in the cognitive load of a concept every C++ programmer must now hold. It does not sit in runtime, where the ignore default sets it to zero. Standardization normally pays off by requiring every implementation to carry a feature; for a narrow, adoption-bounded slice that same requirement becomes pure cost.
+The model reaches that result twice over. First, standardizing the guarantee adds almost nothing over the build options libc++ and Bloomberg's BDE already ship, so its marginal value is near zero; the marginal-value test then ends the analysis, because no other term matters. Second, even granting a positive benefit, that benefit fades: the deployed facilities' own documentation scopes it to an adoption period, while the cost falls on every conforming implementation, through the delivery mechanism that is hardest to reverse. That cost is real. It sits in the implementer maintenance the reference implementers have declined to carry, in the coupling created when the noexcept operator changes meaning, and in the cognitive load of a concept every C++ programmer must now hold. It does not sit in runtime, where the ignore default sets it to zero. Standardization normally pays off by requiring every implementation to carry a feature; for a narrow, adoption-bounded slice that same requirement becomes pure cost.
 
-The deployment record shows an asymmetry. A transitional capability ships today as a vendor opt-in, and its users' own documentation bounds it to a rollout period. Standardizing it as a portable guarantee sets that temporary need against a permanent obligation on every implementation and every reader of the language. A vendor extension carries the capability for the codebases and the interval that need it, and lapses when they do not. The standardized portable guarantee carries it for everyone, forever. Whoever takes up the response question next builds on the deployment record and the model placed here.
+The deployment record shows an asymmetry. A transitional capability ships today as a vendor opt-in, and the documentation for those options bounds it to a rollout period. Standardizing it as a portable guarantee sets that temporary need against a permanent obligation on every implementation and every reader of the language. A vendor extension carries the capability for the codebases and the interval that need it, and lapses when they do not. The standardized portable guarantee carries it for everyone, forever. Whoever takes up the response question next builds on the deployment record and the model placed here.
 
 ---
 
@@ -288,7 +296,7 @@ Among the response options for a detected core-language violation, the author pr
 
 One limitation is disclosed up front: the cost model applied here is the author's own construction, and its quantities are order-of-magnitude instruments meant to rank options, not precise measurements. No compiler yet implements implicit contract assertions with any semantic, so the model reasons from deployed analogues rather than from a conforming implementation.
 
-This paper is one of a set in the July 2026 mailing on the runtime checking of core-language undefined behavior. Its companions are P4297R0 (the ownership question and its polls), P4306R0 (the configuration-ownership comparison), P4310R0 (the response question on the merits), P4308R0 (the response-option space), and P4317R0 (a profile carrying the same enumeration). This paper prices one slice of the same subject and cross-references those rather than repeating them. It works only from the published record and primary vendor documentation; committee-internal materials may contain answers the record does not.
+This paper is one of a set in the August 2026 mailing on the runtime checking of core-language undefined behavior. Its companions are P4297R1 (the ownership question and its polls), P4306R1 (the configuration-ownership comparison), P4310R1 (the response question on the merits), P4308R1 (the response-option space), and P4317R1 (a profile carrying the same enumeration). This paper prices one slice of the same subject and cross-references those rather than repeating them. It works only from the published record and primary vendor documentation; committee-internal materials may contain answers the record does not.
 
 This paper was prepared with the assistance of generative tools. The author is responsible for its content.
 
@@ -310,11 +318,11 @@ Louis Dionne, Yeoul Na, and Konstantin Varlamov stated the implementation cost i
 
 [2] [P3100R8](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3100r8.pdf) - "A framework for systematically addressing undefined behaviour in the C++ Standard" (Timur Doumler, Joshua Berne, 2026).
 
-[3] [P4310R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4310r0.pdf) - "Hasta la Vista, Undefined Behavior: Why Implicit Contract Violations Should Terminate" (Vinnie Falco, Ville Voutilainen, 2026).
+[3] [P4310R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4310r1.pdf) - "Hasta la Vista, Undefined Behavior: Why std::core_ub Should Terminate by Default" (Vinnie Falco, Ville Voutilainen, 2026).
 
-[4] [P4308R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4308r0.pdf) - "Eight Responses to a Throwing Implicit Contract Assertion" (Vinnie Falco, Ville Voutilainen, 2026).
+[4] [P4308R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4308r1.pdf) - "Eight Responses to a Throwing Implicit Contract Assertion" (Vinnie Falco, Ville Voutilainen, 2026).
 
-[5] [P4306R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4306r0.pdf) - "Configuring Runtime Checking: Profiles and Implicit Contract Assertions" (Vinnie Falco, Ville Voutilainen, 2026).
+[5] [P4306R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4306r1.pdf) - "Configuring Runtime Checking: Profiles and Implicit Contract Assertions" (Vinnie Falco, Ville Voutilainen, 2026).
 
 [6] [P2000R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2000r5.pdf) - "Direction for ISO C++" (Jeff Garland, Paul E. McKenney, Roger Orr, Bjarne Stroustrup, David Vandevoorde, Michael Wong, 2026).
 

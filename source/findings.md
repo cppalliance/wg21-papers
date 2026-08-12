@@ -60,9 +60,9 @@ This section identifies the structural factors which create the observed symptom
 
 > https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures Summarize in ONLY ONE brutal sentence the relationship of this document to official ISO documents.
 
-### The Committee Deviates From the ISO Directives
+### A Detection Model for Aggressive Institutional Proposals
 
-> https://github.com/cppalliance/wg21-papers/blob/master/source/08-august/d4196-sd-4-and-iso.md Summarize just this paper in a single brutal sentence. No labels, plain markdown.
+> https://github.com/cppalliance/wg21-papers/blob/master/source/2026-08-august/d4196-gaming-detection-model.md Summarize just this paper in a single brutal sentence. No labels, plain markdown.
 
 ### What Incentives Does SD-4 Create?
 

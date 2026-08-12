@@ -26,7 +26,7 @@ This paper's claim is limited. If a continuing response is allowed at all, it sh
 - Rewritten as a single-claim argument: the deployment record (Table 1) plus the two load-bearing findings, with the survey detail, the terminology glossary, and the corroborating evidence deferred to the companion papers.
 - Reframed onto the `std::core_ub` profile (P4317R1): the response is argued as the profile's response to a detected core-language violation rather than as a restriction on P3100R8's implicit contract assertions.
 - Ceded the enforcement axis to P4332R0 and scoped this paper to the response axis alone.
-- Handed the `noexcept` and throwing-response mechanics to P4308R0.
+- Handed the `noexcept` and throwing-response mechanics to P4308R1.
 
 ### R0: July 2026
 
@@ -118,9 +118,9 @@ Timur Doumler and Joshua Berne, whose enumeration and classification of core-lan
 
 [2] [P3100R8](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3100r8.pdf) - "A framework for systematically addressing undefined behaviour in the C++ Standard" (Timur Doumler, Joshua Berne, 2026).
 
-[3] [P4306R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4306r0.pdf) - "Configuring Runtime Checking: Profiles and Implicit Contract Assertions" (Vinnie Falco, Ville Voutilainen, 2026).
+[3] [P4306R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4306r1.pdf) - "Configuring Runtime Checking: Profiles and Implicit Contract Assertions" (Vinnie Falco, Ville Voutilainen, 2026).
 
-[4] [P4297R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4297r0.pdf) - "Severing P3100's Profiles Claim from Its Case-by-Case Review" (Vinnie Falco, Ville Voutilainen, 2026).
+[4] [P4297R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4297r1.pdf) - "Severing P3100's Profiles Claim from Its Case-by-Case Review" (Vinnie Falco, Ville Voutilainen, 2026).
 
 [5] [libc++ Hardening Modes](https://libcxx.llvm.org/Hardening.html) - "Hardening Modes" (LLVM Project, 2025).
 
@@ -158,4 +158,4 @@ Timur Doumler and Joshua Berne, whose enumeration and classification of core-lan
 
 [23] [P4332R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4332r0.pdf) - "Contracts are inappropriate for undefined behavior checks" (John Spicer, Vinnie Falco, Jose Daniel Garcia Sanchez, Bjarne Stroustrup, Ville Voutilainen, 2026).
 
-[24] [P4308R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4308r0.pdf) - "Eight Responses to a Throwing Implicit Contract Assertion" (Vinnie Falco, Ville Voutilainen, 2026).
+[24] [P4308R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4308r1.pdf) - "Eight Responses to a Throwing Implicit Contract Assertion" (Vinnie Falco, Ville Voutilainen, 2026).

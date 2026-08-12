@@ -1,7 +1,7 @@
 ---
 title: "Configuring Runtime Checking: Profiles and Implicit Contract Assertions"
-document: P4306R0
-date: 2026-07-14
+document: P4306R1
+date: 2026-08-11
 intent: info
 audience: EWG
 reply-to:
@@ -17,11 +17,15 @@ Two proposals answer one question - how a program configures the runtime checkin
 
 On the guarantee, the two models differ in both author and reach. P3100's menu makes what an expression means configuration-selected across every checkable operation. In the configurations where a violation can throw, and only there, it also makes what the noexcept operator may assume about that expression configuration-selected. A Profile raises the question only where its author defines a non-terminating meaning.
 
-This comparison is supplied for the explicit decision its companion P4297R0 asks EWG to take, on the evidence.
+This comparison is supplied for the explicit decision its companion P4297R1 asks EWG to take, on the evidence.
 
 ---
 
 ## Revision History
+
+### R1: August 2026
+
+- TBD
 
 ### R0: July 2026
 
@@ -31,7 +35,7 @@ This comparison is supplied for the explicit decision its companion P4297R0 asks
 
 ## 1. Introduction
 
-Two bodies of work now answer the same question: how a program configures the runtime checking of core-language undefined behavior. Kept together, as P3100R8's Section 7.2 states, one of them must be defined in the other's terms. The comparison below measures the two candidate owners of that configuration against criteria already in the committee's record, and it is the dedicated comparison its companion P4297R0<sup>[8]</sup> asks EWG to weigh: P4297R0 asks for the polls, and this comparison is the record those polls would weigh.
+Two bodies of work now answer the same question: how a program configures the runtime checking of core-language undefined behavior. Kept together, as P3100R8's Section 7.2 states, one of them must be defined in the other's terms. The comparison below measures the two candidate owners of that configuration against criteria already in the committee's record, and it is the dedicated comparison its companion P4297R1<sup>[8]</sup> asks EWG to weigh: P4297R1 asks for the polls, and this comparison is the record those polls would weigh.
 
 The related work is two-sided. One side is the implicit-contract-assertion machinery of P3100R8<sup>[1]</sup> (Doumler and Berne), which configures runtime checks through the C++26 Contracts evaluation semantics and the Labels of P3400R3<sup>[2]</sup>. On the other side is the Profiles framework of P3589R2<sup>[3]</sup> (Dos Reis) with the individual profiles of P3984R0<sup>[4]</sup> (Stroustrup), under which a profile owns the guarantee directly. Section 2 sets the two side by side and states why they cannot both be primary. The criteria the comparison applies are drawn from the Direction Group's P2000R5<sup>[5]</sup>, the deployment-experience standard applied in P3608R0<sup>[6]</sup> and proposed in the companion P4297, the polled Hagenberg mandate, and P3874R1<sup>[7]</sup>, and Section 3 states the provenance of each.
 
@@ -183,7 +187,7 @@ On systematic coverage the P3100 model leads. On deployment, the shipped form is
 
 | Criterion | Provenance | Finding |
 |---|---|---|
-| Deployment experience | party-proposed (P4297R0 Poll 3)<sup>[8]</sup> | named-guarantee form: decade of production; both specifications: none; applied evenly, leaves the base role unassigned |
+| Deployment experience | party-proposed (P4297R1 Poll 3)<sup>[8]</sup> | named-guarantee form: decade of production; both specifications: none; applied evenly, leaves the base role unassigned |
 | Existing practice | advisory (P2000R5)<sup>[5]</sup> | supports both proposals on different clauses |
 | Systematic coverage | polled (Hagenberg, consensus)<sup>[25]</sup> | P3100 leads, but does not resolve ownership: both owners consume the enumeration identically |
 | Guarantee and dialects | disputants' texts<sup>[1][7]</sup> | P3100's menu makes meaning configuration-selected across checkable operations; the compile-time `noexcept` question arises only in throwing configs; a throw-defining Profile raises the same question through undeployed definitions; P3100 did the design work |
@@ -569,7 +573,7 @@ This paper asks for nothing.
 
 [7] [P3874R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3874r1.pdf) - "Should C++ be a memory-safe language?" (Jon Bauman, Timur Doumler, Nevin Liber, Ryan McDougall, Pablo Halpern, Jeff Garland, Jonathan M&uuml;ller, 2026).
 
-[8] [P4297R0](https://isocpp.org/files/papers/P4297R0.pdf) - "Severing P3100's Profiles Claim from Its Case-by-Case Review" (Vinnie Falco, Ville Voutilainen, 2026).
+[8] [P4297R1](https://isocpp.org/files/papers/P4297R1.pdf) - "Severing P3100's Profiles Claim from Its Case-by-Case Review" (Vinnie Falco, Ville Voutilainen, 2026).
 
 [9] [P3081R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3081r2.pdf) - "Core safety profiles for C++26" (Herb Sutter, 2025).
 

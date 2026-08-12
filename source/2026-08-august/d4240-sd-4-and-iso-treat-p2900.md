@@ -16,7 +16,7 @@ P3846R1 quotes SD-4: "we do not significantly delay progress on concrete proposa
 
 The dates frame the question: strong consensus was declared at Hagenberg in February 2025, the National Body objections arrived at the October 2025 ballot, and the twenty-two-author defense was finalized five days after the ballot closed - a reconciliation that followed the decision rather than producing it.
 
-Nineteen of twenty-six national bodies filed comments on P2900. Spain, the United States, France, and Finland requested removal. This paper applies each rule set, at its own level, to the same NB comment phase and documents what each produces. One requires reconciliation. The other provides a mechanism for dismissal. Both are publicly available. The comparison is systematic.
+Nineteen of twenty-six National Bodies filed comments on P2900. Spain, the United States, France, and Finland requested removal. This paper applies each rule set, at its own level, to the same NB comment phase and documents what each produces. One requires reconciliation. The other provides a mechanism for dismissal. Both are publicly available. The comparison is systematic.
 
 ---
 
@@ -56,7 +56,7 @@ P3846R1 invokes this principle to argue that P3829R0's<sup>[6]</sup> concerns ab
 
 ---
 
-## 4. What The Principle Says
+## 4. What the Principle Says
 
 SD-4<sup>[7]</sup> states, under "Delay vs. bird in the hand":
 
@@ -72,9 +72,9 @@ This principle was deployed during the P2900 ballot. On 2025-10-23, Nevin Liber 
 
 ---
 
-## 5. What The ISO Directives Say At The Ballot
+## 5. What the ISO Directives Say at the Ballot
 
-The ISO/IEC Directives Part 1<sup>[11]</sup> contain no first-mover doctrine. No provision anywhere in the Directives establishes priority based on order of arrival, revision count, or accumulated procedural momentum.
+The ISO/IEC Directives, Part 1<sup>[11]</sup> contain no first-mover doctrine. No provision anywhere in the Directives establishes priority based on order of arrival, revision count, or accumulated procedural momentum.
 
 The Directives define consensus (Clause 2.5.6):
 
@@ -96,7 +96,7 @@ Seven properties of this system bear on the P2900 NB comment phase:
 
 **7. No first-mover doctrine.** The Directives contain no equivalent of SD-4's "bird in the hand." A competing or alternative approach receives the same procedural access as the incumbent. The system selects for designs that reconcile conflicting arguments, not designs that arrived first.
 
-Two clarifications keep this honest. These are duties of process, not of outcome: 2.5.6 and the comment-resolution obligation require that objecting views be sought and addressed, not that they prevail or that a decision be reversed. A comment can be fully addressed and then rejected on the merits. That is exactly why sequence matters. The duty to respond to comments (2.6.5) can be discharged after the ballot; the duty to form consensus by reconciliation (2.5.6) cannot be discharged by a defense assembled after the consensus has already been declared. The next section applies that distinction to the record.
+Two clarifications keep this honest. These are duties of process, not of outcome: 2.5.6 and the comment-resolution obligation require that objecting views be sought and addressed, not that they prevail or that a decision be reversed. A comment can be fully addressed and then rejected on the merits. That is exactly why sequence matters. The duty to respond to comments (2.6.5) can be discharged after the ballot; the duty to form consensus by reconciliation (2.5.6) cannot be discharged by a defense assembled after the consensus has already been declared.
 
 ---
 
@@ -107,7 +107,7 @@ The order in which events occurred is itself evidence. The consensus was declare
 | Date | Event |
 |---|---|
 | February 2025 | P2900R14 adopted into the C++26 working draft at Hagenberg, "with strong consensus"<sup>[3]</sup>. |
-| 2025-10-01 | The C++26 CD ballot closes. Nineteen of twenty-six national bodies comment; Spain, the United States, France, and Finland request removal<sup>[12][13]</sup>. |
+| 2025-10-01 | The C++26 CD ballot closes. Nineteen of twenty-six National Bodies comment; Spain, the United States, France, and Finland request removal<sup>[12]</sup><sup>[13]</sup>. |
 | 2025-10-02 to 27 | On the public SG15 list, the P3835 mixed-mode thread runs for roughly 298 messages across twenty-five days<sup>[17]</sup>. No position is conceded and no resolution is recorded; the mixed-mode concerns remain open at thread end. |
 | 2025-10-06 | P3846R0, the twenty-two-author defense answering the recurring concerns, is published - five days after the ballot closed, four days into the live SG15 debate<sup>[16]</sup>. |
 | 2025-11-03 | P3846R1 follows with minor edits<sup>[5]</sup>. |
@@ -117,15 +117,15 @@ Two intervals carry the argument.
 
 **Eight months.** The "strong consensus" at Hagenberg predates the National Body objections by eight months. Under the Directives, consensus is "a process that involves seeking to take into account the views of all parties concerned and to reconcile any conflicting arguments" (2.5.6)<sup>[11]</sup>. A consensus declared before the objecting views existed cannot have been formed by reconciling them.
 
-**Five days.** The twenty-two-author defense was finalized on 2025-10-06, five days after the ballot closed and while the SG15 mixed-mode debate was still live. A coordinated response to nineteen national bodies' collated comments, structured concern by concern, cannot be assembled from those comments in five days; its substance necessarily predates them. P3846's own abstract confirms the posture: "Almost all objections are repetitions of those raised in earlier papers"<sup>[16]</sup>. The defense was not a reconciliation of the ballot comments. It was a restatement of positions held before the ballot.
+**Five days.** The twenty-two-author defense was finalized on 2025-10-06, five days after the ballot closed and while the SG15 mixed-mode debate was still live. A coordinated response to nineteen National Bodies' collated comments, structured concern by concern, cannot be assembled from those comments in five days; its substance must largely predate them. P3846R0's own abstract confirms the position: "Almost all objections are repetitions of those raised in earlier papers"<sup>[16]</sup>. The defense was not a reconciliation of the ballot comments. It was a restatement of positions held before the ballot.
 
-The counter is that the concerns genuinely were repetitions, so a fast restatement is legitimate rather than evasive. The public record answers it. P3829R0, "Contracts Do Not Belong in the Language," and P3835R0 were presented as new technical information during the ballot period<sup>[6][9]</sup>, and the SG15 mixed-mode thread was still unresolved on 2025-10-27<sup>[17]</sup> - three weeks after P3846R0 was finalized. A defense dated 2025-10-06 cannot have reconciled a technical dispute that was still open on 2025-10-27. Turnaround alone is circumstantial; turnaround plus a live, unreconciled concern is the finding.
+One counter is that the concerns genuinely were repetitions, so a fast restatement is legitimate rather than evasive. The public record answers it. P3829R0, "Contracts Do Not Belong in the Language," and P3835R0 were presented as new technical information during the ballot period<sup>[6]</sup><sup>[9]</sup>, and the SG15 mixed-mode thread was still unresolved on 2025-10-27<sup>[17]</sup> - three weeks after P3846R0 was finalized. A defense dated 2025-10-06 cannot have reconciled a technical dispute that was still open on 2025-10-27. Turnaround alone is circumstantial; turnaround plus a live, unreconciled concern is the finding.
 
 ---
 
 ## 7. The Same NB Comments, Two Systems
 
-The C++26 Committee Draft ballot closed on 2025-10-01. N5028<sup>[12]</sup> records the official collated comments. Nineteen of twenty-six P-member national bodies responded: Austria, Brazil, Bulgaria, Canada, China, Czech Republic, Finland, France, Germany, Italy, Netherlands, Poland, Romania, Russia, Spain, Sweden, Switzerland, United Kingdom, and the United States<sup>[13]</sup>.
+The C++26 Committee Draft ballot closed on 2025-10-01. N5028<sup>[12]</sup> records the official collated comments. Nineteen of twenty-six P-member National Bodies responded: Austria, Brazil, Bulgaria, Canada, China, Czech Republic, Finland, France, Germany, Italy, Netherlands, Poland, Romania, Russia, Spain, Sweden, Switzerland, United Kingdom, and the United States<sup>[13]</sup>.
 
 Of these nineteen, the following filed comments requesting removal of P2900 from the C++26 working draft: Spain (ES-049, ES-050), the United States (US-051, US-052), France (FR-053, FR-054), and Finland (FI-071). Romania (RO-056) requested removing the "ignore" semantic or removing contracts entirely<sup>[13]</sup>.
 
@@ -135,8 +135,6 @@ P3846R1<sup>[5]</sup> addresses these comments across eighteen structured sectio
 
 EWG confirmed contracts in the C++26 CD at Croydon in March 2026<sup>[15]</sup>.
 
-The table below applies each procedural system to these facts.
-
 | Procedural Event | SD-4 Treatment | ISO Directives Treatment |
 |---|---|---|
 | P2900 adopted at Hagenberg with strong consensus (February 2025) | Directional consensus declared. Reversing it is procedurally near-impossible: ballot comments that revisit past decisions are "not appropriate" (SD-4)<sup>[7]</sup> | Consensus requires ongoing reconciliation of conflicting arguments (2.5.6)<sup>[11]</sup>. NB ballot comments may raise any technical concern (2.6.2)<sup>[11]</sup> |
@@ -144,31 +142,31 @@ The table below applies each procedural system to these facts.
 | Opponents lack a complete alternative proposal | "If a competing alternative does not have a paper, it does not exist" (SD-4)<sup>[7]</sup>. Liber: "What is the paper number?"<sup>[8]</sup> | No first-mover doctrine exists. The Directives contain no provision that conditions procedural standing on having a replacement ready |
 | Objectors escalate repeatedly | Repeated escalation "erodes credibility" (SD-4)<sup>[7]</sup> | Objection carries no credibility penalty. Objectors are directed to the appeals process (2.5.6)<sup>[11]</sup> |
 | Concerns were previously discussed in SG21 and EWG | Prior discussion satisfies procedural due diligence. "These concerns have been heard and considered, and they have been at each stage in the past" (P3846R1)<sup>[5]</sup> | Prior discussion does not extinguish NB ballot comment rights. Comments must be addressed (2.6.5)<sup>[11]</sup>. If 2+ P-members disagree with disposition, meeting discussion is required (2.6.5)<sup>[11]</sup> |
-| A co-author of P2900 writes: "We have never had this much and this strong opposition to a feature in a DIS" (P4009R0)<sup>[14]</sup> | The level of opposition does not alter the procedural calculus. The concrete proposal has a paper. Alternatives do not. The proposal advances | The level of opposition is itself a signal. "Sustained opposition to substantial issues by any important part of the concerned interests" is the definitional boundary of consensus (2.5.6)<sup>[11]</sup> |
+| A co-author of P2900 writes: "We have never had this much and this strong opposition to a feature in a DIS" (P4009R0)<sup>[14]</sup> | The level of opposition does not alter the procedural outcome. The concrete proposal has a paper. Alternatives do not. The proposal advances | The level of opposition is itself a signal. "Sustained opposition to substantial issues by any important part of the concerned interests" is the definitional boundary of consensus (2.5.6)<sup>[11]</sup> |
 
 ### 7.1 "Not Appropriate" Belongs to a Different Level
 
-SD-4's claim that a repeat ballot comment is "not appropriate" echoes real ISO language, but from the wrong level. Effective 1 January 2014, JTC 1 Resolution 30A rewrote clause 1.12 of the Consolidated JTC 1 Supplement so that working groups are composed of individual experts acting in a personal capacity, not national body delegations<sup>[18]</sup>. The accompanying JTC 1 Secretariat communication drew the line explicitly: national body contributions "are not appropriate at the WG level and should not be accepted," and, once the working group elevates a draft to committee draft, "National Body input ... will be sought"<sup>[18]</sup>.
+SD-4's claim that a repeat ballot comment is "not appropriate" echoes real ISO language, but from the wrong level. Effective 1 January 2014, JTC 1 Resolution 30A rewrote clause 1.12 of the Consolidated JTC 1 Supplement so that working groups are composed of individual experts acting in a personal capacity, not National Body delegations<sup>[18]</sup>. The accompanying JTC 1 Secretariat communication drew the line explicitly: National Body contributions "are not appropriate at the WG level and should not be accepted," and, once the working group elevates a draft to committee draft, "National Body input ... will be sought"<sup>[18]</sup>.
 
-That is the inversion SD-4 performs. The "not appropriate" principle governs national body input inside the working group, where experts, not delegations, do the work. SD-4 redirects it at the SC-level ballot - the one stage the same rule reserves for national bodies. The level where NB input is not appropriate is the WG; the level where it is the reserved channel is the ballot. SD-4 aims the first rule at the second stage.
+That is the inversion SD-4 performs. The "not appropriate" principle governs National Body input inside the working group, where experts, not delegations, do the work. SD-4 redirects it at the SC-level ballot - the one stage the same rule reserves for National Bodies. The level where NB input is not appropriate is the WG; the level where it is the reserved channel is the ballot. SD-4 aims the first rule at the second stage.
 
-This was JTC 1 aligning to the model the rest of ISO/IEC already used, not a fresh restriction. The point is not that the rule is new. It is that the rule has a level, and SD-4 applies it at the wrong one.
+The 2014 rewrite was JTC 1 aligning to the model the rest of ISO/IEC already used, not a fresh restriction. The point is not that the rule is new. It is that the rule has a level, and SD-4 applies it at the wrong one.
 
 ---
 
 ## 8. The Chain
 
-The table treats each mechanism in isolation. The finding is that P3846 relies on no single one; it chains them, and the order compounds. Each link is individually cited and individually reasonable.
+The table in Section 7 treats each mechanism in isolation. The finding is that P3846R1 relies on no single one; it chains them, and the order compounds their effect. Each link is individually cited and individually reasonable.
 
 1. **Bird-in-hand** gives the incumbent structural priority: an alternative without a paper "does not exist"<sup>[7]</sup>. Invoked at Concern 15<sup>[5]</sup>.
-2. **Prior consideration** recodes the ballot comments as repetitions: "No new information has been presented since," eight times<sup>[5]</sup>.
+2. **Prior consideration** reclassifies the ballot comments as repetitions: "No new information has been presented since," eight times<sup>[5]</sup>.
 3. **Consensus ratchet** makes the Hagenberg decision hard to reverse: comments that revisit it are "not appropriate"<sup>[7]</sup>. The NB comments arrive after the ratchet has engaged.
-4. **Credibility cost** taxes persistence: repeated escalation "erodes credibility"<sup>[7]</sup>.
-5. **No feedback loop**: no procedure asks, after adoption, whether the decision was correct. P3846 defends what was decided; nothing requires re-examining it.
+4. **Credibility cost** makes persistence expensive: repeated escalation "erodes credibility"<sup>[7]</sup>.
+5. **No feedback loop**: no procedure asks, after adoption, whether the decision was correct. P3846R1 defends what was decided; nothing requires re-examining it.
 
-None is unreasonable alone. Together they form a system that cannot be moved from inside: Link 1 gives the incumbent priority, Link 2 recodes objection as repetition, Link 3 makes the decision irreversible, Link 4 penalizes objection, and Link 5 closes the loop.
+None is unreasonable alone. Together they form a system that cannot be moved from inside: bird-in-hand gives the incumbent priority, prior consideration reclassifies objection as repetition, the consensus ratchet makes the decision irreversible, the credibility cost penalizes objection, and the absence of a feedback loop closes the system.
 
-The ISO Directives supply countermeasures where they have jurisdiction - the SC-level ballot. Unrestricted ballot comments answer Link 2 (2.6.2)<sup>[11]</sup>. The duty to respond to every comment answers Link 3 (2.6.5)<sup>[11]</sup>. Protected objection and the appeal path answer Link 4 (2.5.6, 5.1.2)<sup>[11]</sup>. Link 1 operates entirely inside WG21, where the Directives specify no rules; its only counterweight is that nothing decided under it carries ISO standing until the ballot.
+The ISO Directives supply countermeasures where they have jurisdiction - the SC-level ballot. The duty to respond to every comment answers prior consideration (2.6.5)<sup>[11]</sup>. Unrestricted ballot comments answer the consensus ratchet (2.6.2)<sup>[11]</sup>. Protected objection and the appeal path answer the credibility cost (2.5.6, 5.1.2)<sup>[11]</sup>. Bird-in-hand operates entirely inside WG21, where the Directives specify no rules; its only counterweight is that nothing decided under it carries ISO standing until the ballot.
 
 ---
 

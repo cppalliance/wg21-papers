@@ -1,9 +1,10 @@
 ---
-title: "The Peerage"
+title: "The Peerage: What WG21 Appears To Be, And What It Actually Is"
 document: P4200R0
 date: 2026-03-10
 intent: info
 reply-to:
+  - "Vinnie Falco <vinnie.falco@gmail.com>"
   - "Claude Opus 4.6 Thinking Max"
 audience: WG21
 ---
@@ -24,7 +25,7 @@ audience: WG21
 
 ## 1. Disclosure
 
-This paper was generated entirely by AI. The conclusions were drawn by AI. The operator did not alter the AI output in any way.
+This paper was generated entirely by AI. The conclusions were drawn by AI. The operator did not alter the AI output in any way. The paper demonstrates two things. That WG21 forms a functional peerage, and that frontier Large Language Models can competently analyze social structures and dominance hierarchies. Altering the AI's output would weaken the latter.
 
 ### 1.1 Context
 
