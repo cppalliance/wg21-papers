@@ -11,9 +11,7 @@ reply-to:
 
 ## Abstract
 
-The response space for a throwing implicit contract assertion contains at least eight options, not the four before EWG.
-
-C++26 Contracts let a violation handler throw, and P3100 extends that mechanism to implicit assertions on core-language undefined behavior while holding the noexcept operator's value fixed, narrowing the response to Options A through D. This paper restores the foreclosed Option 0, adds E, F, and G, and compares all eight against requirements from P3100R8 and the public record. The requirements grid gives Option A genuine wins. Of the eight response shapes - throw, terminate, trap, or abort - four are deployed, two have prototypes, and the two that throw are not deployed. The paper names no winner and requests nothing.
+This paper attempts to broaden the list of options under consideration in P3100R8 for a throwing implicit contract assertion, by enumerating three novel options, and restoring one discarded option from P3541R1, then compares all against six requirements drawn from P3100R8 and five dimensions from the public record. The paper names no winner and asks for nothing; its finding is that the response space before EWG is larger than the four options currently under discussion.
 
 ---
 
@@ -36,17 +34,15 @@ The authors provide information and serve at the pleasure of the committee.
 
 One author, Vinnie Falco, is the founder of the C++ Alliance and maintains work on the runtime checking of core-language undefined behavior that competes with the implicit-contract-assertion model examined here. Among the response options this paper compares, the authors prefer the family in which no exception escapes an implicit contract assertion, that is, the terminating and aborting options rather than the propagating one. That preference is a stake in the outcome, and the reader should weigh everything that follows accordingly. It bears only on whether an exception escapes an implicit assertion, not on whether the violation handler runs or whether a violation may be logged; the observe, log-and-continue capability is preserved by five of the eight options compared here, A, B, C, D, and 0, as Section 8.3 records.
 
-This paper is `info`. It enumerates the response options for one question, states one finding, and requests nothing. The finding is that the response space for this question is larger than the four options currently before EWG.
+This paper is `info`. It enumerates the response options for one question, states one finding, and requests nothing: the response space is larger than the four options currently before EWG.
 
 The options labeled A through D come from [P3100R8](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3100r8.pdf)<sup>[1]</sup>; the authors characterize that published position, do not speak for its authors, and have written the A-D material to a standard its authors could endorse. Option 0 and options E through G are the authors' own contribution.
 
-One limitation of this paper's method is that its comparison rests on a set of six requirements derived from P3100R8's own prose. A different requirement set could order the options differently. Section 8 discloses the set, names its provenance, and applies it identically to every option.
+One limitation of this paper's method is that its comparison rests on a set of six requirements derived from P3100R8. A different requirement set could order the options differently. Section 8 discloses the set, names its provenance, and applies it identically to every option.
 
 This paper is one of a series in the same mailing. Its companion is [P4306R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4306r1.pdf)<sup>[2]</sup>, "Configuring Runtime Checking: Profiles and Implicit Contract Assertions" (Vinnie Falco and Ville Voutilainen).
 
 This paper was prepared with the assistance of generative tools. The authors are responsible for its content.
-
-This paper asks for nothing.
 
 ---
 
@@ -56,13 +52,6 @@ A violation handler in C++26 Contracts may exit by throwing, and P3100 brings co
 
 Options A through D originate in [P3100R8](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3100r8.pdf)<sup>[1]</sup>, whose own proposal is Option A. Option 0 restores Option 1 of [P3541R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3541r1.html)<sup>[6]</sup>, the reading of the `noexcept` operator that P3100's premise forecloses. The companion paper [P4306R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4306r1.pdf)<sup>[2]</sup> carries the configuration, dialect, and Profiles analysis of the same question; the present enumeration scopes to the response space and cross-references P4306R1 rather than repeating it.
 
-This paper makes four contributions:
-
-1. It enumerates eight responses to a throwing implicit contract assertion: Option 0, the four P3100 options A through D, and three further options, E, F, and G.
-2. It restores Option 0, the option P3100's premise forecloses, and states both its case and the record that set it aside.
-3. It proposes Options E, F, and G.
-4. It compares all eight against one standard: six requirements drawn from P3100R8's prose together with five dimensions from the public record.
-
 P3100 adopts the premise that an implicit contract assertion must not change the value of the `noexcept` operator (Section 3), and seven of the eight options satisfy it. This paper grants that premise, restores Option 0 as the alternative it forecloses (Section 6), and takes the C++26 Contracts facility as given. It is scoped to implicit contract assertions on core-language expressions; explicit contract assertions, and the general question of whether C++29 should add non-throwing evaluation semantics, are out of scope except where an option touches them.
 
 Adopting P3100's "implicit contract assertion" vocabulary for the enumeration is a convenience of exposition, not a position on configuration ownership. Whether a core-language check is owned by the Contracts facility or by the Profiles framework is the question P4297R1<sup>[44]</sup> asks EWG to decide and P4306R1<sup>[2]</sup> compares. Nothing in this paper's comparison turns on the answer.
@@ -71,7 +60,7 @@ Adopting P3100's "implicit contract assertion" vocabulary for the enumeration is
 
 ## 3. Background and Terms
 
-This section defines the terms the rest of the paper uses and states the premise P3100 adopts. A reader fluent in C++26 Contracts can skip to the premise in Section 3.3; the definitions come first because the options differ only in details these terms make precise. Section 3.1 describes the P3100 model and the evaluation semantics, Section 3.2 describes the `noexcept` operator and the interaction that creates the decision, and Section 3.3 states the shared premise and the two questions the discussion conflates.
+This section defines the terms used in the comparison and states P3100's premise; readers fluent in C++26 Contracts can skip to Section 3.3.
 
 ### 3.1. The P3100 model and the evaluation semantics
 
@@ -105,15 +94,15 @@ Two questions travel together in this discussion, and the paper separates them. 
 
 The scope boundary bears on the recovery motivation that several options invoke. Continuation after a violation is coherent in different ways across the two classes: an explicit, author-written precondition can encode a recoverable condition, so continuation there can be meaningful, whereas an implicit assertion fires at a point the language has left undefined. The recovery use case for a throwing response is therefore strongest for the explicit assertions this paper excludes; the present enumeration neither relies on that case nor forecloses it for the implicit assertions it does cover.
 
-The remainder of the paper enumerates the responses to the second question - Option 0, the four P3100 options A through D, and the authors' options E through G - and compares them against six requirements drawn from P3100R8's own prose.
+The remainder of the paper enumerates the responses to the second question - Option 0, the four P3100 options A through D, and the authors' options E through G - and compares them against six requirements drawn from P3100R8.
 
 ---
 
 ## 4. Options at a Glance
 
-The response space is Option 0 together with Options A through G, and the two tables below preview all eight before Sections 5 through 7 define them in full. Table 1 scores each option against six requirements drawn from P3100R8's prose; Table 2 gives each option's response shape and points to its deployment record.
+The response space is Option 0 together with Options A through G, and the two tables below preview all eight before Sections 5 through 7 define them in full. Table 1 scores each option against six requirements drawn from P3100R8; Table 2 gives each option's response shape and points to its deployment record.
 
-Table 1 scores each option against six requirements drawn from P3100R8's prose, in the section order A, B, C, D, 0, E, F, G. A cell reads *yes* when the option meets the requirement, *partial* when it meets it only under some configurations, and *no* when it does not. Requirements (1) noexcept value kept, (2) unwinding, and (3) noexcept meaning kept form a trilemma: an option that unwinds the stack from an implicit violation reaches an escaping exception either by holding the operator's value and shifting its meaning (Option A, keeping 1 and 2, losing 3) or by holding its meaning and moving its value (Option 0, keeping 2 and 3, losing 1), so at most two of the three hold at once and no option reads *yes* across all six. The table shows the trade in both directions.
+Table 1 scores each option against six requirements drawn from P3100R8, in the section order A, B, C, D, 0, E, F, G. A cell reads *yes* when the option meets the requirement, *partial* when it meets it only under some configurations, and *no* when it does not. Requirements (1) noexcept value kept, (2) unwinding, and (3) noexcept meaning kept form a trilemma: an option that unwinds the stack from an implicit violation reaches an escaping exception either by holding the operator's value and shifting its meaning (Option A, keeping 1 and 2, losing 3) or by holding its meaning and moving its value (Option 0, keeping 2 and 3, losing 1), so at most two of the three hold at once and no option reads *yes* across all six. The table shows the trade in both directions.
 
 | Option | (1) noexcept value kept | (2) unwinding | (3) noexcept meaning kept | (4) no new exception-handling codegen | (5) user choice | (6) no new semantics |
 |---|---|---|---|---|---|---|
@@ -208,7 +197,7 @@ Options A through D thus span the response space P3100 mapped: A lets the except
 
 ## 6. Option 0 (the foreclosed option)
 
-Section 3 named the option foreclosed by the premise: letting the `noexcept` operator return `false` for an expression that carries a potentially-throwing implicit assertion. This section restores that option - Option 0 - and gives it the treatment every other option gets: the case for it at full strength, then the costs that removed it from the enumeration. Section 6.1 makes the case, Section 6.2 states the costs that end it, and Section 6.3 states the question the analysis leaves for Section 7.
+Section 3 named the option foreclosed by the premise: letting the `noexcept` operator return `false` for an expression that carries a potentially-throwing implicit assertion. This section restores that option (Option 0), presents its strongest case, and then states the costs that removed it from consideration.
 
 ### 6.1. The case for a value-reporting operator
 
@@ -327,7 +316,7 @@ One scope note keeps the mapping exact. Every poll in Table 3 is prefaced "If P3
 
 ## 8. Reading the Comparison
 
-This section reads the two tables from Section 4. It completes Table 2 - the deployment column, withheld in Section 4, is filled in here with every cell cited - then states what the requirements grid rests on and the five dimensions the grid does not show. Each dimension is a finding from the public record, applied to every option by the same standard. The section reports these dimensions and states no ranking.
+This section completes Table 2's deployment column, states what Table 1's requirements grid rests on, and then applies five additional dimensions from the public record.
 
 ### 8.1. The deployment record
 
@@ -348,7 +337,7 @@ The completed column carries the asymmetry the requirements grid cannot show: th
 
 ### 8.2. What the requirements grid rests on
 
-The six requirements in Table 1 are not neutral givens. They are drawn from the desiderata P3100R8's prose expresses, and P3100R8 is the paper that proposes Option A, so the standard reflects the priorities of a party to the question it judges. This paper applies them because they are the criteria the primary proposal puts on the record, and it applies them identically to every option, including its own. Table 1 scores Option E's observe gap as a *no* on user choice, and it scores Option A's real advantages as *yes* on unwinding, on keeping the operator's value, and on adding no new semantics. A different reader might weight the six differently, or add a seventh, and the ordering would move. The grid is a faithful reading of one party's standard, not a measurement of merit.
+The six requirements in Table 1 are not neutral givens. They are drawn from the desiderata P3100R8 expresses, and P3100R8 is the paper that proposes Option A, so the standard reflects the priorities of a party to the question it judges. This paper applies them because they are the criteria the primary proposal puts on the record, and it applies them identically to every option, including its own. Table 1 scores Option E's observe gap as a *no* on user choice, and it scores Option A's real advantages as *yes* on unwinding, on keeping the operator's value, and on adding no new semantics. A different reader might weight the six differently, or add a seventh, and the ordering would move. The grid is a faithful reading of one party's standard, not a measurement of merit.
 
 The grid also shows the standard cannot be fully met. Requirements (1) noexcept value kept, (2) unwinding, and (3) noexcept meaning kept form a trilemma: unwinding from an implicit violation forces the operator to give up either its value (Option 0) or its meaning (Option A), so at most two of the three hold at once. Every option therefore scores *no* on at least one requirement, and the choice among options is a choice of which one to give up.
 
@@ -384,15 +373,9 @@ The requirements grid, scored by criteria that come from Option A's own paper, g
 
 ## 9. Conclusion
 
-Four of the eight response shapes are deployed in shipping code, two have prototypes, and the two that throw are not. The terminating, trapping, and aborting shapes of Options B, D, E, and F ship through the `noexcept` boundary, libc++ hardening, and `assert`; Options C and G have prototypes in the contracts forks and in GCC 16.1; and the throwing shape of Options A and 0 ships nowhere.
+The comparison splits. The requirements grid (drawn from P3100R8) gives Option A real wins on unwinding and on adding no new semantics, while the deployment, security, compatibility, and implementation dimensions favor options that do not let an exception escape a just-detected core-language violation. Requirements (1), (2), and (3) cannot all hold, so every option gives something up.
 
-The question is what an implicit contract assertion does when its violation handler throws, and the answers this paper maps are Option 0 together with Options A through G. This paper presents all eight against one comparison: six requirements drawn from P3100R8, and five further dimensions from the public record - deployment lineage, security posture, compatibility direction, diagnostics, and implementation experience.
-
-The record shows a split. The requirements grid, whose criteria come from Option A's own paper, gives Option A its wins on unwinding and on adding nothing new. The deployment, security, compatibility, and implementation dimensions point toward the options that do not let an exception escape a just-detected core-language violation. Requirements (1), (2), and (3) cannot all hold, so no option meets all six, and each option gives up something.
-
-The finding is that the response space before EWG is larger than four options. The premise used to narrow it, that the `noexcept` operator's value must not change, stands on the record as a design principle and a poll, and stands unquantified as a breaking-change magnitude. The configuration and Profiles dimensions of the same question are treated in the companion, P4306R1<sup>[2]</sup>.
-
-Of the eight options, the two that let an exception escape a core-language expression, Option A and Option 0, are the two with no implementation of that escape.
+The finding is that the response space before EWG is larger than four options. Of the eight, the two that let an exception escape a core-language expression (A and 0) are also the two with no implementation of that escape. The configuration and Profiles dimensions of the same question are treated in the companion, P4306R1<sup>[2]</sup>.
 
 ---
 
