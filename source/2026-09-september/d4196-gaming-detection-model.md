@@ -10,7 +10,7 @@ reply-to:
 
 ## Abstract
 
-[P4195R0](https://wg21.link/p4195r0) identifies the incentive structures that [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)'s consensus mechanism creates for proposal authors. This companion paper derives observable behavioral profiles from those structures and provides a detection criteria table with falsification conditions that can be applied to the documented record of any proposal's passage through WG21. The distinguishing characteristic is the author's relationship to feedback: the system works when feedback modifies the design, and fails when the author's institutional position allows feedback to be neutralized instead. The model identifies three author profiles, describes what structural conditions enable unchecked institutional behavior, and provides a diagnostic checklist that distinguishes normal procedural fluency from behavior that exceeds norms the system has no mechanism to enforce.
+[P4195R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4195r0.pdf)<sup>[1]</sup> identifies the incentive structures that [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)'s consensus mechanism creates for proposal authors. This companion paper derives observable behavioral profiles from those structures and provides a detection criteria table with falsification conditions that can be applied to the documented record of any proposal's passage through WG21. The distinguishing characteristic is the author's relationship to feedback: the system works when feedback modifies the design, and fails when the author's institutional position allows feedback to be neutralized instead. The model identifies three author profiles, describes what structural conditions enable unchecked institutional behavior, and provides a diagnostic checklist that distinguishes normal procedural fluency from behavior that exceeds norms the system has no mechanism to enforce.
 
 ## Revision History
 
@@ -103,13 +103,13 @@ The following table turns the three profiles into observable behaviors. Column C
 | 5 | Written record behavior | Produces a paper; may not produce rebuttals | Characterizes opposition technically; opponent's mechanism named; unfavorable results documented | Opposition characterized only in political terms or omitted entirely. Opponent's technical mechanism never stated |
 | 6 | Relationship with chair | Minimal; may not understand what the chair needs to declare consensus | Chair co-authors and gives priority; competing approaches receive hearings and fair polls | Chair co-authors AND takes discretionary actions that specifically disadvantage competing approaches |
 | 7 | Moralization of opposition | "They raise a good point" | Sharp language targeting the design or argument; harsh but argument-focused | Language delegitimizing the act of objecting. Opposition framed as process abuse, comprehension failure, social harm, or conduct violation |
-| 8 | Response to committee reversals | Confused; may not understand what happened procedurally | Design-relevant reversal acknowledged in revision history; author revises and returns | Design-relevant reversal omitted from paper history. Paper proceeds as if it didn't happen |
+| 8 | Response to committee reversals | Confused; may not understand what happened procedurally | Design-relevant reversal acknowledged in revision history; author revises and returns | Design-relevant reversal omitted from paper history. Paper proceeds as if it did not happen |
 | 9 | Burden of proof management | Does not think in these terms | Invites evidence; objecting is cheap; author absorbs the burden | Makes objection expensive. Requires production (paper, implementation, benchmarks). "No new information" invoked for concerns discussed but never resolved |
 | 10 | Use of procedural moves | Unaware of most available moves | Aggressive toolkit use; fast iteration, strategic timing | Pace exceeds reviewing body's stated absorption capacity. Documented complaints about inadequate review time, AND proposal proceeds despite complaints |
 | 11 | Response to committee instructions | Does it, even at high personal cost | Instruction satisfied in substance within 1-2 meeting cycles; purpose served | Instruction ignored or satisfied through reinterpretation (letter addressed, purpose not served). Proposal proceeds as if satisfied |
 | 12 | Behavior between meetings | Works on the paper; may not engage politically | Maintains relationships, coordinates with co-authors, prepares papers | Between-meeting activity produces fait-accompli presentations. Decisions presented as already made before deliberation occurs |
 | 13 | Observable cost structure | High cost, low fluency, low probability of success | Normal employer backing; company employs people, they attend under company name, listed in one NB | Cost structure exceeds normal employer backing. Complexity, layering, or opacity beyond "company sends engineers" |
-| 14 | What happens if they win | A technically sound feature enters the standard, possibly with rough edges | Pre-adoption claims based on deployment of the actual design; post-adoption, third-party implementations emerge | Pre-adoption claims based on analogous-but-different systems. Post-adoption, no third-party implementation, or advertised capabilities don't materialize |
+| 14 | What happens if they win | A technically sound feature enters the standard, possibly with rough edges | Pre-adoption claims based on deployment of the actual design; post-adoption, third-party implementations emerge | Pre-adoption claims based on analogous-but-different systems. Post-adoption, no third-party implementation, or advertised capabilities do not materialize |
 
 The distinguishing signal for C3 is the combination of criteria 1, 2, and 7: the author declines to engage architectural objections technically, dismisses competitors without naming their mechanisms, and moralizes opposition rather than engaging it. Any one of these in isolation is common. All three together, sustained across multiple meetings, is the detection signature.
 
@@ -158,7 +158,7 @@ An evidence item scores C3 only when the C2 explanation is insufficient. The fol
 
 8. **Response to committee reversals**
    - *C2 baseline:* Design-relevant reversal acknowledged in revision history. Author revises and returns. Escalation via SD-4 is legitimate.
-   - *C3 signal:* Design-relevant reversal omitted from paper history. Paper proceeds as if it didn't happen. Concern never addressed.
+   - *C3 signal:* Design-relevant reversal omitted from paper history. Paper proceeds as if it did not happen. Concern never addressed.
    - *Test:* After a documented design-relevant "no" event, does the next revision acknowledge it? Yes = C2. Omitted = C3. Procedural-only setbacks (wording, timing) being omitted is normal.
 
 9. **Burden of proof management**
@@ -184,12 +184,12 @@ An evidence item scores C3 only when the C2 explanation is insufficient. The fol
 13. **Observable cost structure**
     - *C2 baseline:* Normal employer backing. Company employs people, they attend under company name, listed in one NB. Transparent.
     - *C3 signal:* Cost structure exceeds normal employer backing. Complexity, layering, or opacity beyond "company sends engineers."
-    - *Test:* Compare documented funding structure to C2 baseline (single employer, single NB, disclosed). Anything structural that doesn't fit = C3.
+    - *Test:* Compare documented funding structure to C2 baseline (single employer, single NB, disclosed). Anything structural that does not fit = C3.
 
 14. **What happens if they win**
     - *C2 baseline:* Feature's pre-adoption claims based on deployment of the actual design. Post-adoption, third-party implementations emerge and feature works as advertised.
-    - *C3 signal:* Pre-adoption claims based on analogous-but-different systems. Post-adoption, actual design has no third-party implementation, proposer's own use case requires non-standard extensions, or advertised capabilities don't materialize.
-    - *Test:* Does the cited pre-adoption evidence implement the same architectural elements as the standardized design? Same = C2. Different = check post-adoption reality. Capabilities didn't materialize = C3.
+    - *C3 signal:* Pre-adoption claims based on analogous-but-different systems. Post-adoption, actual design has no third-party implementation, proposer's own use case requires non-standard extensions, or advertised capabilities do not materialize.
+    - *Test:* Does the cited pre-adoption evidence implement the same architectural elements as the standardized design? Same = C2. Different = check post-adoption reality. Capabilities did not materialize = C3.
 
 ---
 
@@ -265,3 +265,15 @@ This model diagnoses process capture. It does not prescribe remedies.
 The model does not determine whether a proposal's design is good or bad. A technically excellent design can be adopted through C3 behavior, and a technically poor design can fail despite C2 behavior. The model evaluates the *process* of adoption, not the *quality* of the result. A system that produces good outcomes through captured processes is still captured.
 
 This analysis surfaces structural dynamics that are not discussed in the committee's normal discourse. It is a starting point for conversation. Readers who see a framework should discuss how to formalize one. Readers who want to apply the model to a specific proposal's record should do so. The purpose is to make the invisible visible.
+
+## Disclosure
+
+The author provides information and serves at the pleasure of the committee.
+
+The author developed and maintains Capy and Corosio, coroutine-native I/O libraries under the C++ Alliance. The author advocates for the coroutine model. The competing model, `std::execution`, is in the C++26 working draft.
+
+This paper asks for nothing.
+
+## References
+
+[1] [P4195R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4195r0.pdf) - "WG21 Game Theory: The Culture That Emerges From SD-4" (Vinnie Falco, 2026).

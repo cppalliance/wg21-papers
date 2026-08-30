@@ -101,6 +101,10 @@ The concerns below are ordered from those whose responses are contradicted by th
 
 P3846R1 addresses 18 objections. Verification against the paper's own cited sources finds two responses supported by independently verifiable evidence. The committee record does not support treating the remaining sixteen as settled.
 
+---
+
+## Disclosure
+
 The author provides information and serves at the pleasure of the committee.
 
 This paper asks for nothing.

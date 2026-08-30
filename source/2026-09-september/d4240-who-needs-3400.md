@@ -96,14 +96,30 @@ The following predictions extrapolate from the published evidence in the precedi
 
 **Prediction 8.** An entity that needs P3400 will argue that its legacy codebase's migration constraints must shape the standard's default behavior for all users.
 
+## Disclosure
+
+The author provides information and serves at the pleasure of the committee.
+
+The author co-authored P3276R0, cited in this paper.
+
+This paper asks for nothing.
+
 ## References
 
-- [1] [P3400R4](https://wg21.link/P3400R4) - "Controlling Contract-Assertion Properties" (Joshua Berne, 2026)
-- [2] [P0678R0](https://wg21.link/P0678R0) - "Business Requirements for Modules" (John Lakos, 2017)
-- [3] [P1487R0](https://wg21.link/P1487R0) - "User Experience with Contracts That Work" (John Lakos, 2019)
-- [4] [P2035R0](https://wg21.link/P2035R0) - "Value Proposition: Allocator-Aware (AA) Software" (Pablo Halpern, John Lakos, 2020)
-- [5] [P3276R0](https://wg21.link/P3276R0) - "P2900 Is Superior to a Contracts TS" (Joshua Berne, Steve Downey, Jake Fevold, Mungo Gill, Rostislav Khlebnikov, John Lakos, Alisdair Meredith, 2024)
-- [6] [Bloomberg C++ page](https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/) - "Bloomberg's thought leadership in C++" (Bloomberg L.P., accessed 2026-08-14)
-- [7] [P3173R0](https://wg21.link/P3173R0) - "P2900R6 May Be Minimal, but It Is Not Viable" (Gabriel Dos Reis, 2024)
-- [8] [P3506R0](https://wg21.link/P3506R0) - "P2900 Is Still Not Ready for C++26" (Gabriel Dos Reis, 2024)
-- [9] [P3878R0](https://wg21.link/P3878R0) - "C++26 Contracts are not a good fit for standard library hardening" (Ville Voutilainen, Jonathan Wakely, John Spicer, Stephan T. Lavavej, 2025)
+[1] [P3400R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3400r4.pdf) - "Controlling Contract-Assertion Properties" (Joshua Berne, 2026).
+
+[2] [P0678R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0678r0.pdf) - "Business Requirements for Modules" (John Lakos, 2017).
+
+[3] [P1487R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1487r0.pdf) - "User Experience with Contracts That Work" (John Lakos, 2019).
+
+[4] [P2035R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2035r0.pdf) - "Value Proposition: Allocator-Aware (AA) Software" (Pablo Halpern, John Lakos, 2020).
+
+[5] [P3276R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3276r0.pdf) - "P2900 Is Superior to a Contracts TS" (Joshua Berne, Steve Downey, Jake Fevold, Mungo Gill, Rostislav Khlebnikov, John Lakos, Alisdair Meredith, 2024).
+
+[6] [Bloomberg C++ page](https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/) - "Bloomberg's thought leadership in C++" (Bloomberg L.P., accessed 2026-08-14).
+
+[7] [P3173R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3173r0.pdf) - "P2900R6 May Be Minimal, but It Is Not Viable" (Gabriel Dos Reis, 2024).
+
+[8] [P3506R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3506r0.pdf) - "P2900 Is Still Not Ready for C++26" (Gabriel Dos Reis, 2024).
+
+[9] [P3878R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3878r0.pdf) - "C++26 Contracts are not a good fit for standard library hardening" (Ville Voutilainen, Jonathan Wakely, John Spicer, Stephan T. Lavavej, 2025).

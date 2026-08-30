@@ -24,21 +24,7 @@ Robert Leahy has authored production code in NVIDIA's stdexec<sup>[1]</sup> (the
 
 ---
 
-## 1. Disclosure
-
-The author provides information and serves at the pleasure of the committee.
-
-The author developed and maintains [Capy](https://github.com/cppalliance/capy)<sup>[9]</sup> and [Corosio](https://github.com/cppalliance/corosio)<sup>[10]</sup>, coroutine-native I/O libraries under the C++ Alliance. The author has a stake in the coroutine model's adoption.
-
-Coroutine-native I/O and `std::execution` are complementary. Each serves the domain where its design choices pay off.
-
-Coroutine-native I/O cannot express compile-time work graphs. This is a genuine limitation.
-
-This paper examines the published work of Robert Leahy - production code, WG21 papers, CppCon talks, and open-source review comments - and asks what his observations share. Every claim herein is sourced to Leahy's published work.
-
-This paper asks for nothing.
-
-## 2. Background
+## 1. Background
 
 In broad terms a regular (i.e. synchronous) function call has access to two forms of storage throughout its lifetime (note that the "lifetime" of a regular function call is the time between the call thereto and the return therefrom): stack storage (i.e. "variables with automatic storage duration") and heap storage (i.e. "variables with dynamic storage duration").<sup>[4]</sup>
 
@@ -50,7 +36,7 @@ Note that Leahy frames this observation not as an indictment but as an area requ
 
 Which brings us to the question this paper examines: what do Leahy's published observations about `std::execution`, taken together, reveal about the scope of the sender model?
 
-## 3. The Simplest Integration
+## 2. The Simplest Integration
 
 Let us consider the simplest formulation of bridging AIO and `std::execution`. A sender wraps an AIO initiating function. The sender's `connect` produces an operation state containing the initiation and the receiver. The operation state's `start` invokes the initiation with a completion handler that forwards all synthesized values through to the receiver, completing the operation thereby.<sup>[11]</sup>
 
@@ -60,7 +46,7 @@ But then we look at this code further. We notice something curious. Leahy declar
 
 And so we are confronted with a question: what does `std::execution` require of `start`?
 
-## 4. Exceptions and the Executor Wrapper
+## 3. Exceptions and the Executor Wrapper
 
 `start` is the point where the synchronous domain transitions to the asynchronous domain. Synchronous reporting mechanisms - such as, for example, throwing an exception - become unavailable.<sup>[11]</sup> It is incumbent upon the implementation of `start` to use only asynchronous reporting mechanisms, such as catching its own exceptions and directing them down the error channel to the receiver.<sup>[11]</sup>
 
@@ -80,7 +66,7 @@ Of course, the executive underlying the wrapper embodies whatever execution poli
 
 But if throwing an exception can cause AIO to stop making forward progress on an operation, why do we imagine that throwing an exception is the only way in which AIO can be induced to stop making forward progress on an operation?<sup>[11]</sup>
 
-## 5. Abandonment and the Frame Destructor
+## 4. Abandonment and the Frame Destructor
 
 Leahy identifies a second category of forward-progress failure beyond exceptions. AIO supports what Leahy terms "abandonment" - one can "simply walk away from a running operation, allow the lifetime of the completion handlers to end, and everything is fine."<sup>[8]</sup> `std::execution` does not tolerate this.<sup>[8]</sup> For an operation which has been started, exactly one completion signal must be sent.<sup>[8]</sup>
 
@@ -107,7 +93,7 @@ The equivalent machinery in a coroutine-native I/O library is a pre-allocated `r
 
 But the bridge machinery is not the only place where Leahy's integration imposes structural costs. Let us examine what happens to the values themselves.
 
-## 6. The Channel Mapping and Partial Success
+## 5. The Channel Mapping and Partial Success
 
 AIO operations complete by invoking their completion handler with a leading error code and trailing arguments. A call to `async_read` delivers `(boost::system::error_code, std::size_t)` - the status and the byte count. Both values are always present. A read that returns `ECONNRESET` with 47 bytes means 47 bytes arrived before the peer reset the connection. The byte count is not redundant with the error code.
 
@@ -152,7 +138,7 @@ Both values. No channel to choose. No data lost. The application has the full co
 
 **Leahy's code discards the byte count on the error path. No mapping within the three-channel model preserves it.**
 
-### 6.1. The Prescribed Algorithm
+### 5.1. The Prescribed Algorithm
 
 Leahy prescribed that the error-code-to-channel coalescing is "best left as a separate algorithm to ensure that 'partial success' has its context fully preserved."<sup>[8]</sup> Of course, the prescription is structurally sound - it identifies the correct layer at which the problem should be addressed, and it names the obligation precisely: the context of partial success must be preserved in its entirety.
 
@@ -170,7 +156,7 @@ The coroutine model faces no such choice.
 
 But the channel mapping is not the only place where Leahy's published work identifies a structural cost of the sender model applied to I/O. Let us examine what Leahy found when he turned his attention to the algorithms themselves.
 
-## 7. Split: Allocation, Ownership, Eagerness
+## 6. Split: Allocation, Ownership, Eagerness
 
 Leahy's P3682R0<sup>[5]</sup> proposes removing `std::execution::split`. The paper identifies three deficiencies thereof.
 
@@ -203,7 +189,7 @@ No dynamic allocation. No shared ownership. No conditional eagerness. Leahy's pr
 
 But `split` is not the only algorithm Leahy found to be doing more than its contract requires.
 
-## 8. When_all: The Ronseal Principle
+## 7. When_all: The Ronseal Principle
 
 Leahy's P3887R1<sup>[6]</sup> identifies that `std::execution::when_all` injects stopped completions for children that are not capable of sending stopped, belying the reasonable expectations of the consumer.<sup>[6]</sup> The algorithm does more than what it says on the tin - it is not, in Leahy's terminology, a "Ronseal algorithm."<sup>[6]</sup>
 
@@ -215,7 +201,7 @@ SG1 agreed (8-3-1-0-0). LEWG agreed (10-5-0-0-0).
 
 But the algorithmic corrections address individual symptoms. Let us examine one more observation before considering what the symptoms share.
 
-## 9. The Language Change
+## 8. The Language Change
 
 Leahy's P3950R0<sup>[7]</sup> proposes that `return_value` and `return_void` are not mutually exclusive. The standard specifies that if searches for the names `return_void` and `return_value` in the scope of the promise type each find any declarations, the program is ill-formed.<sup>[7]</sup> This restriction has been present in its current form since N4499<sup>[13]</sup>. A different form thereof was present in N4403.<sup>[14]</sup>
 
@@ -227,7 +213,7 @@ Leahy identifies the restriction as fundamentally arbitrary, unnecessarily makin
 
 **Leahy proposes changing the language. The language has not needed changing for any other task type.**
 
-### 9.1. Two Obligations
+### 8.1. Two Obligations
 
 Both the coroutine-native task and `std::execution::task` are incumbent upon the same obligation: furnish a well-formed promise type that maps the task's successful completion semantics into the coroutine language model. Let us examine how each discharges the obligation thereby imposed.
 
@@ -253,7 +239,7 @@ Leahy identifies the restriction as arbitrary, and the characterization is not i
 
 Which brings us to the question: is it the restriction that is deficient, or is it the derivation?
 
-## 10. What the Chain Reveals
+## 9. What the Chain Reveals
 
 The preceding sections trace an iterative chain of observations, each arising from the published work of one practitioner. Rather than iteratively discovering the whole problem domain, let us take a step back and look at the totality thereof.<sup>[11]</sup>
 
@@ -275,23 +261,37 @@ Each of the above is individually addressable. Leahy has addressed several of th
 
 **Six observations from one practitioner. One boundary.**
 
-## 11. Falsification
+## 10. Falsification
 
 The above-described observations would be discharged - that is, explained by causes other than a shared domain boundary - if any of the following were demonstrated:
 
-- A sender design that achieves zero per-operation allocation under type erasure for byte-oriented I/O, matching the coroutine model's structural property documented in Section 5.
+- A sender design that achieves zero per-operation allocation under type erasure for byte-oriented I/O, matching the coroutine model's structural property documented in Section 4.
 
-- A channel mapping that preserves both the error code and the byte count without routing I/O errors through `set_value`, matching the coroutine model's compound result documented in Section 6.
+- A channel mapping that preserves both the error code and the byte count without routing I/O errors through `set_value`, matching the coroutine model's compound result documented in Section 5.
 
 - A motivation for P3950R0<sup>[7]</sup> that does not involve the sender channel model's interaction with coroutine promise types - that is, a reason the language restriction would need to be removed even if `std::execution::task` did not exist.
 
 - Evidence that `split`'s eagerness, dynamic allocation, and shared ownership served a use case within the sender model's natural domain (i.e. compute dispatch and heterogeneous scheduling) that has no alternative expression via `let_value` and `when_all`.
 
-## 12. Conclusion
+## 11. Conclusion
 
 Leahy's work demonstrates that the sender model maintains its invariants under I/O integration. The bridge works. The channel mapping works. The algorithmic corrections were adopted. The language change was proposed.
 
 The question the work raises is whether those invariants are the right ones for that domain.
+
+## Disclosure
+
+The author provides information and serves at the pleasure of the committee.
+
+The author developed and maintains [Capy](https://github.com/cppalliance/capy)<sup>[9]</sup> and [Corosio](https://github.com/cppalliance/corosio)<sup>[10]</sup>, coroutine-native I/O libraries under the C++ Alliance. The author has a stake in the coroutine model's adoption.
+
+Coroutine-native I/O and `std::execution` are complementary. Each serves the domain where its design choices pay off.
+
+Coroutine-native I/O cannot express compile-time work graphs. This is a genuine limitation.
+
+This paper examines the published work of Robert Leahy - production code, WG21 papers, CppCon talks, and open-source review comments - and asks what his observations share. Every claim herein is sourced to Leahy's published work.
+
+This paper asks for nothing.
 
 ## Acknowledgements
 

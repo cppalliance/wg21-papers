@@ -24,17 +24,7 @@ In 2021 the committee set aside the Networking TS; one stated deficiency was tha
 
 ---
 
-## 1. Disclosure
-
-The author provides information and serves at the pleasure of the committee.
-
-The author developed and maintains [Capy](https://github.com/cppalliance/capy)<sup>[1]</sup> and [Corosio](https://github.com/cppalliance/corosio)<sup>[2]</sup>, coroutine-native I/O libraries under the C++ Alliance. The author has a stake in the coroutine model's adoption.
-
-Three earlier papers in this series ([P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf)<sup>[3]</sup>, [P4095R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4095r1.pdf)<sup>[4]</sup>, [P4096R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4096r1.pdf)<sup>[5]</sup>) identified the work/continuation framing distinction before P3941R4 was written. This paper shows that P3941R4's infallibility requirement confirms the analysis those papers established.
-
-This paper asks for nothing.
-
-## 2. The Diagnosis
+## 1. The Diagnosis
 
 Two papers, six years apart, diagnosed the same deficiency in the executor model.
 
@@ -50,7 +40,7 @@ The first deficiency the paper named was error propagation. Errors arising durin
 
 In 2021, [P2464R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2464r0.html)<sup>[8]</sup>, written on behalf of the Finnish national body, applied the same standard to the Networking TS and reached three deficiencies. The first was the absence of an error channel. In October 2021, LEWG polled electronically on the Networking TS ([P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[14]</sup>). The poll on discontinuing the TS reached no consensus; a second poll on basing networking on the sender/receiver model reached weak consensus in favor, and the committee's asynchronous work moved toward P2300. The Networking TS was set aside, and a missing error channel led the list of reasons.
 
-## 3. The Framing
+## 2. The Framing
 
 Why was the missing channel a deficiency? [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf)<sup>[3]</sup> documents that `execute(F&&)` replaced three older primitives - `dispatch`, `post`, and `defer` - that scheduled a continuation rather than submitting work. The replacement was the executor unification itself: P0443 reconciled the Networking TS executors descended from Kohlhoff's Asio with the parallel algorithms executors, and collapsed both lineages into a single `execute(F&&)`. The framing determines whether the missing channel is a defect. Two readings of the same signature follow. Under the work framing, the callable is a unit of work, the caller is still running, and a missing error channel strands any failure with nowhere to go. Under the continuation framing, the callable is a resumption handle, the caller has suspended or returned, and there is no live caller waiting to receive an error.
 
@@ -60,13 +50,13 @@ P1525R0's own definition confirms the framing it assumed:
 
 > "For the purpose of this document, by 'one-way execute,' we mean a void-returning function that accepts a nullary Invocable and eagerly submits it for execution on an execution agent that the executor creates for it."<sup>[6]</sup>
 
-"Eagerly submits." "Execution agent that the executor creates." The language is work submission throughout. The continuation primitives that `execute` replaced - `dispatch`, `post`, `defer` - do not appear in P1525R0. P1525R0's four authors participated in the executor unification that collapsed those primitives; three of the four co-authored P2300<sup>[10]</sup>. The authors who analyzed `execute(F&&)` under the work framing were the same authors who had collapsed the continuation framing into it. The continuation framing documented in P0113R0 remained in the public record.
+"Eagerly submits." "Execution agent that the executor creates." The language is work submission throughout. The continuation primitives that `execute` replaced - `dispatch`, `post`, `defer` - do not appear in P1525R0. P1525R0's four authors participated in the executor unification that collapsed those primitives; all four co-authored P2300<sup>[10]</sup>. The authors who analyzed `execute(F&&)` under the work framing were the same four authors who had collapsed the continuation framing into it. The continuation framing documented in P0113R0 remained in the public record.
 
 Under the continuation framing, an infallible scheduling operation is not a defect. It is the correct shape. A suspended coroutine does not need a channel to receive an error, because it is not running to act on one.
 
 Two readings of the missing channel are possible: the operation may need to report failure but the API does not allow it, or the operation never fails and the API reflects that. Under the continuation framing, the distinction does not survive. A caller that has suspended cannot act on a failure regardless of whether one occurs. The shape of the API follows from the state of the caller.
 
-## 4. The Return
+## 3. The Return
 
 The deficiency diagnosed in 2021 was resolved by the sender/receiver model. The resolution reintroduced the constraint.
 
@@ -78,7 +68,7 @@ That scheduling operation must not fail. [P3941R4](https://www.open-std.org/jtc1
 
 A scheduler used with `affine_on` may complete only with `set_value()`. No `set_error`. No `set_stopped`. The scheduling operation that drives `task` has no way to report a failure.
 
-## 5. The Coroutine Executor
+## 4. The Coroutine Executor
 
 A third executor, designed for coroutines, takes the same shape.
 
@@ -93,7 +83,7 @@ void post(continuation& c) const;
 
 `dispatch` returns a handle for symmetric transfer. `post` defers. Both accept a suspended coroutine and resume it on a context. Neither delivers a value.
 
-## 6. The Symmetry
+## 5. The Symmetry
 
 Three executors, separated by a decade of committee work, share one shape.
 
@@ -110,7 +100,7 @@ The match across three columns is not exact. P0443R14 required infallibility of 
 
 The old constraint was universal and implicit. The new ones are narrow and explicit. That the committee chose to make the constraint explicit in P3941R4 - where P0443R14 left it implicit - confirms that the constraint is recognized as correct for this role, not that it is a different constraint.
 
-## 7. A Possible Objection
+## 6. A Possible Objection
 
 A possible objection distinguishes incapability from selective constraint. P0443R14's `void` return left no room for an error channel in any executor. P3941R4's completion signatures exclude `set_error` for one scheduler in one role while the model retains the channel elsewhere. The distinction between incapability and selective constraint is real.
 
@@ -120,7 +110,7 @@ The objection treats P0443R14's `void` return as a limitation the operation inhe
 
 If the objection is that P3941R4's infallibility is a deliberate design choice for a specific role, the objection concedes the paper's claim. The role - scheduling a continuation onto an execution context - is the role `dispatch`, `post`, and `defer` filled. "This time we chose it on purpose" is not a rebuttal. It is an acknowledgment that the choice was available the first time as well.
 
-## 8. The Shape
+## 7. The Shape
 
 The shape of the scheduling operation follows from the state of the caller. A caller that is running needs an error channel; a caller that has suspended does not.
 
@@ -129,6 +119,16 @@ Two independent lines of work confirm this. The executor lineage - P0443R14 thro
 Convergence from unrelated starting points eliminates the explanation that the shape is an artifact of any one model's expressiveness. The sender/receiver model did not produce the constraint; neither did the coroutine model. The caller's state produced it, and each model re-encoded what was already there. Kohlhoff's continuation-framed executor carried the same shape in Asio over two decades ago - P0113R0 documented it, but the design predates either model.
 
 P4094, P4095, and P4096 identified the framing distinction before P3941R4 was written. P3941R4 confirmed it. **The committee rediscovered that continuations need a continuation-framed executor.**
+
+## Disclosure
+
+The author provides information and serves at the pleasure of the committee.
+
+The author developed and maintains [Capy](https://github.com/cppalliance/capy)<sup>[1]</sup> and [Corosio](https://github.com/cppalliance/corosio)<sup>[2]</sup>, coroutine-native I/O libraries under the C++ Alliance. The author has a stake in the coroutine model's adoption.
+
+Three earlier papers in this series ([P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf)<sup>[3]</sup>, [P4095R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4095r1.pdf)<sup>[4]</sup>, [P4096R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4096r1.pdf)<sup>[5]</sup>) identified the work/continuation framing distinction before P3941R4 was written. This paper shows that P3941R4's infallibility requirement confirms the analysis those papers established.
+
+This paper asks for nothing.
 
 ## Acknowledgments
 
