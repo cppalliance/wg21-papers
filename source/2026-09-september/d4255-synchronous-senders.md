@@ -10,9 +10,9 @@ reply-to:
 
 ## Abstract
 
-C++20 awaitables and `std::execution` senders both express asynchronous operations consumed from coroutines through `co_await`. They differ in what happens when the operation completes synchronously - when the bytes are already in memory before `co_await` evaluates.
+C++20 awaitables and `std::execution` senders both express asynchronous operations consumed from coroutines through `co_await`. They differ in what happens when the operation completes synchronously (when the bytes are already in memory before `co_await` evaluates).
 
-This paper implements the simplest possible synchronous write under both protocols, grants senders every affordance the standard provides, and traces the protocol steps that execute at the point of `co_await`. The comparison reveals a structural asymmetry in how the two protocols handle the synchronous case - and traces what the sender protocol would need to close it.
+This paper implements the simplest possible synchronous write under both protocols, grants senders every advantage the standard provides, and traces the protocol steps that execute at the point of `co_await`. The comparison reveals a structural asymmetry in how the two protocols handle the synchronous case, and the paper identifies <!-- lah: a simpler word would be better here. notes? indicates? --> what the sender protocol would need to close it.
 
 ---
 
@@ -26,9 +26,9 @@ This paper implements the simplest possible synchronous write under both protoco
 
 ## 1. The Abstraction
 
-A synchronous write stream has one operation: accept a string and store it. No error codes, no byte counts, no partial writes. The abstraction is intentionally minimal - a test fixture that isolates the protocol's behavior from the I/O operation's complexity. Two concrete types implement it.
+A synchronous write stream has one operation: Accept a string and store it. It offers no error codes, byte counts, or partial writes. The abstraction is intentionally minimal: a test fixture that isolates the protocol's behavior from the I/O operation's complexity. Two concrete types implement it.
 
-`string_sink` appends to a `std::string`. The operation is synchronous. The data is already in memory. No kernel transition occurs.
+`string_sink` appends to a `std::string`. The operation is synchronous, the data is already in memory, and no kernel transition occurs.
 
 ```cpp
 class string_sink
@@ -47,13 +47,13 @@ public:
 };
 ```
 
-`tcp_sink` writes to a TCP socket. The operation is asynchronous. The kernel accepts the data, the coroutine suspends, the reactor resumes it when the write completes.
+`tcp_sink` writes to a TCP socket. The operation is asynchronous. The kernel accepts the data, the coroutine suspends, and the reactor resumes it when the write completes.
 
-Both expose the same `write(std::string_view)` signature. The return type differs. The algorithm that calls `co_await sink.write(...)` does not.
+Both expose the same `write(std::string_view)` signature. The return type differs, but the algorithm that calls `co_await sink.write(...)` does not.
 
 ## 2. Recompilation
 
-The awaitable protocol provides two mechanisms for handling synchronous I/O without changing the algorithm's source. The first is recompilation: the same coroutine template compiled against different sink types produces different execution models.
+The awaitable protocol provides two mechanisms for handling synchronous I/O without changing the algorithm's source. The first is recompilation: The same coroutine template compiled against different sink types produces different execution models.
 
 The following illustrative algorithm writes a span of lines to a generic sink:
 
@@ -67,11 +67,9 @@ task<> log_lines(Sink& sink,
 }
 ```
 
-Compile against `tcp_sink`. The awaitable returned by `write` suspends. The reactor resumes. The algorithm is asynchronous.
+If one compiles against `tcp_sink`, the awaitable returned by `write` suspends, the reactor resumes, and the algorithm is asynchronous. If one recompiles against `string_sink`, the awaitable returned by `write` has `await_ready() == true`, no suspension occurs, and the algorithm is synchronous.
 
-Recompile against `string_sink`. The awaitable returned by `write` has `await_ready() == true`. No suspension occurs. The algorithm is synchronous.
-
-The source is identical. The awaitable type varies. The execution model is selected at compile time.
+The source is identical, but the awaitable type varies. The execution model is selected at compile time.
 
 ## 3. Relinking
 
@@ -96,31 +94,29 @@ task<> log_lines(write_stream& sink,
 }
 ```
 
-The algorithm's object code is fixed. It does not know whether the stream is synchronous or asynchronous. It does not need to know.
+The algorithm's object code is fixed. It <!-- lah: Is "it" the algorithm or the object code? Either way, the subject is a thing that cannot "know." --> does not know whether the stream is synchronous or asynchronous, nor does it need to know.
 
-Link against an object file that provides `tcp_sink` behind the vtable. The algorithm is asynchronous.
+If one links against an object file that provides `tcp_sink` behind the vtable, the algorithm is asynchronous. If one links against a different object file that provides `string_sink` behind the vtable, the algorithm is synchronous.
 
-Link against a different object file that provides `string_sink` behind the vtable. The algorithm is synchronous.
+No recompilation. One indirect call per write. Zero allocation per write. <!-- lah: these are all sentence fragments and are unclear. -->
 
-No recompilation. One indirect call per write. Zero allocation per write.
-
-**The algorithm was compiled once. The execution model was chosen by the linker.**
+*The algorithm was compiled once. The execution model was chosen by the linker.*
 
 ## 4. What Senders Provide
 
 Before examining the sender path for synchronous I/O, three genuine achievements of `std::execution` deserve recognition.
 
-**Zero-allocation composition.** Sender pipelines collapse into a single `operation_state` at compile time. No heap allocation, no virtual dispatch, no reference counting. This is a real property that coroutines do not match for multi-stage pipelines.<sup>[3]</sup>
+1. **Zero-allocation composition.** Sender pipelines collapse into a single `operation_state` at compile time. No heap allocation, no virtual dispatch, no reference counting. <!-- lah: we need a verb here. occurs? is necessary? -->  This <!-- lah: this what? --> is a real property that coroutines do not match for multistage pipelines.<sup>[3]</sup>
 
-**Compile-time work graphs.** The sender algebra encodes DAGs of work at the type level. `when_all`, `then`, `let_value` compose into a static structure the optimizer can see through. Domain customization via `transform_sender` retargets the same graph to CPU or GPU by swapping the scheduler.<sup>[4]</sup>
+2. **Compile-time work graphs.** The sender algebra encodes DAGs of work at the type level. `when_all`, `then`, and `let_value` compose into a static structure the optimizer can see through. Domain customization via `transform_sender` retargets the same graph to CPU or GPU by swapping the scheduler.<sup>[4]</sup>
 
-**Structured concurrency.** `counting_scope` tracks dynamically spawned work and prevents scope destruction until all work completes.<sup>[3]</sup>
+3. **Structured concurrency.** `counting_scope` tracks dynamically spawned work and prevents scope destruction until all work completes.<sup>[3]</sup>
 
-The comparison that follows grants senders every affordance: `inline_scheduler::schedule()` as the sender - the standard's own facility for inline completion<sup>[5]</sup> - synchronous completion inside `start`, and the minimal `completion_signatures<set_value_t()>`. P3552R3's `await_transform` bypasses the `affine_on` wrapping for this sender (`[task.promise]` p10), removing one step. The `sender-awaitable` path that remains is unavoidable; the sender protocol imposes it.
+The comparison that follows grants senders every advantage: `inline_scheduler::schedule()` as the sender - the standard's own facility for inline completion<sup>[5]</sup> - synchronous completion inside `start`, and the minimal `completion_signatures<set_value_t()>`. <!-- lah: the preceding list of phrases and hyphens is incoherent. --> P3552R3's `await_transform` bypasses the `affine_on` wrapping for this sender (`[task.promise]` p10), removing one step. The `sender-awaitable` path that remains is unavoidable; the sender protocol imposes it.
 
 ## 5. The Sender Path
 
-Sections 2 and 3 showed the awaitable protocol's two mechanisms for synchronous I/O. This section traces the sender protocol's path for the same operation - a synchronous write to an in-memory string - using the best-case sender the standard provides.
+Sections 2 and 3 showed the awaitable protocol's two mechanisms for synchronous I/O. This section traces the sender protocol's path for the same operation, a synchronous write to an in-memory string, using the best-case sender the standard provides.
 
 `string_sink::write` returns the sender produced by `inline_scheduler::schedule()`, the exposition-only `inline-sender` type from P3552R3<sup>[5]</sup>:
 
@@ -142,7 +138,7 @@ public:
 };
 ```
 
-The sender's `start` calls `set_value` on the receiver immediately. No kernel transition. No suspension on the sender side. This sender is the standard's own facility for inline completion - not a hand-rolled type, but the facility P3552R3 provides for exactly this case.
+The sender's `start` calls `set_value` on the receiver immediately. No kernel transition. No suspension on the sender side. <!-- lah: add verbs to the previous two fragments. --> This sender is the standard's own facility for inline completion, not a hand-rolled type, but the facility in P3552R3 provides for exactly this case.
 
 A coroutine returning `execution::task` consumes it:
 
@@ -156,15 +152,16 @@ execution::task<> log_lines(
 }
 ```
 
-What happens inside `co_await sink.write(line)`, per the specification:
+The specification describes what happens inside `co_await sink.write(line)`:
 
 1. `await_transform` receives the sender.<sup>[5]</sup> The sender is an `inline-sender`. `[task.promise]` p10 detects this and bypasses `affine_on`, returning `as_awaitable(sndr, *this)` directly.
 
-2. `as_awaitable` constructs a `sender-awaitable`.<sup>[3]</sup> `[exec.as.awaitable]`.
+2. `as_awaitable` constructs a `sender-awaitable`,<sup>[3]</sup> the type specified in `[exec.as.awaitable]`.
 
-3. The `sender-awaitable` constructor calls `connect(sndr, awaitable-receiver)`.<sup>[3]</sup> The operation state is materialized. The receiver is wired.
+3. The `sender-awaitable` constructor calls `connect(sndr, awaitable-receiver)`.<sup>[3]</sup> The operation state is materialized, and the receiver is wired.
 
-4. `await_ready()` returns `false`.<sup>[3]</sup> Unconditionally. The coroutine suspends.
+4. `await_ready()` returns `false`.<sup>[3]</sup> Unconditionally. <!--lah: returns unconditionally or suspends unconditionally? Where does this "uncondifitonally" belong? --> The coroutine suspends.
+<!-- lah: stopping here. This paper needs a through rewrite. -->
 
 5. `await_suspend` calls `start(state)`.<sup>[3]</sup> Inside `start`, `set_value(receiver)` fires synchronously.
 
