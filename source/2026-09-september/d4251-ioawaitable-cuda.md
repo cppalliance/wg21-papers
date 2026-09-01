@@ -940,7 +940,7 @@ Eric Niebler, Micha&lstrok; Dominiak, Georgy Evtushenko, Lewis Baker, Lucian Rad
 
 Richard Smith and Gor Nishanov for P0981R0<sup>[62]</sup> (HALO analysis). Yuxuan Chen for the `[[clang::coro_await_elidable]]` attribute. Chuanqi Xu for P2477R3<sup>[75]</sup> (coroutine allocation elision). Dietmar K&uuml;hl and Maikel Nadolski for P3552R3<sup>[76]</sup> (`std::execution::task`). Lewis Baker for cppcoro, the operator `co_await` and symmetric transfer blog posts, and P3425R1<sup>[57]</sup> (operation-state sizes). Michael Wong for P4029R0<sup>[4]</sup> (SG14 priority list).
 
-Michael Garland and the NVIDIA stdexec team for the nvexec GPU schedulers and the Maxwell FDTD benchmark. The CERN Next Generation Triggers project for their C++20 coroutine task-scheduling experiments and the Capy IoAwaitable integration. Dian-Lun Lin (University of Wisconsin-Madison) for Taro and its CppCon 2023 presentation. The NVIDIA Labs team for cuda-oxide. Jiqun Tu (NVIDIA) and Ellery Russell (Schr&ouml;dinger) for the Desmond coroutine integration presented at GTC 2024. The TTG/PaRSEC team for demonstrating coroutine-based heterogeneous GPU dispatch.
+Michael Garland and the NVIDIA stdexec team for the nvexec GPU schedulers and the Maxwell FDTD benchmark. Mateusz Jakub Fila, Attila Krasznahorkay, and Eric Cano (CERN Next Generation Triggers project) for their C++20 coroutine task-scheduling experiments and the Capy IoAwaitable integration. Dian-Lun Lin (University of Wisconsin-Madison) for Taro and its CppCon 2023 presentation. The NVIDIA Labs team for cuda-oxide. Jiqun Tu (NVIDIA) and Ellery Russell (Schr&ouml;dinger) for the Desmond coroutine integration presented at GTC 2024. The TTG/PaRSEC team for demonstrating coroutine-based heterogeneous GPU dispatch.
 
 ## References
 
@@ -1000,7 +1000,7 @@ Michael Garland and the NVIDIA stdexec team for the nvexec GPU schedulers and th
 
 [28] [CUDA Runtime API: Event Management](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__EVENT.html) (NVIDIA, 2024).
 
-[29] [Scheduling for Next Generation Triggers](https://indico.cern.ch/event/1471803/contributions/6967272/) - CHEP 2026 contribution; the scaling findings appear in the attached presentation slides (Eric Cano, Mateusz Fila, Attila Krasznahorkay, 2026).
+[29] [Scheduling for Next Generation Triggers](https://indico.cern.ch/event/1471803/contributions/6967272/) - CHEP 2026 contribution; the scaling findings appear in the attached presentation slides (Mateusz Jakub Fila, Attila Krasznahorkay, Eric Cano, 2026).
 
 [30] [Stack Overflow: CUDA Graph host execution nodes in different streams](https://stackoverflow.com/questions/75739969/is-it-possible-to-execute-more-than-one-cuda-graphs-host-execution-node-in-diff) - Robert Crovella (NVIDIA) on host functions in independent streams executing in undefined order and possibly serialized (2023).
 
