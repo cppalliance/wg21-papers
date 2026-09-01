@@ -19,11 +19,12 @@ WG21 decides by consensus, which ISO defines as the reconciliation of conflictin
 
 None of this process broke a rule, which is why the working group cannot catch it from inside: a process built to produce consensus on time will produce it, whether or not the underlying design was audited. The one audit that ISO places outside the working group is the National Body ballot, and the C++ Alliance's position is that the National Bodies vote No on the C++26 DIS ballot, with technical comments, and return the draft for the evaluation it skipped, at the cost of one cycle. The same procedural maneuvers are being practiced again on a successor proposal, so the ballot check should be exercised now rather than deferred to a later cycle.
 
-The authors provide information and serve at the pleasure of the committee. The authors of P4238R0 request no floor time, no poll, and no committee action; they state a position and offer two recommendations to the National Bodies and the convener.
+The authors provide information and serve at the pleasure of the committee. The authors of P4238R1 request no floor time, no poll, and no committee action; they state a position and offer two recommendations to the National Bodies and the convener.
 
 ## Revision History
 
 - R0: Initial version.
+- R1: Added a Disclosure section recording each author's interest. Added a References section, added inline citations to the paper links in the body, and replaced the wg21.link URLs with canonical open-std.org URLs. The argument and the recommendations are unchanged.
 
 ## 1. Introduction: The Alliance Position
 
@@ -107,7 +108,7 @@ The C++ Alliance's position is that the National Bodies return C++26, at the cos
 
 The authors provide information and serve at the pleasure of the committee.
 
-Co-author John Spicer chaired SG21 during the period this paper examines. Co-author Ville Voutilainen participated in the P2900 polls this paper cites. Co-author Vinnie Falco is president of the C++ Alliance, whose position the paper states. Co-author Jose Daniel Garcia Sanchez is Head of Delegation for Spain.
+Co-author John Spicer chaired SG21 during the period this paper examines. Co-author Ville Voutilainen participated in the P2900 polls this paper cites. Co-author Vinnie Falco is president of the C++ Alliance, whose position the paper states. Co-author Jos&eacute; Daniel Garc&iacute;a S&aacute;nchez is Head of Delegation for Spain.
 
 ## References
 

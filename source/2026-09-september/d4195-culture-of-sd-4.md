@@ -12,11 +12,11 @@ reply-to:
 
 WG21's consensus process selects for survivability through the committee's represented veto structure. It cannot certify technical quality or user welfare. The distinction is testable: post-adoption correction rates for large contested features, compared against a baseline, would reveal whether the system's selection correlates with quality or substitutes for it. That measurement is future work. The consequence is that adoption is evidence that the proposal outlasted organized opposition, not that the design was best.
 
-This report applies game theory to the incentive structures created by [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)'s rules: consensus as chair judgment, polls that record numbers without a minutes register of opposing arguments, and repeat-player dynamics across decades of meetings. It finds that procedural fluency, asymmetric institutional memory, and path dependence are first-order determinants of which proposals enter the C++ standard. Six case histories (contracts, std::execution, networking, trivial relocation, default comparisons, and coroutines) ground the analysis in public WG21 records. The system works well when funded advocates cross-examine each other and a capable chair reads the room; it fails when review costs are high, opposition is unfunded, and the institutional record preserves only one side of the argument.
+This report applies game theory to the incentive structures created by [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)'s rules: consensus as chair judgment, polls that record numbers without a minutes register of opposing arguments, and repeat-player dynamics across decades of meetings. It finds that procedural fluency, asymmetric institutional memory, and path dependence are first-order determinants of which proposals enter the C++ standard. Five case histories (contracts, std::execution, networking, default comparisons, and coroutines) ground the analysis in public WG21 records. The system works well when funded advocates cross-examine each other and a capable chair reads the room; it fails when review costs are high, opposition is unfunded, and the institutional record preserves only one side of the argument.
 
 ## Revision History
 
-### R0
+### R0: September 2026
 
 - Initial version.
 
@@ -26,7 +26,7 @@ The three dynamics identified in the abstract produce a specific cultural patter
 
 Each participant's behavior is rational given the incentive structure. Authors optimize for adoption. Reviewers specialize in domains they care about and abstain elsewhere, because review is a public good nobody wants to provide privately. Chairs optimize for closure, because the role demands converting conflict into decisions. The minority is asked not "are you right?" but "how strongly are you willing to resist?" - a question that turns a technical judgment into a social one.
 
-The case histories confirm that these dynamics are equilibrium outcomes. Contracts ([P2900](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[18]</sup>) illustrates the ideal-author playbook executed through plenary adoption. Coroutines illustrates a minority partially vindicated after the fact: C++20 shipped only language-support primitives, with no high-level coroutine types. The std::execution vote ([N4985](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n4985.pdf)<sup>[2]</sup>: 57-20-27, "numerically this is a weak consensus, but it is a consensus") illustrates chair judgment at the boundary. Networking illustrates a direction poll setting the conceptual framework about fifteen months before the chosen path had a concrete proposal. Trivial relocation illustrates a competing design denied a discussion poll while the established-direction proposal was being reconsidered. Default comparisons illustrates plenary catching a design flaw that subgroup consensus missed.
+The case histories confirm that these dynamics are equilibrium outcomes. Contracts ([P2900](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[18]</sup>) illustrates the ideal-author playbook executed through plenary adoption. Coroutines illustrates a minority partially vindicated after the fact: C++20 shipped only language-support primitives, with no high-level coroutine types. The std::execution vote ([N4985](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n4985.pdf)<sup>[2]</sup>: 57-20-27, "numerically this is a weak consensus, but it is a consensus") illustrates chair judgment at the boundary. Networking illustrates a direction poll setting the conceptual framework about fifteen months before the chosen path had a concrete proposal. Default comparisons illustrates plenary catching a design flaw that subgroup consensus missed.
 
 For the C++ community, the practical consequence is that features entering the standard reflect the priorities of funded, persistent, procedurally fluent authors - a group that overlaps with but is not identical to the group best positioned to judge what C++ users need.
 
@@ -40,7 +40,7 @@ For the C++ community, the practical consequence is that features entering the s
 
 4. SD-4 makes consensus a chair call, not a finding that the remaining objection has been answered. The chair is incentivized to produce a decision rather than to adjudicate the technical claims, so the live question often becomes how strongly the minority will resist rather than whether a defect remains. Consensus does not require persuasion. People can therefore lose a poll without being convinced, and "consensus was achieved" versus "we lost the poll" stays as institutional tension. (Likelihood: very likely. Confidence: medium - chair incentives follow from SD-4; sentiment is not measured.)
 
-5. Path dependence is a first-order effect, not a secondary bias. Once a proposal accumulates favorable direction polls, a competitor must show not only that \( B > A \), but that \( B - A > C_{\text{reversal}} \), where \( C_{\text{reversal}} \) includes discarded wording, abandoned implementations, schedule risk, and reputational cost to previous decisions. Merit still counts; it must clear a higher bar than it would have at the start. (Likelihood: likely. Confidence: high - directly observable in trivial relocation and networking cases.)
+5. Path dependence governs the framing a challenger is heard in, not the merits it is judged on. Once a proposal accumulates favorable direction polls, a competitor is evaluated as an amendment or an objection to it rather than as an equal design, and must show not only that \( B > A \) but that \( B - A > C_{\text{reversal}} \), where \( C_{\text{reversal}} \) includes discarded wording, abandoned implementations, schedule risk, and reputational cost to previous decisions. Merit still decides outcomes; accumulated state decides the terms on which merit is presented. (Likelihood: likely. Confidence: high - the framing appears in the document titles and poll text of the contracts and networking cases.)
 
 6. The incentive to protect an institutional investment scales with its size. A three-page paper carries negligible reversal cost; a multi-year, employer-funded feature carries reversal cost proportional to years of work, reputation, and coalition capital. The proposals that matter most to users are the ones whose authors are most incentivized to lock in early and resist late correction. This is rational investment protection, not moral failure. (Likelihood: likely. Confidence: high - follows from the reversal-cost inequality in section 12 and the payoff functions in section 13; requires only that authors are rational.)
 
@@ -74,7 +74,7 @@ The ideal author optimizes for adoption. The ideal reviewer optimizes for the do
 
 "Sustained" requires attendance across meetings. "Important" and "represented" require institutional standing. "Opposition" must be organized. The rules do not explicitly exclude anyone, but they weight the game toward players who can afford to persist.
 
-The contracts saga illustrates the profile. [P0542](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0542r5.html)<sup>[19]</sup> was removed from C++20 at Cologne 2019 ([P1823R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1823r0.pdf)<sup>[20]</sup>). Cologne minutes ([N4826](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4826.pdf)<sup>[8]</sup>) record that SG21 was established after that removal. [P2182](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2182r1.html)<sup>[21]</sup> defined the MVP from the uncontroversial part of C++20 contracts. [P2695R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2695r0.pdf)<sup>[22]</sup> set the C++26 MVP schedule. [P2961](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2961r2.pdf)<sup>[23]</sup> (Doumler, Maurer) proposed "natural syntax"; SG21 adopted it into the MVP. P2900R6 moved from SG21 to EWG and LEWG on 2024-02-29 with consensus. When SG21, which had developed the MVP, polled on 2024-05-30 whether the ship vehicle should be a TS rather than the IS, consensus was against. EWG forwarded P2900R11 to CWG and LEWG for C++26 at Wroclaw in November 2024. LEWG then forwarded to LWG (SF:23, F:9, N:1, A:0, SA:5). Plenary adopted P2900R14 into the C++26 Working Paper on 2025-02-15. At every stage, the authors who persisted, attended, built coalitions, and maintained chair confidence advanced the proposal. The mechanism worked as designed.
+The contracts saga illustrates the profile. [P0542](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0542r5.html)<sup>[19]</sup> was removed from C++20 at Cologne 2019 ([P1823R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1823r0.pdf)<sup>[20]</sup>). Cologne minutes ([N4826](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4826.pdf)<sup>[8]</sup>) record that SG21 was established after that removal. [P2182](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2182r1.html)<sup>[21]</sup> defined the MVP from the uncontroversial part of C++20 contracts. [P2695R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2695r0.pdf)<sup>[22]</sup> set the C++26 MVP schedule. [P2961](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2961r2.pdf)<sup>[23]</sup> (Doumler, Maurer) proposed "natural syntax"; SG21 adopted it into the MVP. P2900R6 moved from SG21 to EWG and LEWG on 2024-02-29 with consensus. When SG21, which had developed the MVP, polled on 2024-05-30 whether the ship vehicle should be a TS rather than the IS, consensus was against. EWG forwarded P2900R11 to CWG and LEWG for C++26 at Wroclaw in November 2024. LEWG then forwarded to LWG (SF:23, F:9, N:1, A:0, SA:5). Plenary adopted P2900R14 into the C++26 Working Paper on 2025-02-15, and the feature appears in the working draft published the following month ([N5008](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5008.pdf)<sup>[4]</sup>). At every stage, the authors who persisted, attended, built coalitions, and maintained chair confidence advanced the proposal. The mechanism worked as designed.
 
 **The mechanism selects for survivability through the committee's represented veto structure. It cannot tell whether the survivor was excellent.**
 
@@ -166,9 +166,7 @@ Fourth, fluency produces legitimacy: fluent authors signal they are safe institu
 
 The feedback loop is direct: fluency yields chair confidence, which yields agenda access, which yields successful papers, which yield reputation, which yields greater fluency and access. The cycle compounds over meetings.
 
-Procedural fluency is not neutral. It redistributes influence toward repeat attendees, employer-funded participants, chairs, prolific authors, and people with established relationships. It disadvantages independent experts, implementers who cannot attend regularly, users encountering the process for the first time, and critics who appear only when a proposal becomes publicly visible. The crucial inequality is not that insiders are allowed to vote and outsiders are forbidden. It is that insiders know when a consequential decision is actually being made, what language will influence it, and what must have happened beforehand for their intervention to count.
-
-The St. Louis refusal to schedule [P1144](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p1144r13.html)<sup>[39]</sup> for discussion, or even to poll whether to discuss it, while [P2786](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2786r13.html)<sup>[40]</sup> was under reconsideration, is path dependence. Section 12 treats it.
+Procedural fluency is not neutral. It redistributes influence toward repeat attendees, participants whose attendance is paid for, chairs, prolific authors, and people with established relationships. The source of the funding is not the discriminator: an employer, one's own business, consulting or training income, a national body, or independent means all purchase the same attendance. What matters is whether the cost can be absorbed year after year. Fluency disadvantages those who cannot absorb it, implementers who cannot attend regularly, users encountering the process for the first time, and critics who appear only when a proposal becomes publicly visible. The crucial inequality is not that insiders are allowed to vote and outsiders are forbidden. It is that insiders know when a consequential decision is actually being made, what language will influence it, and what must have happened beforehand for their intervention to count.
 
 ## 10. Polls as State Transitions
 
@@ -178,9 +176,9 @@ An author has strong incentive to obtain favorable state transitions as early as
 
 Three possible polls for the same proposal illustrate the mechanism: "Do we like this general direction?" or "Should the author continue working?" or "Forward this paper for inclusion in C++29." A proposal may receive strong support on the first two and fail the third. An "encourage further work" poll can generate momentum, legitimacy, and an expectation of eventual adoption. This is agenda power disguised as grammatical precision.
 
-The networking and executors case shows the sequence. In October 2021, LEWG and SG1 took five electronic polls of 56 participants (questions: [P2452R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2452r0.html)<sup>[41]</sup>; outcomes: [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[42]</sup>). Poll 1: "The Networking TS/Asio async model [P2444R0] is a good basis for most asynchronous use cases, including networking, parallelism, and GPUs." SF:5, WF:10, N:6, WA:14, SA:18 - weak consensus against. Poll 2: "The sender/receiver model [P2300R2] is a good basis for most asynchronous use cases, including networking, parallelism, and GPUs." SF:24, WF:16, N:3, WA:6, SA:3 - consensus in favor. Poll 4: "Networking in the C++ Standard Library should be based on the sender/receiver model [P2300R2]." SF:17, WF:11, N:10, WA:4, SA:6 - weak consensus.
+The networking and executors case shows the sequence. In October 2021, LEWG and SG1 took five electronic polls of 56 participants (questions: [P2452R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2452r0.html)<sup>[39]</sup>; outcomes: [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[40]</sup>). Poll 1: "The Networking TS/Asio async model [P2444R0] is a good basis for most asynchronous use cases, including networking, parallelism, and GPUs." SF:5, WF:10, N:6, WA:14, SA:18 - weak consensus against. Poll 2: "The sender/receiver model [P2300R2] is a good basis for most asynchronous use cases, including networking, parallelism, and GPUs." SF:24, WF:16, N:3, WA:6, SA:3 - consensus in favor. Poll 4: "Networking in the C++ Standard Library should be based on the sender/receiver model [P2300R2]." SF:17, WF:11, N:10, WA:4, SA:6 - weak consensus.
 
-A Poll 4 Strongly Against comment observed that no concrete sender/receiver networking API had been proposed. [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf)<sup>[43]</sup> (Allsop, Falco, Hodges, Kohlhoff, Morgenstern) argued that the Networking TS was already deployed - Asio had 18+ years of deployment experience; the TS itself was about six years old. [P2762R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2762r0.pdf)<sup>[44]</sup> (K&uuml;hl, January 2023), the first concrete sender/receiver networking proposal, arrived about fifteen months after the direction poll. The direction poll set the conceptual framework before the chosen path had a concrete proposal.
+A Poll 4 Strongly Against comment observed that no concrete sender/receiver networking API had been proposed. [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf)<sup>[41]</sup> (Allsop, Falco, Hodges, Kohlhoff, Morgenstern) argued that the Networking TS was already deployed - Asio had 18+ years of deployment experience; the TS itself was about six years old. [P2762R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2762r0.pdf)<sup>[42]</sup> (K&uuml;hl, January 2023), the first concrete sender/receiver networking proposal, arrived about fifteen months after the direction poll. The direction poll set the conceptual framework before the chosen path had a concrete proposal.
 
 ## 11. The Asymmetry of Institutional Memory
 
@@ -202,9 +200,9 @@ A four-stage linguistic transformation tracks the shift: "A and B are competing 
 
 The game becomes a war of attrition: who is willing to pay the cost for longer? Persistence changes the probability of winning independently of technical quality. Showing up again is itself a move. A skilled author will typically withdraw, revise, negotiate, or postpone rather than demand "A or B. Vote now." The losing design may not receive a dramatic rejection. It may experience: less agenda time, then no forwarding poll, then another revision requested, then the champion loses interest, then nothing. B simply stopped moving.
 
-The trivial relocation case shows the full cycle. [P1144](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p1144r13.html)<sup>[39]</sup> (Arthur O'Dwyer, first revision 2018) defines relocation as equivalent to move+destroy with trivial relocation as optimization. [P2786](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2786r13.html)<sup>[40]</sup> (Gill, Meredith, first revision 2023) defines trivial relocation as a separate language primitive. P1144 had been polled for EWGI-to-EWG forwarding at Prague 2020 (1-3-4-1-0; the vote was not treated as a successful forward) and at Issaquah 2023 (0-7-4-3-1; not consensus). P2786 was forwarded from EWGI at Issaquah (1-8-3-3-1). [P2814](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2814r1.pdf)<sup>[45]</sup> (2023) provided a formal comparison, originating from EWGI direction at Issaquah. At Tokyo in March 2024, EWG forwarded P2786 to CWG (7-9-6-0-2). P2786 became "committee direction." At St. Louis in June 2024, EWG pulled P2786 back (21-15-3-6-5). [P3233](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3233r0.html)<sup>[46]</sup>, "Issues with P2786 (\"Trivial Relocatability For C++26\")," and [P3236](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3236r1.html)<sup>[47]</sup>, "Please reject P2786 and adopt P1144," reached the room as third-party papers. P1144R12: "I asked during that meeting whether the chair of EWG was willing to schedule P1144 for discussion, or even to take a poll of EWG on whether to discuss it. He said no." The competing design was denied a direct discussion poll while the established-direction proposal was being reconsidered. That is path dependence, not an absence of fluency.
+The contracts case shows the transformation in the documents themselves. [P2680R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2680r1.pdf)<sup>[43]</sup> (Dos Reis) proposed that contract predicates be free of side effects and free of undefined behavior - a different design basis from the MVP that became [P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[18]</sup>. It arrived into a study group whose work item was already defined as the MVP, and the record names it accordingly. Eight of the MVP's authors answered it with [P2700R1](https://open-std.org/JTC1/SC22/WG21/docs/papers/2022/p2700r1.pdf)<sup>[44]</sup>, "Questions on P2680." [P3362R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3362r0.html)<sup>[45]</sup> (Voutilainen, Corden) argues for Dos Reis's direction and is titled "Static analysis and 'safety' of Contracts, P2900 vs. P2680/P3285" - the incumbent named first by the paper advocating against it.
 
-P2786 re-advanced after significant revision and merged into the C++26 working draft (visible in [N5008](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5008.pdf)<sup>[4]</sup>, March 2025). At Kona in 2025, [N5031](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5031.pdf)<sup>[5]</sup>: "the implementers of our major tools unanimously and independently were unable to support this particular version of this feature." Plenary applied [P3920R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3920r0.html)<sup>[48]</sup> for removal (80-5-28). The four-stage transformation played out across about 20 months. The system eventually reversed itself, but only after implementers unanimously refused support.
+The poll text completes the sequence. When EWG polled the direction at Wroclaw on 2024-11-19, the question was not which design was better. It asked whether "the contracts proposal in P2900's Minimal Viable Product shall be changed to incorporate stricter contracts in addition to regular contracts": SF:10, F:6, N:3, A:14, SA:16, consensus against. A second poll the same day, on whether to make strict contracts the default or a forced opt-in, returned 6-7-9-20-7, also against ([P3499R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3499r1.pdf)<sup>[46]</sup>). Two years after publication, the competing design was votable only as an amendment to the design it competed with. Whether stricter predicates were the better basis was never the question on the floor.
 
 ## 13. The Incentive Structure
 
@@ -223,13 +221,13 @@ U_A = pV + R + E - C_p - C_r - C_a - D
 where:
 - \( pV \): probability of adoption times value of adoption
 - \( R \): reputation and influence
-- \( E \): employer or organizational benefit
+- \( E \): benefit accruing to an employer, an organization, or the author's own business or practice
 - \( C_p \): paper and implementation cost
 - \( C_r \): revision cost
 - \( C_a \): attendance and coalition cost
 - \( D \): delay cost
 
-The author enters when the expected payoff exceeds zero. \( C_a \) - attendance cost - gates entry. Only funded people can afford to play, because \( C_a \) includes travel, lodging, and the opportunity cost of weeks per year.
+The author enters when the expected payoff exceeds zero. \( C_a \) - attendance cost - gates entry. Only those who can absorb \( C_a \) can afford to play, because it includes travel, lodging, and the opportunity cost of weeks per year, recurring every year. An employer, one's own business, consulting or training income, a national body, or independent means all clear that threshold; the absence of any of them does not.
 
 The reviewer's payoff function:
 
@@ -414,7 +412,7 @@ This paper asks for nothing.
 
 The authors provide information and serve at the pleasure of the committee.
 
-The author co-authored [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf)<sup>[43]</sup>, cited in section 10, and participated in the discussions that section analyzes. In 2021 that paper's position was right; it is no longer a design recommendation. Section 10 is a process case, not a brief for any async model.
+The author co-authored [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf)<sup>[41]</sup> and participated in the discussions it addresses. That paper is cited in section 10, and the networking case is also one of the two cases behind key judgment 5. In 2021 that paper's position was right; it is no longer a design recommendation. Both treatments are process cases, not a brief for any async model.
 
 The author does not believe Contracts in its current form is the right mechanism for run-time safety in C++, and has papers to that effect. The author also has papers covering Profiles. P2900 was chosen as a primary case because it is the most heavily documented recent controversy with public records on both sides. Sections 7 and 8 present both perspectives without adjudicating the Contracts design.
 
@@ -448,23 +446,23 @@ Machine-assisted drafting was used in the preparation of this paper. The incenti
 
 [12] [P3912R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3912r0.pdf) - "Design considerations for always-enforced contract assertions" (Timur Doumler, Joshua Berne, et al., 2025).
 
-[13] [P3946R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3946r0.html) - "Designing enforced assertions" (Andrzej Krzemienski, 2025).
+[13] [P3946R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3946r0.html) - "Designing enforced assertions" (Andrzej Krzemie&nacute;ski, 2025).
 
 [14] [P4298R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4298r0.pdf) - "Nonthrowing Evaluation Semantics" (Joshua Berne, 2026).
 
 [15] [P3500R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3500r1.pdf) - "Are Contracts 'safe'?" (Timur Doumler, Gasper Azman, Joshua Berne, Ryan McDougall, 2025).
 
-[16] [P2899R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r0.pdf) - "Contracts for C++ - Rationale" (Joshua Berne, Timur Doumler, Rostislav Khlebnikov, Andrzej Krzemienski, 2025).
+[16] [P2899R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r0.pdf) - "Contracts for C++ - Rationale" (Joshua Berne, Timur Doumler, Rostislav Khlebnikov, Andrzej Krzemie&nacute;ski, 2025).
 
-[17] [P3896R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3896r0.html) - "Design goals for a contract support facility" (Andrzej Krzemienski, 2025).
+[17] [P3896R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3896r0.html) - "Design goals for a contract support facility" (Andrzej Krzemie&nacute;ski, 2025).
 
-[18] [P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf) - "Contracts for C++" (Joshua Berne, Timur Doumler, Andrzej Krzemienski, 2025).
+[18] [P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf) - "Contracts for C++" (Joshua Berne, Timur Doumler, Andrzej Krzemie&nacute;ski, 2025).
 
 [19] [P0542R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0542r5.html) - "Support for contract based programming in C++" (G. Dos Reis, J. Daniel Garcia, J. Lakos, A. Meredith, N. Myers, B. Stroustrup, 2018).
 
 [20] [P1823R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1823r0.pdf) - "Remove Contracts from C++20" (Ville Voutilainen, 2019).
 
-[21] [P2182R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2182r1.html) - "Contract Support: Defining the Minimum Viable Feature Set" (Joshua Berne, John Lakos, Andrzej Krzemienski, 2020).
+[21] [P2182R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2182r1.html) - "Contract Support: Defining the Minimum Viable Feature Set" (Joshua Berne, John Lakos, Andrzej Krzemie&nacute;ski, 2020).
 
 [22] [P2695R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2695r0.pdf) - "A proposed plan for contracts in C++26" (Timur Doumler, 2022).
 
@@ -500,37 +498,33 @@ Machine-assisted drafting was used in the preparation of this paper. The incenti
 
 [38] [P3173R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3173r0.pdf) - "P2900R6 may not be minimal" (Gabriel Dos Reis, 2024).
 
-[39] [P1144R13](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p1144r13.html) - "Object relocation in terms of move plus destroy" (Arthur O'Dwyer, 2025).
+[39] [P2452R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2452r0.html) - "2021 October Virtual LEWG/SG1 Async/Net Polls" (Bryce Adelstein Lelbach, 2022).
 
-[40] [P2786R13](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2786r13.html) - "Trivial Relocatability For C++26" (Mungo Gill, Alisdair Meredith, 2025).
+[40] [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html) - "2021 October Virtual LEWG/SG1 Async/Net Poll Outcomes" (Bryce Adelstein Lelbach, 2022).
 
-[41] [P2452R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2452r0.html) - "2021 October Virtual LEWG/SG1 Async/Net Polls" (Bryce Adelstein Lelbach, 2022).
+[41] [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf) - "Response to P2300R2: Concerns about Introduction of sender/receiver model for Networking" (Christopher Allsop, Vinnie Falco, Richard Hodges, Christopher Kohlhoff, Jens Morgenstern, 2021).
 
-[42] [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html) - "2021 October Virtual LEWG/SG1 Async/Net Poll Outcomes" (Bryce Adelstein Lelbach, 2022).
+[42] [P2762R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2762r0.pdf) - "Sender/Receiver-based Networking" (Dietmar K&uuml;hl, 2023).
 
-[43] [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf) - "Response to P2300R2: Concerns about Introduction of sender/receiver model for Networking" (Christopher Allsop, Vinnie Falco, Richard Hodges, Christopher Kohlhoff, Jens Morgenstern, 2021).
+[43] [P2680R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2680r1.pdf) - "Contracts for C++: Prioritizing Safety" (Gabriel Dos Reis, 2022).
 
-[44] [P2762R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2762r0.pdf) - "Sender/Receiver-based Networking" (Dietmar K&uuml;hl, 2023).
+[44] [P2700R1](https://open-std.org/JTC1/SC22/WG21/docs/papers/2022/p2700r1.pdf) - "Questions on P2680 'Contracts for C++: Prioritizing Safety'" (Timur Doumler, Andrzej Krzemie&nacute;ski, John Lakos, Joshua Berne, Brian Bi, Peter Brett, Oliver Rosten, Herb Sutter, 2022).
 
-[45] [P2814R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2814r1.pdf) - "Comparing P2786 to P1144 with Respect to Trivial Relocation" (Arthur O'Dwyer, Mungo Gill, 2023).
+[45] [P3362R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3362r0.html) - "Static analysis and 'safety' of Contracts, P2900 vs. P2680/P3285" (Ville Voutilainen, Richard Corden, 2024).
 
-[46] [P3233R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3233r0.html) - "Issues with P2786 (Trivial Relocatability For C++26)" (Arthur O'Dwyer, 2024).
+[46] [P3499R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3499r1.pdf) - "Exploring strict contract predicates" (Timur Doumler, Lisa Lippincott, Joshua Berne, 2025).
 
-[47] [P3236R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3236r1.html) - "Please reject P2786 and adopt P1144" (Arthur O'Dwyer, 2024).
+[47] [P3829R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3829r0.pdf) - "Contracts do not belong in the language" (David Chisnall, Michael Spicer, Gabriel Dos Reis, et al., 2025).
 
-[48] [P3920R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3920r0.html) - "Remove trivial relocatability from C++26" (Giuseppe D'Angelo, 2025).
+[48] [P3835R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3835r0.html) - "Contracts make C++ less safe" (Michael Spicer, Ville Voutilainen, J. Daniel Garcia, 2025).
 
-[49] [P3829R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3829r0.pdf) - "Contracts do not belong in the language" (David Chisnall, Michael Spicer, Gabriel Dos Reis, et al., 2025).
+[49] [P3849R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3849r0.pdf) - "SIS/TK611 considerations on Contract Assertions" (Felix Achitz, 2025).
 
-[50] [P3835R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3835r0.html) - "Contracts make C++ less safe" (Michael Spicer, Ville Voutilainen, J. Daniel Garcia, 2025).
+[50] [P3851R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3851r0.pdf) - "Position on contracts assertion for C++26" (J. Daniel Garcia, et al., 2025).
 
-[51] [P3849R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3849r0.pdf) - "SIS/TK611 considerations on Contract Assertions" (Felix Achitz, 2025).
+[51] [P4005R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4005r0.html) - "Guaranteed-enforced contracts" (Ville Voutilainen, 2026).
 
-[52] [P3851R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3851r0.pdf) - "Position on contracts assertion for C++26" (J. Daniel Garcia, et al., 2025).
-
-[53] [P4005R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4005r0.html) - "Guaranteed-enforced contracts" (Ville Voutilainen, 2026).
-
-[54] [P4009R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4009r0.html) - "A proposal for solving all of the contracts concerns" (Ville Voutilainen, 2026).
+[52] [P4009R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4009r0.html) - "A proposal for solving all of the contracts concerns" (Ville Voutilainen, 2026).
 
 \newpage
 
@@ -541,23 +535,23 @@ Machine-assisted drafting was used in the preparation of this paper. The incenti
 | 2024-11-19 | EWG forwards P2900R11 to CWG/LEWG for C++26 (SF:25, F:17, N:0, A:3, SA:12) | POLL |
 | 2024-11-19 | [P3506R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3506r0.pdf)<sup>[37]</sup> "P2900 Is Still Not Ready for C++26" (Dos Reis) | OPPOSITION |
 | 2025-01-12 | [P3573R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3573r0.pdf)<sup>[36]</sup> "Contracts concerns" (Stroustrup, Dos Reis, Voutilainen, et al.) | OPPOSITION |
-| 2025-01-13 | [P2899R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r0.pdf)<sup>[16]</sup> "Contracts for C++ - Rationale" (Berne, Doumler, Khlebnikov, Krzemienski) | REBUTTAL |
+| 2025-01-13 | [P2899R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r0.pdf)<sup>[16]</sup> "Contracts for C++ - Rationale" (Berne, Doumler, Khlebnikov, Krzemie&nacute;ski) | REBUTTAL |
 | 2025-02-03 | [P3591R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3591r0.pdf)<sup>[10]</sup> "Contextualizing Contracts Concerns" (Berne, Doumler) | REBUTTAL |
 | 2025-02-09 | [P3500R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3500r1.pdf)<sup>[15]</sup> "Are Contracts 'safe'?" (Doumler, Azman, Berne, McDougall) | REBUTTAL |
 | 2025-02-11 | EWG Hagenberg: "Remove P2900 from C++26" (SF:9, F:8, N:3, A:19, SA:41) - consensus against | POLL |
 | 2025-02-15 | Plenary adopts P2900R14 into C++26 Working Draft (100 in favor, 14 opposed, 12 abstain) | POLL |
-| 2025-09-02 | [P3829R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3829r0.pdf)<sup>[49]</sup> "Contracts do not belong in the language" (Chisnall, Spicer, Dos Reis, et al.) | OPPOSITION |
-| 2025-09-03 | [P3835R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3835r0.html)<sup>[50]</sup> "Contracts make C++ less safe" (Spicer, Voutilainen, Garcia) | OPPOSITION |
-| 2025-09-27 | [P3849R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3849r0.pdf)<sup>[51]</sup> "SIS/TK611 considerations on Contract Assertions" (Achitz) | OPPOSITION |
-| 2025-09-29 | [P3851R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3851r0.pdf)<sup>[52]</sup> "Position on contracts assertion for C++26" (Garcia et al.) | OPPOSITION |
+| 2025-09-02 | [P3829R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3829r0.pdf)<sup>[47]</sup> "Contracts do not belong in the language" (Chisnall, Spicer, Dos Reis, et al.) | OPPOSITION |
+| 2025-09-03 | [P3835R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3835r0.html)<sup>[48]</sup> "Contracts make C++ less safe" (Spicer, Voutilainen, Garcia) | OPPOSITION |
+| 2025-09-27 | [P3849R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3849r0.pdf)<sup>[49]</sup> "SIS/TK611 considerations on Contract Assertions" (Achitz) | OPPOSITION |
+| 2025-09-29 | [P3851R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3851r0.pdf)<sup>[50]</sup> "Position on contracts assertion for C++26" (Garcia et al.) | OPPOSITION |
 | 2025-10-06 | [P3846R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3846r0.pdf)<sup>[11]</sup> "C++26 Contract Assertions, Reasserted" (Doumler, Berne, et al.) | REBUTTAL |
-| 2025-10-30 | [P3896R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3896r0.html)<sup>[17]</sup> "Design goals for a contract support facility" (Krzemienski) | REBUTTAL |
-| 2025-11 | EWG Kona: seven NB removal comments all fail (~9 SF vs ~40 SA each) | POLL |
+| 2025-10-30 | [P3896R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3896r0.html)<sup>[17]</sup> "Design goals for a contract support facility" (Krzemie&nacute;ski) | REBUTTAL |
+| 2025-11 | EWG Kona: seven NB removal comments all fail (~9 SF vs ~40 SA each), recorded in [N5031](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5031.pdf)<sup>[5]</sup> | POLL |
 | 2025-11 | EWG Kona: D3911 non-ignorable pre! (SF:18, F:25, N:22, A:7, SA:0) - consensus to pursue | POLL |
-| 2025-12-14 | [P3946R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3946r0.html)<sup>[13]</sup> "Designing enforced assertions" (Krzemienski) | REBUTTAL |
+| 2025-12-14 | [P3946R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3946r0.html)<sup>[13]</sup> "Designing enforced assertions" (Krzemie&nacute;ski) | REBUTTAL |
 | 2025-12-15 | [P3912R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3912r0.pdf)<sup>[12]</sup> "Design considerations for always-enforced contract assertions" (Doumler, Berne, et al.) | REBUTTAL |
-| 2026-02 | [P4005R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4005r0.html)<sup>[53]</sup> "Guaranteed-enforced contracts" (Voutilainen) | OPPOSITION |
-| 2026-02 | [P4009R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4009r0.html)<sup>[54]</sup> "A proposal for solving all of the contracts concerns" (Voutilainen) | OPPOSITION |
+| 2026-02 | [P4005R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4005r0.html)<sup>[51]</sup> "Guaranteed-enforced contracts" (Voutilainen) | OPPOSITION |
+| 2026-02 | [P4009R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4009r0.html)<sup>[52]</sup> "A proposal for solving all of the contracts concerns" (Voutilainen) | OPPOSITION |
 | 2026-01/02 | EWG telecons: P4005 no consensus; P4009 strong consensus against | POLL |
 | 2026-07-15 | [P4298R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4298r0.pdf)<sup>[14]</sup> "Nonthrowing Evaluation Semantics" (Berne) | REBUTTAL |
 

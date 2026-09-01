@@ -14,7 +14,7 @@ reply-to:
 
 ## Revision History
 
-### R0
+### R0: September 2026
 
 - Initial version.
 

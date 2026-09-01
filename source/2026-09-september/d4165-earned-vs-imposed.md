@@ -1,7 +1,7 @@
 ---
 title: "Sixteen Million Users, One Hundred Delegates"
 document: P4165R0
-date: 2026-03-28
+date: 2026-09-01
 intent: info
 audience: WG21
 reply-to:
@@ -21,7 +21,7 @@ The record is public. The conclusions are the reader's.
 
 ## Revision History
 
-### R0: March 2026 (pre-Croydon mailing)
+### R0: September 2026
 
 - Initial version.
 

@@ -14,6 +14,16 @@ P3400R4<sup>[1]</sup> describes its assertion-control labels as "essential to th
 
 This paper then extrapolates from the published pattern to produce eight falsifiable behavioral predictions. If the committee record does not match them, they are wrong.
 
+---
+
+## Revision History
+
+### R0: September 2026
+
+- Initial version.
+
+---
+
 ## The Implementer Gate
 
 Seven items from the published record, in chronological order. Each is a verbatim quotation from a published WG21 paper or a corporate website, followed by its implication for P3400R4's readiness claims.

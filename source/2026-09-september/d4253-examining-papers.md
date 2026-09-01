@@ -18,7 +18,7 @@ Robert Leahy has authored production code in NVIDIA's stdexec<sup>[1]</sup> (the
 
 ## Revision History
 
-### R0: July 2026 (post-Brno mailing)
+### R0: September 2026
 
 - Initial revision.
 
