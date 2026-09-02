@@ -1,7 +1,7 @@
 ---
 title: "Sixteen Million Users, One Hundred Delegates"
 document: P4165R0
-date: 2026-09-01
+date: 2026-03-28
 intent: info
 audience: WG21
 reply-to:
@@ -13,15 +13,15 @@ reply-to:
 
 Libraries that must earn their users differ from libraries that are imposed on their users.
 
-Two observable models of library development coexist in C++. One produces libraries through marketplace competition - authors publish code, users adopt or abandon it, and quality is determined by survival. The other produces libraries through committee process - delegates evaluate proposals, vote, and the result ships with every conforming compiler. Economic theory makes specific predictions about the outcomes each model produces. This paper states six predictions derived from established economics, then examines real C++ libraries from both models to test them.
+Two observable models of library development coexist in C++. One produces libraries through marketplace competition: authors publish code, users adopt or abandon it, and quality is determined by survival. The other produces libraries through committee process: delegates evaluate proposals, vote, and the result ships with every conforming compiler. Economic theory makes specific predictions about the outcomes each model produces. This paper states six predictions derived from established economics, then examines real C++ libraries from both models to test those predictions.
 
-The record is public. The conclusions are the reader's.
+The record is public. Conclusions are left to the reader.
 
 ---
 
 ## Revision History
 
-### R0: September 2026
+### R0: March 2026 (pre-Croydon mailing)
 
 - Initial version.
 
@@ -29,11 +29,11 @@ The record is public. The conclusions are the reader's.
 
 ## 1. Two Models
 
-Two models of library development are observable in the C++ ecosystem. Both produce libraries. Both serve users. They differ in the mechanisms that connect authors to users, evaluate quality, and determine what survives.
+Two models of library development coexist in the C++ ecosystem. Both produce libraries. Both serve users. They differ in the mechanisms that connect authors to users, evaluate quality, and determine what survives.
 
 ### 1.1 Model A: Competitive Libraries
 
-Model A libraries are developed in the open marketplace - Boost, GitHub, vcpkg, Conan. The author publishes code. Users evaluate it against alternatives. Adoption is the verdict.
+Model A libraries are developed in the open marketplace, such as Boost, GitHub, vcpkg, and Conan. The author publishes code, users evaluate it against alternatives, and adoption is the verdict.
 
 | Property            | Model A                                  |
 | ------------------- | ---------------------------------------- |
@@ -47,7 +47,7 @@ Model A libraries are developed in the open marketplace - Boost, GitHub, vcpkg, 
 
 ### 1.2 Model B: Standardized Libraries
 
-Model B libraries are developed through the WG21 process. The author writes a paper. Delegates evaluate it in committee. The result ships with every conforming compiler.
+Model B libraries are developed through the WG21 process. The author writes a paper, delegates evaluate it in committee, and the result ships with every conforming compiler.
 
 | Property            | Model B                                  |
 | ------------------- | ---------------------------------------- |
@@ -61,13 +61,13 @@ Model B libraries are developed through the WG21 process. The author writes a pa
 
 ### 1.3 What Model B Provides
 
-Model B provides properties that Model A cannot. Portability is guaranteed across every conforming implementation - a `std::optional` on Linux is the same `std::optional` on Windows, on embedded, on every platform the compiler targets. Universal availability eliminates dependency management entirely - no package manager, no build system integration, no version conflicts. Vocabulary type coordination means the entire ecosystem agrees on what `optional`, `variant`, and `string_view` mean, enabling libraries from different authors to compose without adaptation layers. A single authoritative specification provides a reference that courts, contracts, and compliance regimes can cite. These are genuine, structurally important strengths. No marketplace library can replicate them.
+Model B provides properties that Model A cannot. Portability is guaranteed across every conforming implementation: a `std::optional` on Linux is the same `std::optional` on Windows, on embedded systems, on every platform the compiler targets. Universal availability eliminates dependency management entirely, with no package manager, no build system integration, and no version conflicts. Vocabulary type coordination means the entire ecosystem agrees on what `optional`, `variant`, and `string_view` mean, enabling libraries from different authors to compose without adaptation layers. A single authoritative specification provides a reference that courts, contracts, and compliance regimes can cite. These are genuine, structurally important strengths. No marketplace library can replicate them.
 
 ### 1.4 Historical Context
 
-The two models have not always been separate. In 1990, the committee's founding document stated the principle that would govern library standardization: "A key decision was that the Library working group was not in the business of designing new libraries. The key idea is that the Standard would be based on existing practice"<sup>[3]</sup>. In 1998, Beman Dawes founded [Boost](https://www.boost.org/)<sup>[4]</sup> to provide peer-reviewed libraries as candidates for standardization. The pipeline from Boost to the standard produced C++11 - the standard's most celebrated release - with `shared_ptr`, `function`, `bind`, `regex`, `random`, `filesystem`, `chrono`, and `thread` all tested through years of Boost deployment before entering the standard<sup>[5]</sup>.
+The two models have not always been separate. In 1990, the committee's founding document stated the principle that would govern library standardization: "A key decision was that the Library working group was not in the business of designing new libraries. The key idea is that the Standard would be based on existing practice"<sup>[3]</sup>. In 1998, Beman Dawes founded [Boost](https://www.boost.org/)<sup>[4]</sup> to provide peer-reviewed libraries as candidates for standardization. The pipeline from Boost to the standard produced C++11, the standard's most celebrated release, with `shared_ptr`, `function`, `bind`, `regex`, `random`, `filesystem`, `chrono`, and `thread` all tested through years of Boost deployment before entering the standard<sup>[5]</sup>.
 
-Bjarne Stroustrup observed in his HOPL paper that the committee considered adopting a commercial foundation library in 1992: "Texas Instruments offered their very nice library for consideration and within an hour five representatives of major corporations made it perfectly clear that if this offer was seriously considered they would propose their own corporate foundation libraries"<sup>[5]</sup>. The committee could not adopt one corporation's library over another. The marketplace - Boost - solved the problem the committee could not.
+Bjarne Stroustrup observed in his HOPL paper that the committee considered adopting a commercial foundation library in 1992: "Texas Instruments offered their very nice library for consideration and within an hour five representatives of major corporations made it perfectly clear that if this offer was seriously considered they would propose their own corporate foundation libraries"<sup>[5]</sup>. The committee could not adopt one corporation's library over another. The marketplace, specifically Boost, solved the problem the committee could not.
 
 Joaqu&iacute;n M L&oacute;pez Mu&ntilde;oz observed in 2024 that the relationship has changed: "the standards committee has taken on the role of innovator and is pushing the industry rather than adopting external advancements or coexisting with them"<sup>[6]</sup>.
 
@@ -79,33 +79,33 @@ The properties described in Section 1 are not unique to software. Economists hav
 
 ### 2.1 The Knowledge Problem
 
-Friedrich Hayek, "The Use of Knowledge in Society" (1945)<sup>[7]</sup>. No central authority can aggregate the distributed knowledge held by millions of individuals. Each participant holds local knowledge - about their own needs, constraints, and preferences - that is costly or impossible to communicate to a central planner. Markets solve this through price signals that encode the preferences of all participants into a single actionable number. The price aggregates information without requiring any single actor to hold all of it.
+Friedrich Hayek, in "The Use of Knowledge in Society" (1945)<sup>[7]</sup>, explains that no central authority can aggregate the distributed knowledge held by millions of individuals. Each participant holds local knowledge, about their own needs, constraints, and preferences, that is costly or impossible to communicate to a central planner. Markets solve this through price signals that encode the preferences of all participants into a single actionable number. The price aggregates information without requiring any single actor to hold all of it.
 
 ### 2.2 The Calculation Problem
 
-Ludwig von Mises, "Economic Calculation in the Socialist Commonwealth" (1920)<sup>[8]</sup> and *Bureaucracy* (1944)<sup>[9]</sup>. Even if a central authority could gather dispersed knowledge, without a price signal it cannot calculate which allocation is optimal. Prices emerge from voluntary exchange and encode marginal utility across heterogeneous preferences. Without them, rational resource allocation at scale reduces to guesswork - however well-intentioned the allocators.
+Ludwig von Mises, in "Economic Calculation in the Socialist Commonwealth" (1920)<sup>[8]</sup> and *Bureaucracy* (1944)<sup>[9]</sup>, sets out that even if a central authority could gather dispersed knowledge, without a price signal it cannot calculate which allocation is optimal. Prices emerge from voluntary exchange and encode marginal utility across heterogeneous preferences. Without them, rational resource allocation at scale reduces to guesswork, however well-intentioned the allocators.
 
-In *Bureaucracy*, Mises distinguishes two management systems. Profit management measures success by an outcome metric - profit or loss - that is external, quantitative, and self-correcting. Bureaucratic management has no equivalent metric. Success is measured by compliance with rules and procedures, because the outcome that the organization exists to produce cannot be priced. The distinction is structural, not a judgment of the people involved.
+In *Bureaucracy*, Mises distinguishes two management systems. Profit management measures success by an outcome metric, profit or loss, that is external, quantitative, and self-correcting. Bureaucratic management has no equivalent metric. Success is measured by compliance with rules and procedures, because the outcome that the organization exists to produce cannot be priced. The distinction is structural, not a judgment of the people involved.
 
 ### 2.3 Creative Destruction
 
-Joseph Schumpeter, *Capitalism, Socialism and Democracy* (1942)<sup>[10]</sup>. In competitive markets, inferior products are displaced by superior ones. Schumpeter called this process creative destruction - the mechanism through which quality improves over time. New entrants challenge incumbents. Users migrate to the better product. The inferior product loses its user base and either improves or disappears. Where competition is absent or where incumbents are protected from displacement, inferior products persist.
+Joseph Schumpeter, in *Capitalism, Socialism and Democracy* (1942)<sup>[10]</sup>, describes that in competitive markets, inferior products are displaced by superior ones. Schumpeter called this process creative destruction: the mechanism through which quality improves over time. New entrants challenge incumbents. Users migrate to the better product. The inferior product loses its user base and either improves or disappears. Where competition is absent or where incumbents are protected from displacement, inferior products persist.
 
 ### 2.4 Collective Action
 
-Mancur Olson, *The Logic of Collective Action* (1965)<sup>[11]</sup>. Small, concentrated groups with strong per-member incentives outperform large, diffuse groups in influencing institutional outcomes - even when the diffuse group's aggregate interest is greater. A firm with three delegates in a standards body has concentrated incentives: the delegates attend every meeting, track every paper, and coordinate their positions. Sixteen million developers who use the standard library have diffuse incentives: no individual developer's stake justifies the cost of participation.
+Mancur Olson, in *The Logic of Collective Action* (1965)<sup>[11]</sup>, explains that small, concentrated groups with strong per-member incentives outperform large, diffuse groups in influencing institutional outcomes, even when the diffuse group's aggregate interest is greater. A firm with three delegates in a standards body has concentrated incentives: the delegates attend every meeting, track every paper, and coordinate their positions. Sixteen million developers who use the standard library have diffuse incentives: no individual developer's stake justifies the cost of participation.
 
 ### 2.5 Regulatory Capture
 
-George Stigler, "The Theory of Economic Regulation" (1971)<sup>[12]</sup>. Nobel Prize in Economics, 1982. Regulatory bodies tend, over time, to serve the interests of the entities with the most representation, rather than the broader public the body was created to serve. The entities that participate most actively in the regulatory process - attending hearings, filing comments, building relationships with regulators - shape the body's output. The broader public, whose interests the body nominally serves, participates less and shapes the output less.
+George Stigler, in "The Theory of Economic Regulation" (1971)<sup>[12]</sup>, observes that regulatory bodies tend, over time, to serve the interests of the entities with the most representation, rather than the broader public the body was created to serve. The entities that participate most actively in the regulatory process, attending hearings, filing comments, and building relationships with regulators, shape the body's output. The broader public, whose interests the body nominally serves, participates less and shapes the output less.
 
 ### 2.6 Public Choice
 
-James Buchanan and Gordon Tullock, *The Calculus of Consent* (1962)<sup>[13]</sup>. Nobel Prize in Economics, 1986. Actors in institutional settings respond to the incentive structures of those institutions, not to abstract public interest. The quality of institutional outcomes depends on the feedback mechanism that connects decisions to consequences. In markets, a bad decision produces a loss. In committees, the feedback mechanism is different: a bad decision produces a paper trail. The distance between the decision and its consequences determines how quickly errors are corrected.
+James Buchanan and Gordon Tullock, in *The Calculus of Consent* (1962)<sup>[13]</sup>, note that actors in institutional settings respond to the incentive structures of those institutions, not to abstract public interest. The quality of institutional outcomes depends on the feedback mechanism that connects decisions to consequences. In markets, a bad decision produces a loss. In committees, the feedback mechanism is different: a bad decision produces a paper trail. The distance between the decision and its consequences determines how quickly errors are corrected.
 
 ### 2.7 Self-Interest and Quality
 
-Adam Smith, *The Wealth of Nations* (1776)<sup>[14]</sup>. "It is not from the benevolence of the butcher, the brewer, or the baker that we expect our dinner, but from their regard to their own interest." When self-interest is channeled through competition, the result is quality - the butcher who sells bad meat loses customers to the butcher across the street. When competition is absent, self-interest produces different outcomes. The insight is not that people are selfish. The insight is that the mechanism - competition or its absence - determines whether self-interest serves the public.
+Adam Smith, *The Wealth of Nations* (1776)<sup>[14]</sup>: "It is not from the benevolence of the butcher, the brewer, or the baker that we expect our dinner, but from their regard to their own interest." When self-interest is channeled through competition, the result is quality. The butcher who sells bad meat loses customers to the butcher across the street. When competition is absent, self-interest produces different outcomes. The insight is not that people are selfish; it is that the mechanism, competition or its absence, determines whether self-interest serves the public.
 
 ### 2.8 Summary
 
@@ -125,17 +125,17 @@ Adam Smith, *The Wealth of Nations* (1776)<sup>[14]</sup>. "It is not from the b
 
 If the economic findings in Section 2 apply to software library development, then the two models described in Section 1 should produce different observable outcomes. This section derives six predictions. Each states what we should expect to observe under Model A and Model B. The predictions are numbered for reference.
 
-**Prediction 1** (Hayek). Libraries developed under Model A should more accurately reflect the needs of the broader user community than libraries developed under Model B, because Model A aggregates information from a larger population through adoption signals.
+**Prediction 1** (Hayek): Libraries developed under Model A should more accurately reflect the needs of the broader user community than libraries developed under Model B, because Model A aggregates information from a larger population through adoption signals.
 
-**Prediction 2** (Mises). Model B's evaluation process should substitute procedural compliance for outcome measurement, because the outcome metric - user adoption - is structurally unavailable to the evaluators. Model A's evaluation should be dominated by outcomes.
+**Prediction 2** (Mises): Model B's evaluation process should substitute procedural compliance for outcome measurement, because the outcome metric - user adoption - is structurally unavailable to the evaluators. Model A's evaluation should be dominated by outcomes.
 
-**Prediction 3** (Schumpeter). Under Model A, libraries with significant quality defects should be superseded by better alternatives. Under Model B, libraries with significant quality defects should persist indefinitely.
+**Prediction 3** (Schumpeter): Under Model A, libraries with significant quality defects should be superseded by better alternatives. Under Model B, libraries with significant quality defects should persist indefinitely.
 
-**Prediction 4** (Olson). Under Model B, proposals backed by concentrated organizational resources should advance faster than proposals backed by diffuse community effort, independent of technical maturity.
+**Prediction 4** (Olson): Under Model B, proposals backed by concentrated organizational resources should advance faster than proposals backed by diffuse community effort, independent of technical maturity.
 
-**Prediction 5** (Buchanan). Model A's feedback mechanism - users choosing alternatives - should produce faster quality iteration than Model B's feedback mechanism - committee review on multi-year cycles.
+**Prediction 5** (Buchanan and Tullock): Model A's feedback mechanism - users choosing alternatives - should produce faster quality iteration than Model B's feedback mechanism - committee review on multi-year cycles.
 
-**Prediction 6** (Stigler). Over time, Model B's output should increasingly reflect the priorities of entities with the most institutional representation, rather than the priorities of the broader user community.
+**Prediction 6** (Stigler): Over time, Model B's output should increasingly reflect the priorities of entities with the most institutional representation, rather than the priorities of the broader user community.
 
 ---
 
@@ -169,7 +169,7 @@ Prediction 1 stated that Model A should aggregate information from a larger popu
 
 Victor Zverovich published the `{fmt}` library on GitHub in December 2012<sup>[33]</sup>. Over eight years of marketplace competition, the library earned 23,375 stars, 2,852 forks, and 440 contributors. It was adopted by Meta (Folly), among other production codebases. The committee recognized the marketplace's verdict and standardized the design as `std::format` in C++20 ([P0645](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0645r10.html))<sup>[34]</sup> and `std::print` in C++23 ([P2093R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2093r14.html))<sup>[35]</sup>.
 
-The marketplace identified what C++ developers needed. The committee adopted the marketplace's output. This is the founding principle working as designed: existing practice was standardized. The committee did not need to invent a formatting library. The marketplace delivered one, the community validated it through adoption, and the committee consolidated the result.
+The marketplace identified what C++ developers needed, and the committee adopted the marketplace's output. This is the founding principle working as designed: existing practice was standardized. The committee did not need to invent a formatting library. The marketplace delivered one, the community validated it through adoption, and the committee consolidated the result.
 
 ### 4.3 Observation 3
 
@@ -220,7 +220,7 @@ Prediction 3 stated that under Model A, defective libraries should be superseded
 
 Prediction 3 stated that where competition is absent, inferior products persist.
 
-`std::filesystem` was standardized in C++17 based on Boost.Filesystem. The standard version is frozen at the C++17 specification. Boost.Filesystem Version 4 was released afterward with breaking changes to improve the design<sup>[37]</sup>. Subsequent releases added `fdopendir`/`openat` support for resilience to concurrent filesystem modifications (1.85.0), storage preallocation in `copy_file` to reduce fragmentation on Linux (1.85.0), and continued platform-specific improvements through 1.91.0<sup>[37]</sup>. The marketplace version iterates. The standard version persists unchanged.
+`std::filesystem` was standardized in C++17 based on Boost.Filesystem. The standard version is frozen at the C++17 specification. Boost.Filesystem Version 4 was released afterward with breaking changes to improve the design<sup>[37]</sup>. Subsequent releases added `fdopendir`/`openat` support for resilience to concurrent filesystem modifications (1.85.0), storage preallocation in `copy_file` to reduce fragmentation on Linux (1.85.0), and continued platform-specific improvements through 1.91.0<sup>[37]</sup>. The marketplace version iterates, while the standard version persists unchanged.
 
 Daniel Lemire documented `std::ranges` performance degradation in October 2025<sup>[38]</sup>. Trimming whitespace from strings using chained views (`drop_while`, `reverse`, `drop_while`, `reverse`) produced 70 instructions per string on GCC 15 versus 24 for a simple imperative loop. Engineers at a C++ company observed measurable performance degradation after switching to `std::ranges`. The simdjson project limited `std::ranges` support because it caused performance loss<sup>[38]</sup>. In the marketplace, developers choose the imperative alternative. In the standard, the design persists regardless of the performance evidence.
 
@@ -232,7 +232,7 @@ Stackless coroutines were proposed by Gor Nishanov at Microsoft. Microsoft provi
 
 Stackful coroutines were proposed by Oliver Kowalke and Nat Goodspeed, community developers without comparable corporate backing. P0876 reached 22 revisions over eight years and remains in CWG wording review. Stackful coroutines are not in the C++26 working draft<sup>[26]</sup>.
 
-Both coroutine models are well-understood. Both have multiple implementations. Both serve real use cases. One proposal had Microsoft. The other had two community developers. The timeline difference is eight years versus six.
+Both coroutine models are well-understood. Both have multiple implementations. Both serve real use cases. One proposal had Microsoft, and the other had two community developers. The timeline difference is six years versus eight.
 
 ### 4.8 Observation 8
 
@@ -240,7 +240,7 @@ Prediction 4 stated that concentrated organizational resources should predict ad
 
 [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf)<sup>[39]</sup> (Kohlhoff, Allsop, Falco, Hodges, Morgenstern, October 2021) states: "The asynchronous model of Asio/Net.TS has evolved to support new use cases while also being careful not to leave existing use cases behind, and the strength of the composition model is testament to that. The model is the result of growth and adaptation from use in the real world, and is one reason it is so widely deployed."
 
-The Networking TS was based on Boost.Asio - the most deployed asynchronous library in C++, with decades of field experience, multiple continuation styles (callbacks, futures, coroutines, fibers, deferred, detached), and production deployment at many companies<sup>[39]</sup>. `std::execution` ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html))<sup>[40]</sup> was authored primarily by delegates from NVIDIA, Meta, and other major corporations with significant committee presence. SG4 polled at Kona (November 2023) that networking should use only a sender/receiver model.
+The Networking TS was based on Boost.Asio, the most deployed asynchronous library in C++, with decades of field experience, multiple continuation styles (callbacks, futures, coroutines, fibers, deferred, detached), and production deployment at many companies<sup>[39]</sup>. `std::execution` ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html))<sup>[40]</sup> was authored primarily by delegates from NVIDIA, Meta, and other major corporations with significant committee presence. SG4 polled at Kona (November 2023) that networking should use only a sender/receiver model.
 
 P2469R0 observed: "the proposed solution in P2300 forces a single composition mechanism, one for which we have limited field experience, on every user."
 
@@ -272,7 +272,7 @@ Same design. Same author. Different feedback loops. After thirteen years, `{fmt}
 
 Prediction 6 stated that Model B's output should increasingly reflect the priorities of entities with the most institutional representation.
 
-The committee's own founding document (1990) stated the principle: "The key idea is that the Standard would be based on existing practice"<sup>[3]</sup>. Joaqu&iacute;n M L&oacute;pez Mu&ntilde;oz observed in 2024<sup>[6]</sup>: "the standards committee has taken on the role of innovator and is pushing the industry rather than adopting external advancements or coexisting with them."
+The committee's own founding document (1990) stated the principle: "The key idea is that the Standard would be based on existing practice"<sup>[3]</sup>. <!-- dcp: NB. The L&oacute;pez Mu&ntilde;oz quote already appeared in section 1.4.-->Joaqu&iacute;n M L&oacute;pez Mu&ntilde;oz observed in 2024<sup>[6]</sup>: "the standards committee has taken on the role of innovator and is pushing the industry rather than adopting external advancements or coexisting with them."
 
 The quality bar between the two models has inverted. The author wrote on the Boost mailing list in December 2023<sup>[30]</sup>: "As authors have discovered that the bar of quality for standardization is considerably lower than that required for inclusion in the Boost library collection, Boost is no longer seen as a waypoint along the journey to standardization."
 
@@ -300,9 +300,7 @@ In the TR1 era, nearly every library addition originated from marketplace-tested
 
 Two models of library development are observable in the C++ ecosystem. Section 1 described their properties. Section 2 presented seven findings from the economic literature on centralized allocation and competitive markets. Section 3 derived six predictions from those findings. Section 4 tested each prediction twice - twelve observations drawn from real C++ libraries, committee documents, marketplace data, and the public statements of committee participants.
 
-The predictions and the observations are in the preceding sections. The correspondence between them is the reader's to evaluate.
-
-The record is public.
+The predictions and the observations are in the preceding sections. The correspondence between them is the reader's to evaluate. The record is public.
 
 ---
 
