@@ -10,15 +10,15 @@ reply-to:
 
 ## Abstract
 
-WG21 sometimes records polls on paper revisions that did not appear in a pre-meeting mailing. When an in-meeting revision changes the design, recording the poll can shift the consensus burden before national body experts have seen the change. This paper proposes that, before such a poll is recorded, the chair ask whether anyone objects; one objection keeps the tally out of the minutes while allowing discussion, an informal poll, and a qualitative record. A narrow final-meeting exception permits wording corrections and feature removal when waiting would cost a release.
+WG21 sometimes records polls on paper revisions that did not appear in a pre-meeting mailing. When an in-meeting revision changes the design, recording the poll can shift the burden of achieving consensus from the author to the stakeholders before national body experts have seen the change. This paper proposes that, before such a poll is recorded, the chair ask whether anyone objects and that one objection bars the tally from being recorded in the minutes while allowing discussion, an informal poll, and a qualitative record. A narrow final-meeting exception permits wording corrections and feature removal when waiting would cost a release.
 
 ## Revision History
 
 ### R1: August 2026
 
-- Replaced R0's flat prohibition with an objection right. An unmailed revision may receive a recorded poll when nobody objects.
-- Reorganized the rationale around the shift in consensus burden caused by adopting an unmailed design change, and added the supporting SD-4 consensus-threshold citation.
-- Stated the cost of deferral directly, including repeated review, schedule pressure, and the risk of missing a release train.
+- Replaced R0's flat prohibition with an objection right. An unmailed revision may receive a recorded poll when no one objects.
+- Reorganized the rationale around the shift in onus for achieving consensus due to adopting an unmailed design change and added the supporting SD-4 consensus-threshold citation.
+- Stated the cost of deferral directly, including repeated review, schedule pressure, and risk of missing a release train.
 - Confined the final-meeting exception to defined wording corrections and a separate feature-removal case, while acknowledging the limited chair judgment the exception requires.
 - Corrected the Brno account. P3100R7 was published in the 2026-07 mailing; the relevant fact is that no mailing contained R7 on the date of the 2026-06-10 poll.
 - Moved supporting cases to an appendix, removed speculative objections and rebuttals, and shortened the paper throughout.
@@ -29,23 +29,23 @@ WG21 sometimes records polls on paper revisions that did not appear in a pre-mee
 
 ## 1. The Problem
 
-The pre-meeting mailing gives national body experts time to review the papers WG21 will decide.<sup>[5]</sup><sup>[6]</sup> An in-meeting revision can improve a proposal by incorporating early feedback, correcting wording, or resolving a choice among alternatives. The problem arises when the committee records a poll on that new revision before the wider review chain has seen it. Delegates who prepared from the mailing then prepared against text other than the text being decided.
+The pre-meeting mailing gives national body experts time to review the papers that WG21 will consider.<sup>[5]</sup><sup>[6]</sup> An in-meeting revision can improve a proposal by incorporating early feedback, correcting wording, or resolving a choice among alternatives. The problem arises when the committee records a poll on that new revision before absent stakeholders have seen it. Delegates who prepared from the mailing have thus examined text other than that under consideration.
 
-At the March 2026 Croydon meeting, six of the nineteen papers I had prepared in my areas changed during the week. Some changes were necessary wording corrections. Others recorded design decisions or changed public interfaces. The proposed rule does not restrict early feedback or in-meeting revision. It gives any participant a way to keep a counted result from becoming committee precedent until the revision has appeared in a mailing.
+At the March 2026 Croydon meeting, six of the nineteen papers I had prepared <!-- lah: what exactly does prepared mean? written? read? --> in my areas changed during the week. Some changes were necessary wording corrections. Others recorded design decisions or changed public interfaces. The proposed rule does not restrict early feedback or in-meeting revision; it gives any participant a way to keep a counted result from becoming committee precedent until the paper revision has appeared in a mailing.
 
-## 2. An Unmailed Change Flips the Consensus Burden
+## 2. An Unmailed Change Flips Who Carries the Burden of Consensus
 
 SD-4 states the normal threshold: "A proposal normally advances if there are more than twice as many in favor of a proposal as against."<sup>[5]</sup> That threshold makes the timing of a design change consequential.
 
-Suppose an option first appears in an in-meeting revision and the group forwards it. A stakeholder may have reviewed the mailed paper, seen no such option, and not attended the meeting. That stakeholder must later assemble the consensus needed to remove the option, because the option has become the status quo. Had the option waited for the next mailing, those seeking to add it would have carried the consensus burden. The same disagreement can therefore resolve in opposite directions depending only on whether the change entered before or after national body review.
+Suppose an option first appears in an in-meeting revision and the group records a poll forwarding it. A stakeholder may have reviewed the mailed paper, seen no such option, and not attended the meeting. That stakeholder must later assemble the consensus needed to remove the option, because the option has become the status quo. Had the option been required to appear in the next mailing before being polled, those seeking to add it would have carried the consensus burden. The same disagreement can therefore resolve in opposite directions depending only on whether the change entered before or after national body review.
 
-A "forward with the following changes" poll can have the same effect. If the specified changes include a design decision absent from every mailed revision, the recorded poll establishes that decision before the wider review chain has seen it. Requiring one mailed revision before a tally becomes part of the record keeps the burden on those proposing the change.
+A "forward with the following changes" poll can have the same effect. If the specified changes include a design decision absent from every mailed revision, the recorded poll establishes that decision before absent stakeholders seen it. Requiring one mailed revision before a tally becomes part of the record keeps the burden of consensus on those proposing the change.
 
 ## 3. The Rule
 
-Before taking a poll on a paper revision that did not appear in a pre-meeting mailing, the chair asks whether any participant objects to recording the poll. If anyone objects, no tally enters the record. The group may still discuss the revision, take an informal poll, and minute the direction of sentiment.
+Before taking a poll on a paper revision that did not appear in a pre-meeting mailing, the chair asks whether any participant objects to recording the poll. If anyone objects, no tally enters the record. The group may still discuss the revision, take an informal poll, and record the direction of sentiment.
 
-Mailing status is easy to verify. In the ordinary case, the revision was mailed and the chair proceeds normally. If it was not mailed, the chair asks the question and does not require the objector to defend a technical position. Objecting is low-cost because it answers a required procedural question and does not interrupt the discussion.
+Mailing status is easy to verify. In the ordinary case, the paper revision was mailed and the chair proceeds normally. If the revision was not mailed, the chair asks if anyone objects to recording the poll and does not require the objector to defend a technical position. Objecting is low-cost because it answers a required procedural question and does not interrupt the discussion.
 
 The recorded tally is the boundary because later sessions use counted results as evidence of committee support. A qualitative record can still say that the group discussed a revision and favored its direction. It cannot include SF/F/N/A/SA numbers or another counted result when a participant has objected.
 
@@ -58,7 +58,7 @@ A mailed revision requires no additional question:
 ```
 Chair:     We will poll P1234R3, which appeared in the February mailing.
            "EWG approves the direction of P1234R3."
-           (Poll taken and recorded.)
+           [Poll taken and recorded.]
 ```
 
 For an unmailed revision, the chair asks before recording the result:
@@ -70,23 +70,23 @@ Delegate:  I object.
 Chair:     Then no tally will enter the minutes. We will still take the poll to
            inform the discussion.
            "EWG approves the direction of P1234R5."
-           (Show of hands. The minutes record that R5 was discussed and the room
-           favored the direction.)
+           [Show of hands. The minutes record that R5 was discussed and the room
+           favored the direction.]
 ```
 
-After R5 appears in the next mailing, the group can take and record the poll without this question.
+After R5 appears in the next mailing, the group can take and record the poll without asking whether anyone objects.
 
 ### 3.2. Final-Meeting Exception
 
-At the last meeting before a standard's publication deadline, waiting for another mailing can cost a feature an entire release. The chair therefore does not sustain an objection against a wording correction that preserves the mailed design. The exception also covers a poll to remove a feature from the working draft. The exception treats removal separately so the train model can exclude a feature that is not ready to ship.
+At the last meeting before a standard's publication deadline, waiting for another mailing can cost a feature an entire release. The chair, therefore, does not sustain an objection against a wording correction that preserves the mailed design. The exception also covers a poll to remove a feature from the working draft. The exception treats removal separately so the train model can exclude a feature that is not ready for inclusion in the standard.
 
 The general rule uses an objective mailing-status test. This exception requires limited chair judgment about whether a change meets the definition of a wording correction. That judgment is confined to one class of change at one meeting. If specification review finds that the design must change, the paper returns to EWG or LEWG and appears in a mailing before a recorded poll.
 
 ## 4. The Cost
 
-An objection can make a paper wait for another recorded poll. The next meeting may have different participants, the author may need to reintroduce the proposal, and repeated review consumes time that could have gone to other papers. With nine meetings in a three-year cycle, one additional meeting can also determine whether a feature reaches the next standard. These costs are real.
+An objection can delay a paper's recorded poll to the next meeting. The next meeting may have different participants, the author may need to reintroduce the proposal, and repeated review consumes time that could have gone to other papers. With nine meetings in a three-year cycle, one additional meeting can also determine whether a feature reaches the next standard. These costs are real.
 
-Recording the poll anyway also has a cost. Recording an unmailed design change can establish a new status quo before absent stakeholders know that the change exists. Correcting it later requires those stakeholders to overcome the committee's normal consensus threshold. That burden is harder to see than an extra meeting, but it affects both legitimacy and technical review.
+Recording the poll over an objection also has a cost. It can establish a new status quo before absent stakeholders know that the change exists. Correcting that status later requires those stakeholders to overcome the committee's normal consensus threshold. That burden is less obvious than the cost of an extra meeting, but it affects both legitimacy and technical review.
 
 The proposed rule is intended to change author incentives before an objection occurs. A mailed revision is the only revision assured of a recorded poll, so authors who need schedule certainty have reason to make the mailing version complete. Early feedback remains valuable and can still improve the paper before or during the meeting. If that feedback produces a material design change, one participant may require the new revision to pass through the mailing before its tally becomes committee precedent.
 
@@ -94,15 +94,15 @@ The proposed rule will not eliminate delay. It trades some visible re-review for
 
 ## 5. Prior Art
 
-WG21 has considered a stronger cooling period before. P2138R4 proposed a "Tentatively Plenary" state between specification review and a plenary poll. LEWG supported the proposal by 19 to 12, short of consensus.<sup>[7]</sup><sup>[8]</sup> In 2026, eighteen implementers asked WG21 to slow the addition of features so implementations and implementation feedback could catch up.<sup>[9]</sup> WG14 also uses a four-week document deadline and normally schedules later papers for the subsequent meeting.<sup>[10]</sup> The proposed rule is narrower because it restricts only the recording of a tally and allows the room to proceed when nobody objects.
+WG21 has previously considered a stronger cooling period. P2138R4 proposed a "Tentatively Plenary" state between specification review and a plenary poll. LEWG supported the proposal by 19 to 12, short of consensus.<sup>[7]</sup><sup>[8]</sup> In 2026, eighteen implementers asked WG21 to slow the addition of features so implementations and implementation feedback could catch up.<sup>[9]</sup> WG14 also uses a four-week document deadline and normally schedules later papers for the subsequent meeting.<sup>[10]</sup> The proposed rule is narrower because it restricts only the recording of a tally and allows the room to proceed when no one objects.
 
 ## 6. Proposed Amendment to SD-4
 
-> **Mailing discipline for committee polls.** Before taking a poll on a paper, the chair determines whether the revision under consideration appeared in a pre-meeting mailing published before the meeting. If it did not, the chair asks whether any participant objects to the poll being recorded. On any objection, no tally may enter the record, and the poll is recorded only as permitted under Qualitative record below. This applies to every poll on a paper, whether the poll concerns direction, design, specification, or a request to forward, regardless of the subgroup, and equally to a poll on material for which no paper exists. Presentation and discussion of any document, including drafts and revisions not in a mailing, remain unrestricted, as does the taking of the poll itself; the constraint applies only to the recording of a tally.
+> **Mailing discipline for committee polls.** Before taking a poll on a paper, the chair determines whether the revision under consideration appeared in a pre-meeting mailing. If it did not, the chair asks whether any participant objects to the poll being recorded. On any objection, no tally may enter the record, and the poll is recorded only as permitted under Qualitative record below. This rule applies to every poll on a paper, whether the poll concerns direction, design, specification, or a request to forward, regardless of the subgroup, and equally to a poll on material for which no paper exists. Presentation and discussion of any document, including drafts and revisions not in a mailing, remain unrestricted, as does the taking of the poll itself; the constraint applies only to the recording of a tally.
 
-> **Qualitative record.** A chair may record in the minutes that a document was discussed and the direction of sentiment expressed. A qualitative record is not a poll. A poll is a counted vote, recorded with a tally. Where an objection bars a tally, the qualitative record is what the minutes contain.
+> **Qualitative record.** A chair may record in the minutes that a document was discussed and that a direction of sentiment was expressed. A qualitative record is not a poll. A poll is a counted vote, recorded with a tally. Where an objection bars a tally, the qualitative record is what the minutes contain.
 
-> **Final-meeting exception.** At the last meeting before a standard's publication deadline, an objection is not sustained against a poll on a wording correction that preserves the mailed design, so that defects found in specification review can be repaired without deferring a feature a full release. A wording correction preserves the mailed design when it does not add, remove, or rename any public-facing interface; does not change observable behavior or semantics; and does not narrow or eliminate options presented in the mailed revision. A poll to remove a feature from the working draft falls under this exception as a separate case, since removal reverts the draft to a known prior state. At every earlier meeting no exception applies, because the next pre-meeting mailing is available.
+> **Final-meeting exception.** At the last meeting before a standard's publication deadline, an objection is not sustained against a poll on a wording correction that preserves the mailed design so that defects found in specification review can be repaired without deferring a feature for a full release. A wording correction preserves the mailed design when it does not add, remove, or rename any public-facing interface; does not change observable behavior or semantics; and does not narrow or eliminate options presented in the mailed revision. A poll to remove a feature from the working draft falls under this exception as a separate case, since removal reverts the draft to a known prior state. At every earlier meeting, no exception applies because the next pre-meeting mailing is available.
 
 > **Group boundary.** CWG and LWG are specification groups. When specification review during a meeting determines that a design change, rather than a wording correction, is needed, the paper returns to EWG or LEWG. A paper that returns to an evolution group for a design change appears in the next pre-meeting mailing with a new revision number before any recorded poll is taken on it.
 
@@ -122,15 +122,18 @@ The two cases below show two forms of the same process gap. A.1 covers the March
 
 ### A.1. Croydon
 
-The cases below were adopted at the March 2026 Croydon meeting in revisions first mailed in April. That chronology establishes that the adopted revisions did not appear in a pre-meeting mailing. The open-std.org annual papers index gives a mailing date and disposition for each paper. The chronology does not establish that any individual change was mistaken.
+The cases below were adopted at the March 2026 Croydon meeting; the related revisions were first mailed in April. That chronology establishes that the adopted revisions did not appear in a pre-meeting mailing. The open-std.org annual papers index gives a mailing date and disposition for each paper. The chronology does not establish that any individual change was mistaken.
 
-**Selecting one of three options.** P3980R0, "Task's Allocator Use," appeared in the February mailing with three wording options.<sup>[11]</sup> Croydon selected an option and adopted P3980R1, which omitted the rejected alternatives and first appeared in the April mailing.<sup>[12]</sup> Selecting among mailed alternatives is normal design review. The process concern is narrower: the recorded adoption poll named a revision that had not passed through a mailing.
+#### Selecting one of three options
+P3980R0, "Task's Allocator Use," appeared in the February mailing with three wording options.<sup>[11]</sup> Croydon selected an option and adopted P3980R1, which omitted the rejected alternatives and first appeared in the April mailing.<sup>[12]</sup> Selecting among mailed alternatives is normal design review. The process concern is narrower: The recorded adoption poll named a revision that had not passed through a mailing.
 
-**Removing public names.** P4159R0, "Make sender_to and receiver_of exposition-only," was written and adopted at the meeting, then first mailed in April.<sup>[13]</sup> Making the concepts exposition-only simplified the public interface and may have been the correct change. No national body expert outside the room could review that paper before adoption.
+#### Removing public names
+P4159R0, "Make sender_to and receiver_of exposition-only," was written and adopted at the meeting and first mailed in April.<sup>[13]</sup> Making the concepts exposition-only simplified the public interface and may have been the correct change. No national body expert outside the room could review that paper before adoption.
 
-**Revisions beyond the mailed version.** P3941R2, "Scheduler Affinity," was the last mailed revision.<sup>[14]</sup> Croydon adopted P3941R4 after in-meeting rebasing connected to other `std::execution` changes.<sup>[15]</sup> P3826R3, "Fix Sender Algorithm Customization," appeared in the January mailing. Croydon adopted P3826R5 after two further revisions.<sup>[16]</sup><sup>[17]</sup> The relevant evidence is the amount of connected material that changed between the mailing and the recorded polls.
+#### Revisions beyond the mailed version
+P3941R2, "Scheduler Affinity," was the last mailed revision.<sup>[14]</sup> Croydon adopted P3941R4 after in-meeting rebasing connected to other `std::execution` changes.<sup>[15]</sup> P3826R3, "Fix Sender Algorithm Customization," appeared in the January mailing. Croydon adopted P3826R5 after two further revisions.<sup>[16]</sup><sup>[17]</sup> The relevant evidence is the amount of connected material that changed between the mailing and the recorded polls.
 
-The revisions also depended on one another. P3927R1 rebased its wording on the in-meeting Scheduler Affinity revision.<sup>[18]</sup> P3826R5 removed `write_env` for consistency with that revision, and P4154R0 depended on P3826R5 having been applied.<sup>[19]</sup> The public tracker records the P3826R5 adoption poll as 9 in favor and none against or neutral.<sup>[20]</sup> A reader reconstructing the decision must review several interdependent revisions first published after the meeting.
+The revisions also depended on one another. P3927R1 rebased its wording on the in-meeting "Scheduler Affinity" revision.<sup>[18]</sup> P3826R5 removed `write_env` for consistency with that revision, and P4154R0 depended on P3826R5 having been applied.<sup>[19]</sup> The public tracker records the P3826R5 adoption poll as 9 in favor and none against or neutral.<sup>[20]</sup> A reader reconstructing the decision must review several interdependent revisions first published after the meeting.
 
 ### A.2. Brno
 
@@ -140,11 +143,11 @@ P3100R6, "A framework for systematically addressing undefined behaviour in the C
 
 The tally was 16 strongly favor, 15 favor, 6 neutral, 2 against, and 0 strongly against, and the tracker records consensus.<sup>[23]</sup>
 
-P3100R7 carries a document date of 2026-06-01 but was submitted and published in the July 2026 mailing.<sup>[22]</sup> P3100R7 may therefore have existed as an in-meeting draft when EWG voted. The durable point is limited to the mailing record: on the date of the poll, R6 was the last revision distributed through a WG21 mailing, while the poll named R7. The later publication of R7 does not change what the pre-meeting mailing contained.
+P3100R7 carries a document date of 2026-06-01 but was <!-- submitted and --> <!-- lah: do you *know* when it was *submitted*?  Maybe it was submitted during the meeting, so in June? --> published in the July 2026 mailing.<sup>[22]</sup> P3100R7 may, therefore, have existed as an in-meeting draft when EWG voted. The durable point is limited to the mailing record: On the date of the poll, R6 was the last revision distributed through a WG21 mailing, yet the poll named R7. The later publication of R7 does not change what the pre-meeting mailing contained.
 
 The Brno poll concerned direction rather than adoption into the working draft. It nevertheless recorded a committee position and committed meeting time to line-by-line review. Later sessions can build on that result. A rule limited to wording or forwarding polls would leave this case untouched, so the proposed rule applies to every recorded poll on a paper revision, whether the poll concerns direction, design, specification, or a request to forward.
 
-The Croydon and Brno cases show two forms of the same process gap. Croydon adopted revisions first mailed after the meeting. Brno recorded a direction poll on a revision not yet distributed in a mailing. Neither chronology proves that the resulting decisions were technically wrong. Both show that WG21 can establish a recorded position on text before its wider review chain receives that text.
+The Croydon and Brno cases show two forms of the same process gap. Croydon adopted revisions first mailed after the meeting. Brno recorded a direction poll on a revision not yet distributed in a mailing. Neither chronology proves that the resulting decisions were technically wrong. Both show that WG21 can establish a recorded position on a paper revision before its absent stakeholders receive that revision.
 
 ## References
 
