@@ -40,6 +40,8 @@ This paper first states the model of consensus determination it uses (Section 2)
 
 The paper assumes that the procedural moves it describes were compliant with SD-4 and the ISO Directives. It further assumes that the poll tallies it cites are accurate as recorded.
 
+The paper communicates the position of the C++ Alliance, while pointing out that that is not necessarily the position of every individual working for or otherwise sponsored by the C++ Alliance.
+
 ## 2. How Consensus Is Supposed to Work
 
 WG21 decides by consensus, not by majority rule. The chair, a subject-matter expert, weighs the arguments of every side. Where those arguments can be reconciled, the chair reconciles them. Where the arguments cannot be reconciled, the chair is the decision-maker and may decide against the numerical majority. This empowerment is deliberate: WG21's own guidance states that "the chair's determination of consensus is authoritative, not the straw poll" and that "we make decisions by consensus, not majority" ([P2195R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2195r2.html)<sup>[1]</sup>). ISO defines consensus as a process that takes all views into account and reconciles conflicting arguments, not as a count of hands ([ISO/IEC Directives Part 1, clause 2.5.6](https://www.iso.org/sites/directives/current/consolidated/index.html)). The chair's authority is broad by design, and rightly so; a committee that decides technical questions by votes rather than expert judgment would be technically unsound.
