@@ -67,7 +67,7 @@ The same paper discloses compiler-implementation funding:
 
 > "Bloomberg is in the process of continuing those efforts to implement the Contracts MVP in GCC and is beginning efforts to see a clang implementation made available."<sup>[5]</sup>
 
-The authors <!--lah: this paper has one author, not two, unless Mungo is meant to be named as a coauthor (and a line in the disclosures implies that) -->infer that the compiler branches disclosed here are the same branches Section 6 of P3400R4 later cites as implementation experience.
+The author infers that the compiler branches disclosed here are the same branches Section 6 of P3400R4 later cites as implementation experience.
 
 ### 2025: Bloomberg's website
 
@@ -109,7 +109,7 @@ The following predictions extrapolate from the published evidence in the precedi
 
 ## Disclosure
 
-The author provides information and serves at the pleasure of the committee. The author co-authored P3276R0, cited herein. <!-- lah: Mungo is listed as an author of 3276, but Vinnie isn't. --> This paper asks for nothing.
+The author provides information and serves at the pleasure of the committee. This paper asks for nothing.
 
 ## References
 

@@ -62,6 +62,12 @@ Clause 0.4(b) states that consensus "requires the resolution of substantial obje
 
 Both texts begin from reconciliation of conflicting arguments. ISO's next sentences put opposition in the minutes and require a good-faith attempt to resolve it. SD-4's next sentences put a ratio, a chair call, and a duty on the person voting Against. Fluency, path dependence, and the cost of review are separate mechanisms. Author papers and opposition papers are advocacy. The usual inference is that because the authors responded, the objections were reconciled.
 
+ISO uses the verb, not the noun. This paper uses "reconciliation" for the record state clause 2.5.6 describes, and tests it in three parts.
+
+**Reconciliation.** A sustained opposition on a substantial issue is reconciled when the record contains the objection stated in terms its holder would recognize, a response addressing its substance, and a finding by the leadership, recorded at the time, that the objection no longer stands or that the work proceeds despite it.
+
+Each part is a property of the record rather than of anyone's state of mind, so a later reader can check all three without having been in the room. Persuasion is not among them. The clause quoted above is explicit that the obligation to address a sustained opposition does not imply an obligation to resolve it successfully. An objection registered, answered, and then overruled in a recorded finding is reconciled. An objection outvoted in silence is not. The three parts are, item for item, the three things the SD-4 sentence above declines to require, and a poll tally supplies none of them.
+
 **A rebuttal paper is not reconciliation.**
 
 ## 2. The Ideal Author
