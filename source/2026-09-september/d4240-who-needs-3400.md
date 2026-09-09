@@ -26,11 +26,11 @@ This paper then extrapolates from the published pattern to produce eight falsifi
 
 ## The Implementer Gate
 
-Seven items from the published record, in chronological order. Each is a verbatim quotation from a published WG21 paper or a corporate website, followed by its implication for P3400R4's readiness claims.
+This paper offers seven items from the published record, in chronological order. Each is a verbatim quotation from a published WG21 paper or a corporate website, followed by its implication for P3400R4's readiness claims.
 
 ### 2017: "Business Requirements"
 
-P0678R0<sup>[2]</sup> is titled "Business Requirements for Modules." The paper frames the deployment needs of established codebases - Bloomberg's named as the primary example - as requirements the international standard must satisfy:
+P0678R0<sup>[2]</sup> is titled "Business Requirements for Modules." The paper frames the deployment needs of established codebases (Bloomberg's named as the primary example) as requirements the international standard must satisfy:
 
 > "if the agreed-upon implementation of modules does not take into account established code bases, such as Bloomberg's, they will surely fall far short of wide-spread adoption by industry."<sup>[2]</sup>
 
@@ -61,12 +61,13 @@ Four features are named "business-critical." The stated goal is deployment befor
 P3276R0<sup>[5]</sup>, co-authored by seven Bloomberg-affiliated engineers, states the corporate investment thesis:
 
 > "[Bloomberg] has made this investment because it believes that a contract-checking facility is the single most powerful tool that can be added to the language to improve the correctness - and, therefore, safety - of both existing and future C++ code."<sup>[5]</sup>
+<!-- lah: if the original uses an em dash, then quote it with an em dash. We don't get to alter others' material when we're quoting. -->
 
 The same paper discloses compiler-implementation funding:
 
 > "Bloomberg is in the process of continuing those efforts to implement the Contracts MVP in GCC and is beginning efforts to see a clang implementation made available."<sup>[5]</sup>
 
-The authors infer that the compiler branches disclosed here are the same branches P3400R4 Section 6 later cites as implementation experience.
+The authors <!--lah: this paper has one author, not two, unless Mungo is meant to be named as a coauthor (and a line in the disclosures implies that) -->infer that the compiler branches disclosed here are the same branches Section 6 of P3400R4 later cites as implementation experience.
 
 ### 2025: Bloomberg's website
 
@@ -78,13 +79,13 @@ The Abstract of P3400R4<sup>[1]</sup> states:
 
 > "The functionality enabled by this proposal is essential to the unhindered and widespread adoption of Contracts across the many domains in which C++ is used."<sup>[1]</sup>
 
-Section 6 cites GCC and Clang prototypes on Compiler Explorer behind the `-fcontracts-p3400` flag as implementation experience. These prototypes appear to run on the compiler branches P3276R0<sup>[5]</sup> disclosed Bloomberg funds.
+Section 6 cites GCC and Clang prototypes on Compiler Explorer behind the `-fcontracts-p3400` flag as implementation experience. These prototypes appear to run on the compiler branches P3276R0<sup>[5]</sup> disclosed as funded by Bloomberg.
 
 ### The implementer test
 
 P3173R0<sup>[7]</sup>, a broader critique of P2900R6 covering safety, undefined behavior, and dynamic dispatch, argues among other points for "field experience" with the actual design. P3506R0<sup>[8]</sup>, which also raises concerns about UB in predicates and exception handling, argues for "deployment experience." P3878R0<sup>[9]</sup> argues that contract violations used for hardening must guarantee termination, not permit continuation.
 
-P3400R4 Section 6 cites prototypes funded by the paper author's employer, behind experimental flags, in forks of GCC and Clang. No shipping compiler implements P3400. No production codebase deploys it. The implementation experience is a corporate sponsor verifying its own requirements on branches it pays for.
+Section 6 of P3400R4 cites prototypes funded by the paper author's employer, behind experimental flags, in forks of GCC and Clang. No shipping compiler implements P3400. No production codebase deploys it. The implementation experience is a corporate sponsor verifying its own requirements on branches it funds.
 
 ## Predictions
 
@@ -102,17 +103,13 @@ The following predictions extrapolate from the published evidence in the precedi
 
 **Prediction 6.** An entity that needs P3400 will frame committee opposition to its preferred design as blocking industry adoption, implying that the standard exists to serve large deployers.
 
-**Prediction 7.** An entity that needs P3400 will cite its own internal deployment history as authoritative evidence which the room cannot independently corroborate.
+**Prediction 7.** An entity that needs P3400 will cite its own internal deployment history as authoritative evidence, but the room cannot independently corroborate it.
 
 **Prediction 8.** An entity that needs P3400 will argue that its legacy codebase's migration constraints must shape the standard's default behavior for all users.
 
 ## Disclosure
 
-The author provides information and serves at the pleasure of the committee.
-
-The author co-authored P3276R0, cited in this paper.
-
-This paper asks for nothing.
+The author provides information and serves at the pleasure of the committee. The author co-authored P3276R0, cited herein. <!-- lah: Mungo is listed as an author of 3276, but Vinnie isn't. --> This paper asks for nothing.
 
 ## References
 
