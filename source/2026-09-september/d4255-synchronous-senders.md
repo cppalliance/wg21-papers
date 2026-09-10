@@ -1,7 +1,7 @@
 ---
-title: "Awaitables and Senders for Synchronous I/O"
+title: "Awaitables as the Natural Leaf Protocol for Coroutine-Centric Input/Output"
 document: P4255R0
-date: 2026-09-01
+date: 2026-09-07
 intent: info
 audience: SG1, LEWG
 reply-to:
@@ -10,11 +10,9 @@ reply-to:
 
 ## Abstract
 
-The sender protocol suspends a coroutine and constructs an operation state for a result that is already in memory; the awaitable protocol lets the operation check readiness and return.
+For coroutine-centric input/output (I/O), awaitables are the natural leaf protocol because sender-valued operations add a second composition model whose generic coroutine bridge lacks per-instance readiness.
 
-C++20 awaitables and `std::execution` senders are both consumed from coroutines through `co_await`, and both carry the same inherent suspension for an asynchronous operation; they differ when the operation completes synchronously - a buffered write, a cached read, bytes already in user-space memory before `co_await` evaluates. One synchronous write is traced through both protocols, with the sender granted every advantage the standard provides: the inline-completing sender the task type itself specifies, and a task environment that bypasses scheduler affinity. The awaitable fixture has work in three of the seven phases of `co_await`; Capy's erased stream forwards readiness and takes the same three-phase path when the stream reports ready, and the shipped paths that suspend have work in six, resuming by symmetric transfer. The generic `sender-awaitable` path has work in all seven, because its `await_ready` returns `false` unconditionally and `connect` has already run before readiness is asked. The cost recurs at every iteration of a composed I/O loop. A concrete sender can sidestep the generic path with its own `as_awaitable` member, but that customization is manual, per-sender, and lost under type erasure; lifting the cost from the protocol itself requires a readiness query, a direct value-extraction path, and virtual dispatch for type erasure - three mechanisms whose counterparts are `await_ready`, `await_resume`, and the awaitable's own function-table dispatch, on top of the `connect` and `start` the protocol already carries.
-
----
+Senders provide static composition, completion channels, operation ownership, environments, and structured concurrency, which sender-native consumers use directly. When a coroutine consumes a sender-valued I/O leaf through the generic bridge, translation adds connection, operation state, receiver completion, and an awaiter that always reports not ready. Custom awaiters, await-completion adaptors, domain transformations, and declared erased interfaces can select a different coroutine path, while completion-behavior queries and implementation techniques can reduce state and synchronization after a false readiness result. Branch 7.4 itself contains no pre-initiation query for whether a particular operation already holds a buffered result, whereas an awaitable exposes that decision directly.
 
 ## Revision History
 
@@ -22,608 +20,438 @@ C++20 awaitables and `std::execution` senders are both consumed from coroutines 
 
 - Initial revision.
 
----
-
 ## Introduction
 
-The comparison here is of what `co_await` executes when an I/O operation completes synchronously under two protocols: the C++20 awaitable protocol as constrained by the IoAwaitable protocol of P4003R3,<sup>[1]</sup> and the `std::execution` sender protocol consumed through `execution::task` as P3552R3<sup>[2]</sup> specifies it. No wording is proposed.
+C++ now has two standardized composition surfaces that meet at `co_await`. The coroutine language consumes an awaiter through readiness, conditional suspension, and extraction; `std::execution` constructs asynchronous operations through senders, receivers, connection, and start.<sup>[1]</sup> `execution::task` joins them by translating an awaited sender into an awaiter.<sup>[2]</sup>
 
-Related work. P3552R3 specifies `execution::task` and its `await_transform`; P3941R2<sup>[3]</sup> specifies scheduler affinity for it; P3796R1<sup>[4]</sup> collects open issues with the task type, affinity among them; P3206R0<sup>[5]</sup> proposes a query by which a sender advertises inline completion. P4088R1<sup>[6]</sup> examines the design fork between coroutine-native and sender-native I/O; P4093R1<sup>[7]</sup> and P4092R1<sup>[8]</sup> bridge awaitables into sender pipelines and senders into coroutine-native code; P4126R1<sup>[9]</sup> removes the bridge's allocation.
+P2300R10 defines the sender model and its generic sender-to-awaitable bridge.<sup>[3]</sup> P2257R0 and P3206R0 examine completion timing, with P3206R0 proposing static, environment-dependent, and dynamic completion behavior.<sup>[4]</sup><sup>[5]</sup> P3570R2 supplied the composition case that led to the forwarding await-completion adaptor now in the working draft.<sup>[6]</sup> P3552R3, P3796R1, and P3941R4 develop task integration, stack bounding, and scheduler affinity.<sup>[2]</sup><sup>[7]</sup><sup>[8]</sup>
 
-Contributions:
+Coroutine control transfer has its own history. P0913R1 added symmetric coroutine transfer, P1056R1 applied it to lazy tasks, and P2583R4 examines its absence from intermediate sender receivers.<sup>[9]</sup><sup>[10]</sup><sup>[11]</sup> P3801R0 separately identifies recursive behavior when sender completions resume task coroutines inline.<sup>[12]</sup> P4003R3 defines the IoAwaitable protocol used here, while P4092R1, P4093R1, and P4126R1 examine both bridge directions and their continuation requirements.<sup>[13]</sup><sup>[14]</sup><sup>[15]</sup><sup>[16]</sup>
 
-1. A phase-by-phase trace of one synchronous write under both protocols, with senders in the most favorable configuration the standard provides (Sections 5-7).
-2. A record of how the shipped awaitable libraries handle the synchronous case and the cost they carry for it (Section 6).
-3. The composed-I/O multiplier that makes the per-operation difference recur (Section 10).
-4. The modifications the sender protocol would need to match the awaitable protocol on this case, and a survey of the mechanisms that exist today (Section 11).
+1. A vocabulary separating synchronous completion, inline completion, per-instance pre-start readiness, and a coroutine fast path.
+2. A side-by-side account of the language awaiter surface and the sender-to-awaitable translation surface.
+3. A normative trace that includes every `as_awaitable` branch and the implementation freedom available to standard-library senders.
+4. Three I/O fixtures separating an already-materialized result, completion discovered during initiation, and a pending operation.
+5. A survey of completion behavior, await-completion adaptation, domain transformation, composition, erasure, and two public implementations.
 
-Assumptions. The sender trace follows the working draft N5054<sup>[10]</sup> and P3552R3,<sup>[2]</sup> with the task's environment naming `inline_scheduler` under both spellings of that knob (`scheduler_type` in P3552R3, `start_scheduler_type` in the working draft) so that no affinity cost is counted. The unit of comparison is the phase, defined in Section 5. No heap-allocation elision is assumed on either side. Runtime cost is measured only where Section 11.5 says so; elsewhere the comparison is of what the protocols specify.
+The scope is coroutine-centric I/O: operations whose primary consumer is a coroutine body and whose higher-level buffering can make a result available before initiation. Sender-native pipelines, direct receiver consumers, and system calls whose completion becomes known only during initiation remain in the comparison but are not covered by the central conclusion.
 
-## 1. The Abstraction
+The term "natural leaf protocol" has four criteria: direct language integration, a per-instance readiness decision, one operation representation for coroutine consumption, and no sender-to-awaitable translation layer. The criteria are the author's analytical standard and are applied to both protocols in Table 2. The author maintains awaitable-native libraries and has a professional interest in the result. If a delegate rejects the word "natural" or these criteria, the normative fallback finding remains: branch 7.4 connects before readiness and returns `false` from `await_ready` for every instance.<sup>[1]</sup>
 
-A synchronous write stream has one operation: Accept a string and store it. It offers no error codes, byte counts, or partial writes. The abstraction is intentionally minimal: a test fixture that isolates the protocol's behavior from the I/O operation's complexity. Two concrete types implement it.
+"Wording burden" means additional standardized entities and semantic interactions. It does not mean generated runtime cost.
 
-`string_sink` appends to a `std::string`. The operation is synchronous, the data is already in memory, and no kernel transition occurs.
+N5054 and the current public draft rendering supply the normative basis.<sup>[1]</sup> Source claims use immutable stdexec and Beman.Execution commits from September 2026. Phase counts are not used as a performance model, and no benchmark result is used as evidence.
+
+## Sender Composition Solves a Different Problem
+
+Sender and receiver provide a general model for constructing and composing asynchronous operations. The properties that make that model useful remain relevant when its coroutine-consumption path is examined.
+
+The sender model provides static composition. Adaptors such as `then`, `let_value`, and `when_all` form typed work graphs whose connected operation state owns the state of its children. P2300R10 describes the performance requirement as avoiding allocations and indirections in generic asynchronous algorithms expected on hot paths.<sup>[3]</sup> This is a property of sender-native composition rather than of one leaf operation.
+
+The model also provides three completion channels. A receiver accepts value, error, or stopped completion, and completion signatures describe those possibilities for a sender in an environment. Environments provide schedulers, allocators, stop tokens, and domain information used to transform or execute the operation. The native protocol therefore describes more than suspension and resumption.
+
+Operation states give the connected operation a lifetime. The working draft says that connecting a sender and receiver creates an asynchronous operation, while `start` begins it.<sup>[1]</sup> Destroying an operation state while its operation is still live has undefined behavior. This ownership boundary is necessary when work remains pending after initiation.
+
+The model permits an asynchronous operation to execute synchronously. The working draft states that an operation can complete during `start` on the starting thread, and `inline_scheduler` completes by calling `set_value` directly from `start`.<sup>[1]</sup> Synchronous execution is therefore part of the sender model.
+
+Structured concurrency is another sender-side facility. The counting-scope facilities track associated work and require the scope to reach an allowed state before destruction; premature destruction invokes `terminate` rather than preventing destruction.<sup>[1]</sup><sup>[17]</sup>
+
+Sender-native composition provides static work graphs, explicit completion channels, operation ownership, environmental customization, and structured concurrency. The awaitable leaf protocol does not replace those properties.
+
+## Completion and Readiness Are Different Properties
+
+Synchronous execution is not one property. Four separate properties determine what a coroutine can avoid, and using one name for all four conflates distinct protocol properties.
+
+| Term | Meaning in this analysis |
+| --- | --- |
+| **Synchronous completion** | The operation executes a completion operation before `start()` returns. |
+| **Inline completion** | The operation completes before `start()` returns on the execution agent that called `start()`. |
+| **Per-instance pre-start readiness** | This operation object already has its result before initiation, although another object of the same type may not. |
+| **Coroutine fast path** | The coroutine obtains the result without being considered suspended by `[expr.await]`. |
+| **Awaiter** | The object on which the language evaluates `await_ready`, `await_suspend`, and `await_resume`. |
+| **Operation state** | The object produced by connecting a sender and receiver and passed to `start`. |
+
+Table 1. The four completion properties and the two protocol objects used throughout the comparison. The definitions separate completion discovered during initiation from a result known before initiation.
+
+The working draft defines synchronous completion through timing relative to `start`.<sup>[1]</sup> Different instances of one sender type may complete during `start` or later. The definition does not provide a pre-start result or a way for a coroutine to ask whether one exists.
+
+The coroutine language asks a different question. After promise transformation and awaiter selection, `[expr.await]` evaluates `await_ready()` before deciding whether the coroutine is considered suspended.<sup>[1]</sup> A true result proceeds to `await_resume`; a false result enters the suspension path and evaluates `await_suspend`. The result is a property of the awaiter object, so two objects of the same type can return different values.
+
+P3206R0 proposes completion behavior as a sender attribute.<sup>[5]</sup> Its categories describe whether receiver completion occurs before `start` returns and whether it occurs inline. The proposal permits static type information, environment-dependent queries, and a dynamic result for `split` after its shared operation has completed. It contains no wording, and the working draft's generic sender awaiter does not query it.
+
+Completion behavior and pre-start readiness can correlate without being equivalent. A sender may guarantee inline completion because `start` performs work immediately, even though no result exists beforehand. Conversely, a shared or cached operation may already hold a result and still expose that result through `start` and receiver completion.
+
+Synchronous completion, inline completion, per-instance readiness, and a coroutine fast path are four distinct properties. Only the third represents whether a particular result is already available before initiation.
+
+## Awaitables and Senders Expose Different Consumption Surfaces
+
+The two protocols expose different surfaces to a coroutine consumer. The protocol difference concerns specification structure and semantic obligations; entity counts do not establish runtime cost.
+
+An awaitable reaches the language through one awaiter. The language evaluates `await_ready`, conditionally evaluates `await_suspend`, then evaluates `await_resume`.<sup>[1]</sup> P4003R3 extends the suspend member with an I/O environment that provides executor, stop-token, and allocator information, while retaining the same readiness and extraction boundary.<sup>[13]</sup>
+
+A sender reaches the same language protocol after a second composition model has been translated. A compatible sender describes completion signatures in an environment, transforms through its domains, may acquire scheduler affinity, may apply an await-completion adaptor, connects to a receiver, stores a resulting operation state, starts it, accepts one completion channel, stores the result for the coroutine, and finally presents an awaiter to `[expr.await]`.<sup>[1]</sup> Each mechanism provides a sender property; the translation is additional only for a coroutine consumer.
+
+| Concern | Awaitable leaf | Sender-valued leaf awaited by `execution::task` | Sender capability provided |
+| --- | --- | --- | --- |
+| Result alternatives | `await_resume` return or throw | Completion signatures and value, error, stopped channels | Generic composition over completion alternatives |
+| Consumer context | Promise and I/O environment | Receiver environment, sender attributes, domains, task promise | Scheduler, allocator, cancellation, and domain customization |
+| Operation creation | Awaiter construction | `connect(sender, receiver)` produces an operation state | Separate graph construction from activation |
+| Activation | `await_suspend` when not ready | `start(operation_state)` from the bridge's `await_suspend` | Uniform lazy start |
+| Pre-suspension decision | `await_ready()` on this awaiter object | Custom awaiter, or fixed `false` in the generic fallback | The native sender protocol specifies completion timing instead |
+| Coroutine translation | None after awaiter selection | `await_transform`, optional `affine`, `as_awaitable`, transformation, adaptation, then awaiter selection | Interoperation with sender-valued expressions |
+
+Table 2. The protocol surfaces used when a coroutine consumes an awaitable leaf or a sender-valued leaf. The right column records why the sender mechanism exists; the table measures wording requirements and semantic obligations rather than generated instructions.
+
+A sender pipeline uses completion signatures, connection, and receiver channels directly. A coroutine body already supplies sequencing, lifetime, and conditional suspension, so sender-valued I/O must cross both protocol surfaces before the language can consume it.
+
+Awaitables expose per-instance readiness directly, while the native sender path exposes completion after an operation has been connected and started.
+
+## The Generic Bridge Has No Per-Instance Readiness Branch
+
+The working draft provides five routes from an expression to an awaiter. The generic sender fallback is only the last sender-specific route, and its exact placement prevents the trace from being generalized to every conforming sender.
+
+Inside `execution::task`, `await_transform` first handles scheduler affinity. If the task's `start_scheduler_type` is `inline_scheduler`, it passes the sender directly to `as_awaitable`; otherwise it applies `affine` first.<sup>[1]</sup><sup>[2]</sup> Affinity is therefore a separate concern from readiness.
+
+`as_awaitable(expr, promise)` then selects among five ordered results:<sup>[1]</sup>
+
+1. The expression's own `as_awaitable` member.
+2. An `as_awaitable` member on the transformed and await-completion-adapted sender.
+3. The original expression when it is already an awaiter.
+4. The exposition-only `sender-awaitable` for a compatible single-value sender.
+5. The original expression otherwise.
+
+The first three routes can avoid the generic bridge. The second route applies `transform_sender` before consulting the forwarding `get_await_completion_adaptor` query, so a domain or attribute adaptor can supply a common coroutine representation for more than one concrete sender type.
+
+The fourth route constructs the exposition-only `sender-awaitable`. Its relevant shape is:
 
 ```cpp
-class string_sink
-{
-    std::string& out_;
+variant<monostate, result-type, exception_ptr> result{};
+connect_result_t<Sndr, awaitable-receiver> state;
 
-public:
-    explicit string_sink(std::string& s)
-        : out_(s) {}
-
-    auto write(std::string_view sv)
-    {
-        out_.append(sv.data(), sv.size());
-        // returns an awaitable or sender
-    }
-};
+sender-awaitable(Sndr&& sndr, Promise& p);
+static constexpr bool await_ready() noexcept { return false; }
+void await_suspend(coroutine_handle<Promise>) noexcept { start(state); }
+value-type await_resume();
 ```
 
-`tcp_sink` writes to a TCP socket. The operation is asynchronous. The kernel accepts the data, the coroutine suspends, and the reactor resumes it when the write completes.
+This is working-draft exposition from `[exec.as.awaitable]`.<sup>[1]</sup> The constructor initializes `state` with `connect`, so connection precedes the language's readiness question. `await_ready()` then returns `false` for every object. `await_suspend()` starts the operation.
 
-Both expose the same `write(std::string_view)` signature. The return type differs, but the algorithm that calls `co_await sink.write(...)` does not.
+Completion reaches an `awaitable-receiver`. Value or error completion emplaces a result or exception in the stored variant, then evaluates `continuation.resume()`; stopped completion resumes the handle selected by the promise's `unhandled_stopped` operation.<sup>[1]</sup> `await_resume()` rethrows the stored exception or extracts the stored value. The variant is a subobject whose alternative is emplaced; its presence does not imply heap allocation.
 
-## 2. Recompilation
+`[expr.await]` considers the coroutine suspended before evaluating `await_suspend`.<sup>[1]</sup> An implementation may optimize generated code when observable behavior permits, but phase counting does not establish the resulting instruction or latency cost.
 
-The awaitable protocol provides two mechanisms for handling synchronous I/O without changing the algorithm's source. The first is recompilation: The same coroutine template compiled against different sink types produces different execution models.
+Standard-library sender types have additional implementation freedom. `[exec.snd.expos]/2` makes it unspecified whether a standard-library sender provides `sndr.as_awaitable(p)` and requires any such expression to meet `as_awaitable` semantics.<sup>[1]</sup> A conforming implementation can therefore give `inline-sender` a member that selects the first branch. Portable code cannot require that member.
 
-The following illustrative algorithm writes a span of lines to a generic sink:
+The generic fallback connects before readiness, reports false readiness, starts from `await_suspend`, and completes through its receiver. Those statements describe branch 7.4 only.
+
+## Three I/O Cases Locate the Boundary
+
+Three I/O shapes separate a result known before suspension from completion discovered during initiation. The distinction prevents an eager fixture from standing in for every synchronous I/O operation.
+
+### A result produced before the operation object returns
+
+The smallest fixture performs an in-memory append before returning its awaitable or sender:
 
 ```cpp
-template<class Sink>
-task<> log_lines(Sink& sink,
-    std::span<std::string_view> lines)
+auto write(std::string_view text)
 {
-    for (auto line : lines)
-        co_await sink.write(line);
+    out_.append(text.data(), text.size());
+    // Return an immediate awaitable or inline-completing sender.
 }
 ```
 
-If one compiles against `tcp_sink`, the awaitable returned by `write` suspends, the reactor resumes, and the algorithm is asynchronous. If one recompiles against `string_sink`, the awaitable returned by `write` has `await_ready() == true`, no suspension occurs, and the algorithm is synchronous.
+This is hypothetical fixture code. It isolates consumption of an already-produced, value-less result. An immediate awaitable returns `true` from `await_ready`; an inline sender reports completion from `start`. If the sender reaches the generic fallback, the language still receives false readiness.
 
-The source is identical, but the awaitable type varies. The execution model is selected at compile time.
+The fixture is intentionally narrow. The append occurs even when the returned operation object is discarded, so it does not represent the lazy execution convention of standard sender adaptors. Its result concerns protocol consumption after work has already happened.
 
-## 3. Relinking
+### Completion discovered during initiation
 
-The second mechanism is relinking: The linker selects the execution model for an algorithm compiled once against a type-erased stream. Where recompilation varies the template argument, relinking varies the object file behind a function table.
+Overlapped `WSARecv` supplies a sender-native mixed-completion example. Microsoft specifies that return zero means the operation completed immediately, while `SOCKET_ERROR` with `WSA_IO_PENDING` means successful initiation followed by later completion.<sup>[18]</sup> P2300R10 contains one `recv_sender` type, and the `start` of the `recv_op` operation state that its `connect` returns handles both outcomes.<sup>[3]</sup>
 
-The following illustrative algorithm compiles against a type-erased stream. The shape follows Capy's `any_write_stream`:<sup>[11]</sup> `write` is not itself virtual, because a virtual function cannot return an implementation-specific awaitable type; it returns a fixed awaitable that calls through a function table. Capy's table is a struct of function pointers, not a C++ virtual table; this paper says function table for it and reserves virtual for the hypothetical sender base of Section 11.5:
+The sender protocol directly represents this operation. The operation state's `start` calls `WSARecv`; immediate success calls `set_value`, while the operation state for a pending result persists until completion-port processing. P2300R10's immediate branch assumes `FILE_SKIP_COMPLETION_PORT_ON_SUCCESS`, which suppresses the completion-port entry that an immediate operation would ordinarily produce.<sup>[19]</sup> The operation result does not exist before initiation, so true pre-start readiness is unavailable.
 
-```cpp
-class write_stream
-{
-    struct vtable;
-    void* impl_;            // the concrete stream
-    vtable const* vt_;      // its function table
-    void* cached_;          // storage for its awaitable, allocated once
+An awaiter handles the same distinction from `await_suspend`. It initiates `WSARecv`, stores an immediate result when return zero is observed, then returns `false` or transfers directly to the continuation. For a pending result, the coroutine remains suspended. Both implementations need stable state and a race-safe handshake when completion can occur concurrently with initiation.
 
-public:
-    // returns an IoAwaitable that calls through vt_
-    auto write(std::string_view sv);
-};
+Socket readiness does not convert this case into pre-start completion. Microsoft warns that a readiness event can be followed by a receive returning `WSAEWOULDBLOCK`.<sup>[20]</sup> Readiness predicts whether initiation might complete; it is not the result of a particular receive.
 
-task<> log_lines(write_stream& sink,
-    std::span<std::string_view> lines)
-{
-    for (auto line : lines)
-        co_await sink.write(line);
-}
-```
+### A user-space result ready in one instance and pending in another
 
-The algorithm's object code is fixed. It is identical whether the stream behind the function table is synchronous or asynchronous, and nothing in it distinguishes the two cases.
+A buffered stream supplies the pre-start case. One `read_some` object may find enough bytes in a user-space buffer, while another object of the same type must initiate an asynchronous receive. The cache-hit result can be copied and counted before suspension is considered.
 
-If one links against an object file that provides `tcp_sink` behind the function table, the algorithm is asynchronous. If one links against a different object file that provides `string_sink` behind the function table, the algorithm is synchronous.
-
-Relinking requires no recompilation and costs zero allocations per write: The concrete stream's awaitable is constructed into storage the erased stream allocated once. The erased awaitable constructs the concrete awaitable inside its own `await_ready()` (Capy commit `9200ddc`) and forwards the answer. A ready stream completes without suspending, through four function-table calls (`construct_awaitable`, `await_ready`, `await_resume`, `destroy_awaitable`) and no scheduler. A pending stream suspends, a fifth call, `await_suspend`, forwards through the table, and the coroutine resumes by symmetric transfer - `await_suspend` returning the handle to resume, so the resumption is a tail call rather than a nested one. On either path no operation state, receiver, or nested resume exists. The algorithm was compiled once, and the execution model was chosen by the linker.
-
-## 4. What Senders Provide
-
-Before examining the sender path for synchronous I/O, this section records three properties `std::execution` provides that the awaitable protocol does not.
-
-1. **Zero-allocation composition.** Sender pipelines collapse into a single `operation_state` at compile time. No heap allocation, virtual dispatch, or reference counting occurs. Coroutines do not match this property for multistage pipelines.<sup>[12]</sup>
-
-2. **Compile-time work graphs.** The sender algebra encodes directed acyclic graphs (DAGs) of work at the type level. `when_all`, `then`, and `let_value` compose into a static structure the optimizer can see through. Domain customization via `transform_sender` retargets the same graph to CPU or GPU by swapping the scheduler.<sup>[13]</sup>
-
-3. **Structured concurrency.** `counting_scope` tracks dynamically spawned work and prevents scope destruction until all work completes.<sup>[14]</sup>
-
-The comparison that follows grants senders every advantage the standard provides. The sender is `inline_scheduler::schedule()`, the facility the working draft specifies for inline completion (`[exec.inline.scheduler]`);<sup>[10]</sup> that choice carries the minimal completion signature, `completion_signatures<set_value_t()>`, and synchronous completion inside `start`, both specified there. The task's environment names `inline_scheduler` as its scheduler type, so that `await_transform` skips the affinity wrapping (`affine_on` in P3552R3 `[task.promise]` p10; `affine` in the working draft `[task.promise]` p6) and no scheduler affinity step is counted. The `sender-awaitable` path that remains is imposed by the sender protocol on every sender that neither provides its own `as_awaitable` member nor supplies an await-completion adaptor, and on every sender consumed through `any_sender`, which erases both (Section 12). `any_sender` is this paper's name for the erased sender wrappers libraries ship, such as stdexec's `any_sender` (header `exec/any_sender_of.hpp`);<sup>[13]</sup> the working draft specifies none.
-
-## 5. The Sender Path
-
-Sections 2 and 3 showed the awaitable protocol's two mechanisms for synchronous I/O. This section traces the sender protocol's path for the same operation, a synchronous write to an in-memory string, using the best-case sender the standard provides.
-
-Both traces use the same unit. A phase is one stage of `co_await` that the protocol's specification names: transform, connect, readiness, suspend, launch, complete, extract. Each trace lists all seven; a protocol with no work in a phase says so. The unit is the phase rather than the function call, so that wrapper forwarding on either side (a `transform_awaiter` calling through to the awaitable it wraps, a `sender-awaitable` calling `connect`) does not change the count. Four of the names are `[expr.await]`'s own stages (transform, readiness, suspend, extract); three are the sender protocol's (connect, `start` - called launch here - and completion), and a protocol that has no such stage leaves the phase empty. The sender's launch and complete phases both run inside the awaitable's suspend stage, which is why the sender-named phases are listed separately: The count is of protocol stages, and it is stated so that a reader who prefers `[expr.await]`'s four can recount. A readiness check counts as work whatever it answers, on both sides.
-
-`string_sink::write` returns the sender produced by `inline_scheduler::schedule()`, the exposition-only `inline-sender` type the working draft specifies at `[exec.inline.scheduler]`:<sup>[10]</sup>
+The following illustrative projections share one operation implementation:
 
 ```cpp
-class string_sink
-{
-    std::string& out_;
-
-public:
-    explicit string_sink(std::string& s)
-        : out_(s) {}
-
-    auto write(std::string_view sv)
-    {
-        out_.append(sv.data(), sv.size());
-        return std::execution::
-            inline_scheduler{}.schedule();
-    }
-};
-```
-
-The sender's `start` calls `set_value` on the receiver immediately. No kernel transition occurs, and the sender side does not suspend. This sender is not a hand-rolled type; it is the one the working draft<sup>[10]</sup> specifies for inline completion.
-
-A coroutine returning `execution::task` consumes it. The task's environment names `inline_scheduler` so that `[task.promise]` p10 skips affinity wrapping; the default environment uses `task_scheduler` and would wrap every awaited sender in `affine_on`:<sup>[2]</sup>
-
-```cpp
-struct inline_env
-{
-    // P3552R3 names the knob scheduler_type; the working draft names it
-    // start_scheduler_type. Declaring both satisfies either text.
-    using scheduler_type       = execution::inline_scheduler;
-    using start_scheduler_type = execution::inline_scheduler;
-};
-
-execution::task<void, inline_env> log_lines(
-    string_sink& sink,
-    std::span<std::string_view> lines)
-{
-    for (auto line : lines)
-        co_await sink.write(line);
-}
-```
-
-The working draft<sup>[10]</sup> and P3552R3<sup>[2]</sup> describe what happens inside `co_await sink.write(line)`:
-
-1. Transform. `await_transform` receives the sender. P3552R3 `[task.promise]` p10 checks `same_as<inline_scheduler, scheduler_type>`;<sup>[2]</sup> the working draft `[task.promise]` p6 checks `same_as<inline_scheduler, start_scheduler_type>`.<sup>[10]</sup> The task's environment satisfies both, so the affinity wrapper (`affine_on` in P3552R3, `affine` in the working draft) is bypassed and `as_awaitable(sndr, *this)` is returned directly.
-
-   `as_awaitable` then applies `transform_sender(sndr, get_env(p))` and `adapt-for-await-completion`, which queries `get_await_completion_adaptor` on the sender's environment and applies the adaptor when one is present; `inline-sender` supplies none, so the sender passes through unchanged. A `sender-awaitable` is constructed from the result (`[exec.as.awaitable]` p7-p8).<sup>[10]</sup>
-
-2. Connect. The `sender-awaitable` constructor calls `connect(sndr, awaitable-receiver)`.<sup>[10]</sup> The operation state is materialized, and the receiver is wired.
-
-3. Readiness. `await_ready()` returns `false` unconditionally.<sup>[10]</sup>
-
-4. Suspend. The coroutine suspends.
-
-5. Launch. `await_suspend` calls `start(state)`.<sup>[10]</sup> Inside `start`, `set_value(receiver)` fires synchronously.
-
-6. Complete. The receiver stores the result in a `variant` and calls `.resume()` on the coroutine handle, nested inside `await_suspend`.<sup>[10]</sup> The coroutine resumes.
-
-7. Extract. `await_resume()` reads the value from the `variant`.<sup>[10]</sup>
-
-All seven phases have work. For an operation that completes synchronously, the path incurs one suspension and one resumption, one operation state construction, one receiver instantiation, and one `variant` emplacement; only the scheduler affinity wrapping is avoided.
-
-The bypass in the transform phase belongs to the task's environment: Every sender awaited from a task whose environment names `inline_scheduler` skips `affine_on`, a user-defined synchronous sender included.<sup>[2]</sup> Under the default environment the same `co_await` wraps the sender in `affine_on`<sup>[3]</sup> (P3941R2, "Scheduler Affinity," which specifies scheduler affinity enforcement for sender-based coroutines) and adds that operation's cost. Seven phases is therefore the floor for any sender that neither customizes `as_awaitable` nor supplies an await-completion adaptor (Section 4), in the most favorable task configuration the standard provides.
-
-## 6. The Awaitable Path
-
-The same operation traced through the awaitable protocol. Where Section 5 returned a sender from `write`, this section returns an IoAwaitable - a type satisfying the three-member protocol defined in P4003R3<sup>[1]</sup> (a minimal coroutine execution model that specifies executor affinity, stop-token propagation, and frame-allocator delivery for coroutines).
-
-`string_sink::write` returns an IoAwaitable:
-
-```cpp
-class string_sink
-{
-    std::string& out_;
-
-public:
-    explicit string_sink(std::string& s)
-        : out_(s) {}
-
-    auto write(std::string_view sv)
-    {
-        out_.append(sv.data(), sv.size());
-        return immediate{};
+struct buffered_read_awaiter {
+    bool await_ready() {
+        return stream.try_read(buffer, result);
     }
 
-private:
-    struct immediate
-    {
-        bool await_ready() const noexcept
-        {
-            return true;
-        }
-
-        void await_suspend(
-            std::coroutine_handle<>,
-            io_env const*) noexcept
-        {
-        }
-
-        void await_resume() noexcept {}
-    };
-};
-```
-
-A coroutine returning a task type that satisfies the IoAwaitable protocol<sup>[1]</sup> consumes it:
-
-```cpp
-task<> log_lines(
-    string_sink& sink,
-    std::span<std::string_view> lines)
-{
-    for (auto line : lines)
-        co_await sink.write(line);
-}
-```
-
-What happens inside `co_await sink.write(line)`:
-
-1. Transform. `await_transform` delegates to `transform_awaitable`, which wraps the IoAwaitable in a `transform_awaiter`.<sup>[11]</sup>
-
-2. Connect. No work.
-
-3. Readiness. `await_ready()` returns `true`.
-
-4. Suspend. No work. The coroutine does not suspend.
-
-5. Launch. No work.
-
-6. Complete. No work.
-
-7. Extract. `await_resume()` returns.
-
-Three phases have work: transform, readiness, extract. The path incurs no suspension, no operation state construction, no receiver instantiation, no `variant` emplacement, and no scheduler affinity wrapping.
-
-`immediate` is the protocol's ceiling: `await_ready()` returns `true` because the fixture knows the result before `co_await` evaluates. The shipped libraries reach the same end by two paths. Corosio's socket awaitables return `true` from `await_ready()` only when a stop has been requested; `await_suspend` issues the syscall speculatively and, when it completes at once, returns the caller's own coroutine handle, so the coroutine suspends and resumes by symmetric transfer without a scheduler round-trip<sup>[15]</sup> (`native/native_tcp_socket.hpp`, `native/detail/reactor/reactor_stream_socket.hpp`). Capy's `any_write_stream` forwards the concrete awaitable's readiness through its function table<sup>[11]</sup> (`io/any_write_stream.hpp`, commit `9200ddc`): a ready stream takes the fixture's path through erasure, and a pending one suspends and resumes the same tail-call way; it issues no speculative syscall of its own. The fixture's `await_resume()` returns nothing; a shipped awaitable returns an `io_result` carrying an error code, which adds a return value and no phase. Corosio caps consecutive inline completions at an adaptive budget of 2 to 16, or 4 when no other thread has been woken to share the work, and posts the next completion through the queue, because unbounded inline completion starves other coroutines on the same executor. Inline completion is turned off entirely when the context is constructed from `io_context_options` at their defaults and the concurrency hint exceeds one. The budget is a cost of Corosio's shipped path that the fixture does not carry. On every path, no operation state, receiver, or `variant` exists; where a suspension occurs, the resumption is a tail call with no nested frame, and where the stream reports ready, Capy's erased path does not suspend at all.
-
-## 7. Comparison
-
-| Phase | Awaitable, fixture | Awaitable, shipped path | Sender |
-| --------- | ------------------ | ----------------------- | ------ |
-| Transform | `await_transform` wraps in `transform_awaiter` | same | `await_transform`, `as_awaitable`, `sender-awaitable` constructed |
-| Connect | none | none | `connect(sndr, awaitable-receiver)`: operation state and receiver |
-| Readiness | `await_ready()` is `true` | `await_ready()` is `false` on both: stop-based (Corosio) or forwarded from a pending stream (Capy) | `await_ready()` is `false`, unconditionally |
-| Suspend | none | suspend | suspend |
-| Launch | none | `await_suspend` issues the syscall speculatively (Corosio) or forwards through the function table (Capy) | `await_suspend` calls `start(state)` |
-| Complete | none | returns the caller's handle: symmetric transfer | `set_value`, `variant` emplace, `resume()` nested in `await_suspend` |
-| Extract | `await_resume()` | `await_resume()` | `await_resume()` reads the `variant` |
-
-Table 1. The seven phases of a single `co_await sink.write(line)` on a synchronous `string_sink`. The fixture column is the `immediate` awaitable of Section 6. The shipped-path column covers Corosio's speculative-syscall socket awaitable and Capy's erased `any_write_stream` over a pending stream; a ready stream takes the fixture column through erasure. The sender column is the `sender-awaitable` path of Section 5 as the working draft specifies it, whose exposition-only `await_suspend` returns `void` and so resumes nested; stdexec's shipped awaiters, generic and inline alike, return the handle instead (Section 11.1, Table 4). A cell reading "none" means the protocol has no work in that phase.
-
-| Property | Awaitable, fixture | Awaitable, shipped path | Sender |
-| ----------------------------- | ------------------ | ----------------------- | ------ |
-| Phases with work | 3 | 6 | 7 |
-| Coroutine suspensions | 0 | 1 | 1 |
-| Coroutine resumptions | 0 | 1, symmetric transfer | 1, nested inside `await_suspend` |
-| Operation state constructions | 0 | 0 | 1 |
-| Receiver instantiations | 0 | 0 | 1 |
-| `variant` emplacements | 0 | 0 | 1 |
-| Scheduler affinity wrappings | 0 | 0 | 0 |
-| Type erasure allocations per write | not erased | 0 (Capy `any_write_stream`; four function-table calls when ready, five when it suspends - Section 3) | 0-1 (`any_sender::connect`; its erased `connect`, `start`, and completion calls are not counted here) |
-
-Table 2. Objects and control transfers per write for the three paths of Table 1. Zero means the mechanism is not instantiated.
-
-The connect and complete phases are where the sender column constructs what the other two columns never do: an operation state, a receiver, and a `variant`. The shipped awaitable path shares the suspend and launch phases with the sender only when readiness cannot be answered before launch - Corosio's stop-based `await_ready`, or Capy's erased stream over a pending concrete stream - and it constructs nothing in them, completing by tail call where the sender's completion is nested. When the concrete stream reports ready, Capy's erased path takes the fixture column: Since commit `9200ddc` the wrapper forwards readiness and skips the suspension.
-
-## 8. Interoperation
-
-The awaitable protocol and the sender protocol are not mutually exclusive. An IoAwaitable can be wrapped as a sender and consumed by sender pipelines, and a sender can be consumed from coroutine-native code without `execution::task`.
-
-P4093R1<sup>[7]</sup> (awaitable-to-sender bridge) provides `as_sender`, which wraps any IoAwaitable as a `std::execution` sender:
-
-```cpp
-auto sndr = as_sender(sink.write(line))
-    | ex::then([] { /* next step */ });
-```
-
-The sender algebra works. `when_all` composes bridged IoAwaitables into parallel work. `let_value` sequences them. `upon_error` handles failures. The IoAwaitable is a leaf node in the sender's work graph. Structured concurrency is inherited from the sender pipeline.
-
-Without callback handles, the bridge allocates one coroutine frame per bridged operation - the frame exists only to produce a `coroutine_handle<>`, the only type the awaitable protocol accepts. P4126R1<sup>[9]</sup> (callback handles for zero-cost bridging) shows this allocation is eliminable. A callback handle - three pointers matching the coroutine frame prefix, zero heap allocation - gives senders a `coroutine_handle<>` without allocating a frame.
-
-The I/O layer is awaitable-native. Sender pipelines compose those awaitables into parallel work through the bridge. With P4126R1's callback handles,<sup>[9]</sup> the bridge imposes no allocation.
-
-## 9. Overhead by Consumer and I/O Shape
-
-Section 8 shows IoAwaitables entering sender pipelines via `as_sender`.<sup>[7]</sup> P4092R1<sup>[8]</sup> (sender-to-awaitable bridge) provides `await_sender`, through which senders are consumed from coroutine-native code without `execution::task`. P4088R1<sup>[6]</sup> (which documents the properties C++20 coroutines provide for stream I/O) examines the broader design fork between the two models.
-
-The question is which implementation shape minimizes total cost when both consumers - coroutines and sender pipelines - exist.
-
-| Consumer / I/O shape | Awaitable | Sender |
-| -------------------- | --------- | ------ |
-| **Coroutine** | | |
-| Synchronous | transform, readiness, and extract (Section 6) | all seven phases (Section 5) |
-| Asynchronous | no phase beyond the inherent suspend | connect and complete phases beyond the inherent suspend |
-| **Sender pipeline** | | |
-| Synchronous | none, given [P4126R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4126r1.pdf)<sup>[9]</sup> | none |
-| Asynchronous | none, given [P4126R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4126r1.pdf)<sup>[9]</sup> | none |
-
-Table 3. Protocol overhead per operation by consumer (coroutine or sender pipeline) and I/O shape (synchronous or asynchronous), for I/O primitives implemented as awaitables versus senders. The two awaitable-column pipeline cells assume the callback handles of P4126R1.
-
-The awaitable path imposes no phase beyond `[expr.await]`'s own in any cell. For synchronous I/O, the sender column carries the connect, suspend, launch, and complete phases of Section 5. For asynchronous I/O, the sender protocol adds `connect`, receiver wiring, and `variant` emplacement atop the inherent suspend; the asynchronous operation itself requires none of the three.
-
-For asynchronous I/O these added steps are a step count, not a separately observable runtime cost: Once the operation suspends to a scheduler, the suspension dominates and the steps are not measurable above it. The case under comparison is synchronous completion, where no suspension absorbs them.
-
-## 10. Composed I/O
-
-Composed I/O algorithms call lower-level operations in a loop. This section examines how the protocol cost from Sections 5-7 multiplies across layered I/O stacks - the dominant pattern in protocol implementations such as TLS, HTTP, WebSocket, SMTP, and DNS resolution.
-
-`read` fills a buffer by looping `read_some`. TLS decrypts by looping encrypted reads. HTTP sequences header parsing with body reads. Each layer is a coroutine composing awaitables. These algorithms are generic - constrained on concepts, agnostic to execution context.
-
-Under the sender protocol, each iteration of such a loop executes every phase of Section 5 independently - even when the operation completes synchronously. Each synchronous completion constructs an operation state, instantiates a receiver, suspends the coroutine, calls `start`, fires `set_value` on the receiver, emplaces the result into a `variant`, and resumes the coroutine. For a 64 KB read from a stream that hands back 4 KB per `read_some`, this is sixteen iterations. On a buffered stream where every completion is synchronous, that is sixteen operation states, sixteen receivers, sixteen suspensions, sixteen resumptions - for data already in user-space memory.
-
-The sender model's construction-before-launch separation is a strength during pipeline building: Aggregate state, let the optimizer see the full graph. Inside a composed I/O loop, the pipeline is already built and running. The connect phase that serves construction-time visibility persists into execution, where it is no longer needed.
-
-If the protocol can detect that the result is already available, the coroutine need not suspend. The suspension and resumption disappear. If the protocol can skip connection when the result is available, the operation state and the receiver disappear - the machinery that shuttles a value across a suspension boundary ceases to exist when no boundary exists. If the protocol expresses readiness through a single boolean - true: The value is here, take it directly; false: The value requires work, suspend, resume when ready - both cases are handled through one mechanism.
-
-This is `await_ready`.
-
-The following algorithm is `read` as implemented in Capy<sup>[11]</sup> (`include/boost/capy/read.hpp`). It composes `read_some` into `read` through `co_await`; the result is itself awaitable, and TLS composes `read`, and HTTP composes TLS:
-
-```cpp
-template <typename S, typename MB>
-  requires ReadStream<S> && MutableBufferSequence<MB>
-auto
-read(S& stream, MB buffers) ->
-        io_task<std::size_t>
-{
-    consuming_buffers consuming(buffers);
-    std::size_t const total_size = buffer_size(buffers);
-    std::size_t total_read = 0;
-
-    while(total_read < total_size)
-    {
-        auto [ec, n] = co_await stream.read_some(consuming.data());
-        consuming.consume(n);
-        total_read += n;
-        // A contingency that still completed the transfer is a success:
-        // report it only when the buffer was not filled.
-        if(ec && total_read < total_size)
-            co_return {ec, total_read};
+    bool await_suspend(std::coroutine_handle<> h) {
+        return stream.start_read(buffer, result, h);
     }
 
-    co_return {std::error_code(), total_read};
-}
-```
+    std::size_t await_resume() {
+        return result;
+    }
+};
 
-Composition nests without sender algebra. When `read_some` completes synchronously, no allocation occurs, no operation state is constructed, no receiver is wired; the protocol adds nothing to what the hardware delivers. The requirement surface at each `co_await` is three members: `await_ready`, `await_suspend`, `await_resume`. The protocol is conditionally lazy: `await_ready() == false` defers, `await_ready() == true` proceeds. The concept constraint defines the interface, the awaitable defines execution semantics, the coroutine body defines composition logic - three concerns, no coupling. The algorithm accepts any type satisfying `ReadStream`, works across execution contexts without recompilation or runtime overhead, and imposes minimal requirements on user types. The coroutine frame outlives every `co_await` within it; activations nest, destructors run on every exit path, cancellation propagates downward.
-
-When the stream is synchronous, no iteration leaves the coroutine's call chain: The fixture's `await_ready()` returns `true` - as does Capy's erased stream over a ready concrete stream - or, within Corosio's inline budget (Section 6), a shipped stream's `await_suspend` returns the caller's handle. On these paths no completion is scheduled and no operation state is constructed; the generic algorithm adds no protocol machinery to the copy.
-
-Stepanov's iterator concepts do not impose indirection when dereferencing a pointer. A `T*` satisfies `random_access_iterator` and dereferences in one instruction. The concept does not require constructing an intermediate state object, wiring a callback, or performing a two-phase access protocol - even though a disk-backed iterator requires all of those internally. The cost is proportional to what the underlying data access requires.
-
-The awaitable protocol has this property. `await_ready() == true` is the pointer dereference: The value is there, take it. `await_ready() == false` is the disk-backed iterator: The value requires work and the coroutine waits for it. The cost tracks the operation.
-
-## 11. Closing the Gap
-
-An already-available result is a case the committee has specified before. [P0159R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0159r0.html)<sup>[16]</sup> (2015), the draft Concurrency TS, specifies `make_ready_future`, a future whose shared state is ready at construction. The sender protocol specifies a construction-side counterpart, `just()`, a sender whose value is ready at construction - but no consumption-side one. Awaited from a coroutine, `just()` takes the full `sender-awaitable` path like any other sender; inside a running pipeline, where the construction-before-launch property that motivates the design has already been used, a synchronous completion still takes it.
-
-The sender model, as specified, does not match the awaitable model for synchronous I/O through the generic `sender-awaitable` path that every sender inherits unless it provides an escape. A concrete sender can sidestep that path by providing its own member `as_awaitable` or an await-completion adaptor<sup>[10]</sup> - manual, per-sender customizations that `any_sender` erases. The modifications below are what would lift the costs from the generic protocol itself, for every sender, including type-erased senders. Each addresses one layer of the gap.
-
-### 11.1. A Readiness Query
-
-`sender-awaitable::await_ready()` returns `false` unconditionally.<sup>[10]</sup><sup>[17]</sup> To skip suspension for senders that complete synchronously, a readiness query is required. The sender must advertise, at compile time or at run time, that its `start` will call `set_value` before returning.
-
-The `await_transform` of P3552R3<sup>[2]</sup> does bypass `affine_on` when the task's environment names `inline_scheduler` (Section 5, transform phase). It does not bypass the `sender-awaitable` path. The six phases that follow - connect, readiness, suspend, launch, complete, extract - execute regardless.
-
-| Mechanism | Where | What it provides | What it leaves |
-| --------- | ----- | ---------------- | -------------- |
-| `get_completion_behaviour` query | Proposed in P3206R0;<sup>[5]</sup> shipped as `get_completion_behavior` in stdexec<sup>[13]</sup> (`exec/completion_behavior.hpp`) | A sender advertises at compile time that it completes inline; stdexec's `task` answers the query | Not in the working draft; a query the working draft's `sender-awaitable::await_ready()` does not consult |
-| Inline `__sender_awaiter` | stdexec<sup>[13]</sup> (`__as_awaitable.hpp`) | For a sender the query marks inline, `connect` and `start` move into `await_suspend` and the operation state does not outlive it; both stdexec awaiters, generic and inline, return the continuation handle from `await_suspend`, so the resume is a symmetric transfer | `await_ready()` still returns `false`; the coroutine still suspends; the operation state and receiver are still constructed |
-| `get_await_completion_adaptor` | Working draft `[exec.get.await.adapt]`<sup>[10]</sup> | A sender's attributes supply an adaptor applied to it before `sender-awaitable` is built; the adapted sender may provide its own `as_awaitable`, reaching a custom awaitable without an `as_awaitable` member on the original sender | Per-sender, like the member, and lost under `any_sender` like the member; the generic `sender-awaitable` keeps its unconditional `false` |
-| `affine_on` member | P3941R2<sup>[3]</sup> s3.4; `affine()` in the working draft `[exec.affine]`<sup>[10]</sup> | A sender opts out of rescheduling | Affinity only (Section 11.4) |
-
-Table 4. Readiness and inline-completion mechanisms in the sender ecosystem, with what each closes of the gap traced in Sections 5-7 and what remains.
-
-stdexec is the closest of the four: Both of its awaiters avoid the nested resume, and the inline one additionally delivers the deferred connection of Section 11.3; it keeps the suspension, the operation state, and the receiver. None of the four gives `sender-awaitable` a readiness query; the working draft has none. What is required is a trait, a tag, or a constexpr query in the shape P3206R0 proposes, consulted by `sender-awaitable::await_ready()`.
-
-### 11.2. Conditional Suspension
-
-With a readiness query in place, `sender-awaitable::await_ready()` can return `true` when the sender advertises synchronous completion. The coroutine no longer suspends.
-
-But `connect` was already called in the `sender-awaitable` constructor.<sup>[10]</sup> The operation state was already materialized. The receiver was already wired. The `variant` was already allocated. The suspend phase was saved. The connect and complete phases were not.
-
-### 11.3. Deferred Connection
-
-To skip those steps, `connect` must be moved from the `sender-awaitable` constructor into `await_suspend`, where it can be bypassed when `await_ready()` returns `true`.
-
-But the value needs to come from somewhere. `await_resume` must return the result. If `connect` and `start` did not execute, no receiver received the value. The sender needs a second value-delivery mechanism - a `get_value()` member, a direct extraction path, a way to produce the result without constructing an operation state, wiring a receiver, calling `start`, routing through `set_value`, and emplacing into a `variant`.
-
-The sender model then carries two value-delivery mechanisms: channels for asynchronous completion, direct extraction for synchronous completion.
-
-### 11.4. Affinity Wrapping Is Already Conditional
-
-Scheduler affinity is not part of the gap. `[task.promise]` (P3552R3 p10, working draft p6) skips the affinity wrapper for every sender when the task's environment names `inline_scheduler`,<sup>[2]</sup> and P3941R2<sup>[3]</sup> lets an individual sender opt out of rescheduling through an `affine_on` member function. Neither mechanism reaches the `sender-awaitable` path of Sections 11.1-11.3: with affinity wrapping removed, `await_ready()` still returns `false`, the coroutine still suspends, and the operation state is still constructed. The remaining modifications concern that path alone.
-
-### 11.5. Zero-Allocation Type Erasure
-
-`any_sender::connect` produces a type-erased operation state whose size is unknown at compile time. The current implementations use small-buffer optimization (64 bytes in stdexec) or heap allocation.<sup>[13]</sup> The per-operation cost is zero or one allocation.
-
-Measured in the Capy benchmark suite<sup>[11]</sup> (`bench/beman`, commit `d45ae3e`) on a type-erased no-op read, single thread, 20,000,000 operations per cell, clang 22.1.5 release build: The type-erased awaitable consumed by a `capy::task` coroutine allocates zero times per operation; the type-erased `any_sender` consumed by a `beman::execution::task` coroutine allocates once. Wall-clock was 37 ns per operation for the awaitable and 55 ns for the sender on a machine that was not recorded; a rerun of the same source on 2026-08-28 with clang 22.1.8 on an Intel Core i9-13900H gave 36.2 ns and 54.7 ns with the same allocation counts. The wall-clock figure spans two coroutine frameworks and is reported for context; the allocation count is the structural result.
-
-The awaitable model's type erasure adds no allocation on either path, at the call counts of Section 3. To match this, the sender needs a base class with a virtual function that returns the value directly - without constructing an operation state, without wiring a receiver, without calling `start`.
-
-### 11.6. The Result
-
-The preceding sections trace the modifications the sender model would require to match the awaitable model for synchronous I/O. The following hypothetical type collects them:
-
-```cpp
-struct sync_ready_sender
-{
-    using sender_concept = sender_t;
-    using completion_signatures =
-        completion_signatures<set_value_t()>;
-
-    // 11.1: readiness query
-    static constexpr            // cf. await_ready()
-        bool is_synchronous = true;
-
-    // 11.3: direct extraction (bypass connect)
-    void get_value()            // cf. await_resume()
-        const noexcept;
-
-    // 11.5: virtual base for type erasure
-    virtual void                // cf. virtual
-        get_value_erased()      //     await_resume()
-        const;
-
-    // original protocol (retained for async)
+struct buffered_read_sender {
     template<class Receiver>
-    struct state { /* ... */ };
-
-    template<class Receiver>
-    state<Receiver> connect(Receiver&&) const;
+    operation_state<Receiver> connect(Receiver);
+    // operation_state::start first checks the same user-space buffer,
+    // then calls set_value or starts the pending receive.
 };
 ```
 
-The awaitable that already provides the same capabilities:
+This is illustrative code rather than wording or a production implementation. It assumes the stream controls access to its user-space buffer so the readiness decision remains valid through extraction.
 
-```cpp
-struct immediate
-{
-    bool await_ready() const noexcept;
-    void await_suspend(
-        std::coroutine_handle<>,
-        io_env const*) noexcept;
-    void await_resume() noexcept;
-};
-```
+Both projections support ready and pending instances. The awaiter exposes the decision to `[expr.await]`; its cache-hit object proceeds directly to `await_resume`. The sender exposes the decision through the timing of receiver completion after `start`. When that sender reaches the generic bridge, `await_ready` remains false for both objects.
 
-Each modification in the sender column has a direct counterpart in the awaitable's three members. The sender protocol arrives at a readiness query (`is_synchronous` maps to `await_ready`), a direct extraction path (`get_value` maps to `await_resume`), and virtual dispatch for type erasure (maps to the function-table call of Section 3).
+The three cases differ in when the result becomes available. A result produced before construction is an eager fixture, immediate system-call completion is discovered during initiation, and a user-space buffered result supports a genuine per-instance pre-start decision.
 
-## 12. Concerns
+## Existing Alternatives Are Available but Non-Universal
 
-**"P4126R1 is unshipped. The bridge cost is hypothetical."** Both sender-pipeline cells in the awaitable column of Section 9 depend on P4126R1.<sup>[9]</sup> Callback handles would allow sender pipelines to consume awaitables without allocation. The core finding (Sections 5-7) rests on normative text; the bridge zeros are what callback handles would add.
+The generic fallback is not the only coroutine path available to a sender. Current wording and published proposals provide multiple ways to select a different awaiter or describe completion behavior.
 
-**"A sender can provide a member `as_awaitable` and skip the `sender-awaitable` phases. No protocol change is needed."** True. `[exec.as.awaitable]` p7 uses a sender's own `as_awaitable` when the sender provides one, and otherwise an awaitable produced by the environment's await-completion adaptor when that is well-formed, before it falls back to constructing the generic `sender-awaitable`. The following is a paraphrase of p7 that omits the two awaiter-passthrough branches:<sup>[10]</sup>
+### A member can return a ready awaiter
 
-```cpp
-// paraphrase of [exec.as.awaitable] p7; adapt is adapt-for-await-completion
-template<class Expr, class Promise>
-decltype(auto) as_awaitable(Expr&& e, Promise& p)
-{
-    if constexpr (requires { e.as_awaitable(p); })
-        return e.as_awaitable(p);                        // (7.1) the sender's own
-    else if constexpr (requires {
-        adapt(transform_sender(e, get_env(p))).as_awaitable(p); })
-        return adapt(transform_sender(e, get_env(p)))
-            .as_awaitable(p);                            // (7.2) the adaptor's
-    else
-        return sender-awaitable{
-            adapt(transform_sender(e, get_env(p))), p};  // (7.4) every phase
-}
-```
+The highest-priority `as_awaitable` branch invokes the expression's own member.<sup>[1]</sup> A `buffered_read_sender` can use that member to return the awaiter above. On a cache hit, no generic connection, receiver, operation state, or result variant is constructed for coroutine consumption.
 
-In `execution::task` with an `inline_scheduler` environment (Section 5), `await_transform` passes the sender to `as_awaitable` unwrapped, and a sender whose `as_awaitable` returns a synchronous awaitable then takes the path of Section 6.<sup>[2]</sup> `connect`, the receiver, `start`, and the `variant` are never instantiated. Only the transform, readiness, and extract phases remain. Under the default environment the sender is first wrapped in `affine_on`, and the member check in `[exec.as.awaitable]` runs on the wrapper rather than on the sender that defines the member.
+The sender exposes both interfaces explicitly. Sender consumers use `connect` and `start`; coroutine consumers use the awaiter returned by `as_awaitable`. The two projections must agree on values, errors, stopped behavior, cancellation, environment, affinity, lifetime, and concurrency.
 
-The affinity bypass and the `as_awaitable` member are independent mechanisms: The first is a property of the task's environment and applies to every awaited sender, the second is per-sender. Only the second reaches `sender-awaitable`, and it is lost under type erasure.
+### Await-completion adaptation is preserved by ordinary unary composition
 
-The synchronous fast path the sender reaches through `as_awaitable` is an awaitable: The sender hands one back, and the awaitable does the work. Closing the gap for one concrete sender, awaited from a coroutine, is one existing customization point returning the three-member struct of Section 6.
+P3570R2 identified that a raw member on a leaf is unavailable after a sender adaptor changes the expression's type.<sup>[6]</sup> The working draft's response is `get_await_completion_adaptor`, a forwarding attribute query applied after domain transformation.<sup>[1]</sup> Standard unary parent senders forward forwarding attributes by default, so an await-completion adaptor can receive the transformed pipeline rather than only the original leaf.
 
-Two costs remain. The `as_awaitable` member is manual and per-sender; a sender that omits it inherits every phase of Section 5. And it is lost under type erasure: `any_sender` erases the concrete sender and the member with it, and `any_sender::connect` materializes the operation state of Section 11.5. Type erasure is the one sender-specific cost no `as_awaitable` member reaches.
+A claim that every `then` necessarily discards await customization is no longer correct. Multi-child parents have empty attributes by default, behavior-changing adaptors may need a different policy, and user-defined wrappers preserve forwarding attributes only when their `get_env` participates in the convention.
 
-The scope is the coroutine consumer. A sender pipeline never enters `as_awaitable`; Section 9 records no protocol phase for either synchronous pipeline cell.
+### Domains can transform the whole expression
 
-**"The protocol cannot know at compile time whether a given co_await will always complete synchronously. The operation state must be constructed because the protocol must handle the general case."** The awaitable protocol handles this case at runtime. `await_ready()` is evaluated at the point of `co_await`: If the result is available, return `true` - no suspension; if work is required, return `false` - suspend. The protocol does not need compile-time knowledge. It asks the operation at the point of evaluation. For senders that are always synchronous (like `inline-sender`), the property is known at compile time - a constexpr trait could express it. The working draft has no such trait; P3206R0<sup>[5]</sup> proposes one and stdexec ships it, and neither is consulted by the working draft's `sender-awaitable::await_ready()` (Section 11.1, Table 4). The "cannot know" argument applies equally to awaitables, yet an awaitable whose `await_ready()` depends on runtime state handles both cases through the same three-member protocol: when ready, no suspension, no operation state, no receiver; when not ready, a suspension until the work completes. One protocol, two behaviors, selected at the point of evaluation.
+`transform_sender` gives completion and start domains the complete sender expression and recursively transforms the result when its type changes.<sup>[1]</sup> An I/O domain can therefore recognize a family of sender expressions and supply a common coroutine representation. This is broader than adding one member to each leaf type.
 
-**"The optimizer eliminates the protocol overhead."** The nested resumption is observable at runtime as stack growth, independent of optimization. When `await_ready()` returns `false`, `await_suspend` calls `start`; for an inline completion, `set_value` calls `resume()` on the coroutine handle from inside `await_suspend`, so the coroutine resumes nested on the same stack, before `await_suspend` returns. That nested resumption is the stack-growth hazard P2583R4<sup>[17]</sup> documents, and it occurs whether or not the optimizer inlines `connect` and `start`. `[exec.as.awaitable]` specifies unconditional suspension for `sender-awaitable`;<sup>[10]</sup> the as-if rule would let an implementation elide it only where nothing observable depends on it, and the one shipped implementation Table 4 surveys, stdexec, does not. Making the skip part of the protocol requires a specification change, which is Section 11.1.
+A transformation that recognizes `then`, `let_value`, or a multi-child operation must preserve the expression's value, error, stopped, environment, cancellation, affinity, and lifetime semantics. The domain centralizes that work without removing it.
 
-**"Operation state construction delivers structured concurrency guarantees."** Genuine for asynchronous operations where the coroutine suspends and work executes concurrently. For a synchronous write where the data is in the string before `co_await` evaluates, there is no concurrent lifetime to manage. The operation state guarantees a property that was never at risk.
+### Completion behavior can be static or dynamic
 
-**"Protocol step counts are not runtime costs."** True for `connect`, `start`, and `set_value` when sender and receiver are fully visible to the optimizer and the optimizer is sufficiently aggressive. Not true for the resumption, which under the working draft's `sender-awaitable` is a nested call inside `await_suspend` regardless of inlining; stdexec's awaiters return the handle instead (Table 4), the shipped awaitable paths resume by symmetric transfer when they suspend, and the fixture and a ready erased stream do not suspend at all. Not true across type-erasure boundaries, where `any_sender::connect` materializes an operation state outside the optimizer's view.
+P3206R0 proposes a sender attribute describing inline, synchronous, asynchronous, or unknown completion.<sup>[5]</sup> The proposal gives standard adaptors explicit combination rules and gives `split` a dynamic result after its shared operation has completed. It therefore demonstrates that an optional runtime attribute does not require a new member on every sender type.
 
-**"Awaitables do not compose into work graphs."** They do, through the bridge. Section 8 shows IoAwaitables consumed by sender pipelines via `as_sender`.<sup>[7]</sup> The sender algebra - `when_all`, `let_value`, `upon_error` - works. The bridge cost is eliminable with P4126R1.<sup>[9]</sup>
+Completion behavior alone does not produce a result. A consumer can use it to select state lifetime, synchronization, trampoline, or coroutine-transfer strategies. A true pre-start fast path still needs an awaiter or another rule that initiates the sender and stores its completion before `[expr.await]` proceeds to `await_resume`.
 
-**"Unconditional suspension is the sound default."** The awaitable protocol solved this in C++20 with a single boolean. `await_ready()` provides the override. The sender protocol has no equivalent conditional path.
+### Already-awaitable senders need no bridge
 
-**"The composed algorithm is sequential - real composition requires parallelism."** Sequential composition over a single stream is expressed as a coroutine loop. Parallel composition across multiple streams - scatter-gather, concurrent requests, fan-out/fan-in - is expressed through the sender algebra via the bridge of Section 8. Sequential I/O composition is the pattern Section 10 names. Each layer is a coroutine composing awaitables, and each inner await that completes synchronously executes the connect, suspend, launch, and complete phases independently under the sender protocol. The multiplier is proportional to the protocol's depth: HTTP over TLS over TCP is three layers of composed coroutines, each with its own `read_some` loop, each iteration incurring the cost independently.
+The sender concepts recognize qualifying awaitables as senders, and `as_awaitable` returns an expression that is already an awaiter before selecting `sender-awaitable`.<sup>[1]</sup> One type can therefore participate in both sets of concepts without passing through the generic fallback.
 
-**"The composed read loop has no cancellation propagation."** Stop tokens propagate transparently through `io_env` - the execution environment bundle passed to every IoAwaitable via `await_suspend(coroutine_handle<>, io_env const*)`.<sup>[1]</sup> Each child operation inherits the caller's stop token without explicit wiring. Every stream operation observes the stop token and may complete early with an operation-cancelled error. The mechanism is defined in P4003R3<sup>[1]</sup>.
+Existing customization paths can avoid the generic bridge, preserve await adaptation through ordinary unary composition, or specialize a whole domain. No current working-draft rule makes branch 7.4 itself inspect per-instance readiness.
 
-**"The bridge concedes the dependency."** The bridge operates in both directions. P4093R1<sup>[7]</sup> bridges IoAwaitables into sender pipelines. P4092R1<sup>[8]</sup> bridges senders into coroutine-native code without `execution::task`. Section 9 shows the cost is asymmetric: If I/O is an awaitable, neither consumer incurs protocol overhead; if I/O is a sender, coroutine consumers incur it.
+## Capability Preservation Under Composition and Erasure
 
-**"The comparison measures the wrong case."** Synchronous completion is not a corner case in I/O. Buffered writes, cached reads, DNS cache hits, and in-memory operations complete synchronously. A protocol that adds cost to the common fast path repeats that cost on every operation on a connection.
+An optional capability matters only where the surrounding abstraction preserves it. Sender attributes, domain transformation, and configurable erased interfaces provide preservation mechanisms, but each boundary has a different rule.
 
-**"Senders retarget via scheduler swap; awaitables require recompilation."** Section 3 demonstrates retargeting by relinking: The linker swaps the object file behind the function table.
+### Composition needs semantic combination
 
-**"The modifications in Section 11 are natural evolution."** Each modification introduces a new mechanism: a readiness query, a second value-delivery path, virtual dispatch for type erasure. The awaitable protocol provides the same capability with three members.
+A standard parent with one child forwards attributes whose queries opt into forwarding.<sup>[1]</sup> This rule preserves `get_await_completion_adaptor` across ordinary unary adaptors. A parent with multiple children has empty attributes by default, because selecting one child's await policy would not describe the combined operation.
 
-**"The type erasure comparison is asymmetric."** Both paths use type erasure at the same boundary. The awaitable path makes four function-table calls when the stream reports ready, five with a symmetric-transfer resume when it suspends, and constructs no operation state; `any_sender` makes its own erased calls to `connect`, `start`, and the completion, and materializes an operation state the compiler cannot see through, in a small buffer or on the heap. The count that separates the two is the allocation, and Section 11.5 measures it.
+P3206R0 specifies that `then` preserves predecessor behavior, `when_all` combines every child conservatively, `let_value` considers every sender the function may return, and `split` can change its answer after shared completion.<sup>[5]</sup> These are semantic rules, not mechanical forwarding.
 
-**"The falsification criteria measure senders on the awaitable's own terms."** The Disclosure names the limitation: Coroutine-native I/O cannot express compile-time work graphs. Section 4 credits senders with three properties awaitables do not match, and Section 9 covers both synchronous and asynchronous I/O. The criteria in Section 13 cover synchronous protocol cost, which is the claim under test.
+User-defined adaptors follow the same preservation rule. A wrapper that follows the standard unary-parent attribute convention preserves forwarding queries. Adding an optional query does not give an existing wrapper with unrelated `get_env` behavior that preservation. Nonparticipating senders remain valid and use the fallback, so the compatibility effect is partial optimization coverage rather than source breakage.
 
-## 13. Falsification
+### Erasure preserves a declared interface
 
-The observations documented in this paper would no longer hold if any of the following were demonstrated:
+A closed erased interface preserves the operations and queries it declares. Current stdexec parameterizes `any_sender` with a list of erased sender queries; the default list is empty.<sup>[21]</sup> An erased wrapper can include a completion-behavior query with a fixed signature. It does not automatically reproduce an arbitrary promise-dependent `as_awaitable` member from the hidden sender.
 
-- A sender protocol mechanism, equivalent to `await_ready`, that skips `connect` and `start` for trivially ready senders without introducing a second value-delivery path.
+A fixed I/O eraser can expose its own outer `as_awaitable`. Capy's public benchmark code contains an erased read sender with both `connect` and `as_awaitable`, while its erased awaitable stream reserves concrete awaiter storage and forwards `await_ready` through a function table.<sup>[22]</sup> These examples establish that erasure itself does not erase readiness when readiness is part of the declared interface.
 
-- A `sender-awaitable` implementation in which `await_ready()` returns `true` when the sender is known to complete synchronously, without requiring `connect` to have already executed. stdexec's inline awaiter (Table 4) defers `connect` and keeps `await_ready()` at `false`, so it does not meet this criterion.
+The fixed stream and a general erased sender solve different storage problems. A fixed stream is defined for one operation family and one result shape, with a storage policy fixed at wrapper construction. A general erased sender accepts compatible sender expressions whose receiver-dependent operation states may have different sizes and alignments.
 
-- A type-erasure mechanism for senders that achieves zero allocations per operation without constructing an operation state and without reintroducing virtual dispatch.
+### Operation state and allocation are independent
 
-## 14. Conclusion
+An operation state can be constructed in caller storage, in a coroutine frame, in an inline erasure buffer, in preallocated storage, or in storage acquired for that operation. Current stdexec requests an inline buffer for its erased operation state and allocates only when the concrete model does not fit its small-buffer criteria.<sup>[21]</sup> Constructing an operation state therefore does not imply allocating it.
 
-For a result already in memory, the sender protocol connects, suspends, launches, completes through a receiver, and resumes nested. The awaitable fixture checks readiness and returns, and the shipped libraries avoid the sender's construction on this path: Capy's erased stream forwards readiness and skips the suspension when the stream reports ready, and Corosio, whose `await_ready` answers only a stop request, suspends and resumes by tail call, at the cost of an inline budget. The gap is in the generic `sender-awaitable` path: `await_ready()` is specified as `false`, `connect` runs in the constructor, and the receiver's `set_value` resumes the coroutine from inside `await_suspend`. Sections 11.1, 11.3, and 11.5 name what would close it - a readiness query consulted before suspension, an extraction path that does not pass through a receiver, and an erased base that returns the value through one virtual call - and each is the sender-side spelling of `await_ready`, `await_resume`, and the function-table call of Section 3.
+An interface containing only sender connection and selected attributes cannot provide an awaiter projection that it omits. Semantic alignment is required when an interface contains both projections.
 
-The per-operation difference is multiplied by composition. Section 10 shows a `read` that loops `read_some` and completes synchronously on every iteration; under the sender protocol each of those iterations constructs and tears down an operation state, and TLS and HTTP each add a loop of their own above it.
+Attribute forwarding preserves compatible queries through ordinary unary boundaries, while behavior-changing composition and closed erasure require explicit semantics.
 
-The two protocols interoperate. IoAwaitables enter sender pipelines through `as_sender`;<sup>[7]</sup> senders enter coroutine-native code through `await_sender`.<sup>[8]</sup> P4126R1's callback handles<sup>[9]</sup> eliminate the bridge's allocation cost. If I/O primitives are awaitables, neither coroutine consumers nor sender-pipeline consumers incur protocol overhead. If I/O primitives are senders, coroutine consumers incur it.
+## Implementations Optimize Inline Completion Without Adding Readiness
 
-The wording that would change this is `[exec.as.awaitable]` and `[task.promise]` in the working draft,<sup>[10]</sup> which came from P2300R10<sup>[12]</sup> and from P3552R3<sup>[2]</sup> with P3941R2;<sup>[3]</sup> a change there is a paper against those sections, reviewed by LEWG. Until the wording changes, a sender awaited from a coroutine carries a suspension and an operation state for a result that is already in memory.
+Two public implementations show that false readiness does not determine generated cost. Their source structures retain sender connection and receiver completion while changing state lifetime and coroutine transfer.
+
+### stdexec selects a statically inline awaiter
+
+At NVIDIA/stdexec commit `2c56ffe7`, both the generic and statically inline sender awaiters return `false` from `await_ready()`.<sup>[21]</sup>
+
+| Source property | Generic stdexec awaiter | Statically inline stdexec awaiter |
+| --- | --- | --- |
+| Selection | Completion behavior is not statically inline for every possible channel | Every possible channel is absent or reports inline completion |
+| Stored before `await_suspend` | Connected operation state and thread-ID handshake | Sender |
+| `connect` | Awaiter constructor | Local to `await_suspend` |
+| `start` | `await_suspend` | `await_suspend` |
+| Coordination | Atomic thread-ID exchange and cross-thread defense | No atomic handshake member |
+| Transfer from `await_suspend` | Continuation or `noop_coroutine` | Selected continuation |
+
+Table 3. The source-level differences between stdexec's generic and statically inline sender awaiters at commit `2c56ffe7`. The table describes code structure rather than optimizer output or latency.
+
+The specialized path relies on completion behavior that establishes that the local operation state cannot outlive `await_suspend`. It then connects, starts, and returns the continuation. This removes the generic handshake without making readiness true, skipping the operation state, or bypassing receiver completion.
+
+stdexec's deployed completion behavior is compile-time and per completion channel.<sup>[21]</sup> A missing query produces `unknown`; `just`, `just_error`, and `just_stopped` publish inline behavior. This implementation is narrower than P3206R0's dynamic `split` result.<sup>[5]</sup>
+
+### Beman.Execution uses one guarded path
+
+At Beman.Execution commit `a20a6f63`, `sender_awaitable` connects in its constructor, reports false readiness, starts in `await_suspend`, and coordinates completion with an atomic Boolean.<sup>[23]</sup> Inline completion causes `await_suspend` to return the continuation; pending completion returns `noop_coroutine` and later resumes the continuation.
+
+Beman's `inline_scheduler` calls `set_value` directly from `start`, but its attributes do not report completion behavior at that revision.<sup>[23]</sup> On 2026-09-07, a complete snapshot at commit `a20a6f63` was scanned case-insensitively for `completion_behavior`, `completion behavior`, `completes_inline`, `any_sender`, and `any_receiver`; no match occurred. This search establishes exact token absence in that revision, not semantic absence under every possible name. The inline sender uses the same guarded awaiter.
+
+### Source structure is not a performance measurement
+
+The source establishes where connection and start occur, which state is stored, which abstract-machine atomics are present, and which coroutine handle is returned. It does not establish instruction counts, latency, cache effects, devirtualization, or whether a particular erased operation allocates.
+
+Both implementations also avoid the working draft's direct nested `.resume()` for completion discovered during `start`. They return a continuation handle from `await_suspend`, providing symmetric transfer at the coroutine boundary. The protocol operation is symmetric transfer; a compiler may implement it as a tail transfer.
+
+stdexec demonstrates a lower-state path for statically inline completion without demonstrating per-instance pre-start readiness in the generic fallback.
+
+## Objections Define the Scope
+
+The objections below separate sender execution from pre-start readiness, identify repairs the finding permits, and exclude consumers that never enter the coroutine bridge.
+
+### "Senders already support synchronous I/O"
+
+The working draft permits completion during `start`, `inline_scheduler` completes that way, and P2300R10's `recv_sender` covers immediate and pending `WSARecv` outcomes with one sender type whose operation state resolves the difference in `start`.<sup>[1]</sup><sup>[3]</sup> Those mechanisms expose completion timing through a receiver. They do not give branch 7.4 a different answer to `await_ready`.
+
+### "Immediate I/O completion is normally discovered only after initiation"
+
+Immediate completion of overlapped `WSARecv` becomes known only during initiation.<sup>[18]</sup> An awaiter for that operation initiates from its own `await_suspend`, while a sender initiates from the `start` of the operation state that `connect` returns. The pre-start advantage applies to higher-level user-space buffering and cached results, not to every operation that might complete immediately.
+
+### "The generic bridge can be repaired without changing the sender concept"
+
+stdexec's specialized awaiter moves connection into `await_suspend`, avoids the generic atomic handshake, and returns a continuation handle.<sup>[21]</sup> A working-draft change could adopt that structure without changing the base sender concept.
+
+Such a repair addresses state lifetime, coordination, and transfer after false readiness. It does not add a query to the generic bridge for whether this sender object already contains a result. The distinction is semantic rather than a claim that the current bridge cannot improve.
+
+### "P3206R0 can return runtime completion behavior"<sup>[5]</sup>
+
+P3206R0 gives `split` a dynamic answer after shared completion and proposes combination rules for standard adaptors.<sup>[5]</sup> An optional query would leave existing senders valid and could provide incremental optimization wherever preserved.
+
+P3206R0 describes when receiver completion occurs relative to `start`; it does not specify how a coroutine obtains a value when connection and receiver completion are skipped.<sup>[5]</sup> The proposed query is also absent from the current generic bridge. A future bridge could initiate from `await_ready` or select another awaiter, but that design would add wording beyond the adopted path.
+
+### "Forwarding queries and domains avoid per-sender customization"
+
+The await-completion adaptor query forwards through ordinary unary standard adaptors, and a domain can transform a complete expression before awaiter selection.<sup>[1]</sup><sup>[6]</sup> These facilities refute a claim that every concrete sender needs its own member.
+
+Behavior-changing adaptors still need semantics for the transformed expression, multi-child parents need a combination policy, and closed erasure needs an interface entry. Centralizing the policy in a domain reduces duplication while retaining the translation boundary.
+
+### "Every co_await operand becomes an awaiter"
+
+Producing an awaiter is the required translation target, so the presence of an awaiter does not establish which native protocol an I/O API ought to expose. The relevant difference is whether the leaf already implements the language-facing readiness and extraction operations or reaches them after sender transformation, adaptation, connection, and receiver completion.
+
+### "One operation can expose both sender and awaitable projections"
+
+The member `as_awaitable` path, qualifying awaitables recognized as senders, and fixed dual-protocol erasure all support this design.<sup>[1]</sup><sup>[22]</sup> A dual projection can serve sender pipelines and coroutine consumers from one underlying operation implementation.
+
+The design has a larger contract than either projection alone. Values, errors, cancellation, stopped behavior, affinity, environment, lifetime, and concurrency must remain equivalent across both public paths.
+
+### "Protocol steps do not establish runtime overhead"
+
+The stdexec specialization retains false readiness, connection, an operation state, `start`, receiver completion, and extraction while removing a synchronization protocol from its source.<sup>[21]</sup> Runtime claims require controlled measurements and generated-code inspection for the implementation and erasure boundary being discussed.
+
+The normative evidence establishes wording requirements and observable control-flow rules; it does not establish runtime cost.
+
+### "Pending operations need state in either model"
+
+A pending `WSARecv` needs stable buffers, overlapped state, cancellation state, and a continuation.<sup>[18]</sup> A sender places those objects in an operation state; an awaiter can place equivalent objects in the coroutine frame or another stable owner. Neither model has a state advantage once the operation remains pending.
+
+### "Skipping every suspension can harm fairness"
+
+A long chain of ready operations can delay other work. An executor or I/O context may impose an inline-completion budget or scheduling boundary. That policy is independent of whether the leaf protocol can observe readiness; a ready path makes the decision available to the execution policy.
+
+### "Sender-native consumers never pay for sender-to-awaitable translation"
+
+A sender pipeline, direct receiver, scope, or `sync_wait` consumer never enters `as_awaitable`. Conversely, an awaitable leaf crossing into a sender pipeline needs an awaitable-to-sender bridge, and published bridge designs have their own continuation and storage requirements.<sup>[15]</sup><sup>[16]</sup>
+
+Only coroutine-centric I/O leaves are covered. Sender-native work graphs are outside the comparison, and no leaf protocol is claimed to minimize every consumer's cost.
+
+The objections narrow the comparison to coroutine-centric I/O with results available before initiation. Sender-native consumers and completion discovered only during initiation remain outside that boundary.
+
+## Conclusion
+
+Buffered I/O needs an object-specific decision before suspension. The awaiter interface exposes that decision through readiness, conditional initiation, and extraction. A sender-valued leaf first presents a graph-construction protocol, which `execution::task` translates before the language can consume it.
+
+The sender model's graph, completion, ownership, environment, domain, and concurrency facilities remain available to sender-native consumers. At a coroutine leaf, the generic bridge reports false readiness for every instance.
+
+The current wording provides concrete alternatives to the generic fallback. A member, forwarding await-completion adaptor, or domain transformation can supply another awaiter; P3206R0 sketches static and dynamic completion behavior;<sup>[5]</sup> a fixed erased interface can retain either facility when it declares it. Those mechanisms correct claims that customization is always per-leaf, that optional attributes are ineffective, or that erasure necessarily loses readiness. Behavior-changing composition needs combination rules, closed erasure needs an interface entry, and dual projections need one semantic contract.
+
+Implementations can improve the false-ready path without adding readiness. stdexec moves connection and start into `await_suspend` for statically inline senders, removes its generic handshake, and returns the continuation.<sup>[21]</sup> Beman uses one guarded path.<sup>[23]</sup> These structures demonstrate that named protocol steps do not determine runtime cost.
+
+On the stated criteria, direct implementation of the language-facing awaiter makes awaitables the natural leaf protocol for coroutine-centric I/O. A sender-valued interface introduces a second composition model before reaching the same language boundary, while its generic translation omits the object-specific pre-start decision. Sender pipelines can consume awaitable leaves through an explicit bridge when static graphs or sender-native concurrency are required. Designers of future networking libraries, task implementations, domains, and erased wrappers can use the boundary documented here to choose the primary protocol and its adapter.
 
 ## Disclosure
 
 The author provides information and serves at the pleasure of the committee.
 
-The author developed and maintains [Capy](https://github.com/cppalliance/capy)<sup>[11]</sup> and [Corosio](https://github.com/cppalliance/corosio)<sup>[15]</sup>, coroutine-native I/O libraries under the C++ Alliance.
+The author developed and maintains [Capy](https://github.com/cppalliance/capy)<sup>[22]</sup> and [Corosio](https://github.com/cppalliance/corosio)<sup>[24]</sup>, coroutine-native I/O libraries under the C++ Alliance.
 
-This paper documents the protocol-level cost difference between awaitables and senders when I/O operations complete synchronously.
+The paper records a finding about the protocol boundary used when coroutine-centric I/O returns sender-valued operations.
 
-Capy and Corosio implement I/O using the coroutine-native model. They compete with sender-based networking frameworks. The author advocates for the coroutine-native model. The sender model is the competing paradigm examined in this paper. The author has a stake in the coroutine model's adoption.
+Capy and Corosio use awaitable-native I/O. The author advocates the awaitable-native model and has a professional interest in its adoption.
 
-The write-side readiness forwarding described in Sections 3 and 6 is recent: Capy commit `9200ddc` (August 2026), applied during the drafting of this paper, aligned `any_write_stream` with the immediate-completion behavior its documentation and the read-side wrapper already specified. The core finding does not rest on that path; the fixture and the normative sender text carry it.
+The comparison does not measure a complete networking framework. It does not rank sender-native consumers, and it presents no benchmark result. Awaitable leaves also require an adapter when consumed by a sender pipeline.
 
-Coroutine-native I/O cannot express compile-time work graphs. This is a genuine limitation.
+This paper belongs to the Network Endeavor series. Companion papers include P4003R3 on IoAwaitable,<sup>[13]</sup> P4092R1 and P4093R1 on both bridge directions,<sup>[14]</sup><sup>[15]</sup> P4126R1 on callback handles,<sup>[16]</sup> and P2583R4 on symmetric transfer through sender composition.<sup>[11]</sup>
 
-This paper belongs to the Network Endeavor series. Companion papers in the series include P4003R3<sup>[1]</sup> (the IoAwaitable protocol), P4088R1<sup>[6]</sup> (coroutine advantages for stream I/O), P4093R1<sup>[7]</sup> (awaitable-to-sender bridge), P4092R1<sup>[8]</sup> (sender-to-awaitable bridge), P4126R1<sup>[9]</sup> (callback handles for zero-cost bridging), and P2583R4<sup>[17]</sup> (symmetric transfer in sender pipelines).
+The method compares public working-draft wording, published WG21 papers, official operating-system documentation, and source pinned to immutable public repository commits. No benchmark result is used.
 
-This paper was drafted and revised with machine assistance (Claude), under the author's direction; the technical claims were verified against the cited sources and repositories.
+The paper was drafted and revised with machine assistance under the author's direction. Every quotation and technical claim is subject to verification against the cited public source.
 
 This paper asks for nothing.
 
 ## Acknowledgments
 
-Eric Niebler, Kirk Shoop, Lewis Baker, and their collaborators for `std::execution` and the sender algebra. Dietmar K&uuml;hl and Maikel Nadolski for [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[2]</sup> (`std::execution::task`). Dietmar K&uuml;hl for reviewing an earlier draft and remarking that the sender example was wrong. Investigating that remark led to a closer reading of P3552R3's `await_transform` and of the environment-level affinity bypass in `[task.promise]` (p10 in P3552R3, p6 in the working draft), which informed the task configuration used in Section 5. Robert Leahy for the AIO-to-sender bridge.
+Eric Niebler, Lewis Baker, Kirk Shoop, and the P2300R10 authors specified the sender model and published the Windows receive example used to distinguish completion during initiation. Dietmar K&uuml;hl and Maikel Nadolski specified `execution::task` and its scheduler-affinity integration. Fabio Fracassi documented the composition problem that motivated the await-completion adaptor. Dalton M. Woodard and Maikel Nadolski developed the public completion-timing classifications examined here. Mungo Gill, Steve Gerbino, and Klemens Morgenstern developed the companion coroutine and bridge analyses.
 
 ## References
 
-[1] [P4003R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4003r3.pdf) - "A Minimal Coroutine Execution Model" (Vinnie Falco, Steve Gerbino, Mungo Gill, 2026).
+[1] [N5054](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/n5054.pdf) - "Working Draft, Programming Languages - C++" (Thomas K&ouml;ppe, 2026).
 
 [2] [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html) - "Add a Coroutine Task Type" (Dietmar K&uuml;hl, Maikel Nadolski, 2025).
 
-[3] [P3941R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3941r2.html) - "Scheduler Affinity" (Dietmar K&uuml;hl, 2026).
+[3] [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html) - "`std::execution`" (Micha&#322; Dominiak, Georgy Evtushenko, Lewis Baker, Lucian Radu Teodorescu, Lee Howes, Kirk Shoop, Michael Garland, Eric Niebler, Bryce Adelstein Lelbach, 2024).
 
-[4] [P3796R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3796r1.html) - "Coroutine Task Issues" (Dietmar K&uuml;hl, 2025).
+[4] [P2257R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2257r0.html) - "Blocking is an insufficient description for senders and receivers" (Dalton M. Woodard, 2020).
 
 [5] [P3206R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3206r0.pdf) - "A sender query for completion behaviour" (Maikel Nadolski, 2025).
 
-[6] [P4088R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4088r1.pdf) - "What C++20 Coroutines Already Buy The Standard" (Vinnie Falco, 2026).
+[6] [P3570R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3570r2.html) - "optional variants in sender/receiver" (Fabio Fracassi, 2025).
 
-[7] [P4093R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r1.pdf) - "Producing Senders from Coroutine-Native Code" (Vinnie Falco, Steve Gerbino, 2026).
+[7] [P3796R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3796r1.html) - "Coroutine Task Issues" (Dietmar K&uuml;hl, 2025).
 
-[8] [P4092R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r1.pdf) - "Consuming Senders from Coroutine-Native Code" (Vinnie Falco, Steve Gerbino, 2026).
+[8] [P3941R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3941r4.html) - "Scheduler Affinity" (Dietmar K&uuml;hl, 2026).
 
-[9] [P4126R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4126r1.pdf) - "A Universal Continuation Model" (Vinnie Falco, Klemens Morgenstern, 2026).
+[9] [P0913R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0913r1.html) - "Add symmetric coroutine control transfer" (Gor Nishanov, 2018).
 
-[10] [N5054](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/n5054.pdf) - "Working Draft, Programming Languages &mdash; C++" (Thomas K&ouml;ppe, 2026).
+[10] [P1056R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1056r1.html) - "Add lazy coroutine (coroutine task) type" (Lewis Baker, Gor Nishanov, 2018).
 
-[11] [Capy](https://github.com/cppalliance/capy) (C++ Alliance, 2025).
+[11] [P2583R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2583r4.pdf) - "Symmetric Transfer and Sender Composition" (Mungo Gill, Vinnie Falco, 2026).
 
-[12] [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html) - "std::execution" (Micha&lstrok; Dominiak, Georgy Evtushenko, Lewis Baker, Lucian Radu Teodorescu, Lee Howes, Kirk Shoop, Michael Garland, Eric Niebler, Bryce Adelstein Lelbach, 2024).
+[12] [P3801R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3801r0.html) - "Concerns about the design of std::execution::task" (Jonathan M&uuml;ller, 2025).
 
-[13] [NVIDIA/stdexec](https://github.com/NVIDIA/stdexec) - "A reference implementation of `std::execution`" (NVIDIA, 2021).
+[13] [P4003R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4003r3.pdf) - "A Minimal Coroutine Execution Model" (Vinnie Falco, Steve Gerbino, Mungo Gill, 2026).
 
-[14] [P3149R11](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3149r11.html) - "async_scope &ndash; Creating scopes for non-sequential concurrency" (Ian Petersen, Jessica Wong, 2025).
+[14] [P4092R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r1.pdf) - "Consuming Senders from Coroutine-Native Code" (Vinnie Falco, Steve Gerbino, 2026).
 
-[15] [Corosio](https://github.com/cppalliance/corosio) (C++ Alliance, 2026).
+[15] [P4093R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r1.pdf) - "Producing Senders from Coroutine-Native Code" (Vinnie Falco, Steve Gerbino, 2026).
 
-[16] [P0159R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0159r0.html) - "Draft of Technical Specification for C++ Extensions for Concurrency" (Artur Laksberg, 2015).
+[16] [P4126R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4126r1.pdf) - "A Universal Continuation Model" (Vinnie Falco, Klemens Morgenstern, 2026).
 
-[17] [P2583R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2583r4.pdf) - "Symmetric Transfer and Sender Composition" (Mungo Gill, Vinnie Falco, 2026).
+[17] [P3149R11](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3149r11.html) - "`async_scope` - Creating scopes for non-sequential concurrency" (Ian Petersen, Jessica Wong, 2025).
+
+[18] [WSARecv](https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsarecv) - "WSARecv function (winsock2.h)" (Microsoft, 2018).
+
+[19] [SetFileCompletionNotificationModes](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setfilecompletionnotificationmodes) - "SetFileCompletionNotificationModes function (winbase.h)" (Microsoft, 2018).
+
+[20] [WSAEventSelect](https://learn.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-wsaeventselect) - "WSAEventSelect function (winsock2.h)" (Microsoft, 2018).
+
+[21] [NVIDIA/stdexec](https://github.com/NVIDIA/stdexec/tree/2c56ffe7f8a2b8b5221918159092be379ae8b40f) - "`std::execution` reference implementation" (NVIDIA, 2026).
+
+[22] [Capy](https://github.com/cppalliance/capy) - "C++20 coroutine I/O foundation and sender benchmarks" (C++ Alliance, 2026).
+
+[23] [Beman.Execution](https://github.com/bemanproject/execution/tree/a20a6f636be4e8d0588521670a178f342695ece8) - "`std::execution` implementation" (Beman Project, 2026).
+
+[24] [Corosio](https://github.com/cppalliance/corosio) - "Coroutine-native networking library" (C++ Alliance, 2026).
