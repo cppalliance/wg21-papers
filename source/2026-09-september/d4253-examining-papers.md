@@ -39,13 +39,13 @@ This analysis provides four contributions:
 
 P3373R4<sup>[1]</sup> supplies the operation-state tradeoff. P1179R1<sup>[2]</sup> supplies established vocabulary for owners and non-owning pointer-like values. P2300R10<sup>[3]</sup> explains the intended `let_value` lifetime of persisted result objects. The current working draft, versioned I/O documentation, and pinned implementation sources supply the remaining evidence.
 
-Three assumptions bound the result. The code-equivalent wording of N5054, the current working draft, is the normative baseline.<sup>[4]</sup> A non-owning descriptor does not extend its referent's lifetime. The asynchronous successor eventually accesses the referenced bytes. No frequency claim about deployed programs follows from the constructed case.
+Three assumptions bound the result: The code-equivalent wording of N5054, the current working draft, is the normative baseline; a non-owning descriptor does not extend its referent's lifetime; and the asynchronous successor eventually accesses the referenced bytes. No frequency claim about deployed programs follows from the constructed case.
 
 ## 1. Earlier Predecessor Destruction Provides Reusable Storage
 
 P3373R4 addresses two child operation states in the `let_*` adaptors: a predecessor and a successor created by a user-supplied factory. The operations do not overlap. Retaining both states until the containing operation ends consumes their combined storage even though only one is active at a time.<sup>[1]</sup>
 
-The adopted design persists the predecessor's result datums, ends the predecessor operation-state lifetime, and then constructs the successor. This permits the two child states to share storage. P3373R4 also records a resource-lifetime benefit: An object held in the predecessor state can release a lock or another resource when that suboperation completes instead of when the containing operation is destroyed.<sup>[1]</sup>
+The adopted design persists the predecessor's result datums, ends the predecessor operation-state lifetime, and then constructs the successor. This permits the two child states to share storage. P3373R4 also records a resource-lifetime benefit: An object held in the predecessor state can release a lock or another resource when that suboperation completes, instead of when the containing operation is destroyed.<sup>[1]</sup>
 
 The tradeoff is explicit in P3373R4.<sup>[1]</sup> Longer predecessor lifetimes make accesses into predecessor state remain valid, while earlier destruction makes more of those accesses undefined. The selected rule applies the earlier lifetime to `let_value`, `let_error`, and `let_stopped`, where storage reuse provides a concrete reduction. N5047 records application of P3373R4 to the working paper as LWG Poll 10.<sup>[5]</sup>
 
@@ -81,7 +81,7 @@ auto& op = ops.template emplace<op_t>(emplace-from{mkop2});
 start(op);
 ```
 
-`variant::emplace` destroys the active alternative before constructing its replacement.<sup>[4]</sup> The first `ops.emplace` therefore destroys the predecessor operation state after the result copies exist but before the factory is invoked.
+`variant::emplace` destroys the active alternative before constructing its replacement.<sup>[4]</sup> The first `ops.emplace` therefore destroys the predecessor operation state after the result copies exist, but before the factory is invoked.
 
 For default `let_value`, the adaptor wording defines the C++ object-lifetime boundary independently of the completion signal.
 
@@ -233,7 +233,7 @@ auto safe_value =
         });
 ```
 
-The successor depends on the vector stored in `let_value::args`. The destroyed `just` operation state owns no required storage. P2300R10 describes this use of `let_value`: the persisted sent object remains alive until the sender returned by the factory completes.<sup>[3]</sup>
+The successor depends on the vector stored in `let_value::args`. The destroyed `just` operation state owns no required storage. P2300R10 describes this use of `let_value`: The persisted sent object remains alive until the sender returned by the factory completes.<sup>[3]</sup>
 
 The second placement stores the owner in the factory. P3373R4 deliberately leaves the callable alive because successor operations can depend on its captures.<sup>[1]</sup>
 
@@ -297,11 +297,11 @@ Two public implementations provide evidence about the transition. They agree tha
 
 The libunifex implementation cited by P3373R4<sup>[1]</sup> constructs a decayed result tuple, destroys `predOp_`, invokes the factory, connects the returned sender, and starts the successor.<sup>[14]</sup> Its source comment states that `predOp_` is destroyed first to make room for the successor operation. This order matches the adopted wording.
 
-NVIDIA stdexec at commit `2c56ffe7` invokes the factory while the predecessor owner remains alive, then replaces the predecessor before connecting and starting the successor.<sup>[15]</sup> A test named for destruction before factory invocation checks that a captured `shared_ptr` still has use count 2 inside the factory and has use count 1 after `start`.<sup>[16]</sup> The observed test condition documents the implementation order even though its name describes the standard order.
+NVIDIA stdexec at commit `2c56ffe7` invokes the factory while the predecessor owner remains alive, then replaces the predecessor before connecting and starting the successor.<sup>[15]</sup> A test named for destruction before factory invocation checks that a captured `shared_ptr` still has use count 2 inside the factory and has use count 1 after `start`.<sup>[16]</sup> The observed test condition documents the implementation order, even though its name describes the standard order.
 
 ### 8.1. The Normative Finding Does Not Depend on Either Ordering
 
-The code-equivalent wording controls the standard result: the predecessor is destroyed before the factory. A synchronous access to predecessor-owned bytes inside the factory can therefore be undefined under the wording while appearing to work in the pinned stdexec implementation.
+The code-equivalent wording controls the standard result: The predecessor is destroyed before the factory. A synchronous access to predecessor-owned bytes inside the factory can therefore be undefined under the wording, while appearing to work in the pinned stdexec implementation.
 
 The asynchronous I/O witness places the access later. In libunifex, the owner is gone before the factory. In the pinned stdexec implementation, the factory first returns an Asio sender containing the descriptor, then predecessor replacement destroys the owner before successor connection and start. The referenced bytes have expired in both implementations by the time the asynchronous child can access them.
 
@@ -309,7 +309,7 @@ The implementation comparison therefore bounds two claims. Factory-time behavior
 
 ## 9. Expected Objections Bound the Finding
 
-The constructed case admits direct objections. Four concern whether the program already violates an ordinary borrowing discipline. Four concern the scope of what follows from one default adaptor.
+The constructed case admits direct objections. Four concern whether the program already violates an ordinary borrowing discipline, and four concern the scope of what follows from one default adaptor.
 
 ### "The Predecessor Never Promised That Its Borrow Would Survive Completion"
 
@@ -329,7 +329,7 @@ The span type identifies the risk category. It does not identify whether the ref
 
 ### "This Is Ordinary C++ Dangling-View Behavior"
 
-The underlying object-lifetime rule is ordinary C++. The additional fact is where the owner dies. In the sender witness, the owner is nested in an operation state and its destruction is prescribed by the following adaptor rather than by a lexical block boundary.
+The underlying object-lifetime rule is ordinary C++. The additional fact is where the owner dies. In the sender witness, the owner is nested in an operation state and its destruction is prescribed by the following adaptor, rather than by a lexical block boundary.
 
 ### "Putting the Owner in `let_value` Solves the Problem"
 
@@ -363,7 +363,7 @@ The five directions differ in ownership visibility, static storage reuse, generi
 
 ## 11. Conclusion
 
-Non-owning buffers are representable in sender completions, and `let_value` safely sequences I/O when the buffer owner resides in state that survives the successor. The adopted P3373R4 transition first persists the buffer descriptor, then destroys the predecessor operation state, then invokes the successor factory. When the destroyed state owns the descriptor's referent, an ordinary `set_value_t(std::span<std::byte>)` completion signature does not distinguish that dangling result from an equal signature whose referent remains alive. The resulting adaptor-specific ownership boundary is consequential for I/O while sender/receiver remains capable of representing I/O.
+Non-owning buffers are representable in sender completions, and `let_value` safely sequences I/O when the buffer owner resides in state that survives the successor. The adopted P3373R4 transition first persists the buffer descriptor, then destroys the predecessor operation state, then invokes the successor factory. When the destroyed state owns the descriptor's referent, an ordinary `set_value_t(std::span<std::byte>)` completion signature does not distinguish that dangling result from an equal signature whose referent remains alive. The resulting adaptor-specific ownership boundary is consequential for I/O, while sender/receiver remains capable of representing I/O.
 
 The record also identifies the tradeoff that produced the boundary. Earlier destruction permits predecessor and successor states to reuse storage and releases predecessor-held resources sooner. Longer lifetime preserves predecessor-owned borrows. Library authors can place owners in surviving state, domain authors can select different transformations, and lifetime-analysis tools can seek the owner relation that the ordinary descriptor type omits. Each builds on a separate part of the evidence rather than on a claim that one representation fits every asynchronous domain.
 
