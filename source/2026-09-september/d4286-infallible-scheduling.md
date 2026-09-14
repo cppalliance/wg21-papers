@@ -1,5 +1,5 @@
 ---
-title: "The Return of Networking TS Executors in P3552"
+title: "Infallible Schedulers: What Unconditional Task Affinity Costs"
 document: P4286R0
 date: 2026-09-01
 intent: info
@@ -10,7 +10,9 @@ reply-to:
 
 ## Abstract
 
-The executor property rejected in 2021 returned in 2026 as a requirement. In 2021, the committee set aside the Networking TS; one stated deficiency was that its executors had no way to report a failure. In 2026, `std::execution::task` requires that the schedulers driving it lack any way to report a failure. The prohibition is the same in both. This paper traces the path from one to the other through the distinction between scheduling work and scheduling a continuation. P4094R1, P4095R1, and P4096R1 identified that distinction before P3941R4 established the infallibility requirement. P3941R4 confirms the framing analysis.
+Making scheduler affinity checkable at compile time bars the working draft's thread pool scheduler from the role a `task` resumes on, and removes the error channel of two other schedulers from every algorithm.
+
+A `task` coroutine promises that it resumes on the execution agent it suspended on, and `affine_on`, the adaptor that carries it back, can fail at three points. Two mechanisms close one of those points, the return step itself: a concept that excludes an error completion, and an unstoppable receiver that excludes a stopped one. So what a caller gives up is the ability to observe a failed return trip rather than a failed `co_await`. Because `parallel_scheduler` is expected to stay fallible, it cannot be the scheduler a `task` resumes on, though a task can still reach the pool by awaiting work sent to it. Only the concept check is confined to that role. The constructor mandate on `task_scheduler` and the signature rewrites that make it and `run_loop`'s scheduler admissible reach programs that never name a coroutine, and both schedulers lose `set_error` in every environment and so in every algorithm, `on` and `sync_wait` included.
 
 ---
 
@@ -22,138 +24,196 @@ The executor property rejected in 2021 returned in 2026 as a requirement. In 202
 
 ---
 
-## 1. The Diagnosis
+## Introduction
 
-Two papers, six years apart, diagnosed the same deficiency in the executor model. In 2019, [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[1]</sup> examined the one-way executor concept of the unified executors proposal<sup>[2]</sup>, whose basis operation accepted a callable and returned nothing:
+[P3941R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3941r4.html)<sup>[1]</sup> constrains the scheduler that a `task` coroutine resumes on. The scheduling operation that returns the coroutine to its own execution agent may declare no error completion, and compilation rejects a scheduler that declares one. Section 1 locates that constraint inside the operation, section 2 states how the closure is encoded and how far the encoding reaches, and section 3 enumerates the cost. Section 4 answers the objections the result raises.
 
-```cpp
-void execute(F&& f);
-```
+The sender/receiver model answered a deficiency that three documents had named in the one-way executor: a failure between submission and execution with no channel on which to report it. [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[2]</sup> named it in 2019, [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html)<sup>[3]</sup> named it in its own section 1.4 in 2020, and [P2464R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2464r0.html)<sup>[4]</sup> named it for the Networking Technical Specification (TS) in 2021. [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[5]</sup> made every completion an operation declares part of its type, which is the general answer. [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[6]</sup> adds `task`, a coroutine type that resumes on the scheduler it suspended on, and P3941R4 supplies the constraint that guarantee needs. [P4151R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4151r1.pdf)<sup>[7]</sup> proposes a new name for the adaptor named `affine_on` in its sources, which is the name used throughout here.
 
-The first deficiency the paper named was error propagation. Errors arising during or after submission were handled, it observed, in an implementation-defined manner that varied from one executor to the next:
+Contributions:
 
-> "The implication is that no generic code can respond to asynchronous errors in a portable way."
+1. The three points at which an `affine_on` operation can fail, which one P3941R4 closes, the two separate mechanisms that close it, and the execution agent that delivers each completion that survives.
+2. The encoding of the constraint as three changes of two reaches: a concept check confined to `affine_on`'s start scheduler, and two changes that are not confined to it, the constructor mandate on `task_scheduler` and the signature rewrites that remove `set_error` from two standard schedulers in every algorithm.
+3. The cost P3941R4 records: the standard scheduler it expects to fail the constraint, the two schedulers that give up their error completions to meet it, the opt-out that does not exist for a coroutine needing a fallible scheduler, and the mechanism `task` would need before the constraint could be relaxed.
 
-In 2021, [P2464R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2464r0.html)<sup>[3]</sup>, written on behalf of the Finnish national body, applied the same standard to the Networking TS and identified three deficiencies. The first was the absence of an error channel. In October 2021, LEWG polled electronically on the Networking TS ([P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[4]</sup>). The poll on discontinuing the TS reached no consensus. A second poll on basing networking on the sender/receiver model reached weak consensus in favor, and the committee's asynchronous work moved toward P2300. The Networking TS was set aside, and a missing error channel led the list of reasons.
+Assumptions:
 
-## 2. The Framing
+1. P3941R4's stated rationale is taken at its word. The constraint exists so that `affine_on` can guarantee scheduler affinity.
+2. P3941R4's proposed wording is read as proposed, against the working draft it targets.
+3. The completion signatures of an operation are the interface generic code programs against, so a failure absent from that set is a failure generic code cannot handle.
 
-Why was the missing channel a deficiency? [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf)<sup>[5]</sup> documents that `execute(F&&)` replaced three older primitives (`dispatch`, `post`, and `defer`) that scheduled a continuation rather than submitting work. The replacement was the executor unification itself: P0443 reconciled the Networking TS executors descended from Kohlhoff's Asio with the parallel algorithms executors and collapsed both into a single `execute(F&&)`. The framing determines whether the missing channel is a defect. Two readings of the same signature follow. Under the work framing, the callable is a unit of work, the caller is still running, and a missing error channel strands any failure. Under the continuation framing, the callable is a resumption handle, the caller has suspended or returned, and no live caller is waiting to receive an error.
+## 1. An `affine_on` Operation Can Fail at Three Points and Report Two
 
-[P4095R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4095r1.pdf)<sup>[6]</sup> and [P4096R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4096r1.pdf)<sup>[7]</sup> show that both P1525R0 and P2464R0 analyzed the operation under the work framing alone. P4094R1, P4095R1, and P4096R1 predate P3941R4. The continuation framing, Kohlhoff's original definition in [P0113R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0113r0.html)<sup>[8]</sup>, was already absent from the API surface when each paper was written.
+`affine_on` is the adaptor through which a `task` returns to its own scheduler after a `co_await`. The constraint P3941R4 adds closes one point in that adaptor and leaves two open, so this section locates all three before section 2 states how the closure is encoded.
 
-P1525R0's own definition confirms the framing it assumed:
+P3941R4 provides more than the constraint. It supplies `get_start_scheduler`, a query that yields the scheduler an operation was started on, and it makes that scheduler a requirement rather than an inference. It changes the shape of `affine_on`, which previously took the scheduler as a second argument. It removes `change_coroutine_scheduler`, whose scheduler changes persisted to the end of the coroutine. It adds a `transform_sender` customization that lets `affine_on` elide the scheduling operation entirely for senders known to complete on the agent they started on, so for such an await none of the failure points below need arise. The permission is soft: The wording leaves it unspecified whether a standard sender offers the member the elision keys on, and names `just`, `just_error`, `just_stopped`, `read_env`, and `write_env` only under Recommended Practice. Between them those changes answer five United States national body comments on `affine_on`, US 232-366, 233-365, 234-364, 235-363, and 236-362, whose underlying issues [P3796R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3796r1.html)<sup>[8]</sup> discusses.
 
-> "For the purpose of this document, by 'one-way execute,' we mean a void-returning function that accepts a nullary Invocable and eagerly submits it for execution on an execution agent that the executor creates for it."<sup>[1]</sup>
+Where P3552R3 wrote `affine_on(sndr, sch)`, P3941R4 strikes the scheduler parameter and obtains the scheduler from the receiver instead, through `get_start_scheduler` (sections 3.1, 3.2, and 3.8). The operation therefore has a child sender and a scheduling operation built from the start scheduler, connected to two internal receivers: one that stores the child's result and starts the scheduling operation, and one for the scheduling operation whose stop token is unstoppable. The stored result is forwarded to the external receiver at the end.
 
-"Eagerly submits." "Execution agent that the executor creates." Both phrases describe submitting work to a newly created agent, not resuming a caller that has suspended. The continuation primitives that `execute` replaced (`dispatch`, `post`, `defer`) do not appear in P1525R0. [P0688R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0688r0.html)<sup>[9]</sup> had removed them from the API surface two years earlier, retaining the continuation semantics only as an optional `prefer(is_continuation)` hint. By the time P1525R0 analyzed the operation, the framing was documented in P0113R0 but no longer visible in the signature.
+Section 3.6 specifies the order in which those pieces run. The scheduling operation state is created when `affine_on` is connected, before any work starts, so a failure to build it is reportable: The main work has not started and the agent has not changed. P3941R4 draws that consequence in section 3.3, writing that when `connect(schedule(sch), rcvr)` throws, "`affine_on` can avoid starting the main work and fail on the execution agent where it was started". The child is then started on the current agent, and two consecutive items of section 3.6's enumeration state what follows:
 
-Under the continuation framing, an infallible scheduling operation is not a defect; it is what the caller's state requires. A suspended coroutine is not running to act on an error, so it does not need a channel to receive one.
+> "Upon completion of the child operation the kind of completion and the parameters, if any, are stored. If this operation throws, the storage is set up to be as if `set_error(current_exception)` were called. Once the parameters are stored, the scheduling operation is started. Upon completion of the scheduling operation, the appropriate completion function with the respective arguments is invoked."
 
-Two readings of the missing channel are possible. In the first, the operation may need to report failure, but the API does not allow it. In the second, the operation never fails, and the API reflects that. Under the continuation framing, the distinction does not survive. A caller that has suspended cannot act on a failure regardless of whether one occurs.
+That ordering fixes an acceptance boundary. Once the scheduling operation starts, it is the only route back. The child has already completed, its result sits in storage, and the receiver waits on an agent the operation promised to return it to. A scheduling operation that completes with `set_error` has no agent on which to deliver that error, which is the rationale P3941R4 gives (section 3.3):
 
-## 3. The Return
+> "However, if this scheduling operation fails, i.e., it completes with `set_error(e)`, or if it gets cancelled, i.e., it completes with `set_stopped()`, the execution agent on which the scheduling operation resumes is unclear and `affine_on` cannot guarantee its promise. Thus, it seems reasonable to require that a scheduler used with `affine_on` is infallible, at least when used appropriately (i.e., when providing a receiver whose associated stop token is an `unstoppable_token`)."
 
-The deficiency diagnosed in 2021 was resolved by the sender/receiver model. The resolution reintroduced the constraint.
+The child's own failure is a separate case, and it survives the constraint. P3941R4 states this in the same section: "Note that `affine_on` can fail and get cancelled (due to the main work failing or getting cancelled) but `affine_on` can still guarantee that execution resumes on the expect execution agent when it uses an infallible scheduler." That error is delivered after the rescheduling succeeds, and therefore on the scheduler the task started on.
 
-The sender/receiver model, [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[10]</sup>, shipped in C++26 as `std::execution`. [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[11]</sup> added `task`, a coroutine type with one defining guarantee: scheduler affinity. After a `co_await`, a task resumes on the same scheduler on which it suspended. `task` implements the guarantee by wrapping every awaited expression in `affine_on` (since renamed `affine`), a sender adaptor that schedules the continuation back onto the task's scheduler.
+Two mechanisms close the third point, and they are not the same mechanism. The concept of section 2 excludes `set_error`. A `set_stopped` from the scheduling operation is excluded separately, because section 3.6 requires the receiver that `affine_on` connects the scheduling operation to carry an `unstoppable_token`, and the proposed default implementation wraps the start scheduler: For an `UNSTOPPABLE-SCHEDULER` `e` wrapping a scheduler `sch`, `schedule(e)` is `unstoppable(schedule(sch))`. The distinction matters inside a `task`, where the environment's stop token is an `inplace_stop_token` and is therefore stoppable: The concept alone would admit a `set_stopped` there, and the unstoppable receiver is what keeps it out.
 
-That scheduling operation must not fail. [P3941R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3941r4.html)<sup>[12]</sup> establishes the requirement:
+Table 1: The three points at which an `affine_on` operation can fail, in the order of section 3.6, with what reaches the receiver and on which agent. Only the third point is closed.
 
-> "If this scheduling operation fails, i.e., it completes with `set_error(e)`, or if it gets cancelled, i.e., it completes with `set_stopped()`, the execution agent on which the scheduling operation resumes is unclear and `affine_on` cannot guarantee its promise. Thus, it seems reasonable to require that a scheduler used with `affine_on` is infallible."
-
-A scheduler used with `affine_on` may complete only with `set_value()`, not `set_error` or `set_stopped`. The scheduling operation that drives `task` has no way to report a failure.
-
-## 4. The Coroutine Executor
-
-A third executor, designed for coroutines, omits the same channels. [P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[13]</sup> constrains the argument to `continuation`, a coroutine handle paired with an intrusive list pointer:
-
-```cpp
-std::coroutine_handle<> dispatch(
-    continuation& c) const;
-
-void post(continuation& c) const;
-```
-
-`dispatch` returns a handle for symmetric transfer, and `post` defers. Both accept a suspended coroutine and resume it on a context. Neither delivers a value.
-
-## 5. The Symmetry
-
-The shape of a scheduling operation is the profile of channels it offers the caller: error, cancellation, and value. Three executors, separated by a decade of committee work, share one shape.
-
-| Property | P0443R14 Executor | Infallible Scheduler (P3941R4) | Coroutine Executor (P4003R3) |
+| Point | How it fails | What reaches the receiver | Agent |
 | --- | --- | --- | --- |
-| Error channel | None | None; `set_error` omitted | None after acceptance. `post` throws before. |
-| Cancellation | None | None; `set_stopped` omitted | `destroy()` on the handle |
-| Value delivered | None | None; `set_value()` nullary | None |
-| Encoded in the type by | `void` return | Completion signatures | `continuation` argument type |
-| Scope | Every executor | Schedulers used with `affine_on` | Every coroutine executor |
-| Why the caller tolerates it | It has returned | It is suspended | It is suspended |
+| Building the scheduling operation state, during `connect` | Allocation or `connect` throws | The main work never starts, and P3941R4 states that `affine_on` can fail here | "the execution agent where it was started" (section 3.3) |
+| The awaited work completes | `set_error` or `set_stopped` from the child | The child's own completion, stored and then forwarded | The scheduler the task started on |
+| The scheduling operation completes | `set_error(e)`, or `set_stopped()` | Neither. The concept excludes `set_error`; the unstoppable receiver and `UNSTOPPABLE-SCHEDULER` exclude `set_stopped` | None |
 
-The match across three columns is not exact. P0443R14 required infallibility of every executor but omitted any such statement; the `void` return left no room to report a failure. P3941R4 requires infallibility of one scheduler in one role and states the requirement in the completion signatures. P4003R3 constrains the argument type to a coroutine handle, making infallibility a consequence of the continuation framing rather than a separate requirement. P4003R3's `post` can throw when it cannot accept the continuation, so its infallibility holds after acceptance rather than unconditionally.
+Two of the three points remain reportable, and the one that closes is the step that carries the receiver back to its agent. A caller that loses this channel keeps the ability to observe a failed `co_await`. What it gives up is the ability to observe a failed return trip.
 
-The old constraint was universal and implicit. The new ones are narrow and explicit. That the committee chose to make the constraint explicit in P3941R4, where P0443R14 left it implicit, confirms that the constraint is recognized as correct for this role, not that it is a different constraint.
+## 2. The Concept Closes the Scheduling Step During Compilation
 
-## 6. A Possible Objection
+The constraint is not a run-time contract on the scheduling operation. It is a concept the scheduler's completion signatures satisfy or fail, checked in two places. This section states the encoding, the scope, and the wording P3941R4 strikes to match.
 
-A possible objection distinguishes incapability from selective constraint. P0443R14's `void` return left no room for an error channel in any executor. P3941R4's completion signatures exclude `set_error` for one scheduler in one role, while the model retains the channel elsewhere. The distinction between incapability and selective constraint is real.
+The exposition-only concept added to [exec.sched] admits two completion signature sets and excludes `set_error` from both:
 
-The distinction answers a question the paper does not ask. The question is not whether the model surrounding the operation improved; it did. The question is whether the scheduling operation changed its requirements; it did not. Both designs answer the same question: Should a continuation-scheduling operation report errors? Both answer no.
+```cpp
+template <class Sch, class Env>
+concept infallible-scheduler =
+    scheduler<Sch> &&
+    (same_as<completion_signatures<set_value_t()>,
+             completion_signatures_of_t<
+                 decltype(schedule(declval<Sch>())), Env>> ||
+     (!unstoppable_token<stop_token_of_t<Env>> &&
+      (same_as<completion_signatures<set_value_t(), set_stopped_t()>,
+               completion_signatures_of_t<
+                   decltype(schedule(declval<Sch>())), Env>> ||
+       same_as<completion_signatures<set_stopped_t(), set_value_t()>,
+               completion_signatures_of_t<
+                   decltype(schedule(declval<Sch>())), Env>>)));
+```
 
-The objection treats P0443R14's `void` return as a limitation the operation inherited from the model. P1525R0 defined the operation as work submission. The `void` return matched the framing the authors assumed: not a limitation of the model, but a consequence of how they read the operation. Kohlhoff designed `dispatch`, `post`, and `defer` with no error channel because the caller had suspended. The `void` return encoded a judgment about the operation's role. P3941R4 encodes the same judgment in completion signatures; the encoding improved, and the judgment did not change.
+The second set, which permits `set_stopped_t()`, is available only where the environment's stop token can be stopped. Both rejections happen during compilation, and they attach to different things. The first attaches to the algorithm: [exec.affine.on] paragraph 5 makes `get_completion_signatures` exit with an exception when the start scheduler does not satisfy the concept. The second attaches to a type: The constructor of `task_scheduler` carries `Mandates: Sch satisfies infallible-scheduler<env<>>`. The stop token of `env<>` is a `never_stop_token`, which is unstoppable, so the strict set is the only one that constructor accepts, and inside an `affine_on` the environment may be stoppable, which is why section 1 gives a separate mechanism for `set_stopped` there.
 
-If the objection is that P3941R4's infallibility is a deliberate design choice for a specific role, the objection grants the paper's claim. The role, scheduling a continuation onto an execution context, is the role `dispatch`, `post`, and `defer` filled. Choosing infallibility deliberately the second time acknowledges that the choice was available the first time; it does not rebut the claim.
+P3941R4 also removes the error path from the wording that described it. [exec.affine.on] paragraph 5 had carried a sentence, put there by P3552R3, sending a scheduling failure to the receiver on an unspecified execution agent. P3941R4 strikes it. The same paper rewrites the completion signatures of `task_scheduler`'s exposition-only sender from `set_value_t()`, `set_error_t(error_code)`, `set_error_t(exception_ptr)`, and `set_stopped_t()` to a form that depends on the environment: `set_value_t()` alone where the environment's stop token is unstoppable, and `set_value_t()` with `set_stopped_t()` otherwise. It rewrites `run_loop`'s sender the same way, from `set_value_t()`, `set_error_t(exception_ptr)`, and `set_stopped_t()`.
 
-## 7. The Shape
+The analogous sentence survives in [exec.on] paragraph 9: "If any scheduling operation fails, an error completion on `out_rcvr` shall be executed on an unspecified execution agent." `on` makes a related promise, remembering the scheduler an operation was started on and transferring execution back to that scheduler's execution resource, and it keeps its error completion while doing so. What the two algorithms are taken to promise separates them, though the normative text does not say so on its face. [exec.on] paragraph 9 promises transfer back to an execution resource and does not promise that an error completion lands there. [exec.affine.on] paragraph 5 uses the same resource-level language, and it is P3941R4's rationale, quoted in section 1, that reads the promise at the grain of the execution agent. The distinction the strike rests on therefore sits in the rationale rather than in the paragraph it edits. The paragraph is in fact left weaker than that: The same edit strikes the scheduler parameter from `affine_on(sndr, sch)` while leaving two later references to *sch* standing, so the surviving text names a scheduler it no longer introduces.
 
-The shape of the scheduling operation follows from the state of the caller. A caller that is running needs an error channel; a caller that has suspended does not.
+One of the three changes is confined to the `affine_on` role and two are not. The concept check on `affine_on`'s start scheduler is confined: It governs what a `task` may resume on and leaves `on` and every other use of a scheduler alone. The mandate on `task_scheduler`'s constructor is not. `task_scheduler` is a general type-erased scheduler, so `task_scheduler sch(parallel_scheduler{});` becomes ill-formed in any program, including one that writes only `sync_wait(on(sch, work))` and never names `task` or `affine_on`. The signature rewrites are not confined either: `run_loop::run-loop-scheduler` and `task_scheduler` lose `set_error` from their senders in every environment and therefore in every algorithm that consumes them, `on` and `sync_wait` included.
 
-Two independent lines of work confirm this. The executor lineage runs from P0443R14 through P2300R10 to P3941R4. It discovered the shape through evolution: Each revision changed how the constraint was encoded, from `void` return to completion signatures, but the constraint survived every redesign. The coroutine executor in P4003R3 discovered the same shape from first principles of the coroutine model, without sender/receiver concepts and without completion signatures. The two derivations share no abstraction machinery. They converge because they share the caller's state.
+## 3. The Cost Is a Scheduler a `task` Cannot Resume On and Two Channels the Draft Loses
 
-Convergence from unrelated starting points eliminates the explanation that the shape is an artifact of any one model's expressiveness. The sender/receiver model did not produce the constraint; neither did the coroutine model. The caller's state produced it, and each model re-encoded what was already there. Kohlhoff's continuation-framed executor omitted the same three channels in Asio over two decades ago. P0113R0 documented it, but the design predates either model.
+A constraint checked during compilation has a cost that can be counted: the set of schedulers a `task` can resume on, and the channels the working draft gives up to enlarge that set. P3941R4 surveys the four schedulers of the working draft, and the items below come from that survey and from its proposed wording.
 
-P4094R1, P4095R1, and P4096R1 identified the framing distinction before P3941R4 was written. P3941R4 confirmed it. *The committee rediscovered that continuations need a continuation-framed executor.*
+Three of the four can meet the constraint, and P3941R4's wording makes two of them meet it. `inline_scheduler` already completes with `set_value()` alone. `task_scheduler` reduces to allocation during `connect`, which the section 3.6 ordering performs before anything starts. `run_loop::run-loop-scheduler` currently permits `set_error_t(std::exception_ptr)`, a permission that lets an implementation use `std::mutex` and `std::condition_variable`, and P3941R4 observes that the same logic admits an implementation in atomic operations that cannot throw.
+
+The fourth is `parallel_scheduler`, the working draft's interface to a replaceable thread pool implementation. Its interface permits `set_error_t(std::exception_ptr)` and `set_stopped_t()`, and P3941R4 writes of it: "It seems unlikely that this interface can be constrained to make it infallible." The proposed wording changes `task_scheduler` and `run_loop` and leaves `parallel_scheduler` as it stands. Under P3941R4 as written, therefore, the working draft's own thread pool scheduler fails the concept, and a `task` cannot be started on it.
+
+What that forbids is narrower than losing the pool, and the line falls in an awkward place. The concept check reads `get_start_scheduler(get_env(out_rcvr))`, the task's own scheduler, and never inspects a scheduler named inside an awaited sender. A task started on an admissible scheduler may therefore `co_await on(parallel_scheduler{}, sndr)` for a plain sender `sndr`: The work runs on the pool, and a scheduling failure inside that child reaches the receiver as the child's own completion, which is the second row of Table 1. Nesting a coroutine is the case that fails. Both `starts_on(parallel_scheduler, nested_task)` and `on(parallel_scheduler, nested_task)` make the nested task's own start scheduler `parallel_scheduler`, so its `task_scheduler` construction is ill-formed ([task.state] paragraph 4).
+
+That boundary runs against P3941R4's own advice. Section 3.5 removes `change_coroutine_scheduler` and offers nesting in its place, writing that "replacing the used scheduler for an existing `task` by nesting it within `on(s, t)` or `starts_on(s, t)` is fairly straightforward" and giving `co_await ex::starts_on(s, [](parameters)->task<T, E> { logic }(arguments));` as the form. For the one standard scheduler the same paper expects to stay fallible, the recommended replacement does not compile. Work still reaches the pool; a coroutine that runs on it does not.
+
+P3941R4 states the general form of that consequence directly (section 3.3):
+
+> "In general it seems unlikely that all schedulers can be constrained to be infallible. As a result `affine_on` and, by extension, `task` won't be usable with all schedulers if `affine_on` insists on using only infallible schedulers. If there are fallible schedulers, there aren't any good options for using them with a `task`."
+
+Two routes past the constraint exist, and P3941R4 states the cost of both. The first is adaptation, which section 4.1 takes up. The second is an opt-out, and it does not exist yet. Inside a `task` the only route past `affine_on` in the proposed wording is the start scheduler type being `inline_scheduler`, which skips the adaptor instead of relaxing it ([task.promise] paragraph 9). Section 3.3.3 describes what a relaxation would take. The constraint "can be relaxed in a future revision of the standard by explicitly opting out of that constraints, e.g., using an additional argument", and P3941R4 adds: "For `task` to make use of it, it too would need an explicit mechanisms to indicate that its `affine_on` use should opt out of the constraint, e.g., by adding a suitable `static` member to the environment template argument."
+
+The survey also settles what the other two schedulers give up to qualify. Neither `run_loop::run-loop-scheduler` nor `task_scheduler` withholds its error channel only in the `affine_on` role while keeping it elsewhere. The wording strikes `set_error` from their senders outright, so `on`, `sync_wait`, and any other consumer of those senders sees an operation that declares no error either. Making two schedulers admissible to one algorithm removes a typed completion from every algorithm that uses them.
+
+What decides the survey's outcome, then, is the proposed wording rather than the concept. The concept states a test; which schedulers pass it is settled by the signature rewrites P3941R4 applies to two of them and withholds from the third.
+
+## 4. Expected Objections
+
+Three objections bear on sections 2 and 3. Each is stated in the form an objector would use, and answered from evidence already presented.
+
+### 4.1 "A fallible scheduler can be adapted"
+
+The constraint excludes a scheduler from the role a `task` resumes on, and it does not exclude the execution resource behind it. A user who wraps a fallible scheduler in an adapting scheduler that never reports failure satisfies the concept and keeps the pool.
+
+P3941R4 states the cost of that adaptation in section 3.3.1, and gives it two forms. The first transforms a scheduling failure into a call to `std::terminate`. The second resumes on an agent the adapting scheduler can reach infallibly, which need not be the agent the task was started on:
+
+> "In that case the scheduling operation would just succeed without necessarily running on the correct execution agent. However, there is no indication that scheduling to the adapted scheduler failed and the scheduler affinity may be impacted in this failure case."
+
+Neither form preserves what the constraint exists to guarantee. The first ends the program instead of resuming the coroutine; the second resumes it on the wrong agent and reports nothing. The comparison worth drawing is with the wording before the strike, under which a fallible scheduler could be used directly and its failure reached the receiver as an error completion. P3941R4 removes that route, so the same failure now reaches the receiver only through an adaptation the user writes, and the second form of that adaptation reports nothing by construction. P3941R4 adds that the standard library provides no easy way to adapt a scheduler, though it can be done. Under either form the failure leaves the type system and stays in the program.
+
+### 4.2 "The constraint is scoped, and a future revision can relax it"
+
+A scheduler's `schedule` keeps its error channel in the model generally. P3941R4 offers the fallible alternative in its own section 3.3.2, where `affine_on` completes with `set_error(rcvr, scheduling_error{e})` and the wrong-agent outcome becomes detectable instead of prohibited, and section 3.3.3 offers to relax the constraint later. A design decision presented with its alternative and an exit is a scoped tradeoff.
+
+Neither half holds as stated. On scope, section 2 records that only the concept check on `affine_on`'s start scheduler is confined to the role: The mandate on `task_scheduler`'s constructor and the signature rewrites to `run_loop` and `task_scheduler` reach programs that never name `task` or `affine_on`. On the exit, section 3.3.2's alternative is available to a future revision, and section 3.3.3 states the two changes it needs, an opt-out on `affine_on` and a second mechanism on `task`'s environment template argument before a coroutine could use it. Neither is proposed here. An exit that two unwritten changes stand behind is a plan, and the wording in front of the committee is the unconditional form.
+
+### 4.3 "An infallible scheduler has no failure to report"
+
+The constraint does not silence a report of a failure that occurs. It admits only schedulers whose scheduling operation cannot fail, and for such a scheduler an error completion would be dead weight in the type. On this reading nothing is lost, because `set_error` is removed only where it could never be sent.
+
+The reading holds for one of the two schedulers that can fail and not for the other, and the difference is worth stating in P3941R4's own terms. `run_loop::run-loop-scheduler` may fail so that an implementation can use `std::mutex` and `std::condition_variable`, and P3941R4 observes that the same logic admits an implementation in atomic operations that cannot throw. For that scheduler the objection largely lands: What the working draft gives up is implementation freedom and a declared signature, not a failure a conforming program could count on seeing. `parallel_scheduler` is the harder case, because P3941R4 expects its interface to stay fallible, so the failure is real and what is given up is affinity to it. The objection therefore narrows the cost rather than dissolving it, and section 3 is where the remainder sits.
+
+## 5. Conclusion: One Static Check, and What the Draft Gives Up for It
+
+Scheduler affinity is a run-time promise, and P3941R4 turns it into a property a compiler can check. That is the achievement, and the sections above take it as given. What the record then shows is the cost, which the proposing paper names in two forms.
+
+The first is affinity. A scheduler whose `schedule` can fail cannot be the one a `task` resumes on, so `parallel_scheduler` is expected to sit outside that set, and adapting it by hand leads to `std::terminate` or to a resumption on the wrong agent with nothing reported. The pool itself stays reachable, through `co_await on(parallel_scheduler{}, sndr)`, whose failures arrive on the awaited side; what is barred is a coroutine that runs on it, including the nesting idiom P3941R4 section 3.5 recommends in place of the `change_coroutine_scheduler` it removes. The second cost is the working draft's own vocabulary. Two schedulers were made admissible by striking `set_error` from their senders outright, so `run_loop::run-loop-scheduler` and `task_scheduler` now declare no error to any algorithm, `on` and `sync_wait` included, and `task_scheduler`'s constructor mandate makes wrapping a fallible scheduler ill-formed in programs that never mention a coroutine. Only the concept check on `affine_on`'s start scheduler is confined to the role it was written for. A reading on which the constraint stops at `affine_on` accounts for one of the three changes.
+
+Neither cost is permanent, and neither is presently escapable. Section 3.3.2 of P3941R4 sketches a fallible `affine_on` under which a resumption on the wrong agent would become something a caller can detect, and section 3.3.3 sets out the opt-out that would relax it. Reaching that alternative takes two changes nobody has written: the opt-out itself, and a mechanism on `task`'s environment before a coroutine could reach it. Until those exist, a `task` resumes on the schedulers the concept admits, and the committee is voting on the unconditional form.
+
+The ordering in section 3.6 is what a delegate can check first and fastest. It puts the connect before the work and the rescheduling after it, so a failure to build the operation state is reportable, an awaited operation's own error is reportable on the right agent, and only the return trip is closed. The next document on the subject is the one that constrains `parallel_scheduler`, or writes the opt-out, or shows that a scheduler which cannot report a failure is a scheduler worth having.
 
 ## Disclosure
 
-The author provides information and serves at the pleasure of the committee. This paper asks for nothing.
+The author provides information and serves at the pleasure of the committee.
 
-The author developed and maintains [Capy](https://github.com/cppalliance/capy)<sup>[14]</sup> and [Corosio](https://github.com/cppalliance/corosio)<sup>[15]</sup>, coroutine-native I/O libraries under the C++ Alliance. The author has a stake in the coroutine model's adoption.
+The author, with Steve Gerbino, developed and maintains [Capy](https://github.com/cppalliance/capy)<sup>[9]</sup> and [Corosio](https://github.com/cppalliance/corosio)<sup>[10]</sup>, coroutine-native I/O libraries under the C++ Alliance. The author has a stake in the adoption of the coroutine model.
+
+The intent of this paper is informational. It places an analysis in the record and requests nothing.
+
+The author is the lead author of [P4003R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4003r3.pdf)<sup>[11]</sup>, a coroutine execution model that competes with the design analyzed here, and one of the five authors of [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf)<sup>[12]</sup>, the 2021 response to P2464R0, and therefore a named party to the dispute in which the executor error channel was argued.
+
+One limitation of the method: The paper reads P3941R4 as written, against the working draft it targets. P3941R4 is at revision 4, and any later revision supersedes the readings here.
+
+This paper belongs with [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf)<sup>[13]</sup>, [P4095R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4095r1.pdf)<sup>[14]</sup>, and [P4096R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4096r1.pdf)<sup>[15]</sup>.
+
+Method: Every claim about a cited paper was checked against that paper's own published text, with a section or paragraph number given wherever a quotation is used. The wording claims in section 2 were read from P3941R4's proposed wording, including which sentences it marks as struck.
 
 This paper was prepared with the assistance of generative tools. The author is responsible for its content.
 
+This paper asks for nothing.
+
 ## Acknowledgments
 
-The author thanks Dietmar K&uuml;hl for P3941R4, which specifies the infallibility requirement and states its rationale precisely; Christopher Kohlhoff for the continuation framing in P0113R0 and for the Networking TS; Ville Voutilainen for P2464R0; Eric Niebler, Kirk Shoop, Lewis Baker, and Lee Howes for P1525R0 and the sender/receiver model that resolved the deficiencies they identified; and Steve Gerbino and Mungo Gill for co-developing the coroutine executor in P4003R3.
+The author thanks Dietmar K&uuml;hl for P3941R4, which supplied the *infallible-scheduler* concept, the `task_scheduler` mandate, the survey of the four standard schedulers, and the two adaptation options section 4.1 answers. The author thanks Ville Voutilainen for P2464R0, which named the deficiency for the Networking TS.
+
+Thanks also to Robert Leahy for P4151R1, which proposes the rename this paper follows its sources in not adopting, and to Eric Niebler, Kirk Shoop, Lewis Baker, and Lee Howes for P1525R0. The nine authors of P2300R10 built the model that answered the deficiency P1525R0 identified.
 
 ## References
 
-[1] [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf) - "One-Way execute is a Poor Basis Operation" (Eric Niebler, Kirk Shoop, Lewis Baker, Lee Howes, 2019).
+[1] [P3941R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3941r4.html) - "Scheduler Affinity" (Dietmar K&uuml;hl, 2026).
 
-[2] [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html) - "A Unified Executors Proposal for C++" (Jared Hoberock, Michael Garland, Chris Kohlhoff, Chris Mysen, Carter Edwards, Gordon Brown, David Hollman, 2020).
+[2] [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf) - "One-Way execute is a Poor Basis Operation" (Eric Niebler, Kirk Shoop, Lewis Baker, Lee Howes, 2019).
 
-[3] [P2464R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2464r0.html) - "Ruminations on networking and executors" (Ville Voutilainen, 2021).
+[3] [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html) - "A Unified Executors Proposal for C++" (Jared Hoberock, Michael Garland, Chris Kohlhoff, Chris Mysen, Carter Edwards, Gordon Brown, Daisy Hollman, Lee Howes, Kirk Shoop, Lewis Baker, Eric Niebler, 2020).
 
-[4] [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html) - "2021 October Library Evolution Polling Outcomes on Networking and Executors" (Bryce Adelstein Lelbach, Fabio Fracassi, Ben Craig, 2022).
+[4] [P2464R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2464r0.html) - "Ruminations on networking and executors" (Ville Voutilainen, 2021).
 
-[5] [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf) - "The Unification of Executors and P0443" (Vinnie Falco, 2026).
+[5] [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html) - "std::execution" (Micha&lstrok; Dominiak, Georgy Evtushenko, Lewis Baker, Lucian Radu Teodorescu, Lee Howes, Kirk Shoop, Michael Garland, Eric Niebler, Bryce Adelstein Lelbach, 2024).
 
-[6] [P4095R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4095r1.pdf) - "The Basis Operation and P1525" (Vinnie Falco, 2026).
+[6] [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html) - "Add a Coroutine Task Type" (Dietmar K&uuml;hl, Maikel Nadolski, 2025).
 
-[7] [P4096R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4096r1.pdf) - "Coroutine Executors and P2464R0" (Vinnie Falco, 2026).
+[7] [P4151R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4151r1.pdf) - "Rename affine_on" (Robert Leahy, 2026).
 
-[8] [P0113R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0113r0.html) - "Executors and Asynchronous Operations, Revision 2" (Christopher Kohlhoff, 2015).
+[8] [P3796R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3796r1.html) - "Coroutine Task Issues" (Dietmar K&uuml;hl, 2025).
 
-[9] [P0688R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0688r0.html) - "A Proposal to Simplify the Unified Executors Design" (Chris Kohlhoff, Jared Hoberock, Chris Mysen, Gordon Brown, 2017).
+[9] [Capy](https://github.com/cppalliance/capy) (Vinnie Falco, Steve Gerbino, 2025).
 
-[10] [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html) - "std::execution" (Micha&lstrok; Dominiak, Lewis Baker, Lee Howes, Kirk Shoop, Michael Garland, Eric Niebler, Bryce Adelstein Lelbach, 2024).
+[10] [Corosio](https://github.com/cppalliance/corosio) (Vinnie Falco, Steve Gerbino, 2026).
 
-[11] [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html) - "Add a Coroutine Task Type" (Dietmar K&uuml;hl, Maikel Nadolski, 2025).
+[11] [P4003R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4003r3.pdf) - "A Minimal Coroutine Execution Model" (Vinnie Falco, Steve Gerbino, Mungo Gill, 2026).
 
-[12] [P3941R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3941r4.html) - "Scheduler Affinity" (Dietmar K&uuml;hl, 2026).
+[12] [P2469R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2469r0.pdf) - "Response to P2464: The Networking TS is baked, P2300 Sender/Receiver is not" (Jamie Allsop, Vinnie Falco, Richard Hodges, Christopher Kohlhoff, Klemens Morgenstern, 2021).
 
-[13] [P4003R3](https://isocpp.org/files/papers/P4003R3.pdf) - "A Minimal Coroutine Execution Model" (Vinnie Falco, Steve Gerbino, Mungo Gill, 2026).
+[13] [P4094R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r1.pdf) - "The Unification of Executors and P0443" (Vinnie Falco, 2026).
 
-[14] [Capy](https://github.com/cppalliance/capy) - Coroutine I/O primitives library (Vinnie Falco).
+[14] [P4095R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4095r1.pdf) - "The Basis Operation and P1525" (Vinnie Falco, 2026).
 
-[15] [Corosio](https://github.com/cppalliance/corosio) - Coroutine-native networking library (Vinnie Falco).
+[15] [P4096R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4096r1.pdf) - "Coroutine Executors and P2464R0" (Vinnie Falco, 2026).
