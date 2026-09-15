@@ -1,7 +1,7 @@
 ---
-title: "The Hidden Ownership Boundary in std::execution::let_value"
+title: "Two Ends of One Dangling Reference: Coroutine Parameters and let_value Predecessors"
 document: P4253R0
-date: 2026-09-07
+date: 2026-09-14
 intent: info
 audience: SG1, LEWG
 reply-to:
@@ -10,9 +10,9 @@ reply-to:
 
 ## Abstract
 
-Default `let_value` can make a valid non-owning result dangle by destroying the predecessor operation state that owns its referent.
+A `std::span` that a `then` produces from its own operation state is well-defined for a `then` successor and reads destroyed storage for an asynchronous read reached through `let_value`, and the completion signature does not record where the owner sits.
 
-The adopted P3373R4 transition persists predecessor result datums, destroys the predecessor state, and then invokes the successor factory, permitting storage reuse and earlier resource release. Because a copied `std::span` survives this transition without preserving its referent, and its completion signature cannot distinguish predecessor-owned storage from storage with a surviving external owner, an asynchronous I/O successor that later accesses the bytes violates its buffer-lifetime precondition in the predecessor-owned case. The composition remains safe when the owner survives in persisted arguments, factory state, external state, or an owning result; sender-based I/O generally remains representable.
+Asynchronous I/O requires the memory a buffer descriptor names to stay valid until completion while the descriptor owns nothing, and an I/O sender factory that takes the descriptor as an argument, the shape Asio has through `use_sender`, is reached from a value through `let_value`. The change adopted for C++26 destroys the `let_value` predecessor operation state after its results are copied out and before the sender factory runs, while `then` keeps its predecessor alive throughout. The coroutine parameter problem is the same hazard from the other end, and that end has a standard note, a guideline, and a diagnostic where the `let_value` end has none.
 
 ---
 
@@ -20,53 +20,31 @@ The adopted P3373R4 transition persists predecessor result datums, destroys the 
 
 ### R0: September 2026
 
-- Initial version.
+- Initial revision.
 
 ---
 
-## Introduction
+## 1. Introduction
 
-`std::execution` provides typed completion channels, static composition of operation states, and structured lifetime management for asynchronous work. P3373R4<sup>[1]</sup> refined one part of that model by allowing `let_value`, `let_error`, and `let_stopped` to reuse predecessor operation-state storage. The adopted rule has a direct consequence when a result object borrows from storage owned by that predecessor.
+P3373R4<sup>[1]</sup> changed `std::execution::let_value`, `let_error`, and `let_stopped` so that the predecessor operation state is destroyed after decayed copies of its result datums are stored and before the user's sender factory is invoked. The change resolved C++26 Committee Draft (CD) comment CA-338<sup>[2]</sup> and was applied to the working paper at Croydon in March 2026.<sup>[3]</sup> The result datum of interest below is a non-owning view, such as a `std::span<std::byte>`, and the successor of interest is an asynchronous read constructed from that view.
 
-The case examined here has four objects with distinct lifetimes: a predecessor operation state, an owner stored within it, a non-owning result datum such as `std::span`, and a successor operation that uses the datum. The concrete witness concerns default `let_value` behavior and a successor that accesses predecessor-owned storage. External owners, owning result types, callable captures, and domain customizations are separate cases.
+The operation-state design provides three properties that the analysis below depends on. It provides stable storage at a fixed address for the whole of an operation, so child operations may hold pointers into it. It provides static composition, so a pipeline's storage is one object whose size is known at compile time and which can sit on the stack. And it provides nested lifetimes, so a child's operation state is a data member of its parent's and cannot outlive it.<sup>[4]</sup> P3389R0, the LEWG presentation of the proposal, states that "Operation state represents the stack frame (variables with 'automatic storage duration' are members thereof)",<sup>[5]</sup> and P3373R4 proposes that the predecessor's frame end when the predecessor returns, "in the same way that returning from a synchronous function destroys the stack frame thereof."<sup>[1]</sup>
 
-This analysis provides four contributions:
+Related work. P3373R4 supplies the change, the design space, and the poll record.<sup>[1]</sup> P2300R10 section 1.3.3 supplies the model's own asynchronous read example, which routes a `std::span` from a `then` into an asynchronous read.<sup>[6]</sup> The C++ Core Guidelines rule CP.53 states the coroutine parameter lifetime problem and its remedy.<sup>[7]</sup> P1179R1 supplies the Owner and Pointer vocabulary and treats `co_await` as invalidating Pointer parameters.<sup>[8]</sup> P3801R0 and P3796R1 debate the coroutine problem as it applies to `std::execution::task`.<sup>[9]</sup><sup>[10]</sup> P4288R1 describes a completion with a reference into an operation state as "the asynchronous analogue of a function which returns a reference to a local variable".<sup>[11]</sup>
 
-1. A step-by-step account of the P3373R4<sup>[1]</sup> transition as incorporated into the working draft.
-2. A matched pair of predecessors with the same `set_value_t(std::span<std::byte>)` completion signature and different owner placement.
-3. An application of that pair to Boost.Asio's documented asynchronous buffer-lifetime contract.
-4. Safe ownership placements, implementation differences, and unranked design directions.
+Contributions:
 
-P3373R4<sup>[1]</sup> supplies the operation-state tradeoff. P1179R1<sup>[2]</sup> supplies established vocabulary for owners and non-owning pointer-like values. P2300R10<sup>[3]</sup> explains the intended `let_value` lifetime of persisted result objects. The current working draft, versioned I/O documentation, and pinned implementation sources supply the remaining evidence.
+1. A matched pair of predecessors with equal completion signatures, one of whose spans dangles under `let_value` and neither of which dangles under `then`, with the working-draft lines that produce the difference.
+2. A correspondence between that hazard and the coroutine parameter lifetime problem, stated as a relation between a source that ends and a consumer that continues, with the documentation and tooling each side has.
+3. The record of the change: what P3373R4 said about per-algorithm lifetimes, how the polls went, and where the public implementations stand on the order of destruction.
 
-Three assumptions bound the result. The code-equivalent wording of N5054, the current working draft, is the normative baseline.<sup>[4]</sup> A non-owning descriptor does not extend its referent's lifetime. The asynchronous successor eventually accesses the referenced bytes. No frequency claim about deployed programs follows from the constructed case.
+Assumptions. The analysis is of the working-draft wording in the C++ draft sources at commit `999d8ae0`,<sup>[12]</sup> whose [exec.let] text is unchanged from N5054.<sup>[4]</sup> Implementation behavior is reported as of the pinned commits and dates given. The I/O contracts cited are the vendors' own.
 
-## 1. Earlier Predecessor Destruction Provides Reusable Storage
+## 2. `then` Keeps the Predecessor Alive and `let_value` Destroys It
 
-P3373R4 addresses two child operation states in the `let_*` adaptors: a predecessor and a successor created by a user-supplied factory. The operations do not overlap. Retaining both states until the containing operation ends consumes their combined storage even though only one is active at a time.<sup>[1]</sup>
+The two adaptors differ in one line. `then` is specified through `default-impls`, whose `start` is `(execution::start(ops), ...)` and which never destroys a child;<sup>[12]</sup> the child operation state is the data member `inner-ops` of `basic-operation`, so it lives as long as the parent.<sup>[12]</sup> `impls-for<then-cpo>` overrides only `complete`, which invokes the callable and forwards its result.<sup>[12]</sup> The predecessor's callable, its captures, and anything they own remain alive until the whole operation is destroyed.
 
-The adopted design persists the predecessor's result datums, ends the predecessor operation-state lifetime, and then constructs the successor. This permits the two child states to share storage. P3373R4 also records a resource-lifetime benefit: An object held in the predecessor state can release a lock or another resource when that suboperation completes instead of when the containing operation is destroyed.<sup>[1]</sup>
-
-The tradeoff is explicit in P3373R4.<sup>[1]</sup> Longer predecessor lifetimes make accesses into predecessor state remain valid, while earlier destruction makes more of those accesses undefined. The selected rule applies the earlier lifetime to `let_value`, `let_error`, and `let_stopped`, where storage reuse provides a concrete reduction. N5047 records application of P3373R4 to the working paper as LWG Poll 10.<sup>[5]</sup>
-
-P3373R4 therefore provides reusable operation-state storage and earlier resource release by ending the predecessor lifetime before the successor is formed.<sup>[1]</sup>
-
-## 2. `let_value` Destroys the Predecessor Before Calling the Factory
-
-The adopted wording creates a specific destruction boundary inside `let_value`. The boundary is narrower than the general completion rules and requires three lifetime concepts to remain separate.
-
-The **async lifetime** of an operation begins when `start` begins and ends when its completion operation begins. The associated **operation state** becomes invalid after completion executes. Its C++ object lifetime can continue beyond that point or end during completion. These are separate rules in `[exec.async.ops]`; completion does not generally destroy every operation-state object.<sup>[4]</sup>
-
-`let_value` adds an explicit object-lifetime operation. Its state contains a variant named `ops`. That variant initially contains the predecessor operation state. On a matching value completion, `[exec.let]` performs six steps:
-
-1. Store decayed copies of the predecessor's result datums in `args`.
-2. Replace the active `ops` alternative with `monostate`.
-3. Invoke the user-supplied factory with references to the stored copies.
-4. Connect the returned sender to the downstream receiver.
-5. Store the successor operation state in `ops`.
-6. Start the successor.
-
-The following excerpt is from the C++ draft source at commit `999d8ae0`, lines 4268-4277, with the exposition-only markup stripped and nothing else altered.<sup>[6]</sup> These ten lines are byte-identical in N5046, in N5054, and at that commit. Other parts of `[exec.let]` did change over the same interval, the exposition-only `let-env` having acquired a second parameter, so the claim here concerns the quoted block and not the subclause as a whole.
+`let_value` is specified through `let-state`, whose `ops` variant is constructed holding the predecessor operation state.<sup>[12]</sup> On a matching completion it runs the following, quoted from the draft source at lines 4268-4277 with exposition markup stripped:<sup>[12]</sup>
 
 ```cpp
 auto& tuple = args.template emplace<args_t>(std::forward<Ts>(ts)...);
@@ -81,54 +59,44 @@ auto& op = ops.template emplace<op_t>(emplace-from{mkop2});
 start(op);
 ```
 
-`variant::emplace` destroys the active alternative before constructing its replacement.<sup>[4]</sup> The first `ops.emplace` therefore destroys the predecessor operation state after the result copies exist but before the factory is invoked.
+`variant::emplace` destroys the active alternative before constructing the new one.<sup>[4]</sup> The second line therefore destroys the predecessor operation state after the result copies exist and before the factory runs. The result datums survive as decayed copies in `args`; the storage they may point into does not. No prose sentence in [exec.let] states when the predecessor operation state ends; the line above is the whole specification.<sup>[12]</sup>
 
-For default `let_value`, the adaptor wording defines the C++ object-lifetime boundary independently of the completion signal.
+P3373R4 describes the `then` case directly. Of a `then` callable that captures a `std::vector` and returns a reference into it, P3373R4 writes: "The lack of UB stems from the fact that the lifetime of the invocable is bound to the lifetime of the operation state."<sup>[1]</sup> That binding still holds for `then`. It no longer holds for a predecessor of `let_value`.
 
-## 3. Persisting a Descriptor Does Not Preserve Its Referent
+One adaptor keeps the predecessor's storage and the other frees it, and the completion-signature machinery that describes the result is the same for both.
 
-The result datum persisted by `let_value` can be an owner or a non-owning descriptor. That distinction determines whether persisting the datum also preserves the objects reached through it.
+## 3. One Predecessor, Two Successors, Opposite Validity
 
-The standard defines `std::span` in `[span.overview]` as "a view over a contiguous sequence of objects, the storage of which is owned by some other object."<sup>[4]</sup> A span is trivially copyable. Copying it preserves a pointer and an extent; the copy does not copy the objects in the viewed sequence.
-
-P1179R1 uses the terms **Owner** and **Pointer** for this distinction. Its examples classify `string` and `vector` as Owners, while raw pointers, `string_view`, `span`, and `vector::iterator` are non-owning Pointers.<sup>[2]</sup> The terminology is broader than built-in pointer syntax because each listed type can remain alive after the object it denotes has been destroyed.
-
-### Terms Used in the Example
-
-- **Owner:** an object, such as `vector`, that owns the referenced byte storage.
-- **Descriptor:** a non-owning object, such as `span`, containing access information.
-- **Referent:** the byte sequence reached through the descriptor.
-- **Predecessor:** the operation whose result triggers `let_value`.
-- **Persisted result:** the decayed result object stored in `let_value::args`.
-- **Successor factory:** the callable that returns the next sender.
-
-Completion signatures provide a different category of information. `[exec.cmplsig]` permits `set_value_t(Vs...)`, `set_error_t(Err)`, and `set_stopped_t()`. A completion signature describes a completion operation through its tag and argument types.<sup>[4]</sup>
-
-Consider `set_value_t(std::span<std::byte>)`. The type states that successful completion sends a span. It does not identify whether the span refers to external storage, static storage, state owned by `let_value`, or state owned by its predecessor. A different completion datum can carry ownership: `vector`, `shared_ptr`, or an explicit owner token can make that property part of the result.
-
-`let_value` persists the completion datum it receives. When that datum is a span, persisting the span does not preserve storage owned by a different object.
-
-## 4. Identical Completion Signatures Can Have Opposite Validity
-
-Two predecessors isolate the ownership property. Each sends `std::span<std::byte>` through the value channel. The first stores the owner in its `then` callable; the second refers to an owner outside the sender.
-
-The dangling half of the pair is P3373R4's own example. Its Examples section pipes `just()` into a `then` callable that captures a `std::vector`, returns `std::cref(vec.front())`, and continues on a scheduler; the paper then walks the synchronous analogue and reports the AddressSanitizer diagnostic that analogue produces.<sup>[1]</sup> Two substitutions follow here. The result datum becomes `std::span<std::byte>` so that it is a buffer descriptor rather than a reference wrapper, which is what an I/O operation receives. The control is then added: a second predecessor with the same completion signature and the owner placed outside the sender. The matched pair is what this section contributes, not the dangling case, which P3373R4 established.
-
-The following constructed sender stores the vector in the predecessor operation state after connection.
+The predecessor below stores a buffer in its own operation state and completes with a view of it. The vector is a capture of the `then` callable; the callable is part of the `then` operation state; the span is a `std::span`, which the standard defines as "a view over a contiguous sequence of objects, the storage of which is owned by some other object."<sup>[4]</sup> In P1179R1's terms the vector is an Owner and the span is a Pointer.<sup>[8]</sup>
 
 ```cpp
 auto ephemeral =
     std::execution::just()
     | std::execution::then(
-        [owner = std::vector<std::byte>(4096)]()
-            mutable noexcept {
+        [owner = std::vector<std::byte>(4096)]() mutable noexcept {
             return std::span<std::byte>(owner);
         });
 ```
 
-The `then` callable returns a valid span while its vector capture is alive. `let_value` receives that span, copies it into `args`, and replaces the predecessor operation state with `monostate`. Replacement destroys the `then` callable and its vector. The persisted span remains alive and denotes storage whose lifetime has ended.
+Two successors consume the span. The first is synchronous. It runs during the predecessor's completion operation, and by Section 2 the `then` operation state, its callable, and the vector are alive for the whole of the enclosing operation.
 
-The control changes only the owner's location. Both fragments are block-scope declarations; at namespace scope the reference capture would name a variable with non-automatic storage duration, which compilers diagnose.
+```cpp
+auto a = ephemeral
+    | std::execution::then([](std::span<std::byte> s) noexcept {
+        return s.size();
+    });
+```
+
+The second is asynchronous and is constructed from the span. `async_read_some(sock, s)` stands for any function that takes the buffer as an argument and returns a sender, which is what an Asio initiating function invoked with the `use_sender` completion token is.<sup>[13]</sup><sup>[14]</sup> Under the draft, `ops.template emplace<monostate>()` runs before the factory is invoked, so the factory receives a span whose storage has been freed, and the read it constructs targets that storage.
+
+```cpp
+auto b = ephemeral
+    | std::execution::let_value([&sock](std::span<std::byte> s) {
+        return async_read_some(sock, s);
+    });
+```
+
+A control shows that the difference is not visible in the type. `durable` returns the same span type from a vector that lives outside the sender:
 
 ```cpp
 std::vector<std::byte> owner(4096);
@@ -140,285 +108,246 @@ auto durable =
     });
 ```
 
-Destroying the second predecessor destroys a callable containing a reference. It does not destroy `owner`, so the persisted span remains usable while the external vector remains alive.
-
-Both `noexcept` callables return the same type. Their value completion signatures are therefore equal:
+Destroying `durable`'s predecessor destroys a callable holding a reference and leaves the vector alone. Both callables are `noexcept`, both return `std::span<std::byte>`, and `just()` contributes `set_value_t()`, so both predecessors have `completion_signatures<set_value_t(std::span<std::byte>)>`:
 
 ```cpp
-using ephemeral_sigs =
+static_assert(std::same_as<
     std::execution::completion_signatures_of_t<
-        decltype(ephemeral), std::execution::env<>>;
-using durable_sigs =
+        decltype(ephemeral), std::execution::env<>>,
     std::execution::completion_signatures_of_t<
-        decltype(durable), std::execution::env<>>;
-
-static_assert(std::same_as<ephemeral_sigs, durable_sigs>);
+        decltype(durable), std::execution::env<>>>);
 ```
 
-The assertion holds by the completion-signature rules, which do not depend on any implementation: Both callables are `noexcept`, `just()` contributes `set_value_t()`, and decay-copying a `std::span` cannot throw, so both predecessors carry `completion_signatures<set_value_t(std::span<std::byte>)>`.
+The assertion holds by the completion-signature rules and compiles against stdexec trunk on x86-64 gcc 16.2 with `-std=c++23 -Wall -Wextra`, with no diagnostics.<sup>[15]</sup>
 
-The assertion also compiles. Against stdexec at x86-64 gcc 16.2 with `-std=c++23 -Wall -Wextra`, the pair builds with no diagnostics and the `static_assert` passes.<sup>[7]</sup> That build substitutes `stdexec::` for `std::execution::` because stdexec is not the standard library, and it tracks the stdexec trunk branch, so it is reproducible today rather than fixed for all time. The deduction above, not the build, is what the section rests on.
+The safe and the unsafe compositions differ in the successor's algorithm and in nothing the type system sees.
 
-Table 1. Matched predecessors with one completion signature and two owner locations.
+## 4. Sender Factories for Asynchronous I/O Are Reached Through `let_value`
 
-| Property | Predecessor-owned case | External-owner control |
+A synchronous successor that does not store the span is finished with it before returning, so `then` is sufficient for it and, by Section 2, safe. The successor that holds the span past its own return is an asynchronous one, and the five asynchronous I/O interfaces below each require that the memory a descriptor names remain valid from initiation to completion while the descriptor itself owns nothing.
+
+Boost.Asio 1.92.0, for the buffers of `async_read_some`: "Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called."<sup>[13]</sup> Its `mutable_buffer` "does not own the underlying data, and so is cheap to copy or assign."<sup>[16]</sup> The Networking TS states the same rule for every asynchronous read or write: "The program shall ensure the memory remains valid until" the last copy of the buffer sequence is destroyed or the completion handler is invoked, whichever comes first.<sup>[17]</sup> Windows `ReadFileEx`: "This buffer must remain valid for the duration of the read operation."<sup>[18]</sup> Linux `io_uring(7)`: "the pointers to a buffer used as part of a IORING_OP_WRITE or IORING_OP_READ operation must remain valid until completion."<sup>[19]</sup> POSIX `aio_read`: if the buffer "becomes an illegal address prior to asynchronous I/O completion, then the behavior is undefined."<sup>[20]</sup>
+
+A sender for such a read takes one of two shapes, and P2762R2 section 4.7 shows them side by side, writing that "the following senders have the same effect when started":<sup>[21]</sup>
+
+```cpp
+auto s0 = execution::just(buffer) | net::async_read_some(socket);
+auto s1 = net::async_read_some(execution::just(buffer), socket);
+auto s2 = net::async_read_some(socket, buffer);
+```
+
+The first two are the adaptor shape: the read is a sender adaptor whose child produces the buffer, and by Section 2 the child operation state is a data member of the read's and lives as long as it does. P2300R10 section 1.3.3 uses this shape, piping a `then` that returns `std::span(buf.data.get(), buf.size)` directly into `async_read(handle)`, "a pipeable sender adaptor" that "takes a sender parameter which must send an input buffer".<sup>[6]</sup> Under the adaptor shape, `ephemeral | async_read(handle)` keeps the vector alive through the read.
+
+The third form is the factory shape: the buffer is an argument, and the sender exists only once the argument does. Asio has only this shape, because every Asio initiating function takes its buffers as arguments,<sup>[13]</sup> and `use_sender` turns that call into a sender.<sup>[14]</sup> To construct a factory-shape sender from a value produced earlier in a pipeline, the pipeline needs the algorithm that passes "the sender's result datums to a user-specified callable, which returns a new sender that is connected and started",<sup>[12]</sup> which is `let_value`. P3373R4's own `let_value` example is this shape: a `write` function receives a `std::span<const std::byte>` from its caller and, inside `let_value`, calls `writable.write(span)` for a sender.<sup>[1]</sup>
+
+Both documented examples place the owner where the change does not reach. P2300R10's owner is `buf`, a persisted argument of an enclosing `let_value`, of which P2300R10 says "Critically, the lifetime of the sent object will last until the sender returned by the std::invocable completes"<sup>[6]</sup>; P3373R4 preserves that guarantee. P3373R4's owner is outside the sender, in the caller of `write`. Move the owner one stage earlier, into the `then` that produces the span, and under the adaptor shape nothing changes, while under the factory shape the same span, with the same type, reaches the read after its storage is gone.
+
+Of the two shapes sender I/O takes, the adaptor keeps the predecessor alive, and the factory, the one shape an Asio initiating function can take, is reached through `let_value` and does not.
+
+## 5. The Other End: Coroutine Parameters
+
+Coroutines have a lifetime hazard with the same shape, viewed from the opposite end, and it is recorded in the standard, in the Core Guidelines, and in a compiler. A plain function taking a `std::string_view` may be called with a temporary; the temporary outlives the call. Make the function a coroutine and the temporary ends at the end of the full-expression while the coroutine body, holding the view, continues after its first suspension.
+
+```cpp
+void       sync_use(std::string_view s);   // temporary outlives the call
+task<void> async_use(std::string_view s);  // body outlives the temporary
+
+task<void> caller() {
+    sync_use(std::string("payload"));           // well-defined
+    auto t = async_use(std::string("payload")); // t views a dead string
+    co_await std::move(t);                      // undefined behavior
+}
+```
+
+The standard says so in a note: "If a coroutine has a parameter passed by reference, resuming the coroutine after the lifetime of the entity referred to by that parameter has ended is likely to result in undefined behavior."<sup>[4]</sup> CP.53, "Parameters to coroutines should not be passed by reference", gives the reason: "Once a coroutine reaches the first suspension point, such as a co_await, the synchronous portion returns. After that point any parameters passed by reference are dangling." Its remedy is by-value parameters, "because the copied parameter will live in the coroutine frame that is safe to access throughout the coroutine", and its enforcement is "Flag all reference parameters to a coroutine."<sup>[7]</sup> P1179R1's lifetime profile encodes the same rule: "On co_await or co_yield, for every Pointer parameter p, KILL(p)."<sup>[8]</sup> Clang 18 ships `[[clang::coro_lifetimebound]]`, under which, for a coroutine return type so annotated, "capturing reference to a temporary which would die after the expression" is a warning.<sup>[22]</sup><sup>[23]</sup> P3796R1 notes that the views can be hidden inside value types, so "preventing const& parameters isn't a solution".<sup>[10]</sup>
+
+The correspondence with Section 3 is a relation between a source whose storage ends and a consumer that continues past that end.
+
+| | Coroutine parameter | `let_value` predecessor |
 |---|---|---|
-| Value completion | `set_value_t(span<byte>)` | `set_value_t(span<byte>)` |
-| Owner location | `then` callable in predecessor state | enclosing block |
-| Predecessor destruction | destroys the vector | destroys a reference capture |
-| Persisted span | refers to expired storage | refers to live storage |
+| Boundary | call into a coroutine | value completion into `let_value` |
+| Datum | parameter | result datum |
+| Storage that ends | caller's temporaries, end of full-expression | predecessor operation state, `emplace<monostate>()` |
+| Consumer that continues | coroutine body after suspension | successor operation |
+| Safe synchronous control | plain function | `then` |
+| Visible in the signature | reference parameter: yes; view-typed parameter: no | no |
+| Remedy | the callee takes owners by value | the producer completes with owners |
+| Note in the standard | [dcl.fct.def.coroutine] Note 3 | none |
+| Guideline with enforcement | CP.53 | none |
+| Compiler diagnostic | Clang `coro_lifetimebound` | none |
 
-The matched pair differs in owner provenance, a property absent from their equal completion signatures.
+Table 1. The coroutine parameter problem and the `let_value` predecessor problem, row by row. In the coroutine, the consumer outlives the source; in `let_value`, the source is gone before the consumer begins. The instruments in the last three rows act on reference parameters; a view-typed parameter, as in the example above, escapes them, which is P3796R1's point.
 
-## 5. The Same Boundary Violates an Asynchronous I/O Precondition
+Both ends are in `std::execution`. `task` "represents a sender that can be used as the return type of coroutines",<sup>[4]</sup> and the coroutine end applies to it: P3801R0 raises it under the heading "No protection against dangling references", and P3796R1 answers.<sup>[9]</sup><sup>[10]</sup> P3801R0 also names the cure: "The natural sender/receiver solution is structured concurrency, which ensures references live long enough."<sup>[9]</sup> The sender side has the other end.
 
-The matched pair becomes consequential when the successor is an asynchronous I/O operation. The three APIs examined below separate a pointer-size descriptor from storage that must remain alive until completion.
-
-### 5.1. I/O Requires the Referent Through Completion
-
-Boost.Asio 1.92.0 defines `mutable_buffer` as a copyable representation that "does not own the underlying data."<sup>[8]</sup> Its `basic_stream_socket::async_read_some` operation accepts one or more mutable buffers and returns immediately.<sup>[9]</sup> The parameter contract states:
-
-> Although the buffers object may be copied as necessary, ownership of the underlying memory blocks is retained by the caller, which must guarantee that they remain valid until the completion handler is called.
-
-The descriptor can therefore survive while its referent does not. The precondition applies from initiation through completion, the same interval for which the successor sender uses the buffer.
-
-The public stdexec Asio adapter exposes `async_read_some` as a sender through `exec::asio::use_sender`.<sup>[10]</sup> The following constructed factory converts the persisted span to Asio's descriptor:
+A coroutine reading into a local buffer does not choose among owner placements. The buffer is a local of the frame, the frame survives the suspension, and the read completes into storage that is alive because the coroutine is:
 
 ```cpp
-auto read_from =
-    [&socket](std::span<std::byte>& buffer) {
-        return socket.async_read_some(
-            boost::asio::buffer(
-                buffer.data(), buffer.size()),
-            exec::asio::use_sender);
-    };
+std::vector<std::byte> buf(4096);
+auto [ec, n] = co_await sock.read_some(buf);
 ```
 
-Applying that factory to the two predecessors from Section 4 produces two well-typed compositions:
+The frame is the default owner. Under `let_value` the corresponding safety depends on the author having put the owner in `args`, in the factory's captures, or outside the sender, and Section 3 shows the signature does not record which.
 
-```cpp
-auto first =
-    std::move(ephemeral)
-    | std::execution::let_value(read_from);
+P2300R10's stated case against coroutines is allocation and indirection: coroutine frames "require an unavoidable dynamic allocation and indirect function calls", and HALO (heap allocation elision optimization) "requires a sophisiticated compiler".<sup>[6]</sup> Lifetimes are not part of that case. Table 1 holds row by row for the first seven rows, and the `let_value` column is empty for the last three.
 
-auto second =
-    std::move(durable)
-    | std::execution::let_value(read_from);
-```
+## 6. The Record
 
-For `first`, the adopted order copies the span and destroys the vector owner before invoking `read_from`. The factory can copy the invalid pointer into an Asio descriptor, but the read cannot satisfy its requirement that the referenced memory remain valid through completion. Access through that descriptor has undefined behavior.
+The case for the change is stated in P3373R4 and in CA-338. Ending the predecessor's operation state "after the values received therefrom have been stored in the parent's operation state allows the storage occupied thereby to be reused for the operation state of the second operation".<sup>[1]</sup> Resources the predecessor holds through RAII (resource acquisition is initialization) are released when it completes rather than when the whole operation ends.<sup>[1]</sup> libunifex "already uses the above-described lifetime management strategy", so the change standardizes existing practice.<sup>[1]</sup> CA-338 states that the maximal lifetime was "unnecessarily increasing the lifetime of those operation states and the storage occupied by a let_value, let_error, or let_stopped operation state."<sup>[2]</sup>
 
-For `second`, the same factory receives the same span type. The external vector remains alive, so the I/O precondition remains satisfied while the containing scope retains `owner`.
+The record of adoption and implementation, as of 2026-09-15:
 
-Windows `ReadFileEx` independently requires its buffer to remain valid for the read duration.<sup>[11]</sup> Linux `io_uring(7)` states the same rule for pointers used by `IORING_OP_READ` and `IORING_OP_WRITE`.<sup>[12]</sup> These APIs use completion routines and completion queues rather than Asio completion tokens, yet impose the same owner-lifetime requirement.
+1. Four polls, none with a vote against. LEWG at Wroc&lstrok;aw 2024, welcoming "a principled reduction of operation state lifetimes for specific S/R algorithms (described as ad-hoc in P3373)": 10-7-0-0-0. LEWG telecon 2025-05-13, approving the design for the `let_*` algorithms and `split` as proposed in P3373R1: 5-7-0-0-0. SG1 at Kona 2025-11-04, forwarding as the fix for CA-338: 3-8-0-0-0. LEWG at Croydon 2026-03-23, forwarding P3373R2 to LWG: 9-6-7-0-0.<sup>[1]</sup>
+2. Plenary, Croydon 2026: "Apply the changes in P3373R4 (Of Operation States and Their Lifetimes) to the C++ working paper. CA-338. No discussion. No objection to unanimous consent. Approved." The minutes record the same three sentences for 34 of the 38 LWG motions that day.<sup>[3]</sup>
+3. [exec.async.ops]/8 states generally that "The lifetime of an asynchronous operation's operation state can end during the execution of the completion operation."<sup>[12]</sup> [exec.let] does not state that `let_value`'s predecessor does, and contains no prose statement of when the predecessor operation state ends. The `emplace<monostate>()` line is the whole specification.<sup>[12]</sup>
+4. P3373R4's wording is a redline. It strikes the `2` from `ops2_variant_t` in the three places it edits and elides, with `[...]`, the paragraph requiring "the types args_variant_t and ops2_variant_t" to be well-formed.<sup>[1]</sup> The editorial application, draft commit `27bd4d47`, applied the redline as written.<sup>[24]</sup> [exec.let]/14 still names `ops2_variant_t`, a type the wording no longer defines.<sup>[12]</sup>
+5. P3373R4 reports: "This change has been implemented in nVidia's stdexec."<sup>[1]</sup> The merged code invokes the factory and then destroys the predecessor; the adopted wording destroys the predecessor and then invokes the factory.<sup>[12]</sup> At the pull request's head, commit `4c465db`, the destruction is an explicit `emplace<__monostate>()` after the factory call.<sup>[25]</sup> A later refactor removed that line,<sup>[33]</sup> and at commit `6bac4e1a` the predecessor is destroyed as a side effect of emplacing the successor into the same variant, whose `emplace` destroys the active alternative first.<sup>[26]</sup><sup>[34]</sup> The order did not change. libunifex, the cited existing practice, follows the wording's order: "we need to destroy predOp_ first to make room", then the factory.<sup>[27]</sup>
+6. The test added with the stdexec change is titled "let_value destroys the first operation state before invoking the sender factory". Its body checks `ptr.use_count() == 2` inside the factory, where `ptr` is a `shared_ptr` captured by the first operation's `then` callable; that check holds only while the first operation state is alive.<sup>[25]</sup>
+7. Beman.Execution at its 2026-09-12 head keeps the predecessor in `basic_operation::inner_ops` for the whole operation and has no `let_value` change for P3373R4;<sup>[28]</sup> libc++ lists P3373R4 as not yet implemented.<sup>[29]</sup> NVIDIA's CCCL `cuda::experimental::execution`,<sup>[35]</sup> pika,<sup>[36]</sup> and kuhllib keep the predecessor alive for the whole operation, and HPX forwards to stdexec. Among maintained public implementations, libunifex alone follows the wording's order. The `let_value` composition of Section 3 is undefined behavior under the draft, dangles once the read starts under stdexec, and runs to completion under Beman.
+8. At the LEWG session of 2026-03-23, before the poll forwarding P3373R2 to LWG, Mungo Gill presented a Compiler Explorer example<sup>[37]</sup> of a sender whose operation state owns a 4096-byte buffer and completes with a `std::span` into it, consumed through `let_value` by an `async_write_sender` taking the span as an argument, annotated "Well-defined today. UB under P3373R2." The poll that followed was 9-6-7-0-0.<sup>[1]</sup> P3373R3 (2026-03-23) and P3373R4 (2026-03-27) were published after that session; R3's changes are wording corrections and R4's is the `sender_t`/`receiver_t` rename, and neither adds text on views into the predecessor's operation state.<sup>[38]</sup><sup>[1]</sup> The stdexec pull request and its review contain no discussion of the lifetime of values passed to the factory.<sup>[25]</sup>
 
-The hidden owner location determines whether equal sender metadata satisfies an ordinary asynchronous I/O precondition.
+P3373R4 weighed four designs. Of the ad hoc option, deciding lifetimes algorithm by algorithm: it "has the added disadvantage of the cognitive load it forces onto users."<sup>[1]</sup> Of the implementation-defined option, in the LEWG presentation: it "Has a Hyrum's Law problem".<sup>[5]</sup> Of the status quo: it "Causes perhaps initially-surprising accesses to have well-defined behavior", with the consequence that "people will write fragile code which works with standard algorithms, but doesn't compose with non-standard algorithms", which "could in turn become a safety issue".<sup>[1]</sup> P3373R4 confines the change to the `let_*` algorithms because other algorithms "only ever contain a single child operation state" so "there are no savings to be gained", and because ending lifetimes there "would add overhead since a std::optional (or equivalent) would need to be used".<sup>[1]</sup> The boundary between `then` and `let_value` is drawn by storage layout, not by any property of the values that cross it. The paper called this option ad hoc; LEWG's Wroc&lstrok;aw poll called it principled. The sentence about fragile code now describes `then` and `let_value`, and, as of the commits above, four implementations of `let_value`.
 
-## 6. Safe Ownership Placements Survive the Successor
+Items 1 through 8 are the record. The hazard of Section 3 was demonstrated to LEWG before the wording was forwarded, and no document in the record analyzes it: not the paper in its two subsequent revisions, the NB comment, the tracking issue, the plenary minutes, or the implementation's pull request. The position that such a view is the asynchronous analogue of a reference to a local variable is stated of `then`'s captures in P3373R4 and of `split` in P4288R1.<sup>[1]</sup><sup>[11]</sup> Neither states it of a view consumed by a `let_value` factory, and neither addresses the fact that the same view, with the same completion signature, is well-defined under a `then` successor.
 
-The adopted rule supports safe asynchronous I/O when the owner resides in state that remains alive through the successor. Three placements meet that condition without retaining the predecessor operation state.
+## 7. Objections
 
-The first placement sends the owner itself into `let_value`. The adaptor moves the vector into its persisted argument storage before destroying the predecessor:
+### "Put the owner in the persisted arguments, as P2300R10 does."
 
-```cpp
-auto safe_value =
-    std::execution::just(
-        std::vector<std::byte>(4096))
-    | std::execution::let_value(
-        [&socket](auto& owner) {
-            auto buffer = boost::asio::buffer(
-                owner.data(), owner.size());
-            return socket.async_read_some(
-                buffer, exec::asio::use_sender);
-        });
-```
+That placement is safe, and Section 4 shows both documented examples use it. The completion signature does not record whether it was used; `ephemeral` and `durable` have the same one. A reader of the pipeline cannot tell the safe composition from the unsafe one without reading the predecessor's callable.
 
-The successor depends on the vector stored in `let_value::args`. The destroyed `just` operation state owns no required storage. P2300R10 describes this use of `let_value`: the persisted sent object remains alive until the sender returned by the factory completes.<sup>[3]</sup>
+### "A view into the predecessor's own state was already the asynchronous analogue of returning a reference to a local."
 
-The second placement stores the owner in the factory. P3373R4 deliberately leaves the callable alive because successor operations can depend on its captures.<sup>[1]</sup>
+It was, and P4288R1 says so of `split`.<sup>[11]</sup> P3373R4 gives four synchronous analogues of the same `then` code, two well-defined because the function object outlives its call and two undefined because the lambda's locals end at its return or the lambda itself is a temporary, and reasons from the stack-frame analogy that the undefined ones govern.<sup>[1]</sup> The coroutine end of Table 1 is equally the analogue of a known synchronous error, a reference to a temporary that has ended, and it received a note, a guideline, and a diagnostic.
 
-```cpp
-auto safe_capture =
-    std::execution::just()
-    | std::execution::let_value(
-        [&socket,
-         owner = std::vector<std::byte>(4096)]()
-            mutable {
-            auto buffer = boost::asio::buffer(
-                owner.data(), owner.size());
-            return socket.async_read_some(
-                buffer, exec::asio::use_sender);
-        });
-```
+### "Under [exec.async.ops]/7 the operation state was already invalid after completion, so nothing changed."
 
-The third placement lies outside the containing sender, as in the durable control of Section 4. Static storage, a caller-owned vector, or shared ownership can satisfy the same lifetime requirement when its owner outlives the operation.
+The paragraph reads: "After an asynchronous operation executes a completion operation, its associated operation state is invalid. Accessing any part of an invalid operation state is undefined behavior."<sup>[12]</sup> It is unchanged from P2300R10 and predates the change.<sup>[6]</sup> Whether it reached the asynchronous read is arguable: `ephemeral`'s span points to heap storage owned by a member of the operation state, whether that storage is a "part of" the state is a question the wording does not answer, and P3373R4 describes such accesses under the status quo as having "well-defined behavior".<sup>[1]</sup> The new wording ends the question by destroying the object. The `then` successor runs during the completion operation and is unaffected either way.
 
-An owning completion datum provides another representation. A result type containing the vector, a `shared_ptr`, or an explicit owner token can make ownership part of the transmitted value. This changes the completion type, unlike the two matched span signatures.
+### "Coroutines have the same problem, so this is not a cost of senders."
 
-The P3373R4 transition supports safe I/O when ownership is placed in argument storage, callable state, external state, or an owning result.<sup>[1]</sup>
+Section 5 agrees, and the last three rows of Table 1 record what each end has.
 
-## 7. Coroutine Scope Makes the Compared Ownership Relation Lexical
+### "libunifex has done this for years without incident."
 
-The comparable coroutine composition places the owner and the asynchronous operation in one block. Ordinary lexical scope expresses the lifetime relation without requiring knowledge of an adaptor's operation-state representation.
+No field report of a user's value dangling into the factory is cited here, and none was found: ten searches of the stdexec and libunifex issue trackers for `let_value` with `dangling`, `lifetime`, `use-after-free`, `destroyed`, and `ASAN` returned no such report. libunifex's own history records the bug class on both sides of the algorithm. A 2020 commit, "avoid dangling reference bug in unifex::let", fixed an access through the predecessor's receiver after `predOp_` had been destroyed.<sup>[39]</sup> A 2021 pull request changed the predecessor receiver's `set_error` to take its argument by value, with the comment "Taking by value here to force a copy on the offchange [sic] the error object lives in the operation state, in which case destroying the predecessor operation state would invalidate it."<sup>[40]</sup> A 2022 pull request fixed the same shape on the successor side, for coroutine-evaluated values.<sup>[32]</sup> stdexec #282 asks why libunifex destroys the successor state and values before completing,<sup>[30]</sup> and stdexec #1076 asks "Is it always safe to release operation states early or does it lead to issues elsewhere?"<sup>[31]</sup> The claim is about what the adopted wording permits. P3373R4's own argument about latent issues, that code tested against one set of algorithms is later composed with another "with less rigor", applies to it.<sup>[1]</sup>
 
-Boost.Asio 1.92.0 documents this pattern with a local array passed to `async_read_some` inside a coroutine loop.<sup>[13]</sup> The same shape with a vector is:
+### "stdexec implements the change and its test passes."
 
-```cpp
-boost::asio::awaitable<void>
-read_once(tcp::socket& socket)
-{
-    std::vector<std::byte> owner(4096);
-    co_await socket.async_read_some(
-        boost::asio::buffer(
-            owner.data(), owner.size()));
-}
-```
+stdexec invokes the factory before destroying the predecessor; the wording and libunifex destroy before invoking; Beman.Execution has not implemented the change.<sup>[12]</sup><sup>[25]</sup><sup>[27]</sup><sup>[28]</sup> The test's assertion encodes stdexec's order under the wording's title.<sup>[25]</sup> For the asynchronous successor the outcome under stdexec is the same as under the wording: the storage is gone before the read starts.
 
-Automatic storage lasts until its block exits. `[expr.await]` specifies that suspension returns control to the caller or resumer "without exiting any scopes."<sup>[4]</sup> The vector therefore remains alive while the read is pending, provided the coroutine state itself remains alive.
+### "The change saves storage and every poll favored it."
 
-Coroutines can also dangle. Returning a descriptor into a local owner leaves the caller with an expired referent:
+Both are so. The storage saving is the successor's operation state overlapping the predecessor's, and the polls are 10-7-0-0-0, 5-7-0-0-0, 3-8-0-0-0, and 9-6-7-0-0.<sup>[1]</sup>
 
-```cpp
-task<std::span<std::byte>>
-bad()
-{
-    std::vector<std::byte> owner(4096);
-    co_return std::span<std::byte>(owner);
-}
-```
+## 8. Conclusion
 
-Destroying a suspended coroutine state also destroys its local objects. The coroutine model does not infer ownership or extend a referent beyond its ordinary C++ lifetime.
+A `std::span<std::byte>` produced by a `then` and consumed by an asynchronous read is well-defined when the read is an adaptor whose child is that `then`, and reads destroyed storage when the read is a sender factory reached through `let_value`, which is the only shape Asio offers. The two predecessors that make the difference have the same completion signature. The coroutine parameter problem has this shape from the other end: there the consumer outlives the source, here the source is ended before the consumer starts, and in both the remedy is an owner passed by value across the boundary.
 
-The comparison is therefore about visibility. In the coroutine control, block structure shows that the owner spans the `co_await`. In the sender witness, the owner sits in an ancestor operation state and the following adaptor supplies the destruction boundary.
+The record shows the change adopted for storage and for the timely release of RAII resources, with no vote against at four polls and a plenary disposition shared with 34 of the 38 LWG motions that day, its lifetime specified by one line of code-equivalent wording and no prose, and the implementation it cites running the factory before the destruction the wording specifies, while libunifex follows the wording and Beman.Execution has not implemented it. The hazard was demonstrated to LEWG before the wording was forwarded, and no document in the record analyzes it. The coroutine end of the hazard has a note in the standard, a guideline with an enforcement rule, and a compiler attribute; the `let_value` end has none.
 
-## 8. Implementations Differ at the Factory Boundary
-
-Two public implementations provide evidence about the transition. They agree that result datums are persisted and the predecessor state is replaced. They differ on whether replacement occurs before or after the successor factory invocation.
-
-The libunifex implementation cited by P3373R4<sup>[1]</sup> constructs a decayed result tuple, destroys `predOp_`, invokes the factory, connects the returned sender, and starts the successor.<sup>[14]</sup> Its source comment states that `predOp_` is destroyed first to make room for the successor operation. This order matches the adopted wording.
-
-NVIDIA stdexec at commit `2c56ffe7` invokes the factory while the predecessor owner remains alive, then replaces the predecessor before connecting and starting the successor.<sup>[15]</sup> A test named for destruction before factory invocation checks that a captured `shared_ptr` still has use count 2 inside the factory and has use count 1 after `start`.<sup>[16]</sup> The observed test condition documents the implementation order even though its name describes the standard order.
-
-### 8.1. The Normative Finding Does Not Depend on Either Ordering
-
-The code-equivalent wording controls the standard result: the predecessor is destroyed before the factory. A synchronous access to predecessor-owned bytes inside the factory can therefore be undefined under the wording while appearing to work in the pinned stdexec implementation.
-
-The asynchronous I/O witness places the access later. In libunifex, the owner is gone before the factory. In the pinned stdexec implementation, the factory first returns an Asio sender containing the descriptor, then predecessor replacement destroys the owner before successor connection and start. The referenced bytes have expired in both implementations by the time the asynchronous child can access them.
-
-The implementation comparison therefore bounds two claims. Factory-time behavior varies in the public implementations. Successor-time access still requires ownership that survives predecessor replacement.
-
-## 9. Expected Objections Bound the Finding
-
-The constructed case admits direct objections. Four concern whether the program already violates an ordinary borrowing discipline. Four concern the scope of what follows from one default adaptor.
-
-### "The Predecessor Never Promised That Its Borrow Would Survive Completion"
-
-Correct. The predecessor sends a span that is valid during its completion operation. Neither the span type nor the sender promises that the referent survives later destruction of the predecessor operation state.
-
-The relevant composition remains well-typed, and replacing the following `then` with `let_value` changes when the owner is destroyed. The claim concerns information available at that composition point and attributes no broken promise to the predecessor.
-
-### "Completion Signatures Were Never a Lifetime Type System"
-
-Correct. Completion signatures describe completion operations. Section 3 relies on that definition rather than assigning them a stronger purpose.
-
-Generic composition can inspect `set_value_t(std::span<std::byte>)` and cannot recover the omitted owner location from that type. An owning result or an explicit token can put additional lifetime information into the completion datum.
-
-### "`span` Already Says That It Does Not Own"
-
-The span type identifies the risk category. It does not identify whether the referent is external, static, stored in `let_value::args`, captured by the factory, or owned by the predecessor operation state. The matched pair in Section 4 differs among those locations while preserving the descriptor type.
-
-### "This Is Ordinary C++ Dangling-View Behavior"
-
-The underlying object-lifetime rule is ordinary C++. The additional fact is where the owner dies. In the sender witness, the owner is nested in an operation state and its destruction is prescribed by the following adaptor rather than by a lexical block boundary.
-
-### "Putting the Owner in `let_value` Solves the Problem"
-
-Yes. Section 6 shows two such constructions. They are evidence that sender-based I/O can satisfy the lifetime contract, and they identify the owner placement required by the adopted rule.
-
-### "A Domain Can Customize `let_value`"
-
-Yes. The constructed proof concerns the default transformation and code-equivalent wording. A domain customization can select different storage and lifetime behavior, with that behavior becoming part of the domain's contract.
-
-### "Coroutines Can Dangle Too"
-
-Yes. Section 7 includes a coroutine returning a span into a local vector. The comparison concerns lexical visibility of the owner across one `co_await` and establishes no universal coroutine-safety result.
-
-### "The Example Does Not Cover Every `let_*` Adaptor"
-
-The ordinary buffer witness concerns `let_value`. `let_error` can carry one compound error datum that contains a non-owning view. `let_stopped` carries no result datum, so the same direct buffer-result construction does not apply.
-
-These objections limit the result to a well-typed default `let_value` composition whose predecessor owns the referent. They do not alter the ownership relations shown in Sections 2 through 5.
-
-## 10. Design Directions Trade Visibility Against Storage
-
-The evidence determines no unique remedy. Five directions expose different parts of the ownership relation and preserve different parts of P3373R4's storage result.<sup>[1]</sup>
-
-1. **Owner-placement conventions.** Library guidance can require owners to reside in `let_value` arguments, callable captures, or external state. This preserves the adopted wording and requires users to recognize the boundary.
-2. **Owning completion data.** APIs can send an owner, shared owner, or explicit lifetime token with the descriptor. This makes lifetime information available to composition and changes the completion type or ownership cost.
-3. **Diagnostics or ownership metadata.** Static analysis can track an Owner-to-Pointer relation of the kind described by P1179R1.<sup>[2]</sup> Such analysis requires information beyond an ordinary span completion signature.
-4. **Domain transformation.** An I/O domain can customize `let_value` or provide an adaptor with a domain-specific lifetime contract. This keeps generic wording unchanged and makes behavior depend on the selected domain.
-5. **Longer predecessor lifetime.** An adaptor can retain the predecessor through the successor. This preserves predecessor-owned borrows and gives up the storage reuse and earlier resource release that motivated P3373R4.<sup>[1]</sup>
-
-The five directions differ in ownership visibility, static storage reuse, generic metadata, and implementation cost. The evidence identifies the tradeoff without ranking those selections.
-
-## 11. Conclusion
-
-Non-owning buffers are representable in sender completions, and `let_value` safely sequences I/O when the buffer owner resides in state that survives the successor. The adopted P3373R4 transition first persists the buffer descriptor, then destroys the predecessor operation state, then invokes the successor factory. When the destroyed state owns the descriptor's referent, an ordinary `set_value_t(std::span<std::byte>)` completion signature does not distinguish that dangling result from an equal signature whose referent remains alive. The resulting adaptor-specific ownership boundary is consequential for I/O while sender/receiver remains capable of representing I/O.
-
-The record also identifies the tradeoff that produced the boundary. Earlier destruction permits predecessor and successor states to reuse storage and releases predecessor-held resources sooner. Longer lifetime preserves predecessor-owned borrows. Library authors can place owners in surviving state, domain authors can select different transformations, and lifetime-analysis tools can seek the owner relation that the ordinary descriptor type omits. Each builds on a separate part of the evidence rather than on a claim that one representation fits every asynchronous domain.
+Those who build on this next are the implementers deciding which order to ship, the authors of `std::execution` I/O layers deciding between the adaptor and factory shapes and where owners go, and anyone writing the `let_value` counterpart of CP.53.
 
 ## Disclosure
 
 The author provides information and serves at the pleasure of the committee.
 
-The author developed and maintains [Capy](https://github.com/cppalliance/capy) and [Corosio](https://github.com/cppalliance/corosio) and believes coroutine-native I/O is a practical foundation for networking in C++.
+The author developed and maintains [Capy](https://github.com/cppalliance/capy) and [Corosio](https://github.com/cppalliance/corosio), coroutine-native I/O libraries, and believes coroutine-native I/O is a practical foundation for networking in C++.
 
-Coroutine-native I/O and `std::execution` are complementary. Each serves the domain where its design choices pay off.
+The paper places a finding in the record.
+
+The author has a stake in how C++ compares coroutine-native I/O with sender-based I/O, and Section 5 sets a coroutine shape against a sender shape.
+
+The matched pair is a constructed minimal example. Nothing is measured, and no failure in deployed code is cited.
+
+This paper is a companion to P4255R0 and P4286R0, which also examine the boundary between coroutines and `std::execution`.
 
 This paper uses AI.
-
-The author has a stake in how C++ compares coroutine-native I/O with sender-based I/O. The analysis gives coroutine block scope a visibility advantage in one matched lifetime comparison.
-
-The constructed witness concerns default `let_value` and predecessor-owned storage. It does not measure the frequency of this pattern in deployed programs. The coroutine comparison in Section 7 addresses lexical visibility only; it does not compare compile-time inspection or optimization of a complete sender graph.
-
-Related work includes P3373R4, P2300R10, and the author's coroutine I/O papers. The method compares code-equivalent standard wording, equal-signature ownership controls, versioned I/O contracts, and pinned implementation sources.
 
 This paper asks for nothing.
 
 ## Acknowledgments
 
-The author thanks Robert Leahy for P3373R4 and its precise account of operation-state storage and lifetime choices; Herb Sutter for the Owner and Pointer vocabulary in P1179R1; and Christopher Kohlhoff for Boost.Asio's explicit asynchronous buffer-lifetime contract. The public libunifex and stdexec implementations made the ordering comparison reproducible.
+Robert Leahy, whose P3373R4 supplies the change, the design space, the synchronous analogues, and the `then` analysis on which Sections 2 and 7 rest. Herb Sutter for the Owner and Pointer vocabulary and the `co_await` rule in P1179R1. Christopher Kohlhoff for Boost.Asio's explicit buffer-lifetime contract. Dietmar K&uuml;hl for P2762R2's side-by-side statement of the adaptor and factory shapes, and, with Jonathan M&uuml;ller, for the P3801R0 and P3796R1 exchange on `task` parameters. Mungo Gill for the Compiler Explorer example presented to LEWG at Croydon, for the editorial pass that attributed the dangling example to P3373R4, and for the first compile check of the matched pair.
 
 ## References
 
 [1] [P3373R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3373r4.pdf) - "Of Operation States and Their Lifetimes" (Robert Leahy, 2026).
 
-[2] [P1179R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1179r1.pdf) - "Lifetime safety: Preventing common dangling" (Herb Sutter, 2019).
+[2] [N5028](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5028.pdf) - "C++26 CD summary of voting and comments" (Herb Sutter, 2025).
 
-[3] [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html) - "`std::execution`" (Micha&lstrok; Dominiak, Georgy Evtushenko, Lewis Baker, Lucian Radu Teodorescu, Lee Howes, Kirk Shoop, Michael Garland, Eric Niebler, Bryce Adelstein Lelbach, 2024).
+[3] [N5040](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/n5040.pdf) - "WG21 2026-03 Croydon Hybrid Meeting Minutes" (Braden Ganetsky, 2026).
 
 [4] [N5054](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/n5054.pdf) - "Working Draft, Programming Languages - C++" (Thomas K&ouml;ppe, 2026).
 
-[5] [N5047](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/n5047.html) - "Editors' Report: Programming Languages - C++" (Thomas K&ouml;ppe, Jens Maurer, Dawn Perchik, Richard Smith, 2026).
+[5] [P3389R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3389r0.pdf) - "Of Operation States and Their Lifetimes (LEWG Presentation 2024-09-10)" (Robert Leahy, 2024).
 
-[6] [C++ draft source](https://github.com/cplusplus/draft/blob/999d8ae0d2d3d6e76d85d39819cf253caacf6af6/source/exec.tex#L4268-L4277) - "`let_value` code-equivalent wording at commit `999d8ae0`" (ISO C++ project, 2026).
+[6] [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html) - "std::execution" (Micha&lstrok; Dominiak, Georgy Evtushenko, Lewis Baker, Lucian Radu Teodorescu, Lee Howes, Kirk Shoop, Michael Garland, Eric Niebler, Bryce Adelstein Lelbach, 2024).
 
-[7] [Compiler Explorer](https://godbolt.org/z/qhvq41116) - "Matched-predecessor completion signatures compiled against stdexec trunk, x86-64 gcc 16.2, `-std=c++23 -Wall -Wextra`" (Compiler Explorer, 2026).
+[7] [C++ Core Guidelines CP.53](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rcoro-reference-parameters) - "Parameters to coroutines should not be passed by reference" (Bjarne Stroustrup, Herb Sutter, editors, accessed 2026-09-15).
 
-[8] [Boost.Asio `mutable_buffer`](https://www.boost.org/doc/libs/1_92_0/doc/html/boost_asio/reference/mutable_buffer.html) - "A non-owning mutable buffer descriptor" (Christopher M. Kohlhoff, 2026).
+[8] [P1179R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1179r1.pdf) - "Lifetime safety: Preventing common dangling" (Herb Sutter, 2019).
 
-[9] [Boost.Asio `async_read_some`](https://www.boost.org/doc/libs/1_92_0/doc/html/boost_asio/reference/basic_stream_socket/async_read_some.html) - "Asynchronous socket read and buffer-lifetime requirements" (Christopher M. Kohlhoff, 2026).
+[9] [P3801R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3801r0.html) - "Concerns about the design of std::execution::task" (Jonathan M&uuml;ller, 2025).
 
-[10] [stdexec `use_sender.hpp`](https://github.com/NVIDIA/stdexec/blob/2c56ffe7f8a2b8b5221918159092be379ae8b40f/include/exec/asio/use_sender.hpp) - "Asio sender completion token at commit `2c56ffe7`" (NVIDIA, 2026).
+[10] [P3796R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3796r1.html) - "Coroutine Task Issues" (Dietmar K&uuml;hl, 2025).
 
-[11] [Microsoft `ReadFileEx`](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfileex) - "Asynchronous file read and buffer-lifetime requirements" (Microsoft, accessed 2026-09-07).
+[11] [P4288R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4288r1.pdf) - "Stop the Decay" (Robert Leahy, 2026).
 
-[12] [`io_uring(7)`](https://man7.org/linux/man-pages/man7/io_uring.7.html) - "Linux asynchronous I/O interface" (Linux manual page, 2020).
+[12] [C++ draft source, exec.tex](https://github.com/cplusplus/draft/blob/999d8ae0d2d3d6e76d85d39819cf253caacf6af6/source/exec.tex) - "[exec.async.ops] lines 270-287, [exec.snd.expos] lines 2143-2158 and 2211-2213, [exec.then] lines 4036-4055, [exec.let] lines 4090-4400, at commit 999d8ae0" (ISO C++ project, 2026).
 
-[13] [Boost.Asio C++20 coroutine support](https://www.boost.org/doc/libs/1_92_0/doc/html/boost_asio/overview/composition/cpp20_coroutines.html) - "C++20 Coroutines Support" (Christopher M. Kohlhoff, 2026).
+[13] [Boost.Asio basic_stream_socket::async_read_some](https://www.boost.org/doc/libs/1_92_0/doc/html/boost_asio/reference/basic_stream_socket/async_read_some.html) - "Start an asynchronous read" (Christopher M. Kohlhoff, 2026).
 
-[14] [libunifex `let_value.hpp`](https://github.com/facebookexperimental/libunifex/blob/03a211667e7598311c6bdcefdb3d489d341a42f0/include/unifex/let_value.hpp#L150-L189) - "Predecessor replacement at commit `03a21166`" (Meta Platforms, 2025).
+[14] [stdexec exec/asio/use_sender.hpp](https://github.com/NVIDIA/stdexec/blob/6bac4e1a8ed065eb5cd8d3b295f00aee753d4f84/include/exec/asio/use_sender.hpp) - "Asio completion token whose async_result::initiate returns a sender, at commit 6bac4e1a" (Robert Leahy, 2025).
 
-[15] [stdexec `__let.hpp`](https://github.com/NVIDIA/stdexec/blob/2c56ffe7f8a2b8b5221918159092be379ae8b40f/include/stdexec/__detail/__let.hpp#L259-L283) - "Successor construction at commit `2c56ffe7`" (NVIDIA, 2026).
+[15] [Compiler Explorer](https://godbolt.org/z/qhvq41116) - "Matched predecessors with equal completion signatures, stdexec trunk, x86-64 gcc 16.2, -std=c++23 -Wall -Wextra" (Compiler Explorer, 2026).
 
-[16] [stdexec `test_let_value.cpp`](https://github.com/NVIDIA/stdexec/blob/2c56ffe7f8a2b8b5221918159092be379ae8b40f/test/stdexec/algos/adaptors/test_let_value.cpp#L467-L485) - "`let_value` predecessor-lifetime test at commit `2c56ffe7`" (NVIDIA, 2026).
+[16] [Boost.Asio mutable_buffer](https://www.boost.org/doc/libs/1_92_0/doc/html/boost_asio/reference/mutable_buffer.html) - "Holds a buffer that can be modified" (Christopher M. Kohlhoff, 2026).
+
+[17] [N4771](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4771.pdf) - "Working Draft, C++ Extensions for Networking" (Jonathan Wakely, 2018).
+
+[18] [Microsoft ReadFileEx](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfileex) - "ReadFileEx function (fileapi.h)" (Microsoft, accessed 2026-09-15).
+
+[19] [io_uring(7)](https://man7.org/linux/man-pages/man7/io_uring.7.html) - "Asynchronous I/O facility" (Linux manual pages, 2020).
+
+[20] [aio_read(3p)](https://man7.org/linux/man-pages/man3/aio_read.3p.html) - "asynchronous read from a file" (IEEE and The Open Group, 2017).
+
+[21] [P2762R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2762r2.pdf) - "Sender/Receiver Interface For Networking" (Dietmar K&uuml;hl, 2023).
+
+[22] [Clang Attribute Reference](https://clang.llvm.org/docs/AttributeReference.html#coro-lifetimebound) - "coro_lifetimebound" (LLVM Project, accessed 2026-09-15).
+
+[23] [Clang 18.1.0 Release Notes](https://releases.llvm.org/18.1.0/tools/clang/docs/ReleaseNotes.html) - "Attribute Changes in Clang" (LLVM Project, 2024).
+
+[24] [C++ draft commit 27bd4d47](https://github.com/cplusplus/draft/commit/27bd4d47caa0) - "P3373R4 Of Operation States and Their Lifetimes" (ISO C++ project, 2026).
+
+[25] [NVIDIA/stdexec PR #1715](https://github.com/NVIDIA/stdexec/pull/1715) - "let_value, _error, & _stopped: Destroy Child Operation State After Completion" (Robert Leahy, 2025).
+
+[26] [stdexec __let.hpp](https://github.com/NVIDIA/stdexec/blob/6bac4e1a8ed065eb5cd8d3b295f00aee753d4f84/include/stdexec/__detail/__let.hpp#L266-L283) - "__start_next_fn at commit 6bac4e1a" (NVIDIA, 2026).
+
+[27] [libunifex let_value.hpp](https://github.com/facebookexperimental/libunifex/blob/03a211667e7598311c6bdcefdb3d489d341a42f0/include/unifex/let_value.hpp#L144-L190) - "let_value predecessor destruction, lines 154-180 at commit 03a21166" (Meta Platforms, 2025).
+
+[28] [Beman.Execution let.hpp](https://github.com/bemanproject/execution/blob/c55d8245bea73924a6509c77f68e85008572769a/include/beman/execution/detail/let.hpp#L292-L324) - "let_t state and let_bind at commit c55d8245" (Beman Project, 2026).
+
+[29] [libc++ C++26 Status](https://libcxx.llvm.org/Status/Cxx26.html) - "C++26 implementation status" (LLVM Project, accessed 2026-09-15).
+
+[30] [NVIDIA/stdexec issue #282](https://github.com/NVIDIA/stdexec/issues/282) - "Check the lifetimes in the let_ algorithms" (Eric Niebler, 2021).
+
+[31] [NVIDIA/stdexec issue #1076](https://github.com/NVIDIA/stdexec/issues/1076) - "Upper bound on lifetime of operation states" (msimberg, 2023).
+
+[32] [facebookexperimental/libunifex PR #416](https://github.com/facebookexperimental/libunifex/pull/416) - "Fix asan error for let_value with coroutines" (jesswong, 2022).
+
+[33] [NVIDIA/stdexec PR #1778](https://github.com/NVIDIA/stdexec/pull/1778) - "refactor continues_on and let_value to be more constexpr-friendly" (Eric Niebler, 2026).
+
+[34] [stdexec __variant.hpp](https://github.com/NVIDIA/stdexec/blob/6bac4e1a8ed065eb5cd8d3b295f00aee753d4f84/include/stdexec/__detail/__variant.hpp#L285-L296) - "__variant::emplace, which destroys the active alternative before constructing the new one, at commit 6bac4e1a" (NVIDIA, 2026).
+
+[35] [NVIDIA/cccl let_value.cuh](https://github.com/NVIDIA/cccl/blob/a12115c30f224447508c79c824cc707b84210c63/cudax/include/cuda/experimental/__execution/let_value.cuh) - "cuda::experimental::execution let_value, child operation state as a data member for the whole operation, at commit a12115c3" (NVIDIA, 2026).
+
+[36] [pika let_value.hpp](https://github.com/pika-org/pika/blob/947cf61a14fcafc4d472fb3fcddf3bd2e89d792e/libs/pika/execution/include/pika/execution/algorithms/let_value.hpp) - "let_value with predecessor_op_state as a data member for the whole operation, at commit 947cf61a" (pika, 2026).
+
+[37] [Compiler Explorer](https://godbolt.org/z/Ye67bqbcb) - "async_read_sender completing with a std::span into its own operation state, consumed through let_value by async_write_sender; annotated 'Well-defined today. UB under P3373R2.'" (Mungo Gill, presented to LEWG 2026-03-23).
+
+[38] [P3373R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3373r3.pdf) - "Of Operation States and Their Lifetimes" (Robert Leahy, 2026-03-23).
+
+[39] [facebookexperimental/libunifex commit 9263302e](https://github.com/facebookexperimental/libunifex/commit/9263302eb19d13ad0ba8ba667827d9e842e842ff) - "avoid dangling reference bug in unifex::let" (Eric Niebler, 2020-07-13).
+
+[40] [facebookexperimental/libunifex PR #344](https://github.com/facebookexperimental/libunifex/pull/344) - "back out fix to just[_error] and fix let_value instead" (Eric Niebler, 2021-09-06).
