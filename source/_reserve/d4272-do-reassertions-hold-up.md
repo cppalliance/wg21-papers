@@ -46,7 +46,7 @@ The assessment herein provides seven contributions.
     c. P3626R0 is the alternative wording prepared by the lead author of P2900R14 and P3846R1 so that EWG could poll the alternative; it is not an independent rival proposal.<sup>[10]</sup>
     d. P3097R0 was merged into P2900R8,<sup>[11]</sup> a revision of the proposal, never into the C++26 working draft.<sup>[12]</sup>
 6. A description of the record a discharged reconciliation duty produces, each element located in practice in force today, with a WG21 instance of the record being made (Section 9).
-7. The assignment of the reconciliation duty to the convenership, and the record of its non-exercise during the adoption arc, read against that description (Section 10).
+7. The assignment of the reconciliation duty to the convenership, and the absence of a reconciliation record during the adoption arc across the public sources this paper searched, read against that description. This is a question of office rather than of authorship, and Section 10 sets out both the search scope and the reasons a strong executive is the right design.
 
 Three assumptions govern the assessment. First, a paper's printed date fixes what its authors could have known, so a source dated after 2025-11-03 neither falsifies nor supports a sentence written by that day.
 
@@ -510,11 +510,11 @@ Read against Table 3, the adoption arc's record is short in every row. Row 1: th
 
 The sixteen open objections, therefore, raise a question of office rather than of authorship: Whose duty was the reconciliation that Section 2 requires? SD-4, WG21's own practices document, answers the structural question: It provides that "Subgroup chairs are appointed by the convener, and are selected to match the current needs of the subgroup. They have no fixed term"; that "The subgroup chair may take any polls they choose"; and that plenary consensus is "as determined by the Convener."<sup>[70]</sup> The ISO/IEC Directives assign the reconciliation duty to "the leadership": "If the leadership determines that there is a sustained opposition, it is required to try and resolve it in good faith."<sup>[13]</sup> The accountability provisions stop one level below the top of this chain: The term limits of clause 1.8.1 bind technical and subcommittee chairs, not working group convenors.<sup>[13]</sup> Within WG21, the duty and the discretion, therefore, meet in a single office.
 
-Herb Sutter held that office from 2002 through the adoption arc assessed here and authored SD-4 itself; every chair who presided over the polls of record held office under his appointment.<sup>[90]</sup> What the chain produced is on the record. The SG21 consensus record documents the polls' tallies and no reconciliation process between them.<sup>[91]</sup> EWG's forwarding poll at Wroc&lstrok;aw carried a twelve-vote Strongly Against bloc with no recorded finding that the opposition had been answered.<sup>[40]</sup> Of the twenty-three national body comments on contract assertions at Kona, all but two were rejected.<sup>[8]</sup>
+Herb Sutter held that office from 2002, when SC22 confirmed the appointment,<sup>[95]</sup> through the adoption arc assessed here,<sup>[96]</sup><sup>[8]</sup> and authored SD-4 itself, which the Direction Group's own reference list records as "[Sutter,2018] WG21 Practices and Procedures. ISO/IEC JTC1/SC22/WG21/SD-4. 2018-01-17."<sup>[97]</sup> Every chair who presided over the polls of record held office under his appointment, and SG21's is on the record: the convener announced in plenary that "John Spicer will be the chair."<sup>[98]</sup> What the chain produced is on the record. The SG21 consensus record documents the polls' tallies and no reconciliation process between them.<sup>[91]</sup> EWG's forwarding poll at Wroc&lstrok;aw carried a twelve-vote Strongly Against bloc with no recorded finding that the opposition had been answered.<sup>[40]</sup> Of the twenty-three national body comments on contract assertions at Kona, all but two were rejected.<sup>[8]</sup>
 
 The determination clause 2.5.6 requires is also on the record, in the proposers' own rationale, which uses the Directives' term four times: the pre-Hagenberg concerns were "restatements of known, sustained opposition to the Contracts design"; the safety claim was "another source of sustained opposition"; EWG polled "whether, given the sustained opposition, the Contracts proposal should be withdrawn from consideration for C++26" (SF 9, F 8, N 3, A 19, SA 41, consensus against); and after the Wroc&lstrok;aw strict-predicates poll, "EWG had consensus against pursuing this direction, although sustained opposition to that decision remained," under a recorded result reading "Consensus against, but P2900 would be in danger of failure in plenary" (Sections 2.6 and 3.6.1).<sup>[20]</sup> The recorded answers to that determination were a removal poll, two gauge polls, one of which the same rationale calls "deliberately vaguely worded," and a response paper, P3591R0, which the rationale names as "a comprehensive response to all these concerns."<sup>[20]</sup>
 
-The concentration is not the defect; the non-exercise is. A strong executive is how a volunteer committee breaks deadlocks, and the Directives vest the reconciliation duty in the leadership because a room of two hundred cannot reconcile anything. The duty was nonetheless not discharged on the record anywhere in the adoption arc, and it does not expire with the officeholder. Guy Davidson holds the convenership now: ISO selected him in November 2025, effective 2026-01-01, and the current revision of SD-4 names him as its reply-to.<sup>[90]</sup><sup>[70]</sup> In February 2026, the Directions Group issued guidance on building consensus and converging proposals.<sup>[92]</sup> The sixteen open objections identified in this assessment are now before the national bodies, the level where the resolution obligation governs outright.
+The concentration is not the defect; the non-exercise is. A strong executive is how a volunteer committee breaks deadlocks, and the Directives vest the reconciliation duty in the leadership because a room of two hundred cannot reconcile anything. The duty was nonetheless not discharged on the record anywhere in the adoption arc, and it does not expire with the officeholder. Guy Davidson holds the convenership now: ISO selected him in November 2025, effective 2026-01-01, and the current revision of SD-4 names him as its reply-to.<sup>[90]</sup><sup>[94]</sup> In February 2026, the Directions Group issued guidance on building consensus and converging proposals.<sup>[92]</sup> The sixteen open objections identified in this assessment are now before the national bodies, the level where the resolution obligation governs outright.
 
 ---
 
@@ -692,7 +692,7 @@ This paper asks for nothing.
 
 [69] [P4020R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4020r0.html) - "Concerns about contract assertions" (Andrzej Krzemie&nacute;ski, 2026).
 
-[70] [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures) - "WG21 Practices and Procedures" (Guy Davidson, 2026).
+[70] [SD-4](https://web.archive.org/web/20260125120311/https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures) - "WG21 Practices and Procedures" (Herb Sutter, 2024). Revision of 2024-12-30, the text in force throughout the adoption arc assessed here.
 
 [71] [P1974R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p1974r0.pdf) - "Non-transient constexpr allocation using propconst" (Jeff Snyder, Louis Dionne, Daveed Vandevoorde, 2020).
 
@@ -739,4 +739,14 @@ This paper asks for nothing.
 [92] [P4024R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4024r0.pdf) - "Guidance on Building Consensus and Converging Proposals" (Michael Wong, Jeff Garland, Paul E. McKenney, Roger Orr, Bjarne Stroustrup, Daveed Vandevoorde, 2026).
 
 [93] [P4238R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4238r0.pdf) - "Returning C++26 for the Evaluation It Skipped" (Vinnie Falco, Ville Voutilainen, Jos&eacute; Daniel Garc&iacute;a S&aacute;nchez, John Spicer, 2026).
+
+[94] [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures) - "WG21 Practices and Procedures" (Guy Davidson, 2026). Current revision, dated 2026-05-11.
+
+[95] [N1409](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2002/n1409.html) - "Minutes of ISO WG21 meeting, October 20, 2002" (Robert Klarer, 2002); records "Plum noted that Herb Sutter was confirmed as convenor of WG21".
+
+[96] [N5005](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5005.pdf) - "WG21 2025-01 Hagenberg Admin telecon minutes" (Nina Dinka Ranns, 2025).
+
+[97] [P0939R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0939r0.pdf) - "Direction for ISO C++" (Howard Hinnant, Roger Orr, Bjarne Stroustrup, Daveed Vandevoorde, Michael Wong, 2018).
+
+[98] [N4826](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/n4826.pdf) - "WG21 2019-07 Cologne Minutes of Meeting" (Nina Dinka Ranns, 2019).
 

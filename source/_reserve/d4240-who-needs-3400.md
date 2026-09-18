@@ -115,6 +115,10 @@ The objection is disclosure. P3400R4 names the assistance it received in produci
 
 Section 6 of P3400R4 cites prototypes written by the paper author, in his own repositories, from his employer's address, behind experimental flags, in forks of GCC and Clang. No shipping compiler implements P3400. No production codebase deploys it. The implementation experience is a corporate sponsor verifying its own requirements on branches its own employee writes.
 
+The implementation status is checkable. As of 2026-09-18, a search of the GCC C++ status page, the GCC 16 release notes, the Clang C++ status page, the cppreference C++26 compiler support table, the microsoft/STL C++26 contracts tracking issue, and EDG's published feature list found no reference to P3400 or to assertion-control labels; the cppreference table tracks four contracts papers, P2900R14, P3598R0, P3819R0 and P3886R0, and P3400 is not among them.<sup>[19]</sup><sup>[20]</sup><sup>[21]</sup><sup>[22]</sup><sup>[23]</sup> No feature-test macro for P3400 appears on any of those pages, and the papers tracker records P3400R4 as an EWG-direction-approved paper targeting C++29 rather than an adopted feature.<sup>[24]</sup> This establishes absence from those pages on that date, not absence from every implementation under every name.
+
+The implementers describe the state of the work in the same terms. [P3595R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3595r0.pdf)<sup>[25]</sup> reports that the configuration system "has been partially implemented in branches of GCC and Clang that are available on compiler explorer", and links a Compiler Explorer build for "control of evaluation semantic based on group labels (as provided by [P3400R4])". One qualification belongs with that citation and cuts against this paper's own argument: P3595R0's co-author Iain Sandoe is the GCC contracts implementer and is not a Bloomberg employee, so that implementation is not one the sponsor's own employee wrote.
+
 ## Predictions
 
 The following predictions generalize from the author's observations of committee proceedings on contracts, partially corroborated by the public record cited in the preceding section. Each identifies a behavioral pattern that the structural position of an entity requiring P3400 would produce. They are falsifiable: if the committee record does not match them, they are wrong.
@@ -127,9 +131,15 @@ The following predictions generalize from the author's observations of committee
 
 **Prediction 4.** An entity that needs P3400 will argue that continuation past undefined behavior serves its customers, positioning a business-value judgment as a language-design principle.
 
+The record already carries instances. [P2899R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r1.pdf)<sup>[16]</sup> gives the production rationale directly: the observe semantic "provides the opportunity to install a logging handler to instrument an existing codebase - one that is known to run successfully in production - with contract assertions to find defects in that codebase without bringing down the entire production system upon contract violation", and elsewhere licenses continuing past undefined behavior on the ground that in such a codebase "any undefined behavior it exhibits is most likely 'benign'". [P3400R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3400r3.pdf)<sup>[17]</sup> makes the argument in its own motivation section, that a marked assertion can be "more easily deployed to production environments", and P1487R0's 2010 entry calls a returning violation handler "an absolute requirement for incorporating new contract checks into older programs".<sup>[3]</sup>
+
+Two things in the same record cut the other way and belong here. P2899R1 states the safety caveat in the same passage: "In many situations, this strategy is not advisable because continuing past a contract violation is likely to execute incorrect code and cause undefined behavior."<sup>[16]</sup> And P1487R0 records a 2015 outage at the same company caused by a violation handler that returned, after which management ruled that a check proved correct "is to be changed to never return ... and must never be allowed to continue again".<sup>[3]</sup> The prediction concerns how the extension is argued for. It is not a claim that the company favors continuation uniformly, and its own published record shows that it does not.
+
 **Prediction 5.** An entity that needs P3400 will describe the choice of violation response in the vocabulary of business risk and operational policy, rather than in the vocabulary of language safety guarantees.
 
 **Prediction 6.** An entity that needs P3400 will characterize sustained technical opposition as an obstacle to industry adoption, casting delay as harm to users rather than as unresolved design disagreement.
+
+The record already carries instances here too. P3276R0 frames delay as a signal to regulators - shipping as a TS "would only delay delivery of a feature that is essential for correctness and safety to C++ users around the world", and "such a delay would imply to governments, regulatory bodies, and users that we do not actually take language safety issues seriously" - and characterizes the opposing position as a "myopic mindset" that "does not serve our users, our business, or our long-term need for a qualitatively safer programming language".<sup>[5]</sup> [P3846R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3846r1.pdf)<sup>[18]</sup> states that "delaying standardisation to add features blocks adoption, deployment in real-world codebases, and evolution", and that "removing P2900 from C++26 entirely would not benefit any constituency". P3400R3's abstract applies the same frame to this extension, calling the functionality "essential to the unhindered and widespread adoption of Contracts".<sup>[17]</sup>
 
 **Prediction 7.** An entity that needs P3400 will cite its own internal deployment history as authoritative evidence, but the room cannot independently corroborate it.
 
@@ -180,3 +190,23 @@ This paper asks for nothing.
 [14] [P3878R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3878r0.pdf) - "C++26 Contracts are not a good fit for standard library hardening" (Ville Voutilainen, Jonathan Wakely, John Spicer, Stephan T. Lavavej, 2025).
 
 [15] [P4238R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4238r0.pdf) - "Returning C++26 for the Evaluation It Skipped" (Vinnie Falco, Ville Voutilainen, Jos&eacute; Daniel Garc&iacute;a S&aacute;nchez, John Spicer, 2026).
+
+[16] [P2899R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r1.pdf) - "Contracts for C++ - Rationale" (Timur Doumler, Joshua Berne, Andrzej Krzemie&nacute;ski, Rostislav Khlebnikov, 2025).
+
+[17] [P3400R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3400r3.pdf) - "Controlling Contract-Assertion Properties" (Joshua Berne, 2026).
+
+[18] [P3846R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3846r1.pdf) - "C++26 Contract Assertions, Reasserted" (Timur Doumler, Joshua Berne, 2026).
+
+[19] [C++ Standards Support in GCC](https://gcc.gnu.org/projects/cxx-status.html) - GCC C++ status page (GNU Project, accessed 2026-09-18).
+
+[20] [GCC 16 Release Series Changes](https://gcc.gnu.org/gcc-16/changes.html) - GCC 16 release notes (GNU Project, accessed 2026-09-18).
+
+[21] [C++ Support in Clang](https://clang.llvm.org/cxx_status.html) - Clang C++ status page (LLVM Project, accessed 2026-09-18).
+
+[22] [Compiler support for C++26](https://en.cppreference.com/w/cpp/compiler_support/26) - cppreference C++26 compiler support table (accessed 2026-09-18).
+
+[23] [microsoft/STL issue 5286](https://github.com/microsoft/STL/issues/5286) - "P2900R14 `<contracts>`" tracking issue (Microsoft, accessed 2026-09-18).
+
+[24] [cplusplus/papers issue 2184](https://github.com/cplusplus/papers/issues/2184) - "P3400 R4 Controlling Contract-Assertion Properties" tracker issue, labelled C++29 (accessed 2026-09-18).
+
+[25] [P3595R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3595r0.pdf) - "Configuration of Contract Evaluation Semantics" (Joshua Berne, Iain Sandoe, 2026).
