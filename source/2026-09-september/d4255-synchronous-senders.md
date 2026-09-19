@@ -310,7 +310,7 @@ stdexec demonstrates a lower-state path for statically inline completion without
 
 ## Objections Define the Scope
 
-The objections below separate sender execution from prestart readiness, identify repairs the finding permits, and exclude consumers that never enter the coroutine bridge. Each heading states an objection in the form it is commonly raised; the quotation marks mark the objection rather than a source, and where an objection is attributable to a paper the heading cites it.
+The objections below separate sender execution from prestart readiness, identify repairs the finding permits, and exclude consumers that never enter the coroutine bridge. Each heading states an objection in the form it is commonly raised; the quotation marks indicate the general objection rather than quote a source, and where an objection is attributable to a paper the heading cites it.
 ### "Senders already support synchronous I/O"
 
 The working draft permits completion during `start`, `inline_scheduler` completes that way, and P2300R10's `recv_sender` covers immediate and pending `WSARecv` outcomes with one sender type whose operation state resolves the difference in `start`.<sup>[1]</sup><sup>[3]</sup> Those mechanisms expose completion timing through a receiver. They do not give branch 7.4 a different answer to `await_ready`.
