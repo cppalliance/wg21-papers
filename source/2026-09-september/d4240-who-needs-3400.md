@@ -50,7 +50,7 @@ Corporate management appoints personnel to verify that ISO proposals satisfy the
 
 ### 2020: A CTO-backed deployment plan
 
-A footnote in P2035R0<sup>[4]</sup>, a paper on allocator-aware software, discloses a corporate initiative to deploy ISO features before standardization:
+A footnote in P2035R0<sup>[4]</sup>, a paper on allocator-aware software, discloses a corporate initiative to deploy ISO features before standardization (bracketed citation keys omitted):
 
 > "Conceived by John Lakos in early 2018, Bloomberg's 2020 Vision (BB20V) initiative is jointly supported by Bloomberg's Chief Technology Officer and its engineering services. BB20V includes a focused effort to bring C++23-like compiler technology (e.g., via GCC and Clang) to Bloomberg well before some features are part of the official C++ Standard through proactive development and deployment (at scale) of four specifically targeted business-critical features, namely concepts, contracts, modules, and allocators."<sup>[4]</sup>
 
@@ -82,9 +82,9 @@ The Abstract of P3400R4<sup>[1]</sup> states:
 
 > "The functionality enabled by this proposal is essential to the unhindered and widespread adoption of Contracts across the many domains in which C++ is used."<sup>[1]</sup>
 
-Section 6 cites GCC and Clang prototypes on Compiler Explorer behind the `-fcontracts-p3400` flag as implementation experience. It gives five links. All five resolve to the same two builds and to no others: `gcc_notadragon_contracts_p3850` and `clang_notadragon_contracts_p3850`, shown to the reader as "x86-64 gcc (P3850 contracts)" and "x86-64 clang (P3850 contracts)".
+Section 6 cites GCC and Clang prototypes on Compiler Explorer behind the `-fcontracts-p3400` flag as implementation experience, and gives five links. All five resolve to the same two builds and to no others: `gcc_notadragon_contracts_p3850` and `clang_notadragon_contracts_p3850`, shown to the reader as "x86-64 gcc (P3850 contracts)" and "x86-64 clang (P3850 contracts)".
 
-Compiler Explorer's build configuration records where those two builds are compiled from:<sup>[8]</sup>
+Compiler Explorer's build configuration records where those two builds are compiled from (each entry is a single line in the source, wrapped here for width):<sup>[8]</sup>
 
 ```
 - { image: gcc, name: gcc_notadragon_contracts_p3850,
@@ -95,9 +95,9 @@ Compiler Explorer's build configuration records where those two builds are compi
     repos: ["https://github.com/notadragon/llvm-project/tree/contracts-p3850"] }
 ```
 
-The account holding both repositories belongs to the author of P3400R4. P3204R0<sup>[9]</sup>, an earlier paper of his, gives his reply-to address as `berne@notadragon.com`.
+The account holding both repositories belongs to the author of P3400R4. Its GitHub profile gives the account holder's name as Joshua Berne,<sup>[26]</sup> and P3204R0<sup>[9]</sup>, an earlier paper of his, gives his reply-to address as `berne@notadragon.com`.
 
-Of the most recent 300 commits on the GCC branch, 151 are authored by `jberne4@bloomberg.net`<sup>[10]</sup>; on the Clang branch, 153 of 300<sup>[11]</sup>. In each case that is more than twelve times the next most frequent author, whose commits, like the rest of the remainder, come from the upstream GCC and LLVM histories these forks track. `jberne4@bloomberg.net` is the reply-to address P3400R4 itself carries.
+Every commit on either branch that is not also in the upstream trunk it tracks is authored and committed by `jberne4@bloomberg.net`. As of 2026-09-19 that is 92 commits on the GCC branch<sup>[10]</sup> and 62 on the Clang branch<sup>[11]</sup>, with neither branch behind its upstream; the remainder of each history is the upstream GCC and LLVM history the fork tracks. `jberne4@bloomberg.net` is the reply-to address P3400R4 itself carries.
 
 P3400R4 discloses none of this. The string "notadragon" appears nowhere in the paper, and neither repository is named. A reader who wants to know whose implementation experience is on offer has to resolve the build identifiers to find out.
 
@@ -115,9 +115,9 @@ The objection is disclosure. P3400R4 names the assistance it received in produci
 
 Section 6 of P3400R4 cites prototypes written by the paper author, in his own repositories, from his employer's address, behind experimental flags, in forks of GCC and Clang. No shipping compiler implements P3400. No production codebase deploys it. The implementation experience is a corporate sponsor verifying its own requirements on branches its own employee writes.
 
-The implementation status is checkable. As of 2026-09-18, a search of the GCC C++ status page, the GCC 16 release notes, the Clang C++ status page, the cppreference C++26 compiler support table, the microsoft/STL C++26 contracts tracking issue, and EDG's published feature list found no reference to P3400 or to assertion-control labels; the cppreference table tracks four contracts papers, P2900R14, P3598R0, P3819R0 and P3886R0, and P3400 is not among them.<sup>[19]</sup><sup>[20]</sup><sup>[21]</sup><sup>[22]</sup><sup>[23]</sup> No feature-test macro for P3400 appears on any of those pages, and the papers tracker records P3400R4 as an EWG-direction-approved paper targeting C++29 rather than an adopted feature.<sup>[24]</sup> This establishes absence from those pages on that date, not absence from every implementation under every name.
+The implementation status is checkable. As of 2026-09-18, a search of the GCC C++ status page, the GCC 16 release notes, the Clang C++ status page, the cppreference C++26 compiler support table, the microsoft/STL C++26 contracts tracking issue, and EDG's published feature list found no reference to P3400 or to assertion-control labels; the cppreference table tracks four contracts papers, P2900R14, P3598R0, P3819R0 and P3886R0, and P3400 is not among them.<sup>[19]</sup><sup>[20]</sup><sup>[21]</sup><sup>[22]</sup><sup>[23]</sup> No feature-test macro for P3400 appears on any of those pages, and the papers tracker records an EWG poll approving the direction of P3400R3 in June 2026 rather than adopting it, labels the paper C++29, and shows no poll taken since R4 was published in July.<sup>[24]</sup> This establishes absence from those pages on that date, not absence from every implementation under every name.
 
-The implementers describe the state of the work in the same terms. [P3595R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3595r0.pdf)<sup>[25]</sup> reports that the configuration system "has been partially implemented in branches of GCC and Clang that are available on compiler explorer", and links a Compiler Explorer build for "control of evaluation semantic based on group labels (as provided by [P3400R4])". One qualification belongs with that citation and cuts against this paper's own argument: P3595R0's co-author Iain Sandoe is the GCC contracts implementer and is not a Bloomberg employee, so that implementation is not one the sponsor's own employee wrote.
+The implementers describe the state of the work in the same terms. [P3595R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3595r0.pdf)<sup>[25]</sup> reports that the configuration system "has been partially implemented in branches of GCC and Clang that are available on compiler explorer", and links a Compiler Explorer build for "control of evaluation semantic based on group labels (as provided by [P3400R4])". That build resolves to the same two branches. One qualification belongs with the citation: P3595R0's co-author Iain Sandoe is among the GCC contracts implementers who reported on that work in [P3460R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3460r0.pdf)<sup>[27]</sup>, and the same Compiler Explorer configuration carries his own separate contracts branches,<sup>[8]</sup> so contracts work in GCC is not confined to the branches discussed here. Co-authorship of the paper does not establish who wrote the branch it links.
 
 ## Predictions
 
@@ -133,7 +133,7 @@ The following predictions generalize from the author's observations of committee
 
 The record already carries instances. [P2899R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r1.pdf)<sup>[16]</sup> gives the production rationale directly: the observe semantic "provides the opportunity to install a logging handler to instrument an existing codebase - one that is known to run successfully in production - with contract assertions to find defects in that codebase without bringing down the entire production system upon contract violation", and elsewhere licenses continuing past undefined behavior on the ground that in such a codebase "any undefined behavior it exhibits is most likely 'benign'". [P3400R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3400r3.pdf)<sup>[17]</sup> makes the argument in its own motivation section, that a marked assertion can be "more easily deployed to production environments", and P1487R0's 2010 entry calls a returning violation handler "an absolute requirement for incorporating new contract checks into older programs".<sup>[3]</sup>
 
-Two things in the same record cut the other way and belong here. P2899R1 states the safety caveat in the same passage: "In many situations, this strategy is not advisable because continuing past a contract violation is likely to execute incorrect code and cause undefined behavior."<sup>[16]</sup> And P1487R0 records a 2015 outage at the same company caused by a violation handler that returned, after which management ruled that a check proved correct "is to be changed to never return ... and must never be allowed to continue again".<sup>[3]</sup> The prediction concerns how the extension is argued for. It is not a claim that the company favors continuation uniformly, and its own published record shows that it does not.
+Two things in the same record cut the other way and belong here. P2899R1 states the safety caveat immediately before that "benign" sentence: "In many situations, this strategy is not advisable because continuing past a contract violation is likely to execute incorrect code and cause undefined behavior."<sup>[16]</sup> And P1487R0 records a 2015 outage at the same company caused by a violation handler that returned, after which management ruled that a check proved correct "is to be changed to never return ... and must never be allowed to continue again".<sup>[3]</sup> The prediction concerns how the extension is argued for. It is not a claim that the company favors continuation uniformly, and its own published record shows that it does not.
 
 **Prediction 5.** An entity that needs P3400 will describe the choice of violation response in the vocabulary of business risk and operational policy, rather than in the vocabulary of language safety guarantees.
 
@@ -165,7 +165,7 @@ This paper asks for nothing.
 
 [2] [P0678R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0678r0.pdf) - "Business Requirements for Modules" (John Lakos, 2017).
 
-[3] [P1487R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1487r0.pdf) - "User Experience with Contracts That Work" (John Lakos, 2019).
+[3] [P1487R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1487r0.txt) - "User Experience with Contracts That Work" (John Lakos, 2019).
 
 [4] [P2035R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2035r0.pdf) - "Value Proposition: Allocator-Aware (AA) Software" (Pablo Halpern, John Lakos, 2020).
 
@@ -173,29 +173,29 @@ This paper asks for nothing.
 
 [6] [P3270R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3270r0.pdf) - "Repetition, Elision, and const-ification With Regard to contract_assert: A Principled Analysis" (Joshua Berne, John Lakos, 2024).
 
-[7] [Bloomberg C++ page](https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/) - "Bloomberg's thought leadership in C++" (Bloomberg L.P., accessed 2026-08-14).
+[7] [Bloomberg C++ page](https://web.archive.org/web/20250806122107/https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/) - "Bloomberg's thought leadership in C++" (Bloomberg L.P., 2025). Snapshot of 2025-08-06; the live page serves a bot wall to unauthenticated readers.
 
 [8] [compiler-explorer/compiler-workflows](https://github.com/compiler-explorer/compiler-workflows/blob/main/compilers.yaml) - "compilers.yaml, mapping each Compiler Explorer build identifier to its source repository and branch" (Compiler Explorer, accessed 2026-09-10).
 
 [9] [P3204R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3204r0.pdf) - "Why Contracts?" (Joshua Berne, 2024).
 
-[10] [notadragon/gnu_gcc](https://github.com/notadragon/gnu_gcc/tree/contracts-p3850) - "Branch contracts-p3850" (GitHub, accessed 2026-09-10).
+[10] [notadragon/gnu_gcc](https://github.com/notadragon/gnu_gcc/compare/master...contracts-p3850) - "Commits on contracts-p3850 not in upstream master" (GitHub, accessed 2026-09-19).
 
-[11] [notadragon/llvm-project](https://github.com/notadragon/llvm-project/tree/contracts-p3850) - "Branch contracts-p3850" (GitHub, accessed 2026-09-10).
+[11] [notadragon/llvm-project](https://github.com/notadragon/llvm-project/compare/main...contracts-p3850) - "Commits on contracts-p3850 not in upstream main" (GitHub, accessed 2026-09-19).
 
 [12] [P3173R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3173r0.pdf) - "P2900R6 May Be Minimal, but It Is Not Viable" (Gabriel Dos Reis, 2024).
 
 [13] [P3506R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3506r0.pdf) - "P2900 Is Still Not Ready for C++26" (Gabriel Dos Reis, 2025).
 
-[14] [P3878R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3878r0.pdf) - "C++26 Contracts are not a good fit for standard library hardening" (Ville Voutilainen, Jonathan Wakely, John Spicer, Stephan T. Lavavej, 2025).
+[14] [P3878R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3878r0.html) - "C++26 Contracts are not a good fit for standard library hardening" (Ville Voutilainen, Jonathan Wakely, John Spicer, Stephan T. Lavavej, 2025).
 
 [15] [P4238R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4238r0.pdf) - "Returning C++26 for the Evaluation It Skipped" (Vinnie Falco, Ville Voutilainen, Jos&eacute; Daniel Garc&iacute;a S&aacute;nchez, John Spicer, 2026).
 
-[16] [P2899R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r1.pdf) - "Contracts for C++ - Rationale" (Timur Doumler, Joshua Berne, Andrzej Krzemie&nacute;ski, Rostislav Khlebnikov, 2025).
+[16] [P2899R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2899r1.pdf) - "Contracts for C++ - Rationale" (Joshua Berne, Timur Doumler, Rostislav Khlebnikov, Andrzej Krzemie&nacute;ski, 2025).
 
 [17] [P3400R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3400r3.pdf) - "Controlling Contract-Assertion Properties" (Joshua Berne, 2026).
 
-[18] [P3846R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3846r1.pdf) - "C++26 Contract Assertions, Reasserted" (Timur Doumler, Joshua Berne, 2026).
+[18] [P3846R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3846r1.pdf) - "C++26 Contract Assertions, Reasserted" (Timur Doumler, Joshua Berne, et al., 2025).
 
 [19] [C++ Standards Support in GCC](https://gcc.gnu.org/projects/cxx-status.html) - GCC C++ status page (GNU Project, accessed 2026-09-18).
 
@@ -210,3 +210,7 @@ This paper asks for nothing.
 [24] [cplusplus/papers issue 2184](https://github.com/cplusplus/papers/issues/2184) - "P3400 R4 Controlling Contract-Assertion Properties" tracker issue, labelled C++29 (accessed 2026-09-18).
 
 [25] [P3595R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3595r0.pdf) - "Configuration of Contract Evaluation Semantics" (Joshua Berne, Iain Sandoe, 2026).
+
+[26] [github.com/notadragon](https://github.com/notadragon) - GitHub profile for the account holding both repositories, giving the name Joshua Berne (GitHub, accessed 2026-09-19).
+
+[27] [P3460R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3460r0.pdf) - "C++ Contracts Implementers Report" (Eric Fiselier, Nina Dinka Ranns, Iain Sandoe, 2024).
