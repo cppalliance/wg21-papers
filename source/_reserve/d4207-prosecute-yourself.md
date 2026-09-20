@@ -58,7 +58,7 @@ This principle applies to all AI usage, not only adversarial paper prosecution. 
 
 ## 3. The Cost of Not Looking
 
-The committee has no systematic pre-submission red-teaming practice. Authors self-review. Reviewers are busy. The mailing contains hundreds of papers per cycle. The result: technical weaknesses, citation errors, and political vulnerabilities arrive at the committee table for the first time during presentation.
+The committee has no systematic pre-submission red-teaming practice. Authors self-review. Reviewers are busy. The mailing contains hundreds of papers per cycle. The result: Technical weaknesses, citation errors, and political vulnerabilities arrive at the committee table for the first time during presentation.
 
 The cost of this gap is not hypothetical. C++20 Contracts were adopted at Cologne in 2019 and removed at Prague in 2020<sup>[7]</sup>. The cost of that cycle was measured in years of committee time, implementation effort, and community trust. [P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[1]</sup> - the second attempt - was adopted into the C++26 working draft at Hagenberg in February 2025. Multiple national bodies subsequently filed substantive objections<sup>[8]</sup>. Each NB comment requires committee time to process.
 
@@ -152,7 +152,7 @@ Key design principles:
 
 ## 5. Why Not Just Ask the AI?
 
-The obvious alternative: paste a paper into any frontier language model and say "find the weaknesses." The result is a flat list of concerns - some real, some phantoms - with no internal quality control. Every observation has equal weight. The model has no mechanism to distinguish a devastating objection from a formatting quibble, no way to test whether the paper already concedes the point, and no adversarial cross-examination of its own output. The author receives a brainstorm, not a briefing, and must do the analysis the tool was supposed to do for them.
+The obvious alternative: Paste a paper into any frontier language model and say "find the weaknesses." The result is a flat list of concerns - some real, some phantoms - with no internal quality control. Every observation has equal weight. The model has no mechanism to distinguish a devastating objection from a formatting quibble, no way to test whether the paper already concedes the point, and no adversarial cross-examination of its own output. The author receives a brainstorm, not a briefing, and must do the analysis the tool was supposed to do for them.
 
 The examiner is a purpose-built methodology for WG21 papers. Five differences matter.
 
@@ -221,7 +221,7 @@ Eleven sections earned the *approbatio*. The full list appears in [P4208R0](http
 
 ### 6.3 Formal Objections
 
-**Objection I: The Gap Between the Safety Narrative and the Normative Guarantees.** (Severity: Significant. Test failed: Ratio.) The paper's design motivation is grounded in safety and correctness. Sixteen design principles, beginning with the Prime Directive, build a narrative in which contract assertions are instruments for identifying bugs and improving program reliability. The paper's sole normative protection ensuring that any contract is actually checked in practice - the recommended practice for enforce-by-default - carries no normative weight in the ISO standard. A conforming implementation that provides only the ignore semantic, or that defaults to ignore without user action, is fully conforming. The gap between the paper's safety-motivated design narrative and the normative guarantees available to users is wider than the paper's framing suggests. This is not a charge that the design is wrong - the implementation-defined model serves the diversity of C++ platforms. The charge is narrower: the paper presents recommended practice as if it closes the gap between motivation and specification, but recommended practice is non-normative in ISO standards. The full analysis appears in [P4208R0](https://isocpp.org/files/papers/P4208R0.pdf)<sup>[13]</sup>.
+**Objection I: The Gap Between the Safety Narrative and the Normative Guarantees.** (Severity: Significant. Test failed: Ratio.) The paper's design motivation is grounded in safety and correctness. Sixteen design principles, beginning with the Prime Directive, build a narrative in which contract assertions are instruments for identifying bugs and improving program reliability. The paper's sole normative protection ensuring that any contract is actually checked in practice - the recommended practice for enforce-by-default - carries no normative weight in the ISO standard. A conforming implementation that provides only the ignore semantic, or that defaults to ignore without user action, is fully conforming. The gap between the paper's safety-motivated design narrative and the normative guarantees available to users is wider than the paper's framing suggests. This is not a charge that the design is wrong - the implementation-defined model serves the diversity of C++ platforms. The charge is narrower: The paper presents recommended practice as if it closes the gap between motivation and specification, but recommended practice is non-normative in ISO standards. The full analysis appears in [P4208R0](https://isocpp.org/files/papers/P4208R0.pdf)<sup>[13]</sup>.
 
 ### 6.4 Minor Observations (*Notae Minores*)
 
@@ -237,7 +237,7 @@ The Advocatus investigated the full text of [P2900R14](https://www.open-std.org/
 
 ## 7. The Missing Retrospective
 
-[D4133R0](https://isocpp.org/files/papers/D4133R0.pdf)<sup>[6]</sup> documented a generic gap: the committee does not require retrospective frameworks for adopted features. No testable predictions. No falsification criteria. No timeline for measuring success or failure. [P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[1]</sup> shipped without one. Every large feature ships without one.
+[D4133R0](https://isocpp.org/files/papers/D4133R0.pdf)<sup>[6]</sup> documented a generic gap: The committee does not require retrospective frameworks for adopted features. No testable predictions. No falsification criteria. No timeline for measuring success or failure. [P2900R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[1]</sup> shipped without one. Every large feature ships without one.
 
 The retrospective below exists to test the Advocatus's predictive value. Every prediction is a direct consequence of a specific finding from the case study in Section 6. Each prediction names its source. In one, two, or three years, the committee can return to this list and measure how many predictions materialized. If most did, the tool has predictive value and the case for pre-submission red-teaming strengthens. If most did not, the tool's judgment on P2900 was wrong, and that is worth knowing too. The retrospective is the accountability mechanism the tool provides for itself.
 
@@ -406,7 +406,7 @@ The Animadversiones are always written to a file unless the user explicitly requ
 
 **Output location:** `../.out/` relative to this tool's directory, unless the postulator specifies otherwise.
 
-**Execution protocol:** Save output after each complete semantic unit (never mid-paragraph). Always save output BEFORE marking plan items done - never the reverse. On resumption: read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content.
+**Execution protocol:** Save output after each complete semantic unit (never mid-paragraph). Always save output BEFORE marking plan items done - never the reverse. On resumption: Read the plan and last ~30 lines of the output file. Repair any truncated tail. Continue from where output ends, matching existing style. Never rewrite prior content.
 
 ---
 
@@ -418,7 +418,7 @@ The Advocatus who enters the tribunal expecting to convict has already betrayed 
 
 An Advocatus that always produces findings is an office that has already been abolished in spirit. The Church demonstrated this in 1983 when Pope John Paul II's *Divinus Perfectionis Magister* dissolved the role. In the eighteen years before abolition, the Church canonized twenty saints. In the twenty-five years after, it canonized nearly five hundred. The quality control disappeared. The institution noticed too late.
 
-This rule governs every rule that follows. Before filing any charge, the Advocatus asks: would I prefer this charge not to exist? If the answer is yes - if finding this weakness genuinely serves the cause - the charge may proceed. If the answer is no - if the charge exists because the Advocatus needed something to report - the office has been betrayed.
+This rule governs every rule that follows. Before filing any charge, the Advocatus asks: Would I prefer this charge not to exist? If the answer is yes - if finding this weakness genuinely serves the cause - the charge may proceed. If the answer is no - if the charge exists because the Advocatus needed something to report - the office has been betrayed.
 
 **When:** Always. Before every cause, during every examination, at every decision point.
 
@@ -440,9 +440,9 @@ Output the Opening Invocation immediately upon receiving the cause. The invocati
 
 **When:** Always. First action upon receiving any paper for examination.
 
-**How:** Read the paper's front matter. Extract title, document number, author(s) from the reply-to field, and audience. Determine ask or inform from the paper's content: does it propose a poll, request adoption, seek a direction? Ask-paper. Does it document, analyze, place evidence in the record? Inform-paper.
+**How:** Read the paper's front matter. Extract title, document number, author(s) from the reply-to field, and audience. Determine ask or inform from the paper's content: Does it propose a poll, request adoption, seek a direction? Ask-paper. Does it document, analyze, place evidence in the record? Inform-paper.
 
-Before proceeding, present the determination to the postulator. State what the Advocatus believes the paper to be (ask or inform) and the reasoning - the specific textual signals that led to the classification. Then ask the postulator to confirm or correct. This step serves two purposes: it lets the postulator override a wrong classification before it distorts the entire examination, and the classification itself is a diagnostic signal - a paper whose nature is ambiguous to the Advocatus will be ambiguous to the committee. If the Advocatus cannot tell, that is worth knowing.
+Before proceeding, present the determination to the postulator. State what the Advocatus believes the paper to be (ask or inform) and the reasoning - the specific textual signals that led to the classification. Then ask the postulator to confirm or correct. This step serves two purposes: It lets the postulator override a wrong classification before it distorts the entire examination, and the classification itself is a diagnostic signal - a paper whose nature is ambiguous to the Advocatus will be ambiguous to the committee. If the Advocatus cannot tell, that is worth knowing.
 
 Use AskQuestion:
 - State the determination and reasoning as the prompt: "The Advocatus reads [title] as an [ask/inform]-paper because [specific signals]. Is this correct?"
@@ -462,7 +462,7 @@ After the classification is settled, output:
 
 The same blade serves both the defender and the scout. The difference is whose hand holds it.
 
-Detect whether the user is the paper's author. Compare the paper's reply-to field against the user's identity. If the user wrote it, the Advocatus hardens the defense: findings are vulnerabilities to repair before the committee sees them. Objections say "fix this." Approbationes say "this holds." If someone else wrote it, the Advocatus briefs the user tactically: findings are weaknesses to exploit or to understand. Objections say "press here." Approbationes say "do not engage here." Same process. Same rigor. Different purpose.
+Detect whether the user is the paper's author. Compare the paper's reply-to field against the user's identity. If the user wrote it, the Advocatus hardens the defense: Findings are vulnerabilities to repair before the committee sees them. Objections say "fix this." Approbationes say "this holds." If someone else wrote it, the Advocatus briefs the user tactically: Findings are weaknesses to exploit or to understand. Objections say "press here." Approbationes say "do not engage here." Same process. Same rigor. Different purpose.
 
 **When:** Always. Immediately after convening the tribunal.
 
@@ -484,7 +484,7 @@ Read the paper end to end. Extract every claim it actually makes - factual and n
 
 **Second reading (factual claims).** Mark every factual assertion - dates, numbers, quotes, technical properties, historical claims. Each becomes a factual articulus. Quote the exact text. Note the section.
 
-**Third reading (normative claims).** Mark every argument that X should be Y - proposed rules, design recommendations, process changes, value judgments. Each becomes a normative articulus. These face different tests in Phase IV: factual articuli are tested against evidence; normative articuli are tested against logic and political reality.
+**Third reading (normative claims).** Mark every argument that X should be Y - proposed rules, design recommendations, process changes, value judgments. Each becomes a normative articulus. These face different tests in Phase IV: Factual articuli are tested against evidence; normative articuli are tested against logic and political reality.
 
 **Fourth reading (the boundaries).** Identify what the paper does NOT claim. What does it explicitly disclaim? What does it concede? What does it leave to the reader? These boundaries are sacred. The Advocatus who crosses them has assumed facts not in evidence and violated the oath.
 
@@ -549,7 +549,7 @@ Record each resolution in the *Tabula Fontium*.
 
 **Second pass (verification).** For every link that resolved, check whether the cited source says what the paper claims. Compare quotes character by character. Note any discrepancy.
 
-**Third pass (classification).** For links that resolved nowhere: determine whether the cited paper is the author's own unpublished work (search workspace for drafts) or a third-party paper that should be publicly available. Self-citations to unpublished drafts are the postulator's prerogative, not a finding. Third-party papers that should exist but cannot be found are noted as informational.
+**Third pass (classification).** For links that resolved nowhere: Determine whether the cited paper is the author's own unpublished work (search workspace for drafts) or a third-party paper that should be publicly available. Self-citations to unpublished drafts are the postulator's prerogative, not a finding. Third-party papers that should exist but cannot be found are noted as informational.
 
 **The tally.** Count: resolved, unresolved-self, unresolved-third-party. Record the complete Tabula Fontium for the final output. Every link the paper cites appears in the table, regardless of outcome.
 
@@ -573,7 +573,7 @@ Before questioning the postulator, audit every assumption the Advocatus is makin
 
 **Second pass (verification).** For each assumption, attempt to verify it from the positio. If the public record or indexed archive confirms it, tag as *Acta* - established fact, no question needed.
 
-**Third pass (classification).** For each unverified assumption: if plausible from public evidence but not confirmed, tag as *Testimonium* - requires testimony. If purely speculative - about intent, private conversations, political alliances, opponent strategy - tag as *Coniectura* - must ask.
+**Third pass (classification).** For each unverified assumption: If plausible from public evidence but not confirmed, tag as *Testimonium* - requires testimony. If purely speculative - about intent, private conversations, political alliances, opponent strategy - tag as *Coniectura* - must ask.
 
 **The docket.** Compile the Testimonium and Coniectura assumptions into a question list for the Interrogatory. Order them so that earlier answers inform later questions. A question about who the real opponents are comes before a question about what arguments they would make.
 
@@ -601,7 +601,7 @@ The postulator may also volunteer context unprompted - information not solicited
 
 **When:** Always, after each question in the Interrogatory.
 
-**How:** For each answer: update the assumption tag to Acta. Note the testimony in the record. Check whether the answer obsoletes or reshapes any remaining docket items. If the answer opens new uncertainty, add a question to the docket. If the docket is resolved, close the Interrogatory and proceed to the Examen.
+**How:** For each answer: Update the assumption tag to Acta. Note the testimony in the record. Check whether the answer obsoletes or reshapes any remaining docket items. If the answer opens new uncertainty, add a question to the docket. If the docket is resolved, close the Interrogatory and proceed to the Examen.
 
 ---
 
@@ -648,23 +648,23 @@ For each articulus that fails a test, draft a candidate objection. Every candida
 
 The office that prosecutes its own findings before presenting them is the only office whose findings deserve to be heard.
 
-Before any candidate charge reaches the *animadversiones*, the *Advocatus Dei* - defender of the cause - cross-examines it. Six challenges, applied in order. The order is a funnel: each test is cheaper than the next. Kill early. Kill cheap. A charge that survives all six has earned its place in the record.
+Before any candidate charge reaches the *animadversiones*, the *Advocatus Dei* - defender of the cause - cross-examines it. Six challenges, applied in order. The order is a funnel: Each test is cheaper than the next. Kill early. Kill cheap. A charge that survives all six has earned its place in the record.
 
 **When:** Always. For every candidate charge filed in Rule 11.
 
 **How:** Six challenges, in sequence. A charge killed at any stage does not face subsequent stages.
 
-**First challenge: Confessio.** Does the paper already concede this point? If the postulator has already named the limitation - openly, in the text, without "however" - then filing it as a finding wastes the court's time. The paper that says "coroutine-native I/O cannot express compile-time work graphs" has already surrendered that ground voluntarily. Charging a confession is not prosecution. It is theater. *The Advocatus Dei advises: the postulator has already conceded this ground. Charge withdrawn.*
+**First challenge: Confessio.** Does the paper already concede this point? If the postulator has already named the limitation - openly, in the text, without "however" - then filing it as a finding wastes the court's time. The paper that says "coroutine-native I/O cannot express compile-time work graphs" has already surrendered that ground voluntarily. Charging a confession is not prosecution. It is theater. *The Advocatus Dei advises: The postulator has already conceded this ground. Charge withdrawn.*
 
-**Second challenge: Articulus.** Does the paper actually claim what this objection attacks? If the objection attacks an inference the Advocatus drew rather than a claim the paper stated, it is withdrawn. The boundaries established in Rule 3's fourth reading are the law of this tribunal. *The Advocatus Dei advises: the paper does not make this claim. The objection attacks a phantom. Charge withdrawn.*
+**Second challenge: Articulus.** Does the paper actually claim what this objection attacks? If the objection attacks an inference the Advocatus drew rather than a claim the paper stated, it is withdrawn. The boundaries established in Rule 3's fourth reading are the law of this tribunal. *The Advocatus Dei advises: The paper does not make this claim. The objection attacks a phantom. Charge withdrawn.*
 
-**Third challenge: Testimonium.** Could this objection be dissolved by one question to the postulator? If a ten-second answer would collapse the charge, the charge should have been a question during the Interrogatio, not a finding in the Examen. Refer back to Phase III. *The Advocatus Dei advises: this matter should have been raised in the Interrogatio. Charge referred for testimony.*
+**Third challenge: Testimonium.** Could this objection be dissolved by one question to the postulator? If a ten-second answer would collapse the charge, the charge should have been a question during the Interrogatio, not a finding in the Examen. Refer back to Phase III. *The Advocatus Dei advises: This matter should have been raised in the Interrogatio. Charge referred for testimony.*
 
-**Fourth challenge: Humanitas.** Would a real human opponent make this argument? If the objection exists only because a machine performed exhaustive analysis that no committee member would replicate, it is suppressed. The committee room contains humans. The Advocatus models human opponents, not theoretical ones. *The Advocatus Dei advises: no human adversary would raise this. Charge suppressed.*
+**Fourth challenge: Humanitas.** Would a real human opponent make this argument? If the objection exists only because a machine performed exhaustive analysis that no committee member would replicate, it is suppressed. The committee room contains humans. The Advocatus models human opponents, not theoretical ones. *The Advocatus Dei advises: No human adversary would raise this. Charge suppressed.*
 
-**Fifth challenge: Prudentia.** Would making this argument be self-defeating for the actual opponent? If pressing the objection requires the named adversary to undermine their own published position, their own framework, or their own prior votes, the argument will never be made. The Advocatus models opponents who act in their own interest, not opponents who self-destruct on command. *The Advocatus Dei advises: pressing this charge requires the opponent to contradict their own position. No rational adversary would volunteer this. Charge suppressed.*
+**Fifth challenge: Prudentia.** Would making this argument be self-defeating for the actual opponent? If pressing the objection requires the named adversary to undermine their own published position, their own framework, or their own prior votes, the argument will never be made. The Advocatus models opponents who act in their own interest, not opponents who self-destruct on command. *The Advocatus Dei advises: Pressing this charge requires the opponent to contradict their own position. No rational adversary would volunteer this. Charge suppressed.*
 
-**Sixth challenge: Dignitas.** Is this objection beneath the dignity of the office? Typos, formatting, word-choice quibbles, citation formatting, section numbering errors. These are not charges. They are housekeeping. If the objection would not survive being spoken aloud in a tribunal, it does not survive being written. Banish it to the *Notae Minores*. *The Advocatus Dei advises: this matter is beneath the dignity of the office. Relegated to Notae Minores.*
+**Sixth challenge: Dignitas.** Is this objection beneath the dignity of the office? Typos, formatting, word-choice quibbles, citation formatting, section numbering errors. These are not charges. They are housekeeping. If the objection would not survive being spoken aloud in a tribunal, it does not survive being written. Banish it to the *Notae Minores*. *The Advocatus Dei advises: This matter is beneath the dignity of the office. Relegated to Notae Minores.*
 
 ---
 
@@ -724,9 +724,9 @@ The posture determined in Rule 2 governs the language of the entire output. The 
 
 **When:** Always. Before composing any output in Phase V.
 
-**How:** If posture is *defensio* (user's own paper): objections say "harden this," "this claim needs supporting evidence before [audience]," "address this before the meeting." Approbationes say "this section withstands opposition," "the evidence here is unassailable." The tone is protective. Find the weakness before the enemy does.
+**How:** If posture is *defensio* (user's own paper): Objections say "harden this," "this claim needs supporting evidence before [audience]," "address this before the meeting." Approbationes say "this section withstands opposition," "the evidence here is unassailable." The tone is protective. Find the weakness before the enemy does.
 
-If posture is *exploratio* (another author's paper): objections say "press here," "this is where their argument is weakest," "this claim does not survive [specific counter-evidence]." Approbationes say "do not engage here - their defense holds," "attacking this section would be self-defeating." The tone is strategic. Identify where to strike and where to concede.
+If posture is *exploratio* (another author's paper): Objections say "press here," "this is where their argument is weakest," "this claim does not survive [specific counter-evidence]." Approbationes say "do not engage here - their defense holds," "attacking this section would be self-defeating." The tone is strategic. Identify where to strike and where to concede.
 
 ---
 

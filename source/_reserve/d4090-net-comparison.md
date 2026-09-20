@@ -150,7 +150,7 @@ auto do_session(auto& sock, auto& buf)
 }
 ```
 
-Nearly identical to Corosio. Both values visible. No exceptions. Wrapping the pair in `std::expected<size_t, error_code>` is a variant of this approach - the compound result stays on the value channel as a single value. The C++23 monadic operations on `expected` (`and_then`, `or_else`, `transform`) provide value-channel composition for the wrapped result. This is the same pattern: the programmer inspects the compound result with value-level operations, not with channel-level algorithms. `upon_error` does not see inside the `expected`. `retry` does not fire on it. `when_all` does not cancel siblings. The `expected` approach is "just use `set_value`" with monadic syntax. It belongs in the first column of the trade-off table.
+Nearly identical to Corosio. Both values visible. No exceptions. Wrapping the pair in `std::expected<size_t, error_code>` is a variant of this approach - the compound result stays on the value channel as a single value. The C++23 monadic operations on `expected` (`and_then`, `or_else`, `transform`) provide value-channel composition for the wrapped result. This is the same pattern: The programmer inspects the compound result with value-level operations, not with channel-level algorithms. `upon_error` does not see inside the `expected`. `retry` does not fire on it. `when_all` does not cancel siblings. The `expected` approach is "just use `set_value`" with monadic syntax. It belongs in the first column of the trade-off table.
 
 This is the sender instantiation of the industry advice documented in [P4091R0](https://isocpp.org/files/papers/P4091R0.pdf)<sup>[10]</sup>: use the value channel whenever the result is not 100% failure. POSIX, Asio, Go, and Rust all follow this convention. The coroutine-native echo server (Section 2) does the same thing - it returns `(error_code, size_t)` through the value channel and inspects both with `if (ec)`.
 
@@ -341,7 +341,7 @@ Infrastructure operations face no such trade-off. Their outcomes are binary. A r
 
 ### When the Byte Count Determines Correctness
 
-For composed operations (`async_read` with a completion condition), the byte count on error is often diagnostic - the application logs it but does not branch on it. For protocol-layer decisions and raw operations, the byte count determines correctness. The TLS `stream_truncated` case below is the clearest example. Partial-write recovery is another. The distinction matters: the byte count is not always decision-making data, but when it is, it must survive.
+For composed operations (`async_read` with a completion condition), the byte count on error is often diagnostic - the application logs it but does not branch on it. For protocol-layer decisions and raw operations, the byte count determines correctness. The TLS `stream_truncated` case below is the clearest example. Partial-write recovery is another. The distinction matters: The byte count is not always decision-making data, but when it is, it must survive.
 
 Many HTTP servers - including Google's - skip TLS `close_notify`. The composed read returns `(stream_truncated, n)`. If `n` equals `Content-Length`, the body is complete and the truncation is harmless. If `n` is less, the body is incomplete. The byte count determines correctness.
 
@@ -453,13 +453,13 @@ Asked whether the byte count could be made visible to downstream algorithms thro
 
 > "the short answer is, 'yes, intrusively'. Not fully-generically."
 
-Voutilainen described several constructions - capturing the count in a successor's function object, using shared state, or passing data through the environment - and characterized each as "limitedly-general and slightly intrusive." The assessment is consistent with the trade-off table: making the byte count visible to the composition algebra requires moving it outside the channel.
+Voutilainen described several constructions - capturing the count in a successor's function object, using shared state, or passing data through the environment - and characterized each as "limitedly-general and slightly intrusive." The assessment is consistent with the trade-off table: Making the byte count visible to the composition algebra requires moving it outside the channel.
 
 ---
 
 ## 11. Structured Concurrency
 
-[Capy](https://github.com/cppalliance/capy)<sup>[3]</sup> provides `when_all` and `when_any` as coroutine-native primitives with structured cancellation: child operations complete before the parent continues, and stop tokens propagate through `io_env`.
+[Capy](https://github.com/cppalliance/capy)<sup>[3]</sup> provides `when_all` and `when_any` as coroutine-native primitives with structured cancellation: Child operations complete before the parent continues, and stop tokens propagate through `io_env`.
 
 ```cpp
 capy::task<dashboard> load_dashboard(
@@ -486,7 +486,7 @@ capy::task<> timeout_a_worker()
 }
 ```
 
-Both models provide structured concurrency. In the sender model, the operation state protocol - formalized by `async_scope` ([P3149R9](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3149r9.html)<sup>[13]</sup>) - guarantees that child operation states are destroyed before the parent's receiver is called. In the coroutine model, `capy::when_all` and `capy::when_any` guarantee the same property through coroutine frame lifetimes: child coroutines complete and their frames are destroyed before the parent coroutine resumes. Stop tokens propagate through `io_env` at `await_suspend` time. The mechanism differs - operation state protocol vs. coroutine frame scoping - but the structured concurrency guarantees are equivalent: no child outlives its parent, cancellation propagates downward, and results are available only after all children complete. The sender `when_all` additionally provides compile-time work-graph visibility, static type checking of completion signatures, and heterogeneous child composition (GPU + network + timer in one expression) that the coroutine `when_all` does not.
+Both models provide structured concurrency. In the sender model, the operation state protocol - formalized by `async_scope` ([P3149R9](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3149r9.html)<sup>[13]</sup>) - guarantees that child operation states are destroyed before the parent's receiver is called. In the coroutine model, `capy::when_all` and `capy::when_any` guarantee the same property through coroutine frame lifetimes: Child coroutines complete and their frames are destroyed before the parent coroutine resumes. Stop tokens propagate through `io_env` at `await_suspend` time. The mechanism differs - operation state protocol vs. coroutine frame scoping - but the structured concurrency guarantees are equivalent: No child outlives its parent, cancellation propagates downward, and results are available only after all children complete. The sender `when_all` additionally provides compile-time work-graph visibility, static type checking of completion signatures, and heterogeneous child composition (GPU + network + timer in one expression) that the coroutine `when_all` does not.
 
 They differ in where the compound result is visible when the composition decision is made (Q8, Q10). The trade-off table (Section 9) applies at every I/O boundary inside a structured concurrency scope.
 
@@ -496,7 +496,7 @@ They differ in where the compound result is visible when the composition decisio
 
 ### Q1: Is the echo server too minimal to be representative?
 
-The echo server is deliberately minimal. The compound-result problem is per-operation: adding protocol complexity adds more call sites with the same trade-off, not a different one. The sender model's composition strengths are orthogonal to the channel-routing decision each I/O operation must make. If the committee believes a more complex pipeline would change the finding, we invite the sender community to provide one. We will construct the comparison and publish the results.
+The echo server is deliberately minimal. The compound-result problem is per-operation: Adding protocol complexity adds more call sites with the same trade-off, not a different one. The sender model's composition strengths are orthogonal to the channel-routing decision each I/O operation must make. If the committee believes a more complex pipeline would change the finding, we invite the sender community to provide one. We will construct the comparison and publish the results.
 
 ### Q2: Are these gaps being addressed by ongoing work?
 
@@ -508,7 +508,7 @@ Several of the ergonomic issues documented here are the subject of active commit
 
 ### Q3: Could the byte count be stored in the operation state instead of shared state?
 
-A variant of "just split the result" stores the byte count in the operation state rather than a local variable, scoping the lifetime to the operation. This localizes the lifetime hazard and is a meaningful improvement. The structural problem is unchanged: the byte count remains outside the completion signature, invisible to `retry`, `upon_error`, and every generic algorithm that operates on channel data.
+A variant of "just split the result" stores the byte count in the operation state rather than a local variable, scoping the lifetime to the operation. This localizes the lifetime hazard and is a meaningful improvement. The structural problem is unchanged: The byte count remains outside the completion signature, invisible to `retry`, `upon_error`, and every generic algorithm that operates on channel data.
 
 ### Q4: Could the entire compound result be sent through `set_error`?
 
@@ -516,7 +516,7 @@ Sending `tuple<error_code, size_t>` through `set_error` preserves both values bu
 
 > "Yes, use an algorithm other than `when_all`, so that it doesn't cancel the others on one error, and collects all results."
 
-Voutilainen demonstrated this approach in a compilable channel ping-pong example<sup>[9]</sup> (https://godbolt.org/z/h5cv5fbTE) that sends the full tuple through `set_error`, preserves both values, and routes them back to the value channel downstream. This is the closest construction to satisfying the invitation's constraints. It preserves data, avoids exceptions, and avoids shared state. The remaining cost: the standard `when_all` cancels siblings on `set_error` regardless of the error type, and downstream algorithms must use `if constexpr` guards to distinguish the tuple from `std::exception_ptr`. Voutilainen's construction works within the three-channel model. It changes what the error channel carries, which changes the contract downstream algorithms expect. If the committee wishes to pursue that direction, it deserves its own paper and its own design review.
+Voutilainen demonstrated this approach in a compilable channel ping-pong example<sup>[9]</sup> (https://godbolt.org/z/h5cv5fbTE) that sends the full tuple through `set_error`, preserves both values, and routes them back to the value channel downstream. This is the closest construction to satisfying the invitation's constraints. It preserves data, avoids exceptions, and avoids shared state. The remaining cost: The standard `when_all` cancels siblings on `set_error` regardless of the error type, and downstream algorithms must use `if constexpr` guards to distinguish the tuple from `std::exception_ptr`. Voutilainen's construction works within the three-channel model. It changes what the error channel carries, which changes the contract downstream algorithms expect. If the committee wishes to pursue that direction, it deserves its own paper and its own design review.
 
 ### Q5: Do coroutines provide structured concurrency?
 
@@ -560,7 +560,7 @@ An earlier draft measured coroutines by their natural idiom (value-based error h
 
 > "The data is only 'just there' in a coroutine if you collapse everything into the value channel, like the coroutine examples in your papers. Using the error channel (`set_error` in senders, `throw` in coroutines) requires a side channel if you want to convey both error and value at once."
 
-This revision corrects the asymmetry. Both paradigms are measured by the same ruler: the value-channel approach works for both. The remaining question is whether the sender model's composition algebra - the facilities that go beyond what coroutines provide - applies to compound I/O results. Sections 6 through 8 explore that question. Each construction that attempts to use the composition algebra pays a cost. That is not a double standard. It is measuring the composition algebra against its own claims.
+This revision corrects the asymmetry. Both paradigms are measured by the same ruler: The value-channel approach works for both. The remaining question is whether the sender model's composition algebra - the facilities that go beyond what coroutines provide - applies to compound I/O results. Sections 6 through 8 explore that question. Each construction that attempts to use the composition algebra pays a cost. That is not a double standard. It is measuring the composition algebra against its own claims.
 
 ### Q13: Does the composition algebra apply to protocol-layer decisions?
 
@@ -568,7 +568,7 @@ Yes. See Section 9, "Where the Composition Algebra Does Apply."
 
 ### Q14: Could the sender model be extended for compound results?
 
-Petersen proposed on the LEWG reflector (March 14, 2026)<sup>[9]</sup> that the findings in this paper could motivate new sender algorithms designed for compound results - an `error_code`-sensitive `when_all`, an `error_code`-aware `retry`, or adapters that bridge networking pipelines to the existing error-channel-based algorithms. This is a legitimate direction. The findings in this paper do not foreclose it. If such algorithms are designed and they satisfy the invitation's constraints, the finding changes. The authors welcome that work and will re-evaluate. The question is timing: should the standard ship the current algorithms for networking before the compound-result-aware algorithms are designed, or should both iterate together?
+Petersen proposed on the LEWG reflector (March 14, 2026)<sup>[9]</sup> that the findings in this paper could motivate new sender algorithms designed for compound results - an `error_code`-sensitive `when_all`, an `error_code`-aware `retry`, or adapters that bridge networking pipelines to the existing error-channel-based algorithms. This is a legitimate direction. The findings in this paper do not foreclose it. If such algorithms are designed and they satisfy the invitation's constraints, the finding changes. The authors welcome that work and will re-evaluate. The question is timing: Should the standard ship the current algorithms for networking before the compound-result-aware algorithms are designed, or should both iterate together?
 
 ---
 

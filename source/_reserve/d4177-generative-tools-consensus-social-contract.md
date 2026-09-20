@@ -149,7 +149,7 @@ The table is the spine. Empty cells are deliberate. They mark questions the mail
 | E | Cohort drift in "normal authorship" | | Teachable norms anchored in examples, not nostalgia | |
 | F | Embedded participants echo institutional provenance priority | | Separate institutional compliance from personal stigma toward individuals | |
 
-The author repeats: informal observation motivated the paper. It does not fill the table.
+The author repeats: Informal observation motivated the paper. It does not fill the table.
 
 ---
 

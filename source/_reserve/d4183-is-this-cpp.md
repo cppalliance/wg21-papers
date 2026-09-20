@@ -203,9 +203,9 @@ After each subagent returns:
 1. **Re-read each piece of evidence.** For every item the subagent returned, re-examine the quoted content against the question text and the Stroustrup principle. The subagent's tag is a hypothesis, not a conclusion.
 2. **Confirm or overturn each tag.** Mark each piece as `verified` (agrees with subagent's tag) or `overturned` (disagrees - state why in one sentence).
 3. **Apply the decision rule:**
-   - If **any** piece of evidence (after verification) supports-no: answer is **No**
-   - If the subagent returned `NO EVIDENCE FOUND`: answer is **No**
-   - Only if **every** piece of evidence (after verification) supports-yes: answer is **Yes**
+   - If **any** piece of evidence (after verification) supports-no: Answer is **No**
+   - If the subagent returned `NO EVIDENCE FOUND`: Answer is **No**
+   - Only if **every** piece of evidence (after verification) supports-yes: Answer is **Yes**
 4. **Write the answer.** One sentence citing the decisive evidence. If No, cite the specific piece that fails. If Yes, cite the strongest piece.
 
 ---

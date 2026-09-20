@@ -147,7 +147,7 @@ Pulled from C++20 in 2019. Absent from C++23 in 2023. The feature that tested th
 
 C++23 shipped on time. It delivered `std::expected`, `std::print`, `std::mdspan`, `std::generator`, deducing `this`, `std::flat_map`, and ranges completions planned since C++20. These were valuable additions. The release was not contested.
 
-The train model worked for C++23 in the way it was designed to work: the large, contested features were deferred, and the smaller, ready features shipped. The Direction Group's own word for the result was "modest."
+The train model worked for C++23 in the way it was designed to work: The large, contested features were deferred, and the smaller, ready features shipped. The Direction Group's own word for the result was "modest."
 
 ---
 
@@ -328,7 +328,7 @@ WG21 has grown from approximately 50 members in the 1990s to over 250 active par
 
 > We are a set of interrelated committees... some "design by committee" is unavoidable.
 
-More participants means more proposals, more competing interests, and more difficulty achieving genuine consensus. The train model's three-year cadence interacts with this scale: each cycle must process a larger volume of proposals through a larger committee, under the same fixed deadline.
+More participants means more proposals, more competing interests, and more difficulty achieving genuine consensus. The train model's three-year cadence interacts with this scale: Each cycle must process a larger volume of proposals through a larger committee, under the same fixed deadline.
 
 ### 7.5 The "Ship It and Fix It" Culture
 
@@ -376,7 +376,7 @@ The published record documents five properties the model was expected to provide
 
 **Implementation capacity.** Eighteen implementers wrote in P3962R0<sup>[36]</sup> that "full conformance to recent standards remains difficult in practice" and asked the committee to "consider ways of slowing down the addition of features." The model ships the standard on time. It does not ensure the standard can be implemented on time.
 
-**Quality assurance for large features.** C++20 produced proposal-sized defects<sup>[15]</sup>. C++26 carries three contested features with extensive published opposition. The model's quality mechanism is the safety valve: pull what is not ready. The record shows the valve is rarely used for large features because the social cost of pulling exceeds the social cost of shipping.
+**Quality assurance for large features.** C++20 produced proposal-sized defects<sup>[15]</sup>. C++26 carries three contested features with extensive published opposition. The model's quality mechanism is the safety valve: Pull what is not ready. The record shows the valve is rarely used for large features because the social cost of pulling exceeds the social cost of shipping.
 
 ---
 

@@ -12,7 +12,7 @@ reply-to:
 
 Every C++ project that does I/O invents its own buffer types.
 
-Six other ecosystems do not. Each provides a vocabulary for the same operation: pass a contiguous region of bytes, or a sequence of such regions, into a syscall whose name is `readv`, `WSARecv`, or `io_uring_prep_writev`. The C++ standard has the byte. It does not have the descriptor. It does not have the sequence. This paper documents the shapes that ship in [Capy](https://github.com/cppalliance/capy)<sup>[1]</sup> today and that every Boost library above Capy consumes - the same shapes the [Networking TS](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4771.pdf)<sup>[2]</sup> codified, the same shapes [Boost.Asio](https://www.boost.org/doc/libs/release/doc/html/boost_asio.html)<sup>[3]</sup> deployed for over twenty years, the same shapes seven independent ecosystems converged on without coordinating.
+Six other ecosystems do not. Each provides a vocabulary for the same operation: Pass a contiguous region of bytes, or a sequence of such regions, into a syscall whose name is `readv`, `WSARecv`, or `io_uring_prep_writev`. The C++ standard has the byte. It does not have the descriptor. It does not have the sequence. This paper documents the shapes that ship in [Capy](https://github.com/cppalliance/capy)<sup>[1]</sup> today and that every Boost library above Capy consumes - the same shapes the [Networking TS](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4771.pdf)<sup>[2]</sup> codified, the same shapes [Boost.Asio](https://www.boost.org/doc/libs/release/doc/html/boost_asio.html)<sup>[3]</sup> deployed for over twenty years, the same shapes seven independent ecosystems converged on without coordinating.
 
 This paper is Paper 4 in the series defined by [P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf)<sup>[4]</sup>. It has no async dependency, no coroutine dependency, no executor dependency. The vocabulary is reusable by [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html) "`std::execution`"<sup>[5]</sup>, by Asio, by callback-based networking, and by any other I/O system that needs to point at bytes. Design rationale for the bespoke types - why `mutable_buffer` rather than `std::span<std::byte>` - lives in the companion paper [P4036R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4036r0.pdf)<sup>[6]</sup>. Proposed wording for the vocabulary in this paper lives in the companion ask paper *I/O Buffer Ranges*<sup>[20]</sup>. Dynamic buffers (the prepare/commit growable buffer concept) are documented in a separate companion pair, *Dynamic Buffer*<sup>[21]</sup> and *Dynamic Buffer: Design Rationale*<sup>[22]</sup>.
 
@@ -190,7 +190,7 @@ template<ConstBufferSequence CB>
 constexpr std::size_t buffer_size(CB const& bs) noexcept;
 ```
 
-The complexity is `O(n)` in the number of elements. A sequence type that already knows its byte total may cache it externally; the algorithm itself has no customization hook. The free-function shape is the reason this is not a member: the same algorithm runs over every sequence type that satisfies the concept.
+The complexity is `O(n)` in the number of elements. A sequence type that already knows its byte total may cache it externally; the algorithm itself has no customization hook. The free-function shape is the reason this is not a member: The same algorithm runs over every sequence type that satisfies the concept.
 
 `buffer_size` counts bytes. `std::ranges::size`<sup>[9]</sup> counts elements. Both are useful. They answer different questions.
 
@@ -324,7 +324,7 @@ The bottom row is empty. The empty cells are the finding.
 
 ### 8.1 "But `std::span<std::byte>` Already Exists"
 
-[P4036R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4036r0.pdf)<sup>[6]</sup> sets out the structural problems with `std::span<std::byte>` as a buffer descriptor: the type is overloaded with cryptography, hashing, and serialization needs; it is closed to implementation-defined diagnostic hooks; and a sequence of `std::span<std::byte>` is either a span-of-spans (dangling) or a range of spans (cannot represent byte-granular consumption). The conclusion is in P4036R0; this paper inherits it.
+[P4036R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4036r0.pdf)<sup>[6]</sup> sets out the structural problems with `std::span<std::byte>` as a buffer descriptor: The type is overloaded with cryptography, hashing, and serialization needs; it is closed to implementation-defined diagnostic hooks; and a sequence of `std::span<std::byte>` is either a span-of-spans (dangling) or a range of spans (cannot represent byte-granular consumption). The conclusion is in P4036R0; this paper inherits it.
 
 ### 8.2 "But Ranges Already Do This"
 
@@ -481,7 +481,7 @@ Christopher Kohlhoff designed the Asio buffer types and the `ConstBufferSequence
 
 The Networking TS authors codified the operational semantics of the buffer vocabulary in [N4771](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4771.pdf)<sup>[2]</sup>. The shapes in this paper are the shapes they specified.
 
-Neil MacIntosh's [P0298R3](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0298r3.pdf) "A byte type definition"<sup>[19]</sup> established the precedent that motivates the bespoke types: when a generic type performs double duty - byte addressing, arithmetic, character handling - the committee adds a distinct type so that the type system can express the distinction. `std::byte` was the precedent. `mutable_buffer` and `const_buffer` follow it.
+Neil MacIntosh's [P0298R3](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0298r3.pdf) "A byte type definition"<sup>[19]</sup> established the precedent that motivates the bespoke types: When a generic type performs double duty - byte addressing, arithmetic, character handling - the committee adds a distinct type so that the type system can express the distinction. `std::byte` was the precedent. `mutable_buffer` and `const_buffer` follow it.
 
 ---
 

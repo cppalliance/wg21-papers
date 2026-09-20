@@ -73,9 +73,9 @@ The VTA-NAc-vmPFC dopamine pathway fires on social victories. The ventral tegmen
 
 Zhou et al. (2017) demonstrated in *Science* that winning history remodels the thalamo-prefrontal circuit itself. Repeated victories produce lasting synaptic potentiation at mediodorsal thalamus to dorsomedial prefrontal cortex synapses. This potentiation causally stores dominance status - optogenetic induction of long-term potentiation at these terminals produces sustained rank increases lasting days. The rewiring transfers across different contest types. A participant who wins in one domain carries the circuit modification into all subsequent competitions.
 
-Robertson (2012) summarized the research plainly: the testosterone-dopamine feedback loop produced by repeated victories "is as strong as any drug." Coates and Herbert (2008) showed that London traders' morning testosterone levels predicted their afternoon profits - the winner effect operating in real time in a professional competitive environment.
+Robertson (2012) summarized the research plainly: The testosterone-dopamine feedback loop produced by repeated victories "is as strong as any drug." Coates and Herbert (2008) showed that London traders' morning testosterone levels predicted their afternoon profits - the winner effect operating in real time in a professional competitive environment.
 
-The same circuit that rewards the winner punishes the loser. Mehta and Josephs (2006) documented cortisol elevation after social defeat. Archer's 2006 meta-analysis showed testosterone drops following loss. Hsu et al. (2006) demonstrated the "loser effect" - a single defeat suppresses future competitive behavior by reducing the probability of winning the next encounter. The punishment signal is stronger than the reward signal. Baumeister et al. (2001) established in their review "Bad Is Stronger Than Good" that negative events produce stronger, more durable psychological responses at approximately a 5:1 ratio. Tom et al. (2007) measured the neural asymmetry directly using fMRI during mixed gambles: losses produce steeper activity decreases in ventral striatum and vmPFC than the increases produced by equivalent gains, with a median neural loss/gain ratio of approximately 1.85.
+The same circuit that rewards the winner punishes the loser. Mehta and Josephs (2006) documented cortisol elevation after social defeat. Archer's 2006 meta-analysis showed testosterone drops following loss. Hsu et al. (2006) demonstrated the "loser effect" - a single defeat suppresses future competitive behavior by reducing the probability of winning the next encounter. The punishment signal is stronger than the reward signal. Baumeister et al. (2001) established in their review "Bad Is Stronger Than Good" that negative events produce stronger, more durable psychological responses at approximately a 5:1 ratio. Tom et al. (2007) measured the neural asymmetry directly using fMRI during mixed gambles: Losses produce steeper activity decreases in ventral striatum and vmPFC than the increases produced by equivalent gains, with a median neural loss/gain ratio of approximately 1.85.
 
 This asymmetry - that the punishment of losing is neurally coded as more intense than the reward of winning - is the engine of everything that follows in this paper.
 
@@ -105,7 +105,7 @@ Your design is now permanent. Every compiler on earth must implement it. It cann
 
 Irreversible decisions produce more satisfaction than reversible ones. Gilbert and Ebert (2002) demonstrated this experimentally - subjects who could not change their choice reported greater satisfaction than those who could. The psychological immune system manufactures contentment with irreversible outcomes more effectively than with reversible ones. A feature in the C++ Standard is maximally irreversible. The satisfaction it produces does not decay. It grows.
 
-Terror Management Theory (Greenberg, Solomon, and Pyszczynski, 1986) provides the deeper mechanism: permanent contributions serve as symbolic immortality. They buffer death anxiety by creating a legacy that outlives the contributor. Fox, Tost, and Wade-Benzoni (2010) showed that legacy motivation is "previously understudied and powerful" and reverses temporal discounting - people will sacrifice present resources for permanent future impact at rates that defy standard economic models.
+Terror Management Theory (Greenberg, Solomon, and Pyszczynski, 1986) provides the deeper mechanism: Permanent contributions serve as symbolic immortality. They buffer death anxiety by creating a legacy that outlives the contributor. Fox, Tost, and Wade-Benzoni (2010) showed that legacy motivation is "previously understudied and powerful" and reverses temporal discounting - people will sacrifice present resources for permanent future impact at rates that defy standard economic models.
 
 The permanence that amplifies the winner's reward also amplifies the loser's punishment. Your competitor's design is now permanent. Every use of the feature reminds you. Your alternative is extinct. Staw (1976) documented how sunk cost escalation intensifies when losses become irreversible. Loomes and Sugden (1982) established in regret theory that regret is proportional to irreversibility. The competing paper's acceptance is a daily reminder - every time you use the feature, every paper that builds on it, every conference talk that references it.
 
@@ -139,14 +139,14 @@ This is hedonic adaptation (Frederick and Loewenstein 1999) applied to instituti
 
 Corentin Jabot captured the experience precisely: "And I still have no idea why I'm doing all of that."
 
-But here is the asymmetry that drives everything that follows: while wins habituate, losses do not. The fifth rejection hurts as much as the first. Maybe more. Baumeister et al. (2001) established that negative events produce stronger and more durable psychological responses than positive ones at a ratio of approximately 5:1. Cacioppo et al. (1999) documented that negativity bias operates at the level of evaluative categorization itself. And the social defeat literature (Hollis and Bhatt 2015) demonstrates that repeated defeat produces cumulative sensitization - the opposite of habituation. Each defeat primes the circuit to respond MORE intensely to the next. The loss signal does not attenuate with repetition. It amplifies.
+But here is the asymmetry that drives everything that follows: While wins habituate, losses do not. The fifth rejection hurts as much as the first. Maybe more. Baumeister et al. (2001) established that negative events produce stronger and more durable psychological responses than positive ones at a ratio of approximately 5:1. Cacioppo et al. (1999) documented that negativity bias operates at the level of evaluative categorization itself. And the social defeat literature (Hollis and Bhatt 2015) demonstrates that repeated defeat produces cumulative sensitization - the opposite of habituation. Each defeat primes the circuit to respond MORE intensely to the next. The loss signal does not attenuate with repetition. It amplifies.
 
 This creates an accumulating neurochemical deficit. The positive reward from wins fades toward zero (prediction error = 0 for expected outcomes). The negative punishment from losses remains constant or intensifies (negativity bias + sensitization). Over years of participation, the deficit grows. The participant needs bigger wins - not just because old wins feel routine, but because accumulated losses have created a hole that only a larger hit can fill. This pressure to escalate is not a choice. It is a neurochemical inevitability given the asymmetry between reward habituation and defeat sensitization.
 
 **What it feels like:**
 
 - Winner: less time celebrating recent acceptances than early ones. The feeling has become confirmation rather than elation.
-- Loser: most recent rejection stung with the same intensity as the first - or more. No adaptation.
+- Loser: Most recent rejection stung with the same intensity as the first - or more. No adaptation.
 
 **What to look for:**
 
@@ -174,14 +174,14 @@ The WG21 meeting schedule operates on a variable-ratio reinforcement pattern: th
 
 The near-miss is the system's cruelest mechanism. SF:18, WF:12, N:4, WA:8, SA:3. "Bring it back next meeting." You almost won. You will try again. You cannot stop trying.
 
-Clark et al. (2009) showed in *Neuron* that near-misses activate reward circuitry despite being losses. Habib and Dixon (2010) demonstrated that near-misses produce dopamine release in the ventral striatum. But the near-miss effect is not limited to gambling. Wadhwa and Kim (2015) demonstrated in *Psychological Science* that near-win experiences generalize far beyond gambling: participants who nearly won walked faster to get chocolate, salivated more for money, exerted more effort in unrelated tasks, and spent more money shopping. The mechanism is an unsatisfied motivational arousal state that transfers to whatever goal-directed behavior follows.
+Clark et al. (2009) showed in *Neuron* that near-misses activate reward circuitry despite being losses. Habib and Dixon (2010) demonstrated that near-misses produce dopamine release in the ventral striatum. But the near-miss effect is not limited to gambling. Wadhwa and Kim (2015) demonstrated in *Psychological Science* that near-win experiences generalize far beyond gambling: Participants who nearly won walked faster to get chocolate, salivated more for money, exerted more effort in unrelated tasks, and spent more money shopping. The mechanism is an unsatisfied motivational arousal state that transfers to whatever goal-directed behavior follows.
 
 The committee's "bring it back next meeting" is structurally equivalent to a slot machine's near-miss animation. The feedback may be genuine. The revision may improve the paper. But your behavioral response - increased engagement, increased investment, inability to walk away - is identical to what gambling researchers observe in near-miss conditions. Sleesman, Conlon, and McNamara (2012) found in a meta-analysis across 166 samples (N > 30,000) that proximity to completion drives escalation of commitment (r = .39), independent of sunk-cost effects. Decision makers substitute "finish the project" for the original success criteria. The goal is no longer "produce the best design." The goal is "get this paper through."
 
 **What it feels like:**
 
-- Winner: consensus victory felt categorically different from a close vote - different in kind, not just degree.
-- Loser: a near-miss produced more continued effort than a clear rejection, even though the rational response to both is the same. You cannot walk away from "almost."
+- Winner: Consensus victory felt categorically different from a close vote - different in kind, not just degree.
+- Loser: A near-miss produced more continued effort than a clear rejection, even though the rational response to both is the same. You cannot walk away from "almost."
 
 **What to look for:**
 
@@ -213,8 +213,8 @@ Being passed over for a role you expected produces a sharper reaction than being
 
 **What it feels like:**
 
-- Winner: the effort required for the next proposal feels less burdensome - because the anticipated reward is more vivid. The escalation feels natural, righteous.
-- Loser: being passed over for a role you expected produced a sharper reaction than being rejected for one you merely hoped for. The pain is specific to expectation denied.
+- Winner: The effort required for the next proposal feels less burdensome - because the anticipated reward is more vivid. The escalation feels natural, righteous.
+- Loser: Being passed over for a role you expected produced a sharper reaction than being rejected for one you merely hoped for. The pain is specific to expectation denied.
 
 **What to look for:**
 
@@ -241,12 +241,12 @@ Tolerance to standard rewards (paper acceptance) drives seeking of richer signal
 
 Mercier and Sperber (2011) established in *Behavioral and Brain Sciences* that human reasoning evolved to produce winning arguments, not to find truth. Meegan (2010) showed that zero-sum heuristics are applied even when resources are unlimited - people perceive competitive dynamics in objectively non-competitive settings. Anderson et al. (2007) documented that competition produces "strategic game-playing" and "sabotage" in scientific communities. Mansbridge (1983) identified adversary dynamics hidden within consensus bodies. De Dreu and Kret (2016) showed that intergroup competition activates reward circuitry independently of material outcomes - the competition itself is rewarding.
 
-Being blocked by a competitor activates both the loss circuit (cortisol, testosterone crash) and social betrayal circuits. Sanfey et al. (2003) showed in *Science* that unfair offers activate the anterior insula - the same region activated by disgust. Bohnet and Zeckhauser (2004) established betrayal aversion: losses inflicted by trusted agents hurt more than losses from known adversaries. If the committee process were openly adversarial, losing would be less painful. Boxers do not feel betrayed by opponents. But the collaborative framing adds perceived injustice to the defeat - "technical concerns" as cover for competitive blocking. The injustice burns hotter than the loss.
+Being blocked by a competitor activates both the loss circuit (cortisol, testosterone crash) and social betrayal circuits. Sanfey et al. (2003) showed in *Science* that unfair offers activate the anterior insula - the same region activated by disgust. Bohnet and Zeckhauser (2004) established betrayal aversion: Losses inflicted by trusted agents hurt more than losses from known adversaries. If the committee process were openly adversarial, losing would be less painful. Boxers do not feel betrayed by opponents. But the collaborative framing adds perceived injustice to the defeat - "technical concerns" as cover for competitive blocking. The injustice burns hotter than the loss.
 
 **What it feels like:**
 
 - Winner: tracking "who opposed me" with greater precision than "who agreed." Memory of opposition persists years after technical details faded.
-- Loser: being blocked "for technical reasons" you believe were pretextual produced more anger than a straightforward "we prefer the competing design." The injustice burns hotter than the loss.
+- Loser: Being blocked "for technical reasons" you believe were pretextual produced more anger than a straightforward "we prefer the competing design." The injustice burns hotter than the loss.
 
 **What to look for:**
 
@@ -283,7 +283,7 @@ This section breaks the victor/vanquished pattern. There is no winner of withdra
 
 You said you would leave. You planned to leave. The meeting came and you went anyway. You cannot explain why. Withdrawal from the reward circuit manifests as: restlessness when not engaged, compulsive checking of mailing lists, inability to disengage after announced "retirement," returning for "just one more meeting." The behavioral signatures are identical to substance withdrawal - craving, relapse, rationalization.
 
-Lammers and Burgmer (2018) mapped withdrawal symptoms from power loss to ICD-10 dependence criteria directly. Robertson (2012) argued that the winner effect creates physical dependency on the testosterone-dopamine loop. Koob and Le Moal (2001) provided the allostatic model: the system has shifted baseline. "Normal" now feels like deficit. The participant who leaves does not return to their pre-committee neurochemical state. They return to a state that feels worse than baseline - because baseline has been recalibrated upward by years of intermittent reward.
+Lammers and Burgmer (2018) mapped withdrawal symptoms from power loss to ICD-10 dependence criteria directly. Robertson (2012) argued that the winner effect creates physical dependency on the testosterone-dopamine loop. Koob and Le Moal (2001) provided the allostatic model: The system has shifted baseline. "Normal" now feels like deficit. The participant who leaves does not return to their pre-committee neurochemical state. They return to a state that feels worse than baseline - because baseline has been recalibrated upward by years of intermittent reward.
 
 Herb Sutter served 22 years as WG21 convener. He stated he had been "telling the committee for over a year" that it was time for someone else. He stayed until the term expired. Upon leaving, he retained the title "convenor emeritus," specified "nothing else is changing for me," and continued attending meetings, writing trip reports, and bringing proposals. The behavioral pattern - announced departure, continued engagement, retained identity - is indistinguishable from relapse.
 
@@ -327,9 +327,9 @@ What distinguishes habituation from addiction is the presence of tolerance, esca
 
 Charlton and Danforth (2007) distinguished core addiction criteria (conflict, withdrawal, relapse, behavioral salience) from peripheral criteria (cognitive salience, tolerance, euphoria). Only core criteria indicate pathology; peripheral criteria alone indicate high engagement. The behaviors documented in this paper satisfy core criteria. The experience of conflict (committee work displacing relationships, health, career), withdrawal (inability to disengage, compulsive checking), relapse (returning after announced departure), and behavioral salience (committee identity superseding professional identity) are each documented with citations and observable markers.
 
-Billieux et al. (2015) warned against overpathologizing everyday life by applying addiction criteria to any rewarding activity. Kardefelt-Winther et al. (2017) proposed exclusion criteria: a behavior should not be classified as addiction if the engagement is a rational choice, produces no significant functional impairment, or is better explained by another condition. This paper does not claim that every participant is addicted. It claims that the system's reward architecture - intermittent reinforcement, permanent outcomes, variable-ratio scheduling, no circuit breakers - will produce participants whose engagement meets core dependence criteria in every cohort that runs long enough. The question is not whether this describes any specific individual. The question is whether the system's design makes this outcome structurally inevitable.
+Billieux et al. (2015) warned against overpathologizing everyday life by applying addiction criteria to any rewarding activity. Kardefelt-Winther et al. (2017) proposed exclusion criteria: A behavior should not be classified as addiction if the engagement is a rational choice, produces no significant functional impairment, or is better explained by another condition. This paper does not claim that every participant is addicted. It claims that the system's reward architecture - intermittent reinforcement, permanent outcomes, variable-ratio scheduling, no circuit breakers - will produce participants whose engagement meets core dependence criteria in every cohort that runs long enough. The question is not whether this describes any specific individual. The question is whether the system's design makes this outcome structurally inevitable.
 
-The structural prediction: a system with intermittent reinforcement, no term limits, permanent rewards, and no forced withdrawal will produce this trajectory in every participant who stays long enough. The meeting schedule (five days on, four months off, three times per year) is the maximally addictive intermittent exposure pattern documented in pharmacological research - intermittent access produces addiction phenotypes equal to or greater than continuous access (Allain et al. 2018). The inter-meeting gap produces sensitization: each meeting hits harder than the last because the circuitry has been primed by absence.
+The structural prediction: A system with intermittent reinforcement, no term limits, permanent rewards, and no forced withdrawal will produce this trajectory in every participant who stays long enough. The meeting schedule (five days on, four months off, three times per year) is the maximally addictive intermittent exposure pattern documented in pharmacological research - intermittent access produces addiction phenotypes equal to or greater than continuous access (Allain et al. 2018). The inter-meeting gap produces sensitization: Each meeting hits harder than the last because the circuitry has been primed by absence.
 
 ---
 
@@ -344,7 +344,7 @@ It is not that participants become addicted. It is that the system selects for t
 - Phase 3 exits: "It became too political." These participants recognized the adversarial conversion and chose not to escalate. They are the last healthy response.
 - Phase 4 exits: do not exist voluntarily. No one in Phase 4 leaves by choice. They are removed, restructured out, or they die in the role.
 
-The survivor bias is the finding: the committee is composed entirely of people who passed through all four phases. Those who tasted weakly are gone. Those who habituated fully are gone. Those who refused to escalate are gone. What remains is the residue - participants whose neurochemistry responded most intensely to the initial taste, whose losses sensitized rather than discouraged, whose tolerance drove escalation rather than departure, and whose circuits have been remodeled to require the stimulus.
+The survivor bias is the finding: The committee is composed entirely of people who passed through all four phases. Those who tasted weakly are gone. Those who habituated fully are gone. Those who refused to escalate are gone. What remains is the residue - participants whose neurochemistry responded most intensely to the initial taste, whose losses sensitized rather than discouraged, whose tolerance drove escalation rather than departure, and whose circuits have been remodeled to require the stimulus.
 
 Zhou et al. (2017) showed that winning remodels the thalamo-PFC circuit in a way that generalizes across contest types. Yin et al. (2025) showed that the remodeling persists after loss of status. Kingsbury et al. (2021) showed that adult dominance circuits resist change. The system does not merely select participants. It rewires them. And the rewiring is semi-permanent.
 

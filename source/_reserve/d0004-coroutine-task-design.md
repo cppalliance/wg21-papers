@@ -50,7 +50,7 @@ This paper asks for nothing.
 
 `task<T>` has one template parameter. The result type. Nothing else.
 
-The question the committee will ask: where did the allocator, the executor, and the scheduler go?
+The question the committee will ask: Where did the allocator, the executor, and the scheduler go?
 
 ### 2.1 The Allocator Is in the Frame
 
@@ -85,7 +85,7 @@ std::io::task<> handle_client(std::io::any_stream& stream)
 
 ### 2.3 The Scheduler Is Not Needed
 
-`task<T>` is not a work item that a scheduler picks off a queue. It is a coroutine that suspends and resumes. The scheduler concept in `std::execution` serves a different purpose: it represents a source of execution resources for sender algorithms. A coroutine task does not need to name a scheduler because it does not schedule itself - it is resumed by the entity that completes the I/O operation it was waiting on.
+`task<T>` is not a work item that a scheduler picks off a queue. It is a coroutine that suspends and resumes. The scheduler concept in `std::execution` serves a different purpose: It represents a source of execution resources for sender algorithms. A coroutine task does not need to name a scheduler because it does not schedule itself - it is resumed by the entity that completes the I/O operation it was waiting on.
 
 ### 2.4 The Cost of Extra Parameters
 
@@ -173,7 +173,7 @@ std::io::task<> server(std::io::tcp_acceptor& acceptor)
 }
 ```
 
-`run_async()` is a free function for the same reason `run()` is: it operates on any task, and the execution context is inherited through the protocol.
+`run_async()` is a free function for the same reason `run()` is: It operates on any task, and the execution context is inherited through the protocol.
 
 **Free functions. Minimal signatures. The protocol carries the context.**
 
@@ -253,7 +253,7 @@ The cost of parametric control is type proliferation. `task<T, Alloc, Exec>` mea
 
 Intuition depends on the mental model. If the mental model is "function call," eager feels natural - calling the function runs it. If the mental model is "value that represents work," lazy feels natural - the value is inert until consumed.
 
-C++ coroutines are values. A `task<T>` returned from a coroutine function is a handle to a suspended coroutine. The user must do something with it - await it, pass it to `run()`, or pass it to a combinator. This is the same model as `std::future<T>`: the future is inert; `.get()` blocks.
+C++ coroutines are values. A `task<T>` returned from a coroutine function is a handle to a suspended coroutine. The user must do something with it - await it, pass it to `run()`, or pass it to a combinator. This is the same model as `std::future<T>`: The future is inert; `.get()` blocks.
 
 The ecosystem has already made the choice. Every major C++ coroutine library ships a lazy task (Section 3.3). The committee would be fighting established practice by mandating eager start.
 

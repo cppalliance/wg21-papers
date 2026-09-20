@@ -44,7 +44,7 @@ Stage Two begins with timers because the timer is the cheapest proof that the Io
 
 **First: minimal surface.** The timer has one operation (`wait()`). One operation means one code path to audit, one error condition to handle, one awaitable to return. If the protocol breaks, the diagnostic is simple. If the protocol works, the contract holds for every subsequent platform operation - sockets, files, signals - because the mechanism is the same.
 
-**Second: no data movement.** The timer does not read bytes. It does not write bytes. It does not allocate buffers. The only interaction with the kernel is "wake me at this time." Every complexity that `read_some` or `write_some` introduces - buffer ownership, partial completion, scatter-gather - is absent. The timer isolates the question: does the IoAwaitable protocol deliver a kernel completion to a waiting coroutine?
+**Second: no data movement.** The timer does not read bytes. It does not write bytes. It does not allocate buffers. The only interaction with the kernel is "wake me at this time." Every complexity that `read_some` or `write_some` introduces - buffer ownership, partial completion, scatter-gather - is absent. The timer isolates the question: Does the IoAwaitable protocol deliver a kernel completion to a waiting coroutine?
 
 **Third: cross-platform from day one.** Every operating system provides a timer primitive. IOCP has `CreateWaitableTimer`. Linux has `timerfd_create`. BSD/macOS has `EVFILT_TIMER` in kqueue. There is no "platform that does not support timers." The paper cannot be blocked by platform availability.
 
@@ -108,7 +108,7 @@ kevent(kq, &ev, 1, nullptr, 0, nullptr);
 | Linux epoll  | `timerfd_create`            | `epoll_ctl`           | `epoll_wait` event  |
 | BSD kqueue   | `EVFILT_TIMER`              | `kevent` registration | `kevent` return     |
 
-Three platforms. Three primitives. One abstract shape: set a deadline, receive a completion. The IoAwaitable protocol maps each completion to a coroutine resumption through `await_suspend` and symmetric transfer.
+Three platforms. Three primitives. One abstract shape: Set a deadline, receive a completion. The IoAwaitable protocol maps each completion to a coroutine resumption through `await_suspend` and symmetric transfer.
 
 ---
 
@@ -121,7 +121,7 @@ Three platforms. Three primitives. One abstract shape: set a deadline, receive a
 Consider a 30-second timeout:
 
 - **steady_clock**: always expires 30 seconds from now. Correct.
-- **system_clock**: if NTP adjusts the system clock backward by 60 seconds during the wait, the timeout fires 90 seconds from now. If adjusted forward by 60 seconds, the timeout fires immediately. Both are bugs.
+- **system_clock**: If NTP adjusts the system clock backward by 60 seconds during the wait, the timeout fires 90 seconds from now. If adjusted forward by 60 seconds, the timeout fires immediately. Both are bugs.
 
 Wall-clock drift is not hypothetical. Cloud VMs experience clock jumps when migrated. Containers inherit host clock corrections. Laptops resume from sleep with stale system clocks. Every production deployment that uses `system_clock` for timeouts eventually encounters the bug.
 
@@ -233,7 +233,7 @@ await Task.Delay(TimeSpan.FromSeconds(5), cts.Token);
 cts.Cancel();  // cancellation
 ```
 
-.NET provides `Task.Delay` for simple waits and `CancellationToken` for cancellation. The cancellation token is a separate object, not a method on the timer. The pattern is: create delay, pass cancellation token, cancel externally.
+.NET provides `Task.Delay` for simple waits and `CancellationToken` for cancellation. The cancellation token is a separate object, not a method on the timer. The pattern is: Create delay, pass cancellation token, cancel externally.
 
 ### 6.4 Python: `asyncio.sleep`
 
@@ -276,7 +276,7 @@ libuv provides `uv_timer_t`. `uv_timer_start` sets the deadline and callback. `u
 | Asio      | `steady_timer`          | `async_wait`  | `cancel()`       | `expires_at()` |
 | libuv     | `uv_timer_t`            | callback      | `uv_timer_stop`  | `uv_timer_start` |
 
-Six ecosystems. Six timers. One shape: set a deadline, wait for it, cancel it if needed. The proposed `std::io::timer` is this shape expressed as an IoAwaitable.
+Six ecosystems. Six timers. One shape: Set a deadline, wait for it, cancel it if needed. The proposed `std::io::timer` is this shape expressed as an IoAwaitable.
 
 ---
 
@@ -299,7 +299,7 @@ Six ecosystems. Six timers. One shape: set a deadline, wait for it, cancel it if
 3. Custom clocks (`high_resolution_clock`, user-defined simulation clocks) are niche.
 4. A template complicates the type-erased stream model. `any_stream` wraps a concrete type; if the timer is templated on its clock, the type erasure boundary must accommodate clock-dependent completions.
 
-The extension path is clear: a future paper can propose `basic_timer<Clock>` and make `timer` an alias for `basic_timer<steady_clock>`. The non-templated form ships first because it is simpler, covers the common case, and unblocks Stage Two.
+The extension path is clear: A future paper can propose `basic_timer<Clock>` and make `timer` an alias for `basic_timer<steady_clock>`. The non-templated form ships first because it is simpler, covers the common case, and unblocks Stage Two.
 
 ### 7.4 "But cancellation semantics are unclear"
 

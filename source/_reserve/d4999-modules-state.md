@@ -94,7 +94,7 @@ Build systems must solve a problem that traditional compilation does not present
 
 ### 3.1 CMake and Ninja
 
-CMake has the largest user base among build systems with C++20 module support. Named modules exited experimental status in CMake 3.28 (December 2023)<sup>[11]</sup>. CMake uses [P1689R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p1689r5.html)<sup>[12]</sup> dependency scanning: the compiler outputs a JSON file describing which modules each source provides and requires, and CMake generates Ninja `dyndep` files to update the build graph dynamically. This requires Ninja 1.11 or later; Makefile generators are not supported because they lack the dynamic dependency mechanism<sup>[11]</sup>.
+CMake has the largest user base among build systems with C++20 module support. Named modules exited experimental status in CMake 3.28 (December 2023)<sup>[11]</sup>. CMake uses [P1689R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p1689r5.html)<sup>[12]</sup> dependency scanning: The compiler outputs a JSON file describing which modules each source provides and requires, and CMake generates Ninja `dyndep` files to update the build graph dynamically. This requires Ninja 1.11 or later; Makefile generators are not supported because they lack the dynamic dependency mechanism<sup>[11]</sup>.
 
 `import std;` support is experimental since CMake 3.30<sup>[11]</sup>. Header units are not supported. CMake can install module interface source files via `FILE_SET CXX_MODULES` for the Ninja generator, but the Visual Studio generator has no support for exporting or installing module information<sup>[11]</sup>.
 
@@ -110,13 +110,13 @@ CMake has the largest user base among build systems with C++20 module support. N
 | Bazel 9.0.0 | Experimental | In progress | No | Clang only<sup>[16]</sup> |
 | MSBuild | Yes | Yes | No | MSVC only |
 
-build2 takes a different approach from CMake: it uses GCC's module mapper protocol for direct build-system-to-compiler communication, falling back to P1689R5 scanning for Clang and MSVC<sup>[13]</sup>. xmake provides the broadest feature coverage, including header units across all three compilers<sup>[14]</sup>. Meson's tracking issue for module support has been open since March 2019; `import std;` support landed in version 1.10.0 (December 2025) behind an experimental flag<sup>[15]</sup>. Bazel 9.0.0 introduced module support limited to Clang, with active development continuing as of June 2026<sup>[16]</sup>.
+build2 takes a different approach from CMake: It uses GCC's module mapper protocol for direct build-system-to-compiler communication, falling back to P1689R5 scanning for Clang and MSVC<sup>[13]</sup>. xmake provides the broadest feature coverage, including header units across all three compilers<sup>[14]</sup>. Meson's tracking issue for module support has been open since March 2019; `import std;` support landed in version 1.10.0 (December 2025) behind an experimental flag<sup>[15]</sup>. Bazel 9.0.0 introduced module support limited to Clang, with active development continuing as of June 2026<sup>[16]</sup>.
 
 ### 3.3 Package Managers
 
 Neither vcpkg nor Conan has a native workflow for distributing modularized libraries. vcpkg's tracking discussion for C++20 module support has been open since 2021. Conan published an analysis of the packaging problem in October 2023<sup>[17]</sup>, identifying the fundamental constraint: BMIs are compiler-version-specific and cannot be portably distributed.
 
-The Conan team<sup>[17]</sup> and CMake documentation<sup>[11]</sup> both describe the same workaround: ship module interface source files and compile BMIs locally. This approach works but adds compilation overhead for consumers and contradicts the pre-built binary model that package managers are designed to provide.
+The Conan team<sup>[17]</sup> and CMake documentation<sup>[11]</sup> both describe the same workaround: Ship module interface source files and compile BMIs locally. This approach works but adds compilation overhead for consumers and contradicts the pre-built binary model that package managers are designed to provide.
 
 ### 3.4 IDE Support
 
@@ -154,7 +154,7 @@ MSVC is the only implementation where `import std;` is documented as production-
 
 ## 5. Tracked Adoption Stands at 4.1%
 
-This section measures adoption through published experience reports, aggregate tracking data, and developer surveys. Absences are evidence: when a major library does not ship module interfaces, that is a data point about the state of adoption.
+This section measures adoption through published experience reports, aggregate tracking data, and developer surveys. Absences are evidence: When a major library does not ship module interfaces, that is a data point about the state of adoption.
 
 ### 5.1 Experience Reports
 

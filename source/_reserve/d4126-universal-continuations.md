@@ -14,7 +14,7 @@ reply-to:
 
 Senders pay a frame allocation to enter the awaitable protocol. They do not have to.
 
-The IoAwaitable protocol ([P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[1]</sup>) defines a contract between a coroutine and an I/O reactor: the coroutine suspends, the reactor performs the operation, and the executor resumes the coroutine when the result is ready. The only way to obtain a `coroutine_handle<>` today is from a coroutine, and a coroutine requires a frame allocation. A sender pipeline that wants to invoke an IoAwaitable must allocate a coroutine frame to get a handle - even though the sender already has its own operation state and does not need a frame.
+The IoAwaitable protocol ([P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[1]</sup>) defines a contract between a coroutine and an I/O reactor: The coroutine suspends, the reactor performs the operation, and the executor resumes the coroutine when the result is ready. The only way to obtain a `coroutine_handle<>` today is from a coroutine, and a coroutine requires a frame allocation. A sender pipeline that wants to invoke an IoAwaitable must allocate a coroutine frame to get a handle - even though the sender already has its own operation state and does not need a frame.
 
 This paper is additive. It does not take anything away from senders, from coroutines, or from any existing design. It gives senders something they do not have today: zero-allocation access to every IoAwaitable ever written - timers, channels, semaphores, I/O operations, and anything else the ecosystem produces. A general bridge to standard awaitables would also need to handle the `void`-returning and `bool`-returning variants of `await_suspend`. It gives awaitable authors a new consumer base without modifying a single line of their code.
 
@@ -120,7 +120,7 @@ The handle is the only thing the executor sees. It calls `.resume()`. It does no
 
 ## 3. The Problem
 
-The only way to obtain a `coroutine_handle<>` today is from a coroutine. A coroutine requires a frame allocation. The awaitable-to-sender bridge in [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[5]</sup> demonstrates this: the bridge creates a coroutine whose sole purpose is to hold a handle that the reactor can resume. The coroutine frame is the tax.
+The only way to obtain a `coroutine_handle<>` today is from a coroutine. A coroutine requires a frame allocation. The awaitable-to-sender bridge in [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[5]</sup> demonstrates this: The bridge creates a coroutine whose sole purpose is to hold a handle that the reactor can resume. The coroutine frame is the tax.
 
 [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[5]</sup> Appendix A shows the bridge implementation. The `bridge_task` coroutine exists to produce a `coroutine_handle<>`. The coroutine body calls `co_await` on the IoAwaitable, and the `await_suspend` receives the handle from the compiler. The bridge works. It allocates a coroutine frame per I/O operation.
 
@@ -134,7 +134,7 @@ One allocation per I/O operation. For high-throughput networking - millions of o
 
 An I/O operation can take one of two shapes: a sender or an awaitable. The choice determines which consumption model pays a tax and which runs at zero cost.
 
-**If the I/O operation is a sender,** coroutines consume it through `co_await` on the sender. The sender's `connect` produces an operation state. The coroutine must store that operation state somewhere - typically in the coroutine frame or in a bridge object. The sender's completion calls `set_value` on a receiver, which must resume the coroutine. The machinery to connect a sender to a coroutine - `execution::task`, or a bridge like the one in [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[5]</sup> - is the tax coroutines pay. [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[6]</sup>, "Add a Coroutine Task Type," is this tax made standard: it type-erases the operation state, allocates, and converts an `error_code` to `exception_ptr` through the execution framework's error-conversion machinery ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[7]</sup>).
+**If the I/O operation is a sender,** coroutines consume it through `co_await` on the sender. The sender's `connect` produces an operation state. The coroutine must store that operation state somewhere - typically in the coroutine frame or in a bridge object. The sender's completion calls `set_value` on a receiver, which must resume the coroutine. The machinery to connect a sender to a coroutine - `execution::task`, or a bridge like the one in [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[5]</sup> - is the tax coroutines pay. [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[6]</sup>, "Add a Coroutine Task Type," is this tax made standard: It type-erases the operation state, allocates, and converts an `error_code` to `exception_ptr` through the execution framework's error-conversion machinery ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[7]</sup>).
 
 **If the I/O operation is an awaitable,** coroutines consume it directly. `co_await stream.read_some(buf)` is the language feature working as designed. The compiler provides the handle. The awaitable suspends the coroutine. The reactor completes the operation. The executor resumes the coroutine. No bridge. No type erasure. No allocation beyond the coroutine frame that the coroutine already needs for its own state.
 
@@ -177,7 +177,7 @@ The two needs are not in conflict.
 
 ## 6. Three Kinds of Coroutines
 
-C++ has shipped multiple models for parallel execution (`std::execution_policy` and [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[7]</sup> senders with `bulk`), multiple models for formatted output (`iostream` and `std::format`), and multiple models for error handling (exceptions and `error_code`). Multiple coroutine models serving different domains is consistent with the committee's practice. Unlike `iostream` and `std::format`, which overlap significantly, the three coroutine models serve non-overlapping domains: stackful coroutines serve deep suspension through coroutine-unaware APIs, frame-erased coroutines serve type-erased I/O with split compilation and ABI stability, and frame-visible coroutines (if they ever exist) serve compile-time work graphs that need the frame in the type system. Each addresses a use case the others structurally cannot.
+C++ has shipped multiple models for parallel execution (`std::execution_policy` and [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[7]</sup> senders with `bulk`), multiple models for formatted output (`iostream` and `std::format`), and multiple models for error handling (exceptions and `error_code`). Multiple coroutine models serving different domains is consistent with the committee's practice. Unlike `iostream` and `std::format`, which overlap significantly, the three coroutine models serve non-overlapping domains: Stackful coroutines serve deep suspension through coroutine-unaware APIs, frame-erased coroutines serve type-erased I/O with split compilation and ABI stability, and frame-visible coroutines (if they ever exist) serve compile-time work graphs that need the frame in the type system. Each addresses a use case the others structurally cannot.
 
 ### 6.1 Stackful (fibers)
 
@@ -185,7 +185,7 @@ C++ has shipped multiple models for parallel execution (`std::execution_policy` 
 
 ### 6.2 Stackless, frame-erased (C++20 coroutines)
 
-C++20 coroutines type-erase the frame through `coroutine_handle<>`. The promise type is invisible to the caller. The caller sees only a handle. This is ideal for I/O: type erasure gives type-erased streams, split compilation, and ABI stability. The I/O library compiles once. Transport changes do not break the ABI.
+C++20 coroutines type-erase the frame through `coroutine_handle<>`. The promise type is invisible to the caller. The caller sees only a handle. This is ideal for I/O: Type erasure gives type-erased streams, split compilation, and ABI stability. The I/O library compiles once. Transport changes do not break the ABI.
 
 `std::execution` ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[7]</sup>) provides compile-time sender composition, structured concurrency guarantees, and a customization point model that enables heterogeneous dispatch. These are real achievements. The sender model serves GPU dispatch, parallel algorithms, and infrastructure well.
 
@@ -341,7 +341,7 @@ The `destroy` pointer is a no-op - the sender owns its own lifetime. If a compon
 
 Any callback handle must be convertible to `coroutine_handle<void>`. This is non-negotiable. Awaitables accept `coroutine_handle<>`. Executors traffic in `coroutine_handle<>`. The handle is the type-erased boundary between the awaitable and its consumer.
 
-A `coroutine_handle<>` is a pointer to a frame. The storage for that frame must come from somewhere. A factory function cannot conjure storage without allocating - and allocation is the cost this paper eliminates. The compiler cannot rewrite the user's struct into something else. The only zero-allocation path is: the user provides the storage, and `coroutine_handle<>` points directly at it.
+A `coroutine_handle<>` is a pointer to a frame. The storage for that frame must come from somewhere. A factory function cannot conjure storage without allocating - and allocation is the cost this paper eliminates. The compiler cannot rewrite the user's struct into something else. The only zero-allocation path is: The user provides the storage, and `coroutine_handle<>` points directly at it.
 
 This means the standard would need to mandate the two-pointer prefix layout - `resume` and `destroy` function pointers at offsets 0 and 1 - so that `from_address` on a user-provided struct produces a valid handle. There is no alternative design that avoids allocation without this guarantee.
 

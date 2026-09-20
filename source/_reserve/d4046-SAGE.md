@@ -73,7 +73,7 @@ What separates the two is access to **generating principles** - the deep reasoni
 
 > *"Someone who understands the generating principles of a tradition will be able to verify or check their knowledge, but, more importantly, they will also be able to extend it while remaining faithful to the original body of knowledge."*
 
-Bjarne Stroustrup articulated this concept in his own terms: principles and examples must be "very closely interlaced." A principle without examples cannot be applied. An example without a principle cannot be extended. The combination is what makes knowledge transmissible.
+Bjarne Stroustrup articulated this concept in his own terms: Principles and examples must be "very closely interlaced." A principle without examples cannot be applied. An example without a principle cannot be extended. The combination is what makes knowledge transmissible.
 
 ### 2.4 Conclusions and Judgment in WG21
 
@@ -112,7 +112,7 @@ Consider SD-9, which says things like "use `[[nodiscard]]` for functions where i
 
 SD-10 comes closest to real knowledge transfer by referencing "Design and Evolution of C++" principles. But the references are brief, newcomers may not have read D&E, and there is no explanation of how to apply principles to novel cases.
 
-P2000R5 articulates the right philosophy and goals. The Directions Group's P4023R0<sup>[1]</sup> identifies the same gap from the AI perspective: current models are trained on legacy code and unsafe patterns, and the ecosystem needs "a curated, human validated collection" of high-quality C++ knowledge. P4023R0 focuses on code; the methodology presented in this paper addresses the complementary dimension - the evaluative judgment that experienced participants apply when assessing whether a proposal meets those goals.
+P2000R5 articulates the right philosophy and goals. The Directions Group's P4023R0<sup>[1]</sup> identifies the same gap from the AI perspective: Current models are trained on legacy code and unsafe patterns, and the ecosystem needs "a curated, human validated collection" of high-quality C++ knowledge. P4023R0 focuses on code; the methodology presented in this paper addresses the complementary dimension - the evaluative judgment that experienced participants apply when assessing whether a proposal meets those goals.
 
 The generating principles - how to *think* about API design, how to recognize patterns of failure, how to evaluate whether a proposal belongs in the standard at all - are held by experienced participants. These principles can be captured. The next sections describe a method for doing so.
 
@@ -124,9 +124,9 @@ The foundational paper [P2267R1: Library Evolution Policies](https://www.open-st
 
 Two rationale papers attempt deeper knowledge transfer, with instructive differences in success:
 
-**[P3162R0: LEWG `[[nodiscard]]` Rationale](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3162r0.html)**<sup>[12]</sup> does reasonably well at conveying philosophy. The three guiding principles - minimize complexity, focus on the 90% case, center on outcomes - are genuinely transferable mental models. A reader could apply "minimize complexity" to reject a proposal that marks every getter `[[nodiscard]]`. The "90% case" principle teaches prioritization: catch the severe/common bugs, accept that edge cases slip through. "Center on outcomes" reframes the question from "what does the standard say" to "what diagnostics do users actually see" - a useful perspective shift.
+**[P3162R0: LEWG `[[nodiscard]]` Rationale](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3162r0.html)**<sup>[12]</sup> does reasonably well at conveying philosophy. The three guiding principles - minimize complexity, focus on the 90% case, center on outcomes - are genuinely transferable mental models. A reader could apply "minimize complexity" to reject a proposal that marks every getter `[[nodiscard]]`. The "90% case" principle teaches prioritization: Catch the severe/common bugs, accept that edge cases slip through. "Center on outcomes" reframes the question from "what does the standard say" to "what diagnostics do users actually see" - a useful perspective shift.
 
-The concrete examples (`.empty()` vs `.clear()` confusion, `async` synchronous trap, allocation leaks) give pattern-matching anchors. Someone could recognize analogous situations: a `reset()` that returns the old value might warrant `[[nodiscard]]` under the "common mistake" criterion.
+The concrete examples (`.empty()` vs `.clear()` confusion, `async` synchronous trap, allocation leaks) give pattern-matching anchors. Someone could recognize analogous situations: A `reset()` that returns the old value might warrant `[[nodiscard]]` under the "common mistake" criterion.
 
 The paper does not fully explain *why* these three principles were chosen over others, or how to resolve conflicts between them.
 
@@ -136,7 +136,7 @@ The wording itself is a checklist, not a framework. A reader could apply it to e
 
 **What both leave open:**
 
-Neither paper addresses the deeper question: what is `[[nodiscard]]` *for*? Is it a bug-catching mechanism, a documentation tool, an API design signal, or a way to encode programmer intent? The answer affects everything. If it is purely about catching bugs, frequency data matters. If it is about intent, consistency matters more.
+Neither paper addresses the deeper question: What is `[[nodiscard]]` *for*? Is it a bug-catching mechanism, a documentation tool, an API design signal, or a way to encode programmer intent? The answer affects everything. If it is purely about catching bugs, frequency data matters. If it is about intent, consistency matters more.
 
 Neither discusses the cost model for false positives. When does an unwanted warning become actively harmful? Without this, readers cannot calibrate the tradeoff.
 
@@ -212,7 +212,7 @@ Howard's self-reflection is also instructive: "I can only blame myself. I did no
 >
 > *Just my thoughts, but I really don't know now which story to tell about C++17...*
 
-Nico articulates a principle about integration time: features with wide impact require time for experts to evaluate how they interact with the rest of the standard. The train model creates schedule pressure that can compress this evaluation period. His observation that he does not "know now which story to tell about C++17" reflects the judgment of someone who needs coherence in order to explain the committee's work to the community.
+Nico articulates a principle about integration time: Features with wide impact require time for experts to evaluate how they interact with the rest of the standard. The train model creates schedule pressure that can compress this evaluation period. His observation that he does not "know now which story to tell about C++17" reflects the judgment of someone who needs coherence in order to explain the committee's work to the community.
 
 **Source:** `lib/2016/05/0311.php` (May 18, 2016)
 **Context:** Discussion about whether to standardize string_view given unresolved design questions
@@ -371,7 +371,7 @@ The technology exists today.
 
 If AI can help capture and synthesize knowledge, does expertise become less valuable?
 
-The economics of generative AI invert traditional cost functions. Before LLMs, production was expensive: transcribing interviews, synthesizing themes, drafting documents required skilled human time. Judgment was comparatively cheap: a quick review, an approval, a correction. After generative AI, this inverts. Production becomes nearly free. Judgment becomes the scarce resource.
+The economics of generative AI invert traditional cost functions. Before LLMs, production was expensive: Transcribing interviews, synthesizing themes, drafting documents required skilled human time. Judgment was comparatively cheap: a quick review, an approval, a correction. After generative AI, this inverts. Production becomes nearly free. Judgment becomes the scarce resource.
 
 Generative AI does not devalue expertise. It reveals that judgment was always the valuable part. Production was the tax experts paid to express it.
 
@@ -382,7 +382,7 @@ The inversion reframes any concern about displacement:
 - **Comparative advantage shifts**: Experts focus on judgment rather than production. Howard Hinnant's value lies in knowing which library proposals lack sufficient field experience, not in typing out his reasoning. The AI handles transcription and synthesis; the expert provides the irreplaceable judgment.
 - **Capability expansion**: More people can contribute meaningfully. An expert who might never write a paper can share insights through a one-hour interview. The total knowledge captured increases even as individual time requirements decrease.
 
-The economics are clear: judgment is the bottleneck owned by experts. This methodology amplifies their role. P4023R0's governance principle - "the author is the intelligence of record" - arrives at the same conclusion from the policy direction: human judgment is irreplaceable, and AI is a tool in its service<sup>[1]</sup>.
+The economics are clear: Judgment is the bottleneck owned by experts. This methodology amplifies their role. P4023R0's governance principle - "the author is the intelligence of record" - arrives at the same conclusion from the policy direction: Human judgment is irreplaceable, and AI is a tool in its service<sup>[1]</sup>.
 
 ---
 
@@ -398,7 +398,7 @@ Matheus Izvekov brings a rare perspective to WG21: deep compiler implementation 
 
 His central insight is that **high vote counts in EWG do not necessarily indicate understanding**. His first paper achieved near-consensus, yet later revealed that the full implications were not widely understood - a pattern he observed in his personal experience. This disconnect stems from the separation of experts (concentrated in CWG) from the design phase (EWG), compounded by simultaneous scheduling that prevents cross-pollination. Importantly, this is not a flaw in the committee per se - it is unreasonable to expect everyone to be an expert in everything, especially given C++'s complexity. Voters often follow the lead of trusted experts on topics they do not fully understand, which is a reasonable trust mechanism.
 
-Matheus also articulates a tension between library and language features: foundational operations like `std::move` pay unnecessary compile-time costs as templates when they could be cheaper and better-diagnosed as language primitives. He observes that language features can sometimes provide a more polished user experience than library solutions for foundational operations.
+Matheus also articulates a tension between library and language features: Foundational operations like `std::move` pay unnecessary compile-time costs as templates when they could be cheaper and better-diagnosed as language primitives. He observes that language features can sometimes provide a more polished user experience than library solutions for foundational operations.
 
 **Key Insights:**
 
@@ -412,18 +412,18 @@ Matheus also articulates a tension between library and language features: founda
 
 ### 5.2 Howard Hinnant
 
-Howard Hinnant brings nearly three decades of WG21 experience, beginning as MetroWorks' sole standard library implementer in 1998 and later serving as LWG chair starting in 2005. His perspective is grounded in implementation reality: he has personally shipped standard library code and experienced the consequences of committee decisions at the vendor level.
+Howard Hinnant brings nearly three decades of WG21 experience, beginning as MetroWorks' sole standard library implementer in 1998 and later serving as LWG chair starting in 2005. His perspective is grounded in implementation reality: He has personally shipped standard library code and experienced the consequences of committee decisions at the vendor level.
 
-His most powerful insight is the **standardization threshold principle**: the standard should make the impossible possible or the hard easy, but not the easy easier. This filters out "convenience" proposals that add maintenance burden without solving real problems. He couples this with a requirement for **positive field experience** - proposals benefit from real-world validation before standardization.
+His most powerful insight is the **standardization threshold principle**: The standard should make the impossible possible or the hard easy, but not the easy easier. This filters out "convenience" proposals that add maintenance burden without solving real problems. He couples this with a requirement for **positive field experience** - proposals benefit from real-world validation before standardization.
 
-Howard also articulates a structural property of WG21: it is a volunteer organization. No one can compel work to be done. This means that proposals, however meritorious, depend on sustained voluntary effort from their champions. This is a tradeoff inherent to WG21's design, not a defect.
+Howard also articulates a structural property of WG21: It is a volunteer organization. No one can compel work to be done. This means that proposals, however meritorious, depend on sustained voluntary effort from their champions. This is a tradeoff inherent to WG21's design, not a defect.
 
 **Key Insights:**
 
 - Only standardize features that enable what was previously impossible/impractical, or that significantly reduce difficulty of hard tasks; reject proposals that merely add convenience
 - Proposals must demonstrate successful real-world usage with positive feedback from independent users before standardization; implementation alone is insufficient
 - WG21 is a volunteer organization without executive authority; no one can compel work to be done, so important proposals may be abandoned when champions lose interest
-- Every proposal must clearly answer: what specific problem does this solve, and without this proposal, how hard is the problem to solve?
+- Every proposal must clearly answer: What specific problem does this solve, and without this proposal, how hard is the problem to solve?
 - ABI stability concerns should trigger cost/benefit analysis, not automatic rejection; some ABI breaks are worth the transition cost
 
 **References:** [Full transcript](https://github.com/cppalliance/wg21-sage/blob/master/inputs/howard-hinnant.md)<sup>[16]</sup> | [Synthesized knowledge](https://github.com/cppalliance/wg21-sage/blob/master/knowledge/howard-hinnant.know.md)<sup>[14]</sup>
@@ -444,7 +444,7 @@ Dave Abrahams was present at Boost's founding, instrumental in establishing its 
 
 YouTube alone contains thousands of hours of conference talks, panel discussions, and interviews with WG21 participants. The same workflow that synthesizes knowledge from purpose-conducted interviews can be applied to this archive - transcribe the audio, run the capture rule, and produce structured knowledge files.
 
-Dave's central contribution is articulating the **philosophy of libraries as infrastructure**. Libraries enable domain experts to focus on their actual expertise rather than reinventing fundamental components. "Every time [programmers] have to go on an excursion to build an algorithm that is standard or a data structure... they're doing something that there's economic pressure on them not to give it the attention it deserves." This principle - that libraries free cognitive resources - explains why standardization matters: it shifts work from thousands of individual programmers to a few experts who can give components the attention they deserve.
+Dave's central contribution is articulating the **philosophy of libraries as infrastructure**. Libraries enable domain experts to focus on their actual expertise rather than reinventing fundamental components. "Every time [programmers] have to go on an excursion to build an algorithm that is standard or a data structure... they're doing something that there's economic pressure on them not to give it the attention it deserves." This principle - that libraries free cognitive resources - explains why standardization matters: It shifts work from thousands of individual programmers to a few experts who can give components the attention they deserve.
 
 He also provides a foundational account of how consensus-based collaboration can achieve great things. His exception safety work succeeded despite him not being a committee member with voting rights - he achieved it entirely through persuasion and education. "What the committee demonstrated for me at that time was, contrary to what a lot of people say about design by committee... you can actually accomplish great things by consensus."
 
@@ -462,7 +462,7 @@ He also provides a foundational account of how consensus-based collaboration can
 
 Sean Parent, a senior principal scientist at Adobe who previously worked at Apple and Google, offers a unique perspective spanning three decades of C++ infrastructure work. Like Dave Abrahams, his interview comes from the same documentary project on Boost's history, further demonstrating how existing video content can feed the knowledge capture pipeline.
 
-Parent provides crucial historical context on Boost's role in sustaining C++ during the 13-year gap between C++98 and C++11: "I think C++ in some sense would've greatly diminished during that time period just from stagnation." Boost filled this void, and many of its innovations became C++11 features. This is itself a generating principle: high-quality open-source libraries can sustain a language and seed its future evolution.
+Parent provides crucial historical context on Boost's role in sustaining C++ during the 13-year gap between C++98 and C++11: "I think C++ in some sense would've greatly diminished during that time period just from stagnation." Boost filled this void, and many of its innovations became C++11 features. This is itself a generating principle: High-quality open-source libraries can sustain a language and seed its future evolution.
 
 Parent also drove the **licensing consolidation** that enabled commercial adoption. Early Boost had over 100 different licenses - one per contributor - creating enormous friction for enterprise legal review. He pushed Dave Abrahams to establish the unified Boost Software License, making Adobe the first major company to officially adopt Boost.
 
@@ -483,7 +483,7 @@ Parent independently identifies the need for explicit, documented principles - t
 
 > *"Even what I would consider basic things like saying all new types within the language should be regular, uh, doesn't happen and doesn't get held up."*
 
-"All new types should be regular" is exactly the form of actionable, verifiable principle that the capture rule produces. Parent's observation validates the approach: experienced practitioners hold principles that can be extracted, documented, and applied systematically.
+"All new types should be regular" is exactly the form of actionable, verifiable principle that the capture rule produces. Parent's observation validates the approach: Experienced practitioners hold principles that can be extracted, documented, and applied systematically.
 
 ### 5.5 Dave Abrahams & Doug Gregor (Dinner Reunion)
 
@@ -1261,7 +1261,7 @@ The paper argues this is a distinct approach from both the Networking TS and sen
 - The paper argues from the C++ principle that "the abstractions that succeed in C++ are narrow" - iterators for traversal, RAII for resource lifetime, allocators for memory strategy
 - The design references Kohlhoff's executor model as established precedent
 - Every design choice (two-argument await_suspend, TLS for frame allocators, type-erased executor_ref) is traced to stated principles
-- The paper demonstrates consistency: similar questions (how to propagate executor? stop token? frame allocator?) receive the same answer (environment pointer via await_suspend for the first two; TLS for the third, with documented justification for why)
+- The paper demonstrates consistency: Similar questions (how to propagate executor? stop token? frame allocator?) receive the same answer (environment pointer via await_suspend for the first two; TLS for the third, with documented justification for why)
 
 **Notes:** The paper is grounded in documented principles and applies them consistently. It also implicitly argues that the committee needs agreed-upon principles for async I/O - the Kona poll chose sender/receiver without considering the coroutine-native approach because no such principles constrained the decision space.
 

@@ -184,7 +184,7 @@ The executor discussion began in 2012. Fourteen years later, C++ has no standard
 
 Every successful model in Section 2 earned its moniker through competition. No poll foreclosed alternatives to iterators.
 
-Universal models that endure have one thing in common: they earned the name.
+Universal models that endure have one thing in common: They earned the name.
 
 ---
 

@@ -89,7 +89,7 @@ Question. How do we own a collection of byte regions?
 
 Answer. Use a range. `vector<span<byte>>`, `array<span<byte>, N>`, any range whose value type is `span<byte>`.
 
-Ranges solve the ownership problem: a `vector` owns its elements.
+Ranges solve the ownership problem: A `vector` owns its elements.
 
 Ranges create a byte consumption problem. Consider a JSON stream arriving in two chunks:
 

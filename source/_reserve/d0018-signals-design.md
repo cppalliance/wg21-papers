@@ -48,7 +48,7 @@ The C standard library provides two facilities for signal handling: `signal()` a
 
 The C standard specifies that the behavior is undefined if a signal handler calls any library function other than `abort`, `_Exit`, `quick_exit`, or `signal` itself (with restrictions), or accesses any object other than `volatile sig_atomic_t` or a lock-free atomic<sup>[6]</sup>. POSIX relaxes this to a finite list of async-signal-safe functions<sup>[7]</sup>, but that list excludes `malloc`, `printf`, `new`, and any function that acquires a lock. In practice, a signal handler can set a flag and nothing else.
 
-The result is a universal workaround: the signal handler sets a flag, and a main-loop thread polls the flag. Every C++ server that handles `SIGINT` or `SIGTERM` does this. The polling is manual, the flag is global, the wakeup latency is whatever the poll interval happens to be, and the flag check is scattered across the application.
+The result is a universal workaround: The signal handler sets a flag, and a main-loop thread polls the flag. Every C++ server that handles `SIGINT` or `SIGTERM` does this. The polling is manual, the flag is global, the wakeup latency is whatever the poll interval happens to be, and the flag check is scattered across the application.
 
 ### 2.2 What Async Signal Handling Provides
 
@@ -90,7 +90,7 @@ POSIX defines approximately 140 async-signal-safe functions<sup>[7]</sup>. The l
 - Throw an exception
 - Call any function whose implementation may do any of the above
 
-These restrictions make `<csignal>` handlers nearly unusable for application-level logic. The async model sidesteps them entirely: the signal notification crosses from signal context into reactor context through a kernel mechanism (`signalfd`, `kqueue`, or a dedicated thread), and the coroutine that receives the notification runs in normal execution context with no restrictions.
+These restrictions make `<csignal>` handlers nearly unusable for application-level logic. The async model sidesteps them entirely: The signal notification crosses from signal context into reactor context through a kernel mechanism (`signalfd`, `kqueue`, or a dedicated thread), and the coroutine that receives the notification runs in normal execution context with no restrictions.
 
 ---
 
@@ -175,7 +175,7 @@ The loop handles `SIGHUP` for config reload and exits on `SIGINT` or `SIGTERM`. 
 
 The `flags_t` parameter on `add()` exposes POSIX `sigaction` flags. The question is whether a standard library type should carry platform-specific flag semantics.
 
-The answer is yes, for the same reason `std::filesystem` carries platform-specific permission bits: the abstraction is portable, but the underlying resource has platform-specific properties that applications legitimately need to control. A server that forks child processes needs `SA_NOCLDWAIT` to prevent zombie accumulation. A server that must not restart interrupted system calls needs to omit `SA_RESTART`. These are not exotic requirements. They are the basic signal disposition controls that POSIX applications use daily.
+The answer is yes, for the same reason `std::filesystem` carries platform-specific permission bits: The abstraction is portable, but the underlying resource has platform-specific properties that applications legitimately need to control. A server that forks child processes needs `SA_NOCLDWAIT` to prevent zombie accumulation. A server that must not restart interrupted system calls needs to omit `SA_RESTART`. These are not exotic requirements. They are the basic signal disposition controls that POSIX applications use daily.
 
 ### 5.2 Windows Compatibility
 
@@ -210,7 +210,7 @@ Tokio provides `tokio::signal::unix::signal(SignalKind)` for individual signal s
 
 ### 6.3 .NET
 
-.NET provides `Console.CancelKeyPress`, an event that fires on `CTRL_C_EVENT` and `CTRL_BREAK_EVENT`<sup>[15]</sup>. The scope is narrower than POSIX signals - only console interrupt events - but the pattern is the same: register interest, receive notification through the async framework.
+.NET provides `Console.CancelKeyPress`, an event that fires on `CTRL_C_EVENT` and `CTRL_BREAK_EVENT`<sup>[15]</sup>. The scope is narrower than POSIX signals - only console interrupt events - but the pattern is the same: Register interest, receive notification through the async framework.
 
 ### 6.4 Python
 

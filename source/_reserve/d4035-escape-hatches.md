@@ -131,7 +131,7 @@ The safe path remains the default for untrusted input. The unsafe path exists fo
 
 ## 6. Structured Concurrency
 
-Structured concurrency enforces the same discipline for asynchronous lifetimes that structured control flow enforces for execution order: activations nest, scopes nest, a parent outlives its children, and RAII works. [Capy](https://github.com/cppalliance/capy)<sup>[1]</sup> provides `run` as the structured default and `run_async` as the explicit escape hatch:
+Structured concurrency enforces the same discipline for asynchronous lifetimes that structured control flow enforces for execution order: Activations nest, scopes nest, a parent outlives its children, and RAII works. [Capy](https://github.com/cppalliance/capy)<sup>[1]</sup> provides `run` as the structured default and `run_async` as the explicit escape hatch:
 
 ```cpp
 recycling_frame_allocator alloc;
@@ -146,7 +146,7 @@ run_async(ex, alloc,
 )(my_coro());
 ```
 
-The structured path is the default. The unstructured path requires a longer name and explicit handlers - the caller must decide up front how results and errors are delivered. The escape hatch still provides guardrails: a work guard keeps the execution context alive, a stop token enables cooperative cancellation, and typed handlers prevent silent result loss.
+The structured path is the default. The unstructured path requires a longer name and explicit handlers - the caller must decide up front how results and errors are delivered. The escape hatch still provides guardrails: A work guard keeps the execution context alive, a stop token enables cooperative cancellation, and typed handlers prevent silent result loss.
 
 The consequences of misuse are higher in concurrency than in data validation - a wrong `pct_string_view` produces garbage data, while a wrong detached task produces data races. That severity is precisely why the escape hatch must be designed rather than left to raw `std::thread` or `std::async`, which offer none of these guardrails. Eliminating the escape hatch does not eliminate unstructured concurrency; it pushes programmers toward worse tools.
 
@@ -156,7 +156,7 @@ The consequences of misuse are higher in concurrency than in data validation - a
 
 [P3655R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3655r3.html)<sup>[11]</sup> ("cstring_view") proposes `std::cstring_view`, a non-owning view guaranteed to be null-terminated. The type fills a real gap: `std::string` owns and null-terminates, `std::string_view` does not own and does not null-terminate, and `cstring_view` does not own but does null-terminate. Over 2,100 independent implementations on GitHub confirm the demand. The `substr` split - one-argument returning `cstring_view`, two-argument returning `string_view` - and the deletion of `remove_suffix` show careful attention to the null-termination invariant.
 
-[P3566R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3566r2.pdf)<sup>[12]</sup> ("You shall not pass `char*`") independently arrives at the same pattern for `string` and `string_view`: deprecate the `char const*` constructor as an unbounded-range operation, add a bounded `char[N]` constructor for arrays, and provide an explicitly tagged `unsafe_length_t` replacement for the deprecated path. The escape-hatch structure - safe default, explicit opt-in - is identical to the pattern documented in Sections 2-5.
+[P3566R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3566r2.pdf)<sup>[12]</sup> ("You shall not pass `char*`") independently arrives at the same pattern for `string` and `string_view`: Deprecate the `char const*` constructor as an unbounded-range operation, add a bounded `char[N]` constructor for arrays, and provide an explicitly tagged `unsafe_length_t` replacement for the deprecated path. The escape-hatch structure - safe default, explicit opt-in - is identical to the pattern documented in Sections 2-5.
 
 The escape-hatch pattern from Sections 2-5 applies directly to the constructor set. P3655R3's pointer-and-length constructor has a narrow contract:
 
@@ -212,7 +212,7 @@ The safe constructor scans. The cost is O(n). The `unsafe` factory trusts the ca
 
 C++ earns its reputation as a zero-cost abstraction language by letting programmers pay only for what they use. A type that validates on every construction - with no way to bypass validation at a trusted boundary - imposes cost the programmer cannot eliminate. The `unsafe` factory preserves this principle.
 
-The choice of the name `unsafe` is deliberate. It mirrors the Rust keyword, where `unsafe` marks the boundary at which the programmer takes responsibility for invariants the language normally enforces. `cstring_view::unsafe` marks the same kind of boundary: the caller asserts null-termination that the constructor normally verifies. The cross-language resonance makes the API legible to developers familiar with either language.
+The choice of the name `unsafe` is deliberate. It mirrors the Rust keyword, where `unsafe` marks the boundary at which the programmer takes responsibility for invariants the language normally enforces. `cstring_view::unsafe` marks the same kind of boundary: The caller asserts null-termination that the constructor normally verifies. The cross-language resonance makes the API legible to developers familiar with either language.
 
 P3655R3 also provides a templated constructor from an iterator pair:
 

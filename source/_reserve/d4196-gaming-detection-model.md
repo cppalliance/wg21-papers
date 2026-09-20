@@ -10,11 +10,11 @@ reply-to:
 
 ## Abstract
 
-[P4195R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4195r0.pdf)<sup>[1]</sup> identifies the incentive structures that [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)'s consensus mechanism creates for proposal authors. This companion paper derives observable behavioral profiles from those structures and provides a detection criteria table with falsification conditions that can be applied to the documented record of any proposal's passage through WG21. The distinguishing characteristic is the author's relationship to feedback: the system works when feedback modifies the design, and fails when the author's institutional position allows feedback to be neutralized instead. The model identifies three author profiles, describes what structural conditions enable unchecked institutional behavior, and provides a diagnostic checklist that distinguishes normal procedural fluency from behavior that exceeds norms the system has no mechanism to enforce.
+[P4195R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4195r0.pdf)<sup>[1]</sup> identifies the incentive structures that [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)'s consensus mechanism creates for proposal authors. This companion paper derives observable behavioral profiles from those structures and provides a detection criteria table with falsification conditions that can be applied to the documented record of any proposal's passage through WG21. The distinguishing characteristic is the author's relationship to feedback: The system works when feedback modifies the design, and fails when the author's institutional position allows feedback to be neutralized instead. The model identifies three author profiles, describes what structural conditions enable unchecked institutional behavior, and provides a diagnostic checklist that distinguishes normal procedural fluency from behavior that exceeds norms the system has no mechanism to enforce.
 
 ## Revision History
 
-### R0
+### R0: September 2026
 
 - Initial version.
 
@@ -58,7 +58,7 @@ An individual who:
 - Treats feedback as adversarial rather than informative, and
 - Directs procedural fluency toward protecting the design, not refining it
 
-The Profile 2 author lets feedback change the design, controlling how much it changes. The Profile 3 author changes the institutional environment to protect the design from feedback. This is the distinguishing characteristic, and it is observable: the C2 response to an objection is technical (the design moves), while the C3 response is political (the environment moves). Objections are decomposed into sub-issues without revisiting the premise, competitors are denied agenda time and discussion polls, repeated objections are characterized as "already addressed" even when the core concern was never answered, and persistent opposition is moralized as blocking progress. Whether these moves reflect conviction or calculation is outside the model's scope; the behavioral pattern is the same.
+The Profile 2 author lets feedback change the design, controlling how much it changes. The Profile 3 author changes the institutional environment to protect the design from feedback. This is the distinguishing characteristic, and it is observable: The C2 response to an objection is technical (the design moves), while the C3 response is political (the environment moves). Objections are decomposed into sub-issues without revisiting the premise, competitors are denied agenda time and discussion polls, repeated objections are characterized as "already addressed" even when the core concern was never answered, and persistent opposition is moralized as blocking progress. Whether these moves reflect conviction or calculation is outside the model's scope; the behavioral pattern is the same.
 
 ---
 
@@ -84,7 +84,7 @@ The following ten moves are what an unchecked institutional author does when the
 
 9. **Script the historical record.** Report favorable polls in your paper's history. Omit unfavorable ones. When objections arise, move to a poll, record the tally, and change the subject. The substance of the objection never enters the written record. Twenty years later, your 40 papers are the institutional memory. The opposition is "SA=4" in the minutes.
 
-10. **Moralize continued opposition.** Characterize opposition as blocking progress, refusing to accept the committee's decision, harming C++. Make the social cost of dissent exceed the technical cost of a bad decision. Whether the author acts from conviction or from institutional strategy, the observable behavior is the same: technical disagreement is reframed as a character deficiency.
+10. **Moralize continued opposition.** Characterize opposition as blocking progress, refusing to accept the committee's decision, harming C++. Make the social cost of dissent exceed the technical cost of a bad decision. Whether the author acts from conviction or from institutional strategy, the observable behavior is the same: Technical disagreement is reframed as a character deficiency.
 
 These ten moves are what the incentive structure produces when institutional backing exceeds what the system's safeguards can detect and correct for.
 
@@ -111,7 +111,7 @@ The following table turns the three profiles into observable behaviors. Column C
 | 13 | Observable cost structure | High cost, low fluency, low probability of success | Normal employer backing; company employs people, they attend under company name, listed in one NB | Cost structure exceeds normal employer backing. Complexity, layering, or opacity beyond "company sends engineers" |
 | 14 | What happens if they win | A technically sound feature enters the standard, possibly with rough edges | Pre-adoption claims based on deployment of the actual design; post-adoption, third-party implementations emerge | Pre-adoption claims based on analogous-but-different systems. Post-adoption, no third-party implementation, or advertised capabilities do not materialize |
 
-The distinguishing signal for C3 is the combination of criteria 1, 2, and 7: the author declines to engage architectural objections technically, dismisses competitors without naming their mechanisms, and moralizes opposition rather than engaging it. Any one of these in isolation is common. All three together, sustained across multiple meetings, is the detection signature.
+The distinguishing signal for C3 is the combination of criteria 1, 2, and 7: The author declines to engage architectural objections technically, dismisses competitors without naming their mechanisms, and moralizes opposition rather than engaging it. Any one of these in isolation is common. All three together, sustained across multiple meetings, is the detection signature.
 
 ---
 
@@ -119,7 +119,7 @@ The distinguishing signal for C3 is the combination of criteria 1, 2, and 7: the
 
 An evidence item scores C3 only when the C2 explanation is insufficient. The following list defines, for each criterion, what normal behavior looks like (the C2 baseline), what exceeds normal (the C3 signal), and a binary test that operationalizes the distinction. If no falsifier fires, the item scores C2.
 
-**Falsification principle:** The bright line between C2 and C3 is the type of response to feedback. A C2 author responds technically: the design changes. A C3 author responds politically: the institutional environment changes to protect the design. If a reasonable observer could attribute the behavior entirely to procedural competence and strategic design revision - the author adjusting the proposal to build consensus - the item scores C2. A C3 score requires behavior where the author adjusts the environment instead of the design: suppressing legitimate alternatives procedurally, engineering burden-of-proof shifts, or ensuring the chair's path of least resistance is always "advance." These are observable acts, not inferences about motivation.
+**Falsification principle:** The bright line between C2 and C3 is the type of response to feedback. A C2 author responds technically: The design changes. A C3 author responds politically: The institutional environment changes to protect the design. If a reasonable observer could attribute the behavior entirely to procedural competence and strategic design revision - the author adjusting the proposal to build consensus - the item scores C2. A C3 score requires behavior where the author adjusts the environment instead of the design: suppressing legitimate alternatives procedurally, engineering burden-of-proof shifts, or ensuring the chair's path of least resistance is always "advance." These are observable acts, not inferences about motivation.
 
 1. **Response to architectural objections**
    - *C2 baseline:* The response names a specific technical element from the objection and engages with it. Demonstrates understanding of the competing mechanism.
@@ -164,7 +164,7 @@ An evidence item scores C3 only when the C2 explanation is insufficient. The fol
 9. **Burden of proof management**
    - *C2 baseline:* Author invites evidence. Objecting is cheap. Author absorbs the burden. Normal: "I'll look into it."
    - *C3 signal:* Author makes objection expensive. Requires production (paper, implementation, benchmarks, spec changes). "No new information" invoked for concerns discussed but never resolved.
-   - *Test:* What does the author demand from the objector? Information (cheap) = C2. Production (expensive) = C3. For "no new information": can the invoker cite a written RESOLUTION (not just discussion)? Resolution exists = C2. Only discussion = C3.
+   - *Test:* What does the author demand from the objector? Information (cheap) = C2. Production (expensive) = C3. For "no new information": Can the invoker cite a written RESOLUTION (not just discussion)? Resolution exists = C2. Only discussion = C3.
 
 10. **Use of procedural moves**
     - *C2 baseline:* Aggressive procedural toolkit use. Fast iteration, strategic timing. Speed alone not diagnostic.
@@ -195,7 +195,7 @@ An evidence item scores C3 only when the C2 explanation is insufficient. The fol
 
 ## 5. What The Model Cannot Distinguish
 
-The C2/C3 distinction is behavioral, and the tests are bright-line. A C2 author responds to feedback technically: the design changes. A C3 author responds politically: the institutional environment changes to protect the design from feedback. These are different observable behaviors. A C2 author, no matter how capable, well-funded, or convinced, responds by adjusting the design - that is what makes them C2. No amount of skill, resources, or conviction converts a political response into a technical one. The detection criteria in Section 3 and the falsification conditions in Section 4 operationalize this distinction across fourteen criteria.
+The C2/C3 distinction is behavioral, and the tests are bright-line. A C2 author responds to feedback technically: The design changes. A C3 author responds politically: The institutional environment changes to protect the design from feedback. These are different observable behaviors. A C2 author, no matter how capable, well-funded, or convinced, responds by adjusting the design - that is what makes them C2. No amount of skill, resources, or conviction converts a political response into a technical one. The detection criteria in Section 3 and the falsification conditions in Section 4 operationalize this distinction across fourteen criteria.
 
 What the model cannot distinguish is *motivation within C3*. A Profile 3 author who sincerely believes their design is correct and whose political behavior flows from that conviction (the true believer) produces a behavioral record identical to a Profile 3 author who uses institutional position to advance a design for reasons that are not purely technical (the institutional operator). The model does not and cannot determine which. Neither can WG21.
 
@@ -216,7 +216,7 @@ The Code of Conduct requires an assumption of good faith, but the system has no 
 This model can be applied to the documented record of any proposal's passage through WG21 by:
 
 1. Collecting evidence items from papers, wiki minutes, reflector posts, and trip reports. Each item receives a sequential label (G1, G2, ...) for traceability.
-2. Scoring each item against the detection criteria table using the falsification tests: an item scores C3 only when the C2 baseline explanation fails
+2. Scoring each item against the detection criteria table using the falsification tests: An item scores C3 only when the C2 baseline explanation fails
 3. Challenging every C3 score by searching for counter-evidence that would restore the C2 baseline
 4. Tallying hits per column within each criterion and computing a global C3 percentage using unique G#s (each item counts once regardless of how many criteria tag it)
 5. Evaluating the combination signal: criteria 1 (architectural objections), 2 (competing designs), and 7 (moralization) all showing C3 simultaneously across multiple meetings

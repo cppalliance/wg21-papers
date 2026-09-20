@@ -44,7 +44,7 @@ This paper asks for nothing.
 
 A coroutine that does one thing at a time is sequential code with suspension points. The value of an async model appears when multiple operations proceed concurrently. Without combinators, the programmer must coordinate concurrent coroutines by hand - spawning fire-and-forget tasks, synchronizing with mutexes or condition variables, managing lifetimes manually. Every hand-rolled coordination is a new opportunity for lifetime errors, data races, and leaked tasks.
 
-Structured concurrency eliminates this class of errors by enforcing a scope discipline: child operations do not outlive the parent that launched them. The parent suspends until all children complete. RAII works. Stack unwinding works. Error propagation works. The combinator is the structured concurrency primitive - the `{}` block of concurrent code.
+Structured concurrency eliminates this class of errors by enforcing a scope discipline: Child operations do not outlive the parent that launched them. The parent suspends until all children complete. RAII works. Stack unwinding works. Error propagation works. The combinator is the structured concurrency primitive - the `{}` block of concurrent code.
 
 ### 2.2 The Fork-Join Model
 
@@ -54,7 +54,7 @@ Both combinators implement fork-join:
 2. **Join.** The parent suspends until the join condition is met. For `when_all`, the condition is "all children completed." For `when_any`, the condition is "one child completed and all others exited."
 3. **Cleanup.** No child outlives the join. The parent's scope is intact when it resumes.
 
-This model is the concurrent analogue of a function call: the caller does not proceed until the callee returns. The difference is that the caller launched multiple callees.
+This model is the concurrent analogue of a function call: The caller does not proceed until the callee returns. The difference is that the caller launched multiple callees.
 
 ### 2.3 Why Two Combinators
 
@@ -71,7 +71,7 @@ Additional combinators exist (Section 7). Two cover the common case. The standar
 
 ### 3.1 Why Variadic
 
-The children of a `when_all` are typically heterogeneous: one fetches from a database, another reads a file, a third calls a remote API. Their return types differ. A variadic parameter pack expresses this directly. The alternative - a homogeneous container of awaitables - requires type erasure and loses the per-child result type.
+The children of a `when_all` are typically heterogeneous: One fetches from a database, another reads a file, a third calls a remote API. Their return types differ. A variadic parameter pack expresses this directly. The alternative - a homogeneous container of awaitables - requires type erasure and loses the per-child result type.
 
 ```cpp
 // Heterogeneous: each child has a distinct return type.
@@ -143,8 +143,8 @@ This is not a new mechanism. It is the same symmetric transfer that [P4003R3](ht
 
 The first child's result is the result of the `when_any` expression. The return type depends on the number and types of children:
 
-- **Homogeneous children** (all return the same type `T`): the result type is `T`.
-- **Heterogeneous children** (different return types): the result type is `std::variant<result_of_t<Awaitables>...>`.
+- **Homogeneous children** (all return the same type `T`): The result type is `T`.
+- **Heterogeneous children** (different return types): The result type is `std::variant<result_of_t<Awaitables>...>`.
 
 The homogeneous case avoids the variant overhead for the common pattern (e.g. racing two instances of the same operation). The heterogeneous case preserves full type information. The caller uses `std::visit` or `std::get_if` to inspect the result.
 
@@ -170,7 +170,7 @@ Go's `select` is a language construct, not a library function. It operates on ch
 
 ### 5.2 Rust
 
-Tokio's `join!` macro awaits all futures concurrently. `select!` macro awaits the first future to complete and drops the rest. Cancellation is implicit: dropping a future cancels it. The Rust ownership model makes this safe - a dropped future cannot be accessed.
+Tokio's `join!` macro awaits all futures concurrently. `select!` macro awaits the first future to complete and drops the rest. Cancellation is implicit: Dropping a future cancels it. The Rust ownership model makes this safe - a dropped future cannot be accessed.
 
 C++ does not have Rust's drop semantics. The combinator must explicitly cancel siblings via stop tokens and wait for cooperative exit. The structured guarantee is the same; the mechanism differs because the languages differ.
 
@@ -200,7 +200,7 @@ The combinators in this paper operate on `IoAwaitable` - the coroutine execution
 
 Two combinator families for two async models is the same principle as two condition variable types for two lock models (`std::condition_variable` and `std::condition_variable_any`). Domain separation is not duplication.
 
-A bridge is straightforward: a `sender_awaitable` adapter could allow a sender to be used as a child in `io::when_all`. The combinators do not preclude interoperability; they provide the native vocabulary for the coroutine model.
+A bridge is straightforward: A `sender_awaitable` adapter could allow a sender to be used as a child in `io::when_all`. The combinators do not preclude interoperability; they provide the native vocabulary for the coroutine model.
 
 ### 6.2 "But these should be sender algorithms"
 
@@ -216,7 +216,7 @@ The cancellation model in this paper inherits entirely from [P4003R3](https://is
 
 - Each child inherits a stop token from its `io_env`.
 - `when_any` creates an internal `std::stop_source` and composes it with the inherited token.
-- Cancellation is cooperative: children must check their stop token and exit.
+- Cancellation is cooperative: Children must check their stop token and exit.
 
 The cooperativity is a feature. Forceful cancellation - destroying a coroutine frame while its local variables have active destructors - is undefined behavior. Cooperative cancellation is the only correct model for C++ coroutines. Swift, Kotlin, and Python all use cooperative cancellation for the same reason.
 
@@ -285,7 +285,7 @@ Without these primitives, Stage One delivers sequential I/O with good vocabulary
 
 ## 9. Closing
 
-Every concurrent networking application does the same two things: wait for all children, or wait for the first child. Five ecosystems ship the same two primitives. The shapes are forced by the constraints of structured concurrency. The standard should ship them.
+Every concurrent networking application does the same two things: Wait for all children, or wait for the first child. Five ecosystems ship the same two primitives. The shapes are forced by the constraints of structured concurrency. The standard should ship them.
 
 ---
 

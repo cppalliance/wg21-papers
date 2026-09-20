@@ -86,7 +86,7 @@ This is a fundamental difference from TCP, where the kernel buffers incoming byt
 
 ## 4. Connected vs Unconnected
 
-UDP supports two modes of operation. The default is unconnected: each `send_to` specifies a destination, each `receive_from` reports a source. The alternative is connected: `connect` associates the socket with a single remote endpoint, after which `send` and `receive` operate without per-call endpoint arguments.
+UDP supports two modes of operation. The default is unconnected: Each `send_to` specifies a destination, each `receive_from` reports a source. The alternative is connected: `connect` associates the socket with a single remote endpoint, after which `send` and `receive` operate without per-call endpoint arguments.
 
 ### 4.1 What `connect` Does on a UDP Socket
 
@@ -257,7 +257,7 @@ QUIC is a user of UDP, not a replacement for it.
 
 Multicast is rarely used on the public Internet because most ISPs do not enable multicast routing. On local networks, multicast is pervasive:
 
-- **mDNS/DNS-SD** (Bonjour, Avahi): every Apple device, every Linux desktop with Avahi, every Chromecast and smart speaker uses multicast for service discovery.
+- **mDNS/DNS-SD** (Bonjour, Avahi): Every Apple device, every Linux desktop with Avahi, every Chromecast and smart speaker uses multicast for service discovery.
 - **SSDP/UPnP**: every consumer router, every media server (Plex, DLNA), every smart TV.
 - **PTP (IEEE 1588)**: precision time synchronisation in financial trading, broadcast studios, and industrial automation.
 - **VXLAN**: data centre overlay networking.

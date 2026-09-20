@@ -81,7 +81,7 @@ The implementations of `vector`, `unique_ptr`, `string`, allocators, smart point
 
 ### 2.5 The Question
 
-Each exclusion is individually reasonable. Taken together, they raise a question the committee should answer before standardizing the guarantee: after excluding trusted constructors, trusted destructors, trusted abstraction implementations, all multithreaded code, and all code with non-trivial control flow around pointers - what percentage of a real codebase remains in the verifiable subset?
+Each exclusion is individually reasonable. Taken together, they raise a question the committee should answer before standardizing the guarantee: After excluding trusted constructors, trusted destructors, trusted abstraction implementations, all multithreaded code, and all code with non-trivial control flow around pointers - what percentage of a real codebase remains in the verifiable subset?
 
 The answer might be large. The answer might be small. The answer is unknown. PAVE provides a methodology to find it.
 
@@ -110,7 +110,7 @@ The output of the tool is a per-function classification:
 
 - **Clean**: no banned constructs detected.
 - **Rejected**: one or more banned constructs detected, with the specific rule(s) violated.
-- **Trusted**: the function is annotated as unverified (e.g., `[[suppress(profiles)]]` per [P3589R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3589r2.pdf)<sup>[3]</sup>).
+- **Trusted**: The function is annotated as unverified (e.g., `[[suppress(profiles)]]` per [P3589R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3589r2.pdf)<sup>[3]</sup>).
 
 ---
 
@@ -118,7 +118,7 @@ The output of the tool is a per-function classification:
 
 Phase 1 runs the AST-based tool over a target codebase and produces an aggregate coverage report.
 
-The report answers the first-order question: what fraction of the codebase does the profile claim to verify? An illustrative output:
+The report answers the first-order question: What fraction of the codebase does the profile claim to verify? An illustrative output:
 
 | Category | Functions | Percentage |
 | -------- | --------- | ---------- |

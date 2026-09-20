@@ -159,7 +159,7 @@ The chair's published interpretation:
 
 The guidance further states that a non-sender/receiver paper would need "compelling new information in order to convince the 'grand unified model' contingent that S&R can't get the job done suitably." [P2400R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2400r3.html)<sup>[26]</sup>, the Library Evolution status report for the period ending January 2022, confirmed that networking was listed as "Under Networking Study Group review" with these two prerequisites attached.
 
-The committee did not vote to stop the Networking TS (Poll 3: no consensus). It gave conditional guidance: adopt sender/receiver, address TLS. The conditions required a major redesign. The architect of the Networking TS did not bring the proposal back under those conditions. The Networking TS effectively stopped advancing.
+The committee did not vote to stop the Networking TS (Poll 3: no consensus). It gave conditional guidance: Adopt sender/receiver, address TLS. The conditions required a major redesign. The architect of the Networking TS did not bring the proposal back under those conditions. The Networking TS effectively stopped advancing.
 
 ---
 
@@ -272,10 +272,10 @@ The incompatibility that Kohlhoff identified before the poll is now in the C++26
 
 - [N1925](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1925.pdf)<sup>[22]</sup> (2005): first networking proposal.
 - Networking TS published as ISO TS (2018).
-- [P2430R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2430r0.pdf)<sup>[9]</sup> (August 2021): compound I/O results cannot use `set_error` without information loss.
-- [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[5]</sup> (October 2021): five polls. Poll 3 (stop pursuing): no consensus. Conditional guidance: adopt S/R, address TLS.
+- [P2430R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2430r0.pdf)<sup>[9]</sup> (August 2021): Compound I/O results cannot use `set_error` without information loss.
+- [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[5]</sup> (October 2021): five polls. Poll 3 (stop pursuing): no consensus. Conditional guidance: Adopt S/R, address TLS.
 - [P2762R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2023/p2762r2.pdf)<sup>[10]</sup> (2023): first sender-based networking API proposal.
-- 2026: no sender-based networking has shipped. Networking is not in the C++ standard. Twenty-one years from [N1925](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1925.pdf)<sup>[22]</sup>.
+- 2026: No sender-based networking has shipped. Networking is not in the C++ standard. Twenty-one years from [N1925](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1925.pdf)<sup>[22]</sup>.
 
 ---
 

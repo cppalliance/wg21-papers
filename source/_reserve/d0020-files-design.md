@@ -175,7 +175,7 @@ POSIX `fopen()` uses mode strings (`"r"`, `"w"`, `"a"`, `"r+"`, etc.). This prop
 
 ### 5.3 `append` Semantics
 
-When `file_flags::append` is set, every `write_some()` operation atomically positions the write at the end of the file before writing. This is the POSIX `O_APPEND` semantic. On Windows, it maps to `FILE_APPEND_DATA`. The guarantee is important for concurrent log writers: multiple processes appending to the same file do not interleave within a single write operation.
+When `file_flags::append` is set, every `write_some()` operation atomically positions the write at the end of the file before writing. This is the POSIX `O_APPEND` semantic. On Windows, it maps to `FILE_APPEND_DATA`. The guarantee is important for concurrent log writers: Multiple processes appending to the same file do not interleave within a single write operation.
 
 `append` is only meaningful for `stream_file`. For `random_access_file`, the caller provides the offset explicitly - there is no implicit "end of file" positioning.
 

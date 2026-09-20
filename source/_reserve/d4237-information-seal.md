@@ -81,19 +81,19 @@ The Author moves first: ask for consent, or do not ask. If the Author asks, the 
 
 If the Author does not ask, the Author paraphrases (weaker evidence, no social capital spent) and the Participant is unaffected.
 
-Granting consent has a concrete cost: the Participant's words become part of the public record, available to critics, to national bodies, to future papers that may use the words in arguments the Participant disagrees with. Denying consent has no cost. A strategy that is always at least as good as the alternative, regardless of what the other player does, is called a dominant strategy.
+Granting consent has a concrete cost: The Participant's words become part of the public record, available to critics, to national bodies, to future papers that may use the words in arguments the Participant disagrees with. Denying consent has no cost. A strategy that is always at least as good as the alternative, regardless of what the other player does, is called a dominant strategy.
 
 The Participant has a dominant strategy: deny.
 
 The Author, knowing the Participant will deny, compares asking (which spends social capital for no evidence) to not asking (which preserves social capital and produces a paraphrase). Not asking dominates.
 
-**Nash equilibrium: the Author does not ask, the Participant would deny.** The Author paraphrases. Exception (b) is never exercised.
+**Nash equilibrium: The Author does not ask, the Participant would deny.** The Author paraphrases. Exception (b) is never exercised.
 
 **The permission exists in the text of SD-4. It does not exist in the practice of the committee.**
 
-The consent mechanism is the Institution's stated accountability tool. Its equilibrium inertness makes it a dead letter. The structure is a prisoner's dilemma: each individual is rational to deny, but all participants - including the deniers - would be better off if all granted, because their own positions would be defended by accurate quotation rather than corrupted paraphrase.
+The consent mechanism is the Institution's stated accountability tool. Its equilibrium inertness makes it a dead letter. The structure is a prisoner's dilemma: Each individual is rational to deny, but all participants - including the deniers - would be better off if all granted, because their own positions would be defended by accurate quotation rather than corrupted paraphrase.
 
-The mechanism also lacks enforcement. SD-4 states no procedure for requesting consent, maintains no registry of grants or denials, and describes no enforcement process. When a reflector post was leaked to the web in 2025, the author's only recourse was to publish it himself as a formal paper<sup>[10]</sup>. No enforcement action is documented. The enforcement asymmetry is telling: the committee spent enforcement resources making GitHub repositories private during the Kona 2025 meeting to prevent live leaks through pull requests applying decisions in real time. Confidentiality is actively enforced through technical controls. The consent exception is not enforced at all.
+The mechanism also lacks enforcement. SD-4 states no procedure for requesting consent, maintains no registry of grants or denials, and describes no enforcement process. When a reflector post was leaked to the web in 2025, the author's only recourse was to publish it himself as a formal paper<sup>[10]</sup>. No enforcement action is documented. The enforcement asymmetry is telling: The committee spent enforcement resources making GitHub repositories private during the Kona 2025 meeting to prevent live leaks through pull requests applying decisions in real time. Confidentiality is actively enforced through technical controls. The consent exception is not enforced at all.
 
 **The Institution protects the restriction but not the exception.**
 
@@ -220,7 +220,7 @@ The five games produce a single stable state:
 
 5. **Information asymmetry favors insiders.** The restriction creates a monopoly on credible public use of reflector content. (Section 8)
 
-The equilibrium is stable because no individual player can improve their payoff by changing strategy alone. No individual Participant benefits from granting consent. No individual Author benefits from violating SD-4 (enforcement costs exceed citation benefits). Each individual member benefits from the restriction. But the Institution's payoff is uniformly negative across all five games: it loses legitimacy, accountability, evidence quality, and verification while gaining only partial candor protection. This is a social dilemma - the canonical structure in which individually rational choices produce collectively irrational outcomes.
+The equilibrium is stable because no individual player can improve their payoff by changing strategy alone. No individual Participant benefits from granting consent. No individual Author benefits from violating SD-4 (enforcement costs exceed citation benefits). Each individual member benefits from the restriction. But the Institution's payoff is uniformly negative across all five games: It loses legitimacy, accountability, evidence quality, and verification while gaining only partial candor protection. This is a social dilemma - the canonical structure in which individually rational choices produce collectively irrational outcomes.
 
 The trap is deepened by SD-4's procedural status. Standing documents are maintained by the Convenor and updated without plenary polls<sup>[12]</sup>. For over a decade, SD-4 bore Herb Sutter's name as Convenor and maintainer. The current attribution to Guy Davidson reflects the procedural transfer that accompanies a change in Convenor - standing documents pass to the new Convenor as part of the role. A new Convenor who inherits a portfolio of standing documents, an active committee calendar, and the accumulated expectations of a large working group has limited bandwidth to revisit each inherited document from first principles. The quoting restriction predates the current Convenor's tenure and was not collectively adopted by the committee through consensus. Reform would require collective action to change a document the members never collectively voted on - a document that individually benefits each of them. The Institution cannot change the mechanism because it is not a unitary actor. The members who would need to act are the same members who individually benefit from inaction.
 
@@ -230,7 +230,7 @@ The trap is deepened by SD-4's procedural status. Standing documents are maintai
 
 WG21's quoting restriction is not inherited from ISO. It is an SD-4 invention. Other standards bodies - including sibling working groups within the same subcommittee (SC 22) - operate under different disclosure regimes.
 
-The Chatham House Rule, established by the Royal Institute of International Affairs in 1927 and last revised in 2002, provides that participants may use information received at a meeting but may not reveal the identity or affiliation of any speaker<sup>[2]</sup>. It has been criticized as "designed to protect elite discussions from transparency and accountability"<sup>[3]</sup>. SD-4's restriction is stricter: it prohibits not only attribution but quotation of the content itself.
+The Chatham House Rule, established by the Royal Institute of International Affairs in 1927 and last revised in 2002, provides that participants may use information received at a meeting but may not reveal the identity or affiliation of any speaker<sup>[2]</sup>. It has been criticized as "designed to protect elite discussions from transparency and accountability"<sup>[3]</sup>. SD-4's restriction is stricter: It prohibits not only attribution but quotation of the content itself.
 
 | Body | Domain | Meeting records | Quotation policy | Verification |
 |---|---|---|---|---|
@@ -279,7 +279,7 @@ Section 3 acknowledges this benefit. Section 6 shows the current regime provides
 
 ### "Game theory assumes rational self-interested actors. The committee operates on trust."
 
-The analysis does not require cynicism. Trust-based actors may face a different payoff structure: a delegate who trusts their colleagues and prioritizes the institution may grant consent for reasons that do not appear in the individual-rationality matrix. But:
+The analysis does not require cynicism. Trust-based actors may face a different payoff structure: A delegate who trusts their colleagues and prioritizes the institution may grant consent for reasons that do not appear in the individual-rationality matrix. But:
 
 The dominant-strategy analysis applies whenever the cost asymmetry exceeds the trust premium. It typically does, because the future costs of granting consent are unbounded - the words enter the public record permanently, available to critics and future papers in arguments the granter cannot foresee. The trust premium is bounded by the relationship.
 
@@ -289,7 +289,7 @@ Even if some participants grant consent out of trust, the overall equilibrium is
 
 ### "Iterated play sustains cooperation through reputation effects."
 
-The committee is a repeated game. Participants interact over years. The standard game-theory response to "Nash predicts defection" is that iterated play can sustain cooperation through reputation: participants who consistently deny consent build a reputation as opaque actors, which has costs in future interactions.
+The committee is a repeated game. Participants interact over years. The standard game-theory response to "Nash predicts defection" is that iterated play can sustain cooperation through reputation: Participants who consistently deny consent build a reputation as opaque actors, which has costs in future interactions.
 
 Reputation effects are too weak in this context. The population is small enough that denial is the unremarkable default, not a visible deviation that builds a reputation. The cost of granting consent is concrete and immediate (words in the public record); the reputation cost of denying is diffuse and delayed. The committee's culture of restraint discourages exactly the kind of public reputation-tracking that would make denial costly. A norm of not pressuring colleagues to grant consent is simultaneously a norm that makes denial costless.
 
@@ -323,7 +323,7 @@ The structural incentive runs the other way. Face-to-face meeting attendance is 
 
 This objection has real empirical support. When the Federal Reserve began publishing verbatim FOMC transcripts, members shifted toward prepared remarks on popular topics and reduced spontaneous opinion-sharing<sup>[16]</sup>. When EU Council deliberations became transparent, delegates shifted to rigid position-taking for domestic audiences rather than genuine negotiation<sup>[17]</sup>. As formal EU Council sessions became more transparent, use of informal lunch breaks with no recorded minutes increased substantially for controversial issues<sup>[18]</sup>. A comparative study of Norwegian and Danish municipal meetings found that Norway's open meetings pushed substantive deliberation into informal, unrecorded channels<sup>[19]</sup>.
 
-The evidence is real. But the FOMC study itself demonstrates the key point: theatrical speech is auditable. Computational linguistics can detect the shift from candid to scripted in the textual record. Private coordination cannot be detected at all. The comparison is not candor versus theater. It is auditable dysfunction versus unauditable dysfunction. A body whose public proceedings become theatrical has a problem that can be diagnosed and corrected. A body whose private proceedings cannot be verified has a problem that cannot be diagnosed at all.
+The evidence is real. But the FOMC study itself demonstrates the key point: Theatrical speech is auditable. Computational linguistics can detect the shift from candid to scripted in the textual record. Private coordination cannot be detected at all. The comparison is not candor versus theater. It is auditable dysfunction versus unauditable dysfunction. A body whose public proceedings become theatrical has a problem that can be diagnosed and corrected. A body whose private proceedings cannot be verified has a problem that cannot be diagnosed at all.
 
 The migration studies (EU lunch breaks, Norwegian municipalities) show that transparency does not create private negotiation. It reveals existing private negotiation by contrast with the now-theatrical public record. The private negotiation was always there. Transparency made it visible.
 

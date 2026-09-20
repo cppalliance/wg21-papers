@@ -147,7 +147,7 @@ At no point do two continuations dispatched through the same strand execute conc
 
 ### 3.5 `dispatch` vs `post`
 
-`dispatch` may execute the continuation inline if the caller is already executing within the strand. This avoids unnecessary context switches. `post` always defers: the continuation is enqueued and runs later, even if the caller is already in the strand.
+`dispatch` may execute the continuation inline if the caller is already executing within the strand. This avoids unnecessary context switches. `post` always defers: The continuation is enqueued and runs later, even if the caller is already in the strand.
 
 The distinction is the same as on the underlying executor. The strand inherits the semantics and adds the serialization invariant.
 

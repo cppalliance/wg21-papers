@@ -379,7 +379,7 @@ The Arm GNU bare-metal distribution (`arm-none-eabi-gcc`) targets Cortex-M and s
 
 **Executive summary**
 
-CUDA compilation splits host code (compiled with a host compiler: GCC, Clang, or MSVC on Windows) and device code processed by `nvcc`. The inventory row records that split: coroutine and PMR questions for application logic refer to the **host** toolchain in the same build.
+CUDA compilation splits host code (compiled with a host compiler: GCC, Clang, or MSVC on Windows) and device code processed by `nvcc`. The inventory row records that split: Coroutine and PMR questions for application logic refer to the **host** toolchain in the same build.
 
 **Schema**
 

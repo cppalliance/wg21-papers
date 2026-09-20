@@ -52,7 +52,7 @@ Each provision purchases something real. The question is what happens to the pur
 
 ## 3. The Cost Assumption
 
-Every provision in Section 2 rests on an unstated assumption: papers are expensive to produce.
+Every provision in Section 2 rests on an unstated assumption: Papers are expensive to produce.
 
 The paper-existence rule filters for commitment because writing a paper costs months of expert effort. The first-mover rule protects incumbents because a challenger cannot produce a competing paper in one meeting cycle. The quality bar (example-based, principle-based, alternatives considered) filters for depth because meeting all three criteria requires sustained analytical work. The one-meeting delay is sufficient because no one can produce a high-quality competing paper in four weeks.
 
@@ -94,7 +94,7 @@ Under the new cost structure:
 
 The Challenger's production cost has dropped. The one-meeting delay is still available. The paper still "exists" under SD-4's own rules. The first-mover advantage weakens on the paper-production axis.
 
-At scale: every proposal can be challenged by any actor with AI access and a mailing deadline. The scheduling game - controlled by chairs appointed by the Convenor<sup>[1]</sup> - becomes the sole remaining filter.
+At scale: Every proposal can be challenged by any actor with AI access and a mailing deadline. The scheduling game - controlled by chairs appointed by the Convenor<sup>[1]</sup> - becomes the sole remaining filter.
 
 IETF explicitly allows multiple competing drafts simultaneously: "The document is always subject to change by the working group, up to and including full replacement"<sup>[5]</sup>. TC39 allows competing proposals to coexist at any stage<sup>[6]</sup>. W3C's incubation model is designed to surface rival proposals before standardization<sup>[7]</sup>. SD-4's bird-in-hand doctrine is structurally unique among major standards bodies.
 
@@ -113,7 +113,7 @@ Two players: the Reader (encounters an AI-assisted paper) and the Author (publis
 
 Dismissing on provenance is a dominant strategy. It is weakly better in every cell. The Reader never needs to read the paper.
 
-The quality concern is real and frequently correct. AI produces bad output. Readers who have been burned by low-quality AI-generated text are right to be skeptical. The structural observation is narrower: the dominant response is categorical dismissal on provenance, not specific identification of quality defects. If the objection were purely about quality, the response would cite a specific error in a specific paper. Instead the response asserts that AI authorship precludes new information "by definition." The magnitude of the objection exceeds what the quality concern alone can explain.
+The quality concern is real and frequently correct. AI produces bad output. Readers who have been burned by low-quality AI-generated text are right to be skeptical. The structural observation is narrower: The dominant response is categorical dismissal on provenance, not specific identification of quality defects. If the objection were purely about quality, the response would cite a specific error in a specific paper. Instead the response asserts that AI authorship precludes new information "by definition." The magnitude of the objection exceeds what the quality concern alone can explain.
 
 A quality-based filter produces heterogeneous response: "P4129 has a point about voting dynamics but P4208 is thin." A provenance-based filter produces homogeneous response: every paper dismissed on the same basis, the label applied to the corpus, no discrimination between papers. Fifty papers were published between March and August 2026. A search of the public record returns zero instances of a participant citing a specific claim from a specific paper as worth examining despite its provenance. The uniformity is the tell.
 
@@ -127,17 +127,17 @@ P4241<sup>[3]</sup> documents the reward architecture of consensus-body particip
 
 Three independent proxies measure cumulative exposure to the reward architecture:
 
-**Tenure.** Years of participation. Each year adds meeting cycles, poll outcomes, wins and losses. P4241 Section 11 documents the selection mechanism: participants who stayed longest are those whose neurochemistry responded most intensely to the initial reward. Those who habituated fully or refused to escalate left. The committee's composition is the residue of this filter.
+**Tenure.** Years of participation. Each year adds meeting cycles, poll outcomes, wins and losses. P4241 Section 11 documents the selection mechanism: Participants who stayed longest are those whose neurochemistry responded most intensely to the initial reward. Those who habituated fully or refused to escalate left. The committee's composition is the residue of this filter.
 
 **Paper volume.** Successfully adopted papers. Each adoption is a dopamine event whose prediction error decays toward zero with repetition (Schultz 1997<sup>[8]</sup>). A participant with twenty adopted papers has experienced twenty reward events whose signal has attenuated. AI-produced papers threaten the currency these events represent.
 
 **Chair status.** P4241 Section 12 documents the chair's unique reward: ambient deference, singular authority over consensus determination, continuous (not intermittent) reinforcement during meetings. AI threatens the chair's authority over scheduling by flooding the queue, and threatens the scarcity that makes chair decisions consequential.
 
-The prediction: participants with longer tenure, more adopted papers, and current or former chair status will exhibit sharper provenance-dismissal responses. Participants with shorter tenure or external status will engage with content.
+The prediction: Participants with longer tenure, more adopted papers, and current or former chair status will exhibit sharper provenance-dismissal responses. Participants with shorter tenure or external status will engage with content.
 
 Not every long-tenured, high-volume, chair-holding participant will exhibit provenance dismissal. Some participants are immune to the reward architecture or have developed compensating mechanisms. They can hold chair positions, adopt many papers, and serve for decades without the reward circuit dominating their response to novelty. Their existence confirms the model describes a tendency shaped by neurochemistry, not a deterministic rule. The immune participant's long tenure proves that long service is possible without the effect. Both populations coexist. They are distinguishable by their response to AI-assisted papers - because AI threatens the reward architecture but not the work itself.
 
-Published research supports the mechanism. Sarkar (2025)<sup>[9]</sup> argues that "AI shaming" - disparaging work as AI-generated - is boundary work by knowledge workers protecting class identity whose value depends on exclusivity. Empirical studies demonstrate a social evaluation penalty for AI use: observers discount competence when effort appears bypassed, and workers reduce AI reliance by approximately 14% when usage becomes visible to evaluators<sup>[10]</sup>. The Princeton "Making Talk Cheap" study<sup>[11]</sup> formalizes the dynamic: when LLMs collapse Spencian costly signals, top-quintile workers are hired 19% less often. The signal that effort provided is destroyed.
+Published research supports the mechanism. Sarkar (2025)<sup>[9]</sup> argues that "AI shaming" - disparaging work as AI-generated - is boundary work by knowledge workers protecting class identity whose value depends on exclusivity. Empirical studies demonstrate a social evaluation penalty for AI use: Observers discount competence when effort appears bypassed, and workers reduce AI reliance by approximately 14% when usage becomes visible to evaluators<sup>[10]</sup>. The Princeton "Making Talk Cheap" study<sup>[11]</sup> formalizes the dynamic: When LLMs collapse Spencian costly signals, top-quintile workers are hired 19% less often. The signal that effort provided is destroyed.
 
 At the neurochemical level, perceived social devaluation activates an evolved shame defense system that tracks devaluation magnitude with correlation coefficients of .67-.79 across cultures (Sznycer et al. 2016<sup>[12]</sup>). Social-evaluative threat produces cortisol increases correlated specifically with shame, not general anxiety (Gruenewald et al. 2004<sup>[13]</sup>). Status loss activates anti-reward circuits via negative reward prediction error in the lateral habenula (Fan et al. 2023<sup>[14]</sup>). Exposure to generative AI's capabilities elicits negative emotions that mediate perceived threat to identity, uniqueness, and social value - emotional-first, threat-appraisal-second (Gabbiadini et al. 2023<sup>[15]</sup>).
 
@@ -400,7 +400,7 @@ AI can write the paper. AI cannot attend the meeting. The "qualified and prepare
 
 ### "AI papers are low quality."
 
-The quality concern is real and frequently correct. The structural observation is narrower: the dominant response is categorical dismissal on provenance, not specific identification of quality defects. If the objection were about quality, the response would cite a specific error. Instead the response asserts that AI authorship precludes new information "by definition." The magnitude exceeds what the quality concern alone explains. The residual is the subject of this paper.
+The quality concern is real and frequently correct. The structural observation is narrower: The dominant response is categorical dismissal on provenance, not specific identification of quality defects. If the objection were about quality, the response would cite a specific error. Instead the response asserts that AI authorship precludes new information "by definition." The magnitude exceeds what the quality concern alone explains. The residual is the subject of this paper.
 
 ### "The committee can simply ignore obstructive papers."
 
@@ -420,7 +420,7 @@ The author's papers are inform-papers. They carry `intent: info`. They do not co
 
 ### "ISO rules prohibit AI-generated content in papers."
 
-ISO's AI guidance states: "Do not use images or text created by generative AI in any ISO content"<sup>[16]</sup>. P3702R1<sup>[20]</sup> proposes to align SD-7 with this guidance. However, a former EWG chair (~20 years) states on a non-public WG21 platform: "Our P-papers very intentionally do not adhere to ISO copyright rules for their prose content. ISO has no ownership of them and can't dictate where they can and cannot go"<sup>[17]</sup>. If P-papers are not ISO content, ISO's AI guidance has no jurisdiction over them. The proposed ban faces an authority gap: the rules it invokes do not apply to the documents it targets.
+ISO's AI guidance states: "Do not use images or text created by generative AI in any ISO content"<sup>[16]</sup>. P3702R1<sup>[20]</sup> proposes to align SD-7 with this guidance. However, a former EWG chair (~20 years) states on a non-public WG21 platform: "Our P-papers very intentionally do not adhere to ISO copyright rules for their prose content. ISO has no ownership of them and can't dictate where they can and cannot go"<sup>[17]</sup>. If P-papers are not ISO content, ISO's AI guidance has no jurisdiction over them. The proposed ban faces an authority gap: The rules it invokes do not apply to the documents it targets.
 
 ---
 
@@ -428,9 +428,9 @@ ISO's AI guidance states: "Do not use images or text created by generative AI in
 
 A rule that filters for commitment works when commitment is expensive. When the cost drops, the filter passes everything. What remains is whatever other filters the system provides. In SD-4's case, what remains is chair discretion over scheduling - a filter that operates through the appointment chain, not through merit.
 
-The committee's defense against this structural change is a social norm: dismiss AI-assisted papers on provenance. The norm has no procedural basis. It is enforced through social cost, not through rules. It works today because the committee's social cohesion is strong enough to sustain it. It stops working the moment any respected insider uses AI for a competing paper - because the norm cannot distinguish the insider's AI paper from the outsider's.
+The committee's defense against this structural change is a social norm: Dismiss AI-assisted papers on provenance. The norm has no procedural basis. It is enforced through social cost, not through rules. It works today because the committee's social cohesion is strong enough to sustain it. It stops working the moment any respected insider uses AI for a competing paper - because the norm cannot distinguish the insider's AI paper from the outsider's.
 
-The author cannot assess whether the provenance dismissal is entirely strategic or partially justified. Some AI-assisted papers may genuinely be lower quality. The structural observation holds regardless: the dominant strategy is dismissal on provenance whether the papers are good or bad. The magnitude of the response exceeds what quality concern alone explains. The uniformity of the response across fifty papers, with zero instances of selective engagement, exceeds what quality filtering predicts. The tenure correlation of the response matches what P4241's reward architecture predicts. Three independent data sources confirm seven predictions.
+The author cannot assess whether the provenance dismissal is entirely strategic or partially justified. Some AI-assisted papers may genuinely be lower quality. The structural observation holds regardless: The dominant strategy is dismissal on provenance whether the papers are good or bad. The magnitude of the response exceeds what quality concern alone explains. The uniformity of the response across fifty papers, with zero instances of selective engagement, exceeds what quality filtering predicts. The tenure correlation of the response matches what P4241's reward architecture predicts. Three independent data sources confirm seven predictions.
 
 The cost assumption was load-bearing. It has collapsed. What the committee builds on the ground where it stood is the committee's decision.
 

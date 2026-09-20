@@ -13,7 +13,7 @@ reply-to:
 
 Frame-visible coroutines would eliminate `std::execution::task`'s heap allocation and give sender-based coroutine algorithms full optimizer visibility.
 
-The sender three-channel completion model is a genuine achievement: compile-time verification of async completion paths and generic algorithms that dispatch on completion disposition without knowing the concrete sender type. A structural constraint exists - compound I/O results cannot round-trip through three mutually exclusive channels - and two of the three properties that senders currently provide beyond the coroutine model trace to one language choice: the coroutine frame is opaque. [P1492R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1492r0.pdf)<sup>[1]</sup> documented a Known-Layout Type model where the frame becomes a first-class type with `constexpr` size and alignment. If C++ added frame-visible coroutines alongside the existing opaque-frame model, `std::execution::task` eliminates its heap allocation, coroutine-based sender algorithms gain full optimizer visibility, and both async models that C++26 ships improve. Compile-time work graphs - the type-level encoding of dependency topology - remain the unique sender contribution.
+The sender three-channel completion model is a genuine achievement: compile-time verification of async completion paths and generic algorithms that dispatch on completion disposition without knowing the concrete sender type. A structural constraint exists - compound I/O results cannot round-trip through three mutually exclusive channels - and two of the three properties that senders currently provide beyond the coroutine model trace to one language choice: The coroutine frame is opaque. [P1492R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1492r0.pdf)<sup>[1]</sup> documented a Known-Layout Type model where the frame becomes a first-class type with `constexpr` size and alignment. If C++ added frame-visible coroutines alongside the existing opaque-frame model, `std::execution::task` eliminates its heap allocation, coroutine-based sender algorithms gain full optimizer visibility, and both async models that C++26 ships improve. Compile-time work graphs - the type-level encoding of dependency topology - remain the unique sender contribution.
 
 ---
 
@@ -184,7 +184,7 @@ In the sender model, the operation must choose:
 //   the caller cannot use partial data
 ```
 
-Neither option preserves the compound result. The mutual exclusion of channels is the structural cause. The forward mapping (Section 4) is injective: distinct awaitable return types map to distinct channel configurations. The reverse mapping is not a function: multiple awaitable return types (one with compound results, one without) map to the same channel configuration, and the channel configuration cannot distinguish them.
+Neither option preserves the compound result. The mutual exclusion of channels is the structural cause. The forward mapping (Section 4) is injective: Distinct awaitable return types map to distinct channel configurations. The reverse mapping is not a function: Multiple awaitable return types (one with compound results, one without) map to the same channel configuration, and the channel configuration cannot distinguish them.
 
 The round-trip `awaitable -> channels -> awaitable` loses data. The mapping works one direction.
 
@@ -200,9 +200,9 @@ The sender model currently provides three properties that coroutines do not:
 
 - **Compile-time work graphs.** The sender pipeline type encodes the dependency topology at the type level. `when_all(s1, s2) | then(f)` produces a type from which a scheduler can determine at compile time that `s1` and `s2` run concurrently and `f` depends on both. A coroutine's internal control flow is imperative. No type-level inspection can recover the dependency structure from sequential `co_await` statements.
 
-The first two properties trace to one cause: the coroutine frame is opaque. `coroutine_handle<>` erases the frame's type. The sender model stamps the receiver into the operation state, making the type visible. This is a design choice made in C++20, not a permanent constraint.
+The first two properties trace to one cause: The coroutine frame is opaque. `coroutine_handle<>` erases the frame's type. The sender model stamps the receiver into the operation state, making the type visible. This is a design choice made in C++20, not a permanent constraint.
 
-The third property traces to the composition model itself. Sender composition is declarative: the programmer describes a computation graph, and the type system encodes it. Coroutine composition is imperative: the programmer writes sequential statements, and the control flow executes them. Making the frame visible does not make the control flow declarative.
+The third property traces to the composition model itself. Sender composition is declarative: The programmer describes a computation graph, and the type system encodes it. Coroutine composition is imperative: The programmer writes sequential statements, and the control flow executes them. Making the frame visible does not make the control flow declarative.
 
 ---
 

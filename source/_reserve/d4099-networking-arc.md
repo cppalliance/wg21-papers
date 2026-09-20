@@ -123,7 +123,7 @@ struct read_operation
 
 One anonymous commenter during the 2021 electronic ballot [wrote](https://old.reddit.com/r/cpp/comments/q6tgod/c_committee_polling_results_for_asynchronous/)<sup>[29]</sup>: *"I don't think it's fair to consider standardizing S&R until there are at least a thousand codebases that use S&R. The probability of missing an important use-case, or an important gotcha is very very high if the actual quantity of 'Junior engineer + intern' experience in the field is low."*
 
-The only published production I/O field report as of 2026 ([P4125R1](https://isocpp.org/files/papers/P4125R1.pdf)<sup>[30]</sup>) describes a derivatives exchange that evaluated and rejected sender/receivers before choosing coroutine-native I/O. The partner's rationale: sender/receivers' structured concurrency trade-offs are at odds with their message-passing architecture, adoption would force a rewrite rather than an incremental port, and the pipeline expression syntax does not scale to their domain (Section 7.2).
+The only published production I/O field report as of 2026 ([P4125R1](https://isocpp.org/files/papers/P4125R1.pdf)<sup>[30]</sup>) describes a derivatives exchange that evaluated and rejected sender/receivers before choosing coroutine-native I/O. The partner's rationale: Sender/receivers' structured concurrency trade-offs are at odds with their message-passing architecture, adoption would force a rewrite rather than an incremental port, and the pipeline expression syntax does not scale to their domain (Section 7.2).
 
 ---
 

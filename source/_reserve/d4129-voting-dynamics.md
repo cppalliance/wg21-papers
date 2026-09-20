@@ -55,7 +55,7 @@ The definition of "consensus" is not codified in a formula. The chair of each su
 
 ### 2.3 The Role of Presentation
 
-The votes in a subgroup poll follow a presentation and question-and-answer session. The quality and persuasiveness of the presentation influence the outcome. This is by design: deliberation is the mechanism by which the committee evaluates proposals. It also means that the poll result is not purely a measure of the proposal's technical merit. It is a composite of the proposal, the presentation, the Q&A, and the room.
+The votes in a subgroup poll follow a presentation and question-and-answer session. The quality and persuasiveness of the presentation influence the outcome. This is by design: Deliberation is the mechanism by which the committee evaluates proposals. It also means that the poll result is not purely a measure of the proposal's technical merit. It is a composite of the proposal, the presentation, the Q&A, and the room.
 
 ---
 
@@ -87,7 +87,7 @@ Lionel Penrose established in 1946 that in a two-tier voting system, a priori vo
 
 The Coroutines TS merge vote at San Diego (2018) illustrates the two-tier dynamic. The individual vote was 34 in favour, 17 opposed, 10 abstaining. The national body vote was 5 in favour, 6 opposed, 1 abstaining. The motion failed<sup>[12]</sup>. The individual majority and the national body majority pointed in opposite directions.
 
-At the FDIS level, the rules are strict: if more than 25% of national body votes are "No," the FDIS fails outright<sup>[13]</sup>. A small number of national bodies can block a standard that the individual participants overwhelmingly support.
+At the FDIS level, the rules are strict: If more than 25% of national body votes are "No," the FDIS fails outright<sup>[13]</sup>. A small number of national bodies can block a standard that the individual participants overwhelmingly support.
 
 ---
 
@@ -99,7 +99,7 @@ The following exhibits are drawn from the committee's published record: meeting 
 
 When the same question is polled at different meetings with different attendees and no change in the proposal's content, the published record sometimes shows different outcomes.
 
-**Exhibit A (P2511).** The October 2022 electronic poll on P2511R2 ("Beyond `operator()`: NTTP Callables in Type-Erased Call Wrappers") produced SF:4 / WF:7 / N:3 / WA:1 / SA:2 - no consensus<sup>[14]</sup>. At the Kona in-person LEWG session in November 2022, the same paper received SF:2 / WF:4 / N:3 / WA:3 / SA:0. The paper could not advance in either venue, but the vote distributions differed: the electronic poll had SA votes that disappeared in person, while the in-person poll had WA votes that were absent electronically. The author's own account: "in different meeting you need to face different people in the room."
+**Exhibit A (P2511).** The October 2022 electronic poll on P2511R2 ("Beyond `operator()`: NTTP Callables in Type-Erased Call Wrappers") produced SF:4 / WF:7 / N:3 / WA:1 / SA:2 - no consensus<sup>[14]</sup>. At the Kona in-person LEWG session in November 2022, the same paper received SF:2 / WF:4 / N:3 / WA:3 / SA:0. The paper could not advance in either venue, but the vote distributions differed: The electronic poll had SA votes that disappeared in person, while the in-person poll had WA votes that were absent electronically. The author's own account: "in different meeting you need to face different people in the room."
 
 **Exhibit B (Contracts removal).** At Kona in February 2019, the poll on P1426 "Pull the Plug on Contracts?" received SF:2 / F:7 / N:4 / A:14 / SA:7 - no consensus to remove<sup>[15]</sup>. Five months later at Cologne in July 2019, P1823R0 "Remove Contracts from C++20" achieved consensus. The plenary vote was 68 in favour, 0 opposed, 4 abstaining<sup>[15]</sup>. The same fundamental question - should contracts be in C++20 - reversed from "no" to "yes" for removal.
 
@@ -141,7 +141,7 @@ The published record documents instances where the visibility of individual vote
 
 ### 4.3 Directional Persistence
 
-Once a proposal achieves directional consensus through a poll, the published record shows cases where that direction persisted even as circumstances changed. Alternative explanation: the direction may reflect genuine continued agreement.
+Once a proposal achieves directional consensus through a poll, the published record shows cases where that direction persisted even as circumstances changed. Alternative explanation: The direction may reflect genuine continued agreement.
 
 **Exhibit N (Networking direction).** The October 2021 poll "Networking in the C++ Standard Library should be based on the sender/receiver model" received SF:17 / WF:11 / N:10 / WA:4 / SA:6 - weak consensus<sup>[16]</sup>. The published outcome document noted that many of the 10 neutral voters "wanted to see a concrete paper before choosing sides." Five years later, no sender-based networking library has shipped. The directional poll remains the stated direction.
 
@@ -149,7 +149,7 @@ Once a proposal achieves directional consensus through a poll, the published rec
 
 **Exhibit P (Trivial relocation).** The trivial relocation feature (P2786R13) was forwarded by subgroups and incorporated into the C++26 working paper at Hagenberg. At the Kona 2025 plenary, a procedural motion to postpone the removal vote received In Favour: 5, Opposed: 86, Abstain: 20 - overwhelmingly rejected<sup>[28]</sup>. The removal itself then passed: In Favour: 80, Opposed: 5, Abstain: 28. In this case, implementer consensus was strong enough to overcome the directional inertia.
 
-**Exhibit Q (Status quo paradox).** Arthur O'Dwyer described a pattern on his blog: "the paradoxical result is that everyone altruistically agrees to continue with the status quo, even though the participants in the discussion all believe that the status quo is *worse* than the alternative"<sup>[29]</sup>. The mechanism: uncertainty about whether enough others have changed their minds leads each individual to defer.
+**Exhibit Q (Status quo paradox).** Arthur O'Dwyer described a pattern on his blog: "the paradoxical result is that everyone altruistically agrees to continue with the status quo, even though the participants in the discussion all believe that the status quo is *worse* than the alternative"<sup>[29]</sup>. The mechanism: Uncertainty about whether enough others have changed their minds leads each individual to defer.
 
 ### 4.4 Subgroup and Plenary Disagreements
 
@@ -229,7 +229,7 @@ Deliberation is designed to create dependence between voters. The preceding pres
 
 Poll wording matters. The chair controls the question, and different framings of the same topic produce different vote distributions (Exhibits Y, Z, AA). This paper's own exhibits are organized by the questions as worded. The reader should consider how the wording may have shaped each result.
 
-The published poll tallies are an incomplete record. The presentation quality, the Q&A, the room dynamics, the social context, and the chair's framing are not captured in the numbers. Drawing conclusions from tallies alone is inherently limited. The numbers are the public record, not the full story. As Peter Dimov observed during review of R0: meaningful conclusions require having been there and observed the process.
+The published poll tallies are an incomplete record. The presentation quality, the Q&A, the room dynamics, the social context, and the chair's framing are not captured in the numbers. Drawing conclusions from tallies alone is inherently limited. The numbers are the public record, not the full story. As Peter Dimov observed during review of R0: Meaningful conclusions require having been there and observed the process.
 
 This paper presents the published record because it is the only public artifact. Simpler explanations may exist for every pattern shown. The conclusions are the reader's.
 
@@ -251,7 +251,7 @@ The Direction Group's own paper ([P2000R5](https://wg21.link/p2000r5)<sup>[25]</
 
 ## 7. Future Work
 
-Joaqu&iacute;n M L&oacute;pez Mu&ntilde;oz proposed during review of R0 a methodology for systematic analysis: construct a dataset of all published polls, classify positive polls as successful or unsuccessful based on hard facts - rejected at a later stage, deprecated, removed, or superseded due to design problems - and then analyze correlations with voting set size, N count, evolution over time, and other measurable variables. This is the rigorous empirical approach the paper should aspire to in a future revision.
+Joaqu&iacute;n M L&oacute;pez Mu&ntilde;oz proposed during review of R0 a methodology for systematic analysis: Construct a dataset of all published polls, classify positive polls as successful or unsuccessful based on hard facts - rejected at a later stage, deprecated, removed, or superseded due to design problems - and then analyze correlations with voting set size, N count, evolution over time, and other measurable variables. This is the rigorous empirical approach the paper should aspire to in a future revision.
 
 The committee's published record contains hundreds of polls across three decades. A systematic survey would move beyond the spot-check presented here and allow quantitative analysis of the patterns documented in Section 4.
 
@@ -265,7 +265,7 @@ L&oacute;pez Mu&ntilde;oz identified that Arrow's Impossibility Theorem does not
 
 Dimov demonstrated that the Condorcet Jury Theorem is inapplicable because committee members do not form opinions independently - the preceding presentation and Q&A session are designed to influence votes. He established that bimodal vote distributions are the expected result for contentious topics, not evidence of voter correlation. He clarified the distinction between Neutral votes (informed indecision) and abstention (choosing not to express an opinion). He confirmed that chair control of poll wording is a significant structural factor in outcomes.
 
-An earlier draft attempted a theoretical approach: apply social choice theory as a predictive framework, derive predictions, and test them against the data. That approach was tested by peer review and found wanting. This paper presents the published record without interpretive claims. It is stronger for the critique.
+An earlier draft attempted a theoretical approach: Apply social choice theory as a predictive framework, derive predictions, and test them against the data. That approach was tested by peer review and found wanting. This paper presents the published record without interpretive claims. It is stronger for the critique.
 
 ---
 

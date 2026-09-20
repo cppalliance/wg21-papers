@@ -215,7 +215,7 @@ Jonathan M&uuml;ller's [P3801R0](https://wg21.link/p3801r0)<sup>[24]</sup> arriv
 
 A poll records how many people voted each way. It does not record whether the affected domains had practitioners present. One hundred generalists voting on a networking question and five networking practitioners voting on a networking question produce the same output format. The information content is not the same.
 
-Howard Hinnant described the consequence on the WG21 reflector: a key stakeholder was absent from the session where `std::variant` was discussed, and the decision's trajectory changed. Christopher Kohlhoff - the person whose domain is most affected by networking decisions - was not always present when networking-adjacent decisions were made. The committee proceeded.
+Howard Hinnant described the consequence on the WG21 reflector: A key stakeholder was absent from the session where `std::variant` was discussed, and the decision's trajectory changed. Christopher Kohlhoff - the person whose domain is most affected by networking decisions - was not always present when networking-adjacent decisions were made. The committee proceeded.
 
 ### 6.2 Two Failure Modes
 
@@ -260,7 +260,7 @@ Automated assistance can reduce the labor of producing these artifacts to minute
 
 ## 8. Relieving the Chair's Burden
 
-The artifacts in Sections 5 and 6 are aspirational without enforcement. This section answers: who makes people follow this? The answer: the chair, using powers the chair already has.
+The artifacts in Sections 5 and 6 are aspirational without enforcement. This section answers: Who makes people follow this? The answer: the chair, using powers the chair already has.
 
 The chair currently makes subjective judgments about whether a session is ready, with no framework. Under proportional deliberation, the chair has a checklist. The checklist does the judgment. The chair applies it. That is less work, not more.
 

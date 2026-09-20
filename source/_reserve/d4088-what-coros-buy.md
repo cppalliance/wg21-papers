@@ -70,7 +70,7 @@ C++26 ships two async models: coroutines and senders. Both are in the standard. 
 
 Coroutine I/O is not a new programming model. It is `for`, `if`, `while`, `break`, `return`, structured bindings - the language the programmer already writes. Three keywords are new: `co_await`, `co_return`, `co_yield`.
 
-The coroutine "tutorial" is: write regular code, put `co_await` before async operations. Two caveats apply. The function must return a type whose `promise_type` supports the awaitable protocol - `task<T>`, `io_task<T>`, or another coroutine return type. Non-coroutine callers cannot use `co_await` and must manage the coroutine's lifetime through the returned object.
+The coroutine "tutorial" is: Write regular code, put `co_await` before async operations. Two caveats apply. The function must return a type whose `promise_type` supports the awaitable protocol - `task<T>`, `io_task<T>`, or another coroutine return type. Non-coroutine callers cannot use `co_await` and must manage the coroutine's lifetime through the returned object.
 
 ### 2.2 Thirty Algorithms
 
@@ -289,7 +289,7 @@ The asymmetry is structural. The coroutine frame persists across iterations beca
 
 Real I/O is layered. A network read passes through tcp -> tls -> decompress -> parse. Each layer is a coroutine composing the layer below through `co_await`. The pipeline shares one frame per layer.
 
-[P4255R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4255r0.pdf)<sup>[32]</sup> "Awaitables And Senders For Synchronous I/O" Section 11 quantifies the composed I/O cost. A 64 KB read with a 4 KB kernel buffer produces sixteen iterations of `read_some`. Under the awaitable model, when the buffer already contains decrypted data, `await_ready()` returns `true` and no suspension occurs. The loop runs with the same cost as a hand-written `while` loop calling `memcpy`. Under the sender model, each of those sixteen iterations executes the seven-step protocol sequence documented in [P4255R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4255r0.pdf)<sup>[32]</sup> Section 6: construct operation state, instantiate receiver, suspend coroutine, call `start`, fire `set_value`, emplace into `variant`, resume coroutine.
+[P4255R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4255r0.pdf)<sup>[32]</sup> "Awaitables And Senders For Synchronous I/O" Section 11 quantifies the composed I/O cost. A 64 KB read with a 4 KB kernel buffer produces sixteen iterations of `read_some`. Under the awaitable model, when the buffer already contains decrypted data, `await_ready()` returns `true` and no suspension occurs. The loop runs with the same cost as a hand-written `while` loop calling `memcpy`. Under the sender model, each of those sixteen iterations executes the seven-step protocol sequence documented in [P4255R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4255r0.pdf)<sup>[32]</sup> Section 6: Construct operation state, instantiate receiver, suspend coroutine, call `start`, fire `set_value`, emplace into `variant`, resume coroutine.
 
 TLS is the canonical amplifier. One network read fills a 16 KB TLS record. A 4 KB application buffer reads four times from that record. Three of those four reads are synchronous - the data is already decrypted in memory. Under awaitables, three of four reads pay zero protocol cost. Under senders, all four execute the full protocol sequence. The multiplier compounds across protocol layers: HTTP over TLS over TCP is three layers of composed coroutines, each with its own `read_some` loop.
 
@@ -299,7 +299,7 @@ A sender can handle multiple iterations within a single functor. A `then` handle
 
 When the compiler has full type visibility - no type erasure, concrete sender and receiver types - the per-iteration protocol steps (operation state construction, receiver instantiation, connect, start) may compile to near-zero overhead. The irreducible cost appears under type erasure (Section 9.3) and at the `await_ready` boundary (Section 8), where the structural gap persists regardless of optimization.
 
-Sequence senders - an extension to the sender model for multi-shot, streaming operations - would address the iteration problem directly. Kirk Shoop proposed the abstraction in an August 2019 reflector post. Seven years later, no P-number paper exists. A prototype lives on the `kirkshoop/libunifex` branch `sequenceconnect`, not on stdexec. An experimental API under the `exec::` namespace exists in stdexec, using `subscribe`/`set_next` semantics, with a known bug: stop token propagation fails for type-erased sequence senders ([stdexec issue #1668](https://github.com/NVIDIA/stdexec/issues/1668)). `split`, the sender model's only multi-shot mechanism in the C++26 standard, was removed at Croydon (P3682R0<sup>[34]</sup>). The coroutine loop is available today.
+Sequence senders - an extension to the sender model for multi-shot, streaming operations - would address the iteration problem directly. Kirk Shoop proposed the abstraction in an August 2019 reflector post. Seven years later, no P-number paper exists. A prototype lives on the `kirkshoop/libunifex` branch `sequenceconnect`, not on stdexec. An experimental API under the `exec::` namespace exists in stdexec, using `subscribe`/`set_next` semantics, with a known bug: Stop token propagation fails for type-erased sequence senders ([stdexec issue #1668](https://github.com/NVIDIA/stdexec/issues/1668)). `split`, the sender model's only multi-shot mechanism in the C++26 standard, was removed at Croydon (P3682R0<sup>[34]</sup>). The coroutine loop is available today.
 
 The coroutine frame persists across all iterations. The sender protocol constructs a fresh operation state for each one.
 
@@ -311,7 +311,7 @@ The second property coroutines provide for serial I/O is the immediately-ready f
 
 ### 8.1 The Mechanism
 
-The awaitable protocol begins every `co_await` with a question: is the result already available?
+The awaitable protocol begins every `co_await` with a question: Is the result already available?
 
 ```cpp
 struct immediate
@@ -347,7 +347,7 @@ Network I/O frequently has data already buffered. TLS decryption reads an entire
 
 [P4255R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4255r0.pdf)<sup>[32]</sup> Section 11 quantifies the pattern for composed I/O. A 64 KB read with a 4 KB buffer produces sixteen iterations. On a buffered stream where most completions are synchronous, each synchronous completion executes the seven-step protocol sequence under senders. Under awaitables with `await_ready() == true`, the generic algorithm has the same cost as a hand-written `while` loop calling `memcpy`.
 
-Stepanov's iterator concepts do not impose indirection when dereferencing a pointer. A `T*` satisfies `random_access_iterator` and dereferences in one instruction - the concept does not require constructing an intermediate state object, wiring a callback, or performing a two-phase access protocol. The awaitable protocol has this property. `await_ready() == true` is the pointer dereference: the value is there, take it. `await_ready() == false` is the disk-backed iterator: the value requires work, suspend, resume when ready. The cost tracks the operation, not the protocol.
+Stepanov's iterator concepts do not impose indirection when dereferencing a pointer. A `T*` satisfies `random_access_iterator` and dereferences in one instruction - the concept does not require constructing an intermediate state object, wiring a callback, or performing a two-phase access protocol. The awaitable protocol has this property. `await_ready() == true` is the pointer dereference: The value is there, take it. `await_ready() == false` is the disk-backed iterator: The value requires work, suspend, resume when ready. The cost tracks the operation, not the protocol.
 
 ### 8.4 The Structural Gap
 
@@ -369,7 +369,7 @@ The awaitable protocol reaches the zero-cost path through `await_ready()`. The s
 
 ## 9. What The Frame Buys
 
-The coroutine frame paid for in Section 4 is the storage the awaitable protocol reuses. Sections 7 and 8 documented the two focal properties - zero-cost iteration and the immediately-ready fast path. The properties below are the supporting links in the causal chain from frame to library. Each follows from the design fork in Section 5: the caller is erased, so the operation state is concrete. The operation state is concrete, so it lives in the socket. The socket owns the state, so there is no per-operation allocation. No per-operation allocation, so the stream can be type-erased. The type-erased stream compiles once. The compiled stream is ABI-stable. Remove any link and the rest collapse.
+The coroutine frame paid for in Section 4 is the storage the awaitable protocol reuses. Sections 7 and 8 documented the two focal properties - zero-cost iteration and the immediately-ready fast path. The properties below are the supporting links in the causal chain from frame to library. Each follows from the design fork in Section 5: The caller is erased, so the operation state is concrete. The operation state is concrete, so it lives in the socket. The socket owns the state, so there is no per-operation allocation. No per-operation allocation, so the stream can be type-erased. The type-erased stream compiles once. The compiled stream is ABI-stable. Remove any link and the rest collapse.
 
 ### 9.1 The Operation State Is Concrete
 
@@ -516,7 +516,7 @@ This is the POSIX `read()` contract with a C++ interface. Six change vectors exi
 - **New return values.** A read operation takes a buffer and reports how many bytes were transferred and whether an error occurred. No I/O model in any language returns anything else.
 - **Cancellation.** Stop tokens propagate through `io_env`, not through the return type. Cancellation does not touch the contract.
 - **New I/O patterns.** `read_some` is the primitive. Scatter/gather, vectored I/O, and read-until are composed from `read_some` by algorithms. The primitive does not change because the compositions do.
-- **Environment evolution.** `io_env const*` is part of the `await_suspend` signature. If the environment needs new capabilities, the type evolves. The mitigation is pointer indirection: new fields append to the structure without changing the vtable's function signatures. The same evolution model as `OVERLAPPED` on Windows and `iocb` on Linux.
+- **Environment evolution.** `io_env const*` is part of the `await_suspend` signature. If the environment needs new capabilities, the type evolves. The mitigation is pointer indirection: New fields append to the structure without changing the vtable's function signatures. The same evolution model as `OVERLAPPED` on Windows and `iocb` on Linux.
 
 The contract has survived POSIX, BSD sockets, IOCP, Asio, the Networking TS, io_uring, and every transport from TCP to QUIC.
 
@@ -554,9 +554,9 @@ Per-operation allocations by execution model and stream type:
 
 Additional properties riding on the same frame:
 
-- **Compile-time domain gate.** The two-argument `await_suspend(coroutine_handle<>, io_env const*)` is a deliberate trade-off. The pointer is the cost. The domain gate is the benefit: any awaitable that does not accept `io_env const*` is a type error inside an I/O task. Foreign awaitables that do not speak the I/O protocol are rejected by the compiler. [IoAwaitable](https://github.com/cppalliance/capy/blob/p4088r0/include/boost/capy/concept/io_awaitable.hpp)<sup>[2]</sup>.
+- **Compile-time domain gate.** The two-argument `await_suspend(coroutine_handle<>, io_env const*)` is a deliberate trade-off. The pointer is the cost. The domain gate is the benefit: Any awaitable that does not accept `io_env const*` is a type error inside an I/O task. Foreign awaitables that do not speak the I/O protocol are rejected by the compiler. [IoAwaitable](https://github.com/cppalliance/capy/blob/p4088r0/include/boost/capy/concept/io_awaitable.hpp)<sup>[2]</sup>.
 
-- **Compound result preservation.** `auto [ec, n] = co_await sock.read_some(buf)`. Both values visible. No channel split. No data loss. The sender model's three-channel completion model routes results by channel. [P4090R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4090r0.pdf)<sup>[20]</sup> "Sender I/O: A Constructed Comparison" and [P4091R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4091r0.pdf)<sup>[21]</sup> "Two Error Models" document a trilemma: pick two of {preserve all data, use composition algebra, stay generic}. Sending `tuple<error_code, size_t>` through the value channel works physically but bypasses the composition algebra entirely - `when_all` does not cancel siblings on I/O failure, `upon_error` is unreachable, `retry` does not fire. P4090R0 Section 13 issues an open challenge: construct an echo server that uses the composition algebra for I/O errors while preserving compound results. No such construction exists.
+- **Compound result preservation.** `auto [ec, n] = co_await sock.read_some(buf)`. Both values visible. No channel split. No data loss. The sender model's three-channel completion model routes results by channel. [P4090R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4090r0.pdf)<sup>[20]</sup> "Sender I/O: A Constructed Comparison" and [P4091R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4091r0.pdf)<sup>[21]</sup> "Two Error Models" document a trilemma: Pick two of {preserve all data, use composition algebra, stay generic}. Sending `tuple<error_code, size_t>` through the value channel works physically but bypasses the composition algebra entirely - `when_all` does not cancel siblings on I/O failure, `upon_error` is unreachable, `retry` does not fire. P4090R0 Section 13 issues an open challenge: Construct an echo server that uses the composition algebra for I/O errors while preserving compound results. No such construction exists.
 
 - **Symmetric transfer.** `await_suspend` returns `coroutine_handle<>`. O(1) stack depth regardless of chain length.
 
@@ -570,7 +570,7 @@ Senders can achieve type-erased I/O. They can get ABI stability. The benchmark i
 
 A custom allocator can pool the operation states. The pool must know each operation state's size at construction time - the size depends on both the sender and the receiver, so the pool is parameterized on the pipeline shape. The pool must be threaded through the API - the I/O object, the connect call, or the execution context must carry it. The pool must be managed per-connection - 10,000 connections means 10,000 pools, each sized for the operation states that connection's pipeline produces.
 
-Small buffer optimization (SBO) is another mitigation. SBO works for `std::function` because callable objects are often small. Sender operation states are not small: the state includes captured data from the sender, the receiver's continuation and environment, and intermediate storage. Under type erasure, the size depends on both the sender and receiver types, neither of which is known at compile time. A fixed SBO buffer must be sized for the worst case or fall back to heap allocation.
+Small buffer optimization (SBO) is another mitigation. SBO works for `std::function` because callable objects are often small. Sender operation states are not small: The state includes captured data from the sender, the receiver's continuation and environment, and intermediate storage. Under type erasure, the size depends on both the sender and receiver types, neither of which is known at compile time. A fixed SBO buffer must be sized for the worst case or fall back to heap allocation.
 
 The allocation purchased something. The receiver-parameterized operation state gives the optimizer full pipeline visibility - the strength documented in Section 3. That visibility is what makes senders the right choice for GPU dispatch, HPC, and compile-time work graphs. The allocation is the price of stamping the receiver into the operation state when the receiver is type-erased.
 
@@ -586,7 +586,7 @@ A: `any_sender` type-erases the sender, not the receiver. `connect(any_sender, r
 
 **Q: Does `std::execution::task` not already bridge both models?**
 
-A: It does. `task` is a coroutine that is also a sender. But serving both models in one type is where the friction originates - two template parameters, open issues documented in [P4007R3](https://isocpp.org/files/papers/P4007R3.pdf)<sup>[23]</sup> "Open Issues in `std::execution::task`", constraints that neither model alone requires. The companion approach accepts the design fork: each model does what it does best, and bridges connect them at ~10-14 ns with zero allocations. The question is whether the coroutine side carries I/O facilities that exploit the properties `coroutine_handle<>` provides. `task` bridges the models. It does not provide I/O.
+A: It does. `task` is a coroutine that is also a sender. But serving both models in one type is where the friction originates - two template parameters, open issues documented in [P4007R3](https://isocpp.org/files/papers/P4007R3.pdf)<sup>[23]</sup> "Open Issues in `std::execution::task`", constraints that neither model alone requires. The companion approach accepts the design fork: Each model does what it does best, and bridges connect them at ~10-14 ns with zero allocations. The question is whether the coroutine side carries I/O facilities that exploit the properties `coroutine_handle<>` provides. `task` bridges the models. It does not provide I/O.
 
 **Q: Two async models are harder to teach.**
 
@@ -600,7 +600,7 @@ A: Sequence senders, an extension for multi-shot streaming operations, have been
 
 **Q: Senders complete synchronously too.**
 
-A: `sender-awaitable::await_ready()` returns `false` unconditionally per the normative specification ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[27]</sup> `[exec.as.awaitable]`). Confirmed across implementations: both stdexec and libunifex return `false`. Repeated inline completions cause unbounded stack growth requiring `trampoline_scheduler` as runtime mitigation (+2.6 ns/op). [P4255R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4255r0.pdf)<sup>[32]</sup> Section 14 states three falsification criteria that would discharge the observation. None has been met.
+A: `sender-awaitable::await_ready()` returns `false` unconditionally per the normative specification ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[27]</sup> `[exec.as.awaitable]`). Confirmed across implementations: Both stdexec and libunifex return `false`. Repeated inline completions cause unbounded stack growth requiring `trampoline_scheduler` as runtime mitigation (+2.6 ns/op). [P4255R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4255r0.pdf)<sup>[32]</sup> Section 14 states three falsification criteria that would discharge the observation. None has been met.
 
 **Q: The full-pipeline comparison favors senders because the entire pipeline is one allocation.**
 

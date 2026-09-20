@@ -50,7 +50,7 @@ This paper treats the responses as data before any of them exist. For each signi
 
 An instrument built this way is unfalsifiable by construction, and this paper says so plainly. An instrument is not a hypothesis. It does not bet; it partitions.
 
-[P4047R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4047r0.pdf)<sup>[2]</sup> scores predictions after outcomes are known. This paper defines its binaries before any outcome exists and assigns no scores. The relationship is methodological ancestry. The difference is the genre: a scorecard judges; an instrument reads.
+[P4047R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4047r0.pdf)<sup>[2]</sup> scores predictions after outcomes are known. This paper defines its binaries before any outcome exists and assigns no scores. The relationship is methodological ancestry. The difference is the genre: A scorecard judges; an instrument reads.
 
 The framework behind the expected column is a set of three composite behavioral models. A composite model describes the aggregate personality of a structural role - the tendencies the role produces in whoever occupies it. The framework holds that structural incentives produce predictable aggregate behavior regardless of individual occupants. The three roles follow.
 
@@ -58,7 +58,7 @@ The framework behind the expected column is a set of three composite behavioral 
 
 Appointees are the committee's officers: the convener and the subgroup chairs, appointed without fixed terms under [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)<sup>[3]</sup>, exercising discretion over scheduling, polling, and consensus determination. The role achieves something real. The neutrality norm it enforces is what makes consensus sessions of two hundred participants workable, and the procedural fairness instinct it selects for is genuine.
 
-The framework holds that long tenure without term limits merges the occupant's identity with the role, and that the merger produces a binary switch. Communications about technical substance - a design choice, an API shape, a measurement - receive collegial, proportionate engagement. Communications about governance, process, or institutional structure shift the register: criticism of the institution arrives as criticism of the self, because the distance between the two has closed. The framework expects every claim of P4263R0 to land in the governance register, and it expects the response pattern to be a challenge to standing - "is this appropriate?" - in place of a challenge to correctness - "is this correct?"
+The framework holds that long tenure without term limits merges the occupant's identity with the role, and that the merger produces a binary switch. Communications about technical substance - a design choice, an API shape, a measurement - receive collegial, proportionate engagement. Communications about governance, process, or institutional structure shift the register: Criticism of the institution arrives as criticism of the self, because the distance between the two has closed. The framework expects every claim of P4263R0 to land in the governance register, and it expects the response pattern to be a challenge to standing - "is this appropriate?" - in place of a challenge to correctness - "is this correct?"
 
 ### 2.2. Delegates
 
@@ -68,7 +68,7 @@ The framework holds that most communications never reach a delegate at all, that
 
 ### 2.3. The Public
 
-The public is everyone who writes C++ and cannot vote. The framework models it as roughly sixteen million working developers with a politically engaged core in the tens of thousands, reading trip reports, forums, and conference talks. Its pattern recognition is earned: the templates it applies encode a decade of shipped features and broken promises, and they are right often enough to function as the ecosystem's distributed early-warning system.
+The public is everyone who writes C++ and cannot vote. The framework models it as roughly sixteen million working developers with a politically engaged core in the tens of thousands, reading trip reports, forums, and conference talks. Its pattern recognition is earned: The templates it applies encode a decade of shipped features and broken promises, and they are right often enough to function as the ecosystem's distributed early-warning system.
 
 The framework holds that the public slots every communication into a pre-existing template before evaluating substance, that process papers draw little engagement unless they confirm an existing template, and that the one-sentence compression of a paper is what survives in collective memory. The framework expects P4263R0 to be received as confirmation of grievances already held rather than as novel analysis.
 
@@ -96,7 +96,7 @@ Each subsection states one claim from P4263R0 and the columns for each cohort th
 
 ### 4.1. The Thin Record
 
-P4263R0 Section 3 asserts that the published evidence behind the networking claim in `std::execution` is empty: the unification of executors rests on one hypothetical code snippet, and the cells pairing twenty years of asynchronous claims with networking evidence are blank.
+P4263R0 Section 3 asserts that the published evidence behind the networking claim in `std::execution` is empty: The unification of executors rests on one hypothetical code snippet, and the cells pairing twenty years of asynchronous claims with networking evidence are blank.
 
 **Appointees - expected:** Procedural challenge ("this is relitigating settled decisions") or silence. The missing evidence is not produced. No specific factual error is identified.
 
@@ -120,7 +120,7 @@ P4263R0 Section 4 asserts that papers compete in a zero-sum tournament whose dom
 
 ### 4.3. The Chosen Game
 
-P4263R0 Section 5 asserts that the tournament structure is self-authored: the ISO/IEC Directives impose nothing at the working group's interior, so the structure is a local construction, renewable and changeable by local authority with no ISO process.
+P4263R0 Section 5 asserts that the tournament structure is self-authored: The ISO/IEC Directives impose nothing at the working group's interior, so the structure is a local construction, renewable and changeable by local authority with no ISO process.
 
 **Appointees - expected:** Silence on the Directives analysis specifically. Redirection to practical constraints. The structure described as documentation of long-standing practice.
 
@@ -152,13 +152,13 @@ P4263R0 Section 7 asserts, borrowing the vocabulary of Samo Burja's [Great Found
 
 **Appointees - disconfirmer:** Any officer publicly engages the question of whether the ceremonies still serve their generating principles. The engagement is the disconfirmer regardless of the conclusion reached.
 
-**The public - expected:** The strongest template available: the committee is fundamentally broken. Reception splits by career stage, with early-career readers validated and established readers threatened.
+**The public - expected:** The strongest template available: The committee is fundamentally broken. Reception splits by career stage, with early-career readers validated and established readers threatened.
 
 **The public - disconfirmer:** The dead-player frame is evaluated as a model rather than adopted as a verdict or dismissed as an insult.
 
 ### 4.6. Ask For Nothing As Strategy
 
-P4263R0 Section 9 asserts that information-only papers that ask for nothing are the one move the tournament cannot process: they request nothing that can be denied, compete for nothing that can be lost, and sit in the permanent record either way.
+P4263R0 Section 9 asserts that information-only papers that ask for nothing are the one move the tournament cannot process: They request nothing that can be denied, compete for nothing that can be lost, and sit in the permanent record either way.
 
 **Appointees - expected:** The strategy disclosure is cited as evidence of adversarial intent - a campaign, not scholarship - and discussion centers on the author rather than the claims.
 
@@ -204,16 +204,16 @@ P4263R0 Section 13 states four conditions under which its corpus would stop bein
 
 ## 5. Rhetorical Approaches
 
-A political assertion dressed as a claim is a sentence with the surface grammar of an evaluation - truth conditions, checkable content - whose working function is positional: it defends standing, shifts burden, or converts substance into procedure. "It works today" sounds like evidence and functions as burden-shift. "Not a single person I have spoken with agrees" sounds like data and is unverifiable by construction, because the conversations are private. The framework catalogs these grammars as named verbal moves. Each move has a trigger, a sentence-level structure, and a function the surface conceals.
+A political assertion dressed as a claim is a sentence with the surface grammar of an evaluation - truth conditions, checkable content - whose working function is positional: It defends standing, shifts burden, or converts substance into procedure. "It works today" sounds like evidence and functions as burden-shift. "Not a single person I have spoken with agrees" sounds like data and is unverifiable by construction, because the conversations are private. The framework catalogs these grammars as named verbal moves. Each move has a trigger, a sentence-level structure, and a function the surface conceals.
 
-The catalog below is extracted from the public communications record of senior committee members: eighteen years of trip reports, recorded conference sessions, community question-and-answer sessions, and blog posts. It is presented as a structural model of senior-member rhetoric. The expectation is conditional: if a senior member responds publicly to a claim, the framework expects the response to instantiate the paired move. Silence is measured by the headline binary and Claim 4, never by this catalog.
+The catalog below is extracted from the public communications record of senior committee members: eighteen years of trip reports, recorded conference sessions, community question-and-answer sessions, and blog posts. It is presented as a structural model of senior-member rhetoric. The expectation is conditional: If a senior member responds publicly to a claim, the framework expects the response to instantiate the paired move. Silence is measured by the headline binary and Claim 4, never by this catalog.
 
 Every utterance below is synthetic - expected speech, modeled on the documented register. The utterances retain contractions because they depict speech.
 
 **praise-then-pivot** - [genuine compliment] + ["at the same time"] + [criterion shift onto ground where the speaker's position wins]. Target: Claim 6.
 
 - "Vinnie is one of the most productive library authors this community has - nobody doubts the work ethic. At the same time, it's really important to talk about what moves the committee forward, and that's proposals the room can act on."
-- "There's real energy in these papers and real research behind them. And the question that matters is adoptability and impact: what here can a working group actually use?"
+- "There's real energy in these papers and real research behind them. And the question that matters is adoptability and impact: What here can a working group actually use?"
 
 **concession-reframe** - [quote the concern precisely] + [validate it] + [show it does not change the conclusion]. Target: Claim 8.
 
@@ -228,7 +228,7 @@ Every utterance below is synthetic - expected speech, modeled on the documented 
 **disclaimer-then-claim** - [perfunctory hedge, weight inversely proportional to the claim] + [substantive intervention]. Target: Claim 5.
 
 - "It's not really my place to respond to this - I'm just one retired chair - but the institution described in this paper is not one I recognize, and I was in the room for twenty years."
-- "I don't usually engage with process meta-commentary, and this isn't the most important thing, but: a committee that ships on schedule for fifteen years is performing its function."
+- "I don't usually engage with process meta-commentary, and this isn't the most important thing, but: A committee that ships on schedule for fifteen years is performing its function."
 
 **number-anchored-thesis** - [declarative thesis anchored to a specific number] + [trailing hedge]. Target: Claim 5.
 
@@ -237,7 +237,7 @@ Every utterance below is synthetic - expected speech, modeled on the documented 
 
 **tripartite-scaffold** - [historical precedent with timeline] + [labeled alternatives, one obviously superior] + [shipped artifact]. Target: Claim 7.
 
-- "We've been here before: the Networking TS spent a decade in flight and never converged. For C++29 there are three paths: a second async model that fragments the ecosystem, no networking again, or networking on the model we already shipped - which runs in production today."
+- "We've been here before: The Networking TS spent a decade in flight and never converged. For C++29 there are three paths: a second async model that fragments the ecosystem, no networking again, or networking on the model we already shipped - which runs in production today."
 - "Python took twelve years to recover from a compatibility break. Our choices: two competing async foundations in one standard, another decade of nothing, or building on std::execution, which works today."
 
 **demand-concrete-alternative** - [acknowledge the critique] + [require a proposal before discussion]. Target: Claim 2.
@@ -253,7 +253,7 @@ Every utterance below is synthetic - expected speech, modeled on the documented 
 **pragmatic-close** - [specific next action, never a summary] + [register shift to personal]. Target: Claim 8.
 
 - "Would it be possible for the author to bring the evidence-bar idea as a concrete proposal to the next telecon? I'd love to see it polled properly. Let's dig in."
-- "I think the right next step is simple: pick the one condition that matters most, write the two-page paper, and let the room decide. Does that help?"
+- "I think the right next step is simple: Pick the one condition that matters most, write the two-page paper, and let the room decide. Does that help?"
 - Function: converts conditions into committee homework, routing them back into the tournament whose rules the conditions decline to play by.
 
 **bikeshed-shutdown** - [reframe the discussion as time cost] + [user-trust appeal]. Target: Claim 6.
@@ -265,13 +265,13 @@ Every utterance below is synthetic - expected speech, modeled on the documented 
 
 - "These retrospectives don't read like engineering papers; they read like legal briefs. That's not how this community communicates."
 - "I skimmed a few. The tone is prosecutorial and the framing is conspiratorial. I didn't find them a productive use of my time."
-- Signature: no specific factual error appears in either utterance. The absence is the diagnostic.
+- Signature: No specific factual error appears in either utterance. The absence is the diagnostic.
 
 **consensus-manufacture** - [unverifiable collective attribution]. Target: Claim 4.
 
 - "I've spoken with a lot of members about this, and not a single person reads those events the way the paper does."
 - "The only discussion among the chairs has been concern for the author, not hostility. Everyone wants the same thing here."
-- Function: the claimed consensus can be neither verified nor refuted, because the conversations are private and the minutes are sealed.
+- Function: The claimed consensus can be neither verified nor refuted, because the conversations are private and the minutes are sealed.
 
 **sheep-dipping** - [private channel] + [warmth and concern for the target's reputation] + [directive whose outcome serves the speaker]. Target: Claim 4.
 
@@ -287,7 +287,7 @@ Every utterance below is synthetic - expected speech, modeled on the documented 
 
 - "No. That's not how consensus works here." Then, after the author softens: "This version is much better. Happy to walk you through how to get networking onto the schedule."
 - "Now that the papers are focused, let me introduce you to the people who can actually move this. You've earned the room's attention back."
-- Signature: the teaching is the reward for submission. It arrives after compliance, and arrives nowhere else.
+- Signature: The teaching is the reward for submission. It arrives after compliance, and arrives nowhere else.
 
 **dismissal-with-humor** - [joke that reframes the claim as ammunition for an out-group]. Target: Claim 5.
 
@@ -303,7 +303,7 @@ Every utterance below is synthetic - expected speech, modeled on the documented 
 
 - "This thread is exactly what people parody when they talk about 'design by committee.'"
 - "We are becoming the story. A standards body that spends its energy on meta-debate is not one our users can take seriously."
-- Signature: the shift from technical register to institutional embarrassment marks the point where the speaker has stopped arguing and started managing.
+- Signature: The shift from technical register to institutional embarrassment marks the point where the speaker has stopped arguing and started managing.
 
 ---
 
@@ -311,7 +311,7 @@ Every utterance below is synthetic - expected speech, modeled on the documented 
 
 This paper claims exactly three things.
 
-1. Each binary is exhaustive: one branch must occur.
+1. Each binary is exhaustive: One branch must occur.
 2. Each branch is observable in public venues.
 3. The framework that generates the expected column is disclosed above.
 
@@ -321,11 +321,11 @@ Everything else belongs to the reader: the framework's correctness, the meaning 
 
 ## 7. Reading the Instrument
 
-**Exhaustiveness.** Each binary in this paper is exhaustive: exactly one branch will occur. The paper is therefore unfalsifiable by construction, and says so here. An instrument is not a hypothesis. It does not bet; it partitions.
+**Exhaustiveness.** Each binary in this paper is exhaustive: Exactly one branch will occur. The paper is therefore unfalsifiable by construction, and says so here. An instrument is not a hypothesis. It does not bet; it partitions.
 
 **Observability.** Every branch is defined against public venues: mailing papers, trip reports, conference talks, public forums, published meeting records. Sealed venues - the reflectors, wikis, and minutes that may not be quoted publicly under [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)<sup>[3]</sup> - sit outside every binary. Every branch can be read without quoting sealed material.
 
-**Hierarchy.** Silence is measured by the headline binary and by Claim 4. Public speech is measured by the claim binaries and by the move catalog: a response either instantiates the paired move or it does not. Silence, response-with-move, and response-without-move cover the outcome space.
+**Hierarchy.** Silence is measured by the headline binary and by Claim 4. Public speech is measured by the claim binaries and by the move catalog: A response either instantiates the paired move or it does not. Silence, response-with-move, and response-without-move cover the outcome space.
 
 **No scorekeeper.** The public record and the tables below are sufficient for any reader at any time.
 

@@ -22,8 +22,8 @@ C++20 coroutines allocate their frame in `promise_type::operator new`, which the
 ### R0: May 2026 (pre-Brno mailing)
 
 - Initial version.
-- Clarified scope: the timing problem applies to child coroutines, not to leaf I/O awaitables (Section 2). Thanks to Michael Hava for identifying the gap.
-- Added hybrid option: both paths coexist in a single promise type via `operator new` overload resolution (Section 8).
+- Clarified scope: The timing problem applies to child coroutines, not to leaf I/O awaitables (Section 2). Thanks to Michael Hava for identifying the gap.
+- Added hybrid option: Both paths coexist in a single promise type via `operator new` overload resolution (Section 8).
 - Added structured analysis of TLS concerns: platforms, performance, action at a distance, silent failure, precedent, and categorical rejection (Section 9).
 
 ---
@@ -73,7 +73,7 @@ co_await t;                   // too late
 
 `promise_type::operator new` receives the frame size and the coroutine's own parameters. It executes before the coroutine body, before `initial_suspend`, before any user code inside the coroutine runs. The frame allocator must be available at this point. Any mechanism that delivers context later - after the call expression returns, after `co_await` begins, after the coroutine body starts - cannot influence frame allocation.
 
-The question is: what mechanisms can deliver a runtime value to `promise_type::operator new`?
+The question is: What mechanisms can deliver a runtime value to `promise_type::operator new`?
 
 ---
 
@@ -443,7 +443,7 @@ Two cases deserve specific attention:
 
 The `<memory_resource>` header is hosted-only<sup>[5]</sup>. Freestanding implementations are not required to provide it. Platforms without TLS are overwhelmingly freestanding. The intersection of "has `<memory_resource>`" and "lacks `thread_local`" is empty across every platform surveyed.
 
-The hybrid (Section 8) addresses the theoretical case: the `allocator_arg_t` overload is always available. On any hypothetical platform without TLS, the Path B overload falls back to `std::pmr::new_delete_resource()` - the same behavior as not customizing the frame allocator at all. But no such platform has been identified that also provides the hosted standard library features needed to make frame allocator customization meaningful.
+The hybrid (Section 8) addresses the theoretical case: The `allocator_arg_t` overload is always available. On any hypothetical platform without TLS, the Path B overload falls back to `std::pmr::new_delete_resource()` - the same behavior as not customizing the frame allocator at all. But no such platform has been identified that also provides the hosted standard library features needed to make frame allocator customization meaningful.
 
 ### 9.2 Performance
 
@@ -506,7 +506,7 @@ TLS for the frame allocator does not generalize because the constraint does not 
 
 ### 9.6 Categorical Rejection
 
-Some hold that thread-local storage is categorically inappropriate for standard library mechanisms, regardless of the specific use case. This is a legitimate position. The hybrid (Section 8) provides the answer: users who hold this position use `allocator_arg_t` exclusively. The thread-local is never read. `std::pmr::get_default_resource()` provides a process-wide allocator channel through similar ambient state, adopted in C++17.
+Some hold that thread-local storage is categorically inappropriate for standard library mechanisms, regardless of the specific use case. This is a legitimate position. The hybrid (Section 8) provides the answer: Users who hold this position use `allocator_arg_t` exclusively. The thread-local is never read. `std::pmr::get_default_resource()` provides a process-wide allocator channel through similar ambient state, adopted in C++17.
 
 ---
 

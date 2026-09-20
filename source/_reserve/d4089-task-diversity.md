@@ -13,7 +13,7 @@ reply-to:
 
 The Environment parameter in `std::execution::task` makes cross-library coroutine interoperability structurally impossible without knowing every query by name.
 
-`std::execution::task<T, Environment>` ([P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[1]</sup>, "Add a Coroutine Task Type") was approved as the lingua franca for coroutine-based asynchronous code. The `Environment` parameter is an open query-response protocol whose interoperability surface is defined by a single concept: `queryable`, which is `destructible`. This paper asks a simple question: when two libraries define different environments, how does one task `co_await` the other? The answer, traced step by step through the specification, is that no general conversion exists. The query set is open by design, and the only adaptation mechanism - `write_env` - requires the caller to know every missing query by name. The risk to the ecosystem is structural, documented by the specification itself, by NVIDIA's reference implementation, by the only production precedent (Boost.Asio), and by `task`'s own author.
+`std::execution::task<T, Environment>` ([P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[1]</sup>, "Add a Coroutine Task Type") was approved as the lingua franca for coroutine-based asynchronous code. The `Environment` parameter is an open query-response protocol whose interoperability surface is defined by a single concept: `queryable`, which is `destructible`. This paper asks a simple question: When two libraries define different environments, how does one task `co_await` the other? The answer, traced step by step through the specification, is that no general conversion exists. The query set is open by design, and the only adaptation mechanism - `write_env` - requires the caller to know every missing query by name. The risk to the ecosystem is structural, documented by the specification itself, by NVIDIA's reference implementation, by the only production precedent (Boost.Asio), and by `task`'s own author.
 
 ---
 
@@ -288,7 +288,7 @@ Gor Nishanov designed the coroutine mechanism with an explicit layering model. [
 | Expert (1,000)             | Defines new coroutine types                                                                           |
 | Cream of the crop (200)    | Defines metafunctions, adapters, and composition utilities for coroutines                             |
 
-The middle tier is the one that matters. Power users customize the *environment* by defining new *awaitables* - not by changing the coroutine type. The coroutine type stays fixed; the awaitable carries the domain-specific protocol. The `Environment` parameter inverts this layering: it puts environment customization in the coroutine type itself, forcing a new type for each domain. What Nishanov assigned to the awaitable tier, `task<T, Environment>` moves into the expert tier and exposes in the return type.
+The middle tier is the one that matters. Power users customize the *environment* by defining new *awaitables* - not by changing the coroutine type. The coroutine type stays fixed; the awaitable carries the domain-specific protocol. The `Environment` parameter inverts this layering: It puts environment customization in the coroutine type itself, forcing a new type for each domain. What Nishanov assigned to the awaitable tier, `task<T, Environment>` moves into the expert tier and exposes in the return type.
 
 Nishanov reinforced the principle in [P0975R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0975r0.html)<sup>[9]</sup>:
 
@@ -351,7 +351,7 @@ Domain-specific task types interoperate through the C++20 awaitable protocol. Th
 
 ## 9. Concepts Mitigate the Risk
 
-The fix is a general pattern: define a concept that constrains awaitables, not task types. The promise remains the extension point. The return type stays clean.
+The fix is a general pattern: Define a concept that constrains awaitables, not task types. The promise remains the extension point. The return type stays clean.
 
 `IoAwaitable` ([P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[12]</sup>) is one realization:
 
@@ -387,7 +387,7 @@ Concept-level incompatibility still exists. A promise that does not provide `awa
 
 **Q1: Nicol Bolas is not normative.** Bolas is explaining the rationale, not writing the standard. The normative backing is Nishanov's [P0975R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0975r0.html)<sup>[9]</sup> ("open and not tied to any particular runtime") and [P1362R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1362r0.pdf)<sup>[8]</sup> (layered complexity model), both published WG21 papers. Even setting aside design-intent sources, the empirical evidence in Section 8 - seven independent libraries converging on one-parameter designs - shows that the ecosystem treats the principle as operative.
 
-**Q2: `IoAwaitable` is the author's own design.** `IoAwaitable` is one realization of the principle. The cross_await bridges (Section 8, Klemens Morgenstern, independent author) and Google's `Co<T>` both use the same principle without `IoAwaitable`. The principle is: domain-specific invariants belong in the promise, not in the return type.
+**Q2: `IoAwaitable` is the author's own design.** `IoAwaitable` is one realization of the principle. The cross_await bridges (Section 8, Klemens Morgenstern, independent author) and Google's `Co<T>` both use the same principle without `IoAwaitable`. The principle is: Domain-specific invariants belong in the promise, not in the return type.
 
 **Q3: The Environment parameter serves a real need.** Agreed. The Environment creates a structural risk to task type diversity. The question is whether the risk is worth accepting for domains outside the sender model.
 

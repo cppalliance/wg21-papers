@@ -47,7 +47,7 @@ The committee polled twice on whether a single async model should govern the ent
 
 C++29 is the target. The Network Endeavor ([P4100R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r0.pdf)<sup>[1]</sup>) defines the work: eleven papers backed by two shipping libraries - Capy and Corosio - with independent adopters at various stages: one experimental port completed (Redis), one v2 planned (MySQL), one building on Corosio from day one (Postgres). The companion papers document the technical foundations: coroutine properties ([P4088R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4088r0.pdf)<sup>[4]</sup>), domain separation ([P4099R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4099r0.pdf)<sup>[5]</sup>), and sender-coroutine bridges ([P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[6]</sup>, [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[7]</sup>).
 
-The work is defined. What remains is the question every large institution eventually faces: can we organize ourselves to deliver?
+The work is defined. What remains is the question every large institution eventually faces: Can we organize ourselves to deliver?
 
 This paper is the Network Endeavor's organizational proposal. It is authored by the endeavor's architects. The pipeline, the teams, and the workflow are our design. The invitation to the `std::execution` architects and to the broader committee is genuine - the endeavor cannot succeed without their expertise, and their requirements must be addressed. But this is our proposal, not a jointly authored plan. We are asking the committee to let us do the work, with every stakeholder's requirements visible, documented, and addressed at every stage.
 
@@ -65,7 +65,7 @@ Domain specialization is not fragmentation. C++ has multiple container types, mu
 
 ### 3.2 Interoperability Commitment
 
-Both models must interoperate. Coroutine-native code must be able to consume senders. Sender-based code must be able to consume awaitables. The bridge papers ([P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[6]</sup>, [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[7]</sup>) have explored the mechanisms. The cost is acknowledged by both sides: the coroutine side accepts that interop is a hard requirement; the sender side accepts that coroutine-native I/O makes different trade-offs - frame allocation, type erasure, ABI stability - that serve networking's specific needs.
+Both models must interoperate. Coroutine-native code must be able to consume senders. Sender-based code must be able to consume awaitables. The bridge papers ([P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[6]</sup>, [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[7]</sup>) have explored the mechanisms. The cost is acknowledged by both sides: The coroutine side accepts that interop is a hard requirement; the sender side accepts that coroutine-native I/O makes different trade-offs - frame allocation, type erasure, ABI stability - that serve networking's specific needs.
 
 ### 3.3 Architectural Coherence
 
@@ -77,7 +77,7 @@ This endeavor maintains structural safeguards to prevent that pattern from recur
 
 ## 4. A New Way of Working
 
-The committee's traditional workflow is meeting-centric: papers are published in mailings, discussed at plenary meetings three times a year, and revised between meetings by their authors. For a single paper, this works. For an eleven-paper series with cross-cutting dependencies, it is too slow.
+The committee's traditional workflow is meeting-centric: Papers are published in mailings, discussed at plenary meetings three times a year, and revised between meetings by their authors. For a single paper, this works. For an eleven-paper series with cross-cutting dependencies, it is too slow.
 
 This paper proposes a continuous workflow that operates between meetings and delivers visible progress at every stage.
 
@@ -157,7 +157,7 @@ The Networking TS lost its architectural coherence through successive compromise
 
 Ensures every artifact produced by the pipeline has a clean bridge to `std::execution`. Reviews the spec, the standard shape, and the wording at every stage. Guarantees that coroutine-native awaitables can be consumed from sender-based code and vice versa. Documents the bridge cost at each boundary.
 
-The reciprocal commitment: the pipeline teams accept that interoperability with `std::execution` is a hard requirement and design for it. The Compatibility Team accepts that coroutine-native I/O makes different trade-offs and does not require that networking adopt sender semantics internally. Both sides acknowledge the cost. Both sides get a voice.
+The reciprocal commitment: The pipeline teams accept that interoperability with `std::execution` is a hard requirement and design for it. The Compatibility Team accepts that coroutine-native I/O makes different trade-offs and does not require that networking adopt sender semantics internally. Both sides acknowledge the cost. Both sides get a voice.
 
 ### 5.7 Continuous Production
 

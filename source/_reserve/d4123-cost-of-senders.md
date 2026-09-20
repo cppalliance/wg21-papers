@@ -155,7 +155,7 @@ Then `state::start` ([task.state] paragraph 4) must:
 4. Initialize `SCHED(prom)` with `scheduler_type(get_scheduler(get_env(rcvr)))` - extract the scheduler from the receiver's environment.
 5. Call `handle.resume()`.
 
-These costs are normative. The as-if rule permits an implementation to elide observable operations when the program cannot detect the difference. For the sender protocol costs identified here, the as-if rule does not help: the scheduler extraction calls `get_scheduler(get_env(rcvr))`, which traverses a type-erased environment in separately compiled code. The compiler cannot see through the type erasure boundary to prove the result is unchanged. The `state<Rcvr>` constructor stores the receiver and constructs `own-env` from it - these are not dead stores because the child promise reads them.
+These costs are normative. The as-if rule permits an implementation to elide observable operations when the program cannot detect the difference. For the sender protocol costs identified here, the as-if rule does not help: The scheduler extraction calls `get_scheduler(get_env(rcvr))`, which traverses a type-erased environment in separately compiled code. The compiler cannot see through the type erasure boundary to prove the result is unchanged. The `state<Rcvr>` constructor stores the receiver and constructs `own-env` from it - these are not dead stores because the child promise reads them.
 
 The analysis that follows compares Capy's `task<T>` against the best possible conforming `task<T, IoEnv>`. All implementation-quality costs beyond the spec - virtual dispatch, scheduler comparison on resume, reschedule cycles - are granted as concessions (Section 2).
 
@@ -325,7 +325,7 @@ if (result.ec)
         .stop_source_.request_stop();
 ```
 
-No channel routing. No adapter. No extra allocations. The combinator inspects the value, not the channel tag. The sender model can achieve the same cancellation through the fourth routing, but at the cost of corrupting the error type and requiring per-call-site adaptation. The "write it once" argument inverts: one generic `when_all` plus N adapters is more total code than two implementations (one generic, one I/O-aware) plus zero adapters.
+No channel routing. No adapter. No extra allocations. The combinator inspects the value, not the channel tag. The sender model can achieve the same cancellation through the fourth routing, but at the cost of corrupting the error type and requiring per-call-site adaptation. The "write it once" argument inverts: One generic `when_all` plus N adapters is more total code than two implementations (one generic, one I/O-aware) plus zero adapters.
 
 ### 5.6 `io_env` Indirection
 
@@ -357,7 +357,7 @@ The coroutine-native path for the same I/O operation:
 
 Three properties of Case B deserve attention.
 
-**No separate allocation.** The `state<awaitable-receiver>` is a local variable inside `sender-awaitable`, which lives on the coroutine frame. No heap allocation occurs. This is the steelman: the "no dynamic memory allocation" property of the sender model holds for I/O operations co_awaited inside a coroutine. The cost is CPU overhead per I/O operation - `state<Rcvr>` construction, environment extraction, `affine` wrapping - not allocation.
+**No separate allocation.** The `state<awaitable-receiver>` is a local variable inside `sender-awaitable`, which lives on the coroutine frame. No heap allocation occurs. This is the steelman: The "no dynamic memory allocation" property of the sender model holds for I/O operations co_awaited inside a coroutine. The cost is CPU overhead per I/O operation - `state<Rcvr>` construction, environment extraction, `affine` wrapping - not allocation.
 
 The coroutine frame itself is already allocated. The sender machinery adds CPU overhead on top of the same allocation profile. The "no allocation" benefit does not materialize for the I/O user because the coroutine frame provides the storage regardless of whether the I/O operation is a sender or an awaitable.
 

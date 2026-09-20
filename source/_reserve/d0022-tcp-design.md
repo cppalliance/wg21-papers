@@ -254,7 +254,7 @@ The three layers share a single inheritance chain. A `native_tcp_socket<Backend>
 
 ## 8. Convergence
 
-Six independently designed ecosystems provide the same TCP vocabulary. The shapes converge because the problem is the same: wrap a file descriptor (or HANDLE), associate it with an address, read bytes, write bytes.
+Six independently designed ecosystems provide the same TCP vocabulary. The shapes converge because the problem is the same: Wrap a file descriptor (or HANDLE), associate it with an address, read bytes, write bytes.
 
 | Ecosystem | Socket type | Acceptor/Listener | Address types |
 |-----------|-------------|-------------------|---------------|

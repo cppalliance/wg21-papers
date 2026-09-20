@@ -12,7 +12,7 @@ reply-to:
 
 Every language has a TLS wrapper except C++.
 
-Go has `crypto/tls` since 2012. Rust has `rustls` and `native-tls`. Python has `ssl` since 2004. .NET has `SslStream` since 2005. Java has `SSLSocket` since 1999. Each wraps TLS the same way: a configuration object holds certificates and policy, an encrypted stream wraps a transport. The shape has been stable since SSLv3 in 1996. Thirty years of convergence across seven ecosystems produced the same two-object design every time.
+Go has `crypto/tls` since 2012. Rust has `rustls` and `native-tls`. Python has `ssl` since 2004. .NET has `SslStream` since 2005. Java has `SSLSocket` since 1999. Each wraps TLS the same way: A configuration object holds certificates and policy, an encrypted stream wraps a transport. The shape has been stable since SSLv3 in 1996. Thirty years of convergence across seven ecosystems produced the same two-object design every time.
 
 This paper documents the design rationale for `tls_context` and `tls_stream` as proposed in the companion ask paper *TLS*<sup>[1]</sup>. The configuration object is `tls_context`. The encrypted stream is `tls_stream`. The cryptographic engine is implementation-defined. The interface is portable. This paper is Paper 14 in the series defined by [P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf)<sup>[2]</sup>. It depends on Paper 1 (the IoAwaitable Protocol, [P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[3]</sup> and [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[4]</sup>) and Paper 6 (Stream Concepts, D0011/D0012). Stage Two paper. Final paper in the series.
 
@@ -55,7 +55,7 @@ Every row but the last has a TLS wrapper in its standard library or de facto sta
 
 C++ developers drop to OpenSSL, WolfSSL, BoringSSL, SChannel, or Secure Transport directly. Each has a different API. Each has different memory management conventions. Each has different error reporting. A portable C++ program that needs TLS must either depend on a third-party wrapper (Asio SSL, Poco NetSSL, Qt SSL) or maintain engine-specific code paths.
 
-The standard library can eliminate that fragmentation the same way `std::filesystem` eliminated path-manipulation fragmentation: specify the interface, let the implementation provide the platform integration.
+The standard library can eliminate that fragmentation the same way `std::filesystem` eliminated path-manipulation fragmentation: Specify the interface, let the implementation provide the platform integration.
 
 ### 2.2 Every Server Needs TLS
 
@@ -84,13 +84,13 @@ Every TLS wrapper, in every language, in every era, consists of two objects:
 1. **A configuration object** that holds certificates, keys, trust anchors, protocol version constraints, and verification policy. Created once. Shared across connections. Thread-safe for reads.
 2. **An encrypted stream** that wraps a transport and performs the handshake, encryption, and decryption. One per connection. Not thread-safe. Owned by the coroutine or thread that drives the connection.
 
-This is not a design choice. It is a convergence result. The two objects exist because TLS has two concerns that have different lifetimes: configuration outlives any single connection; the encrypted channel dies with the connection.
+This is not a design choice. It is a convergence result. The two objects exist because TLS has two concerns that have different lifetimes: Configuration outlives any single connection; the encrypted channel dies with the connection.
 
 ### 3.2 Stable Since SSLv3
 
 The SSLv3 specification (1996)<sup>[9]</sup> established the handshake, record, and alert protocols. Every subsequent version - TLS 1.0, 1.1, 1.2, 1.3 - changed the cryptographic details inside those protocols. None changed the wrapper API. `handshake`, `read`, `write`, `shutdown` have been the four operations since the beginning. The configuration object grew new options (ALPN in TLS 1.2 extensions, 0-RTT in TLS 1.3), but the shape - set certificates, set trust, set policy, create context, pass to stream - has not changed.
 
-Thirty years of stability in a security protocol's wrapper API is not an accident. It reflects the fundamental decomposition: the wrapper is a byte transformer. Bytes go in encrypted, come out decrypted. The transformer's interface is trivial. The transformer's internals are not.
+Thirty years of stability in a security protocol's wrapper API is not an accident. It reflects the fundamental decomposition: The wrapper is a byte transformer. Bytes go in encrypted, come out decrypted. The transformer's interface is trivial. The transformer's internals are not.
 
 ### 3.3 Asio's Two Decades
 

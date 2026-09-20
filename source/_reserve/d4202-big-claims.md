@@ -84,7 +84,7 @@ Seven failure modes enabled the pattern.
 
 **Process Momentum replaces technical review.** After years of design review, voting against the framework felt like wasting the committee's investment. The feature had momentum. Momentum is not merit. But in a consensus process, they are difficult to distinguish.
 
-**Scope Creepage.** Once a framework is in the standard for one domain, claiming the next domain becomes easier - "we are already in the standard" is a powerful argument regardless of whether the framework fits the new domain. The scope claim ratchets: it expands but never contracts. No committee mechanism requires that a framework's scope be re-evaluated as it advances.
+**Scope Creepage.** Once a framework is in the standard for one domain, claiming the next domain becomes easier - "we are already in the standard" is a powerful argument regardless of whether the framework fits the new domain. The scope claim ratchets: It expands but never contracts. No committee mechanism requires that a framework's scope be re-evaluated as it advances.
 
 **Employer concentration distorts room composition.** When a single employer's engineers constitute a significant fraction of a study group's attendance, the employer's priorities can dominate direction polls and design reviews. This is not malicious. Engineers naturally advocate for the designs their employer uses and funds. But the effect is that room composition reflects employer interest rather than domain expertise.
 
@@ -118,7 +118,7 @@ Five process changes would have surfaced the case study's problems years before 
 
 **Domain Veto.** When a feature claims applicability to a domain, the relevant domain study group must poll on the claim before the feature advances. A failed poll in the domain study group does not block the feature in its core domain. It removes the scope claim for the contested domain. The feature ships for what it can demonstrate. It does not ship for what it merely claims.
 
-**The Adoption Ladder.** For proposals above a complexity threshold, evidence must demonstrate layered adoption: the authors built it, independent developers used it, independent libraries were built on top of it, independent applications were built on those libraries, and real users - not employees of the proposing organization - shipped production code. Large proposals should also be decomposed into independently reviewable units so that review is verification, not Review by Reputation.
+**The Adoption Ladder.** For proposals above a complexity threshold, evidence must demonstrate layered adoption: The authors built it, independent developers used it, independent libraries were built on top of it, independent applications were built on those libraries, and real users - not employees of the proposing organization - shipped production code. Large proposals should also be decomposed into independently reviewable units so that review is verification, not Review by Reputation.
 
 ---
 

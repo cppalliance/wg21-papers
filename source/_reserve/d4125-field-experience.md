@@ -11,7 +11,7 @@ reply-to:
 
 ## Abstract
 
-A derivatives exchange is porting from Asio callbacks to coroutine-native I/O. Early results: it works.
+A derivatives exchange is porting from Asio callbacks to coroutine-native I/O. Early results: It works.
 
 The paper reports qualitative findings from three structured interviews with the engineering team and early quantitative results from the integration partner's matching facility benchmark suite. The qualitative findings were reported in R0; this revision adds scenario-based latency and throughput comparisons between Corosio and Asio. The results are preliminary - the integration covers a subset of the platform and full production deployment has not occurred - but the field evidence is reported here for the committee's consideration.
 
@@ -255,7 +255,7 @@ The comparative data for all scenarios is presented in Section 7.6.
 
 ### 7.5 Scenario Descriptions
 
-The scenarios are scoped to the Matching Facility component of the system. In a typical deployment, Order Entry Gateways fan messages into the Matching Facility, which publishes derived messages to Market Data Distributors for dissemination to participants. The Matching Facility is the most complex part of the stack: one inbound message may result in many outbound messages.
+The scenarios are scoped to the Matching Facility component of the system. In a typical deployment, Order Entry Gateways fan messages into the Matching Facility, which publishes derived messages to Market Data Distributors for dissemination to participants. The Matching Facility is the most complex part of the stack: One inbound message may result in many outbound messages.
 
 Each scenario was executed with both an empty order book and a pre-filled order book so that the impact of book state can be assessed. The results are intended solely to determine whether the change from Asio to Corosio is viable. The partner notes that there are many further tests that could drill into why differences exist, how impactful they are, and whether they are blockers.
 

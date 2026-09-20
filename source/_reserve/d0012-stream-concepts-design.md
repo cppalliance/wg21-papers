@@ -12,7 +12,7 @@ reply-to:
 
 Every C++ project that does I/O invents its own stream abstraction.
 
-Six other ecosystems do not. Each provides a vocabulary for the same pair of operations: read bytes from a transport, write bytes to a transport. BSD gave them to us in 1983. POSIX standardised `readv`/`writev`. Asio shipped `async_read_some`/`async_write_some`. Go has `io.Reader`/`io.Writer`. Rust has `AsyncRead`/`AsyncWrite`. .NET has `Stream.ReadAsync`/`Stream.WriteAsync`. The C++ standard has none of them. This paper documents the stream concepts that ship in [Capy](https://github.com/cppalliance/capy)<sup>[1]</sup> today - the coroutine-native successors to the [Networking TS](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4771.pdf)<sup>[2]</sup> stream requirements - and the type-erasing wrappers that give C++ ABI-stable I/O for the first time.
+Six other ecosystems do not. Each provides a vocabulary for the same pair of operations: Read bytes from a transport, write bytes to a transport. BSD gave them to us in 1983. POSIX standardised `readv`/`writev`. Asio shipped `async_read_some`/`async_write_some`. Go has `io.Reader`/`io.Writer`. Rust has `AsyncRead`/`AsyncWrite`. .NET has `Stream.ReadAsync`/`Stream.WriteAsync`. The C++ standard has none of them. This paper documents the stream concepts that ship in [Capy](https://github.com/cppalliance/capy)<sup>[1]</sup> today - the coroutine-native successors to the [Networking TS](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4771.pdf)<sup>[2]</sup> stream requirements - and the type-erasing wrappers that give C++ ABI-stable I/O for the first time.
 
 This paper is the design-rationale companion to *Stream Concepts*<sup>[21]</sup>, which contains the proposal-only specification and the straw poll. It is part of the series defined by [P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf)<sup>[3]</sup>, in which Stream Concepts is Paper 6. It depends on Paper 1 (IoAwaitable protocol, [P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[4]</sup>), Paper 4 (buffer-ranges concepts, *I/O Buffer Ranges: Design Rationale*<sup>[22]</sup>), and Paper 5 (dynamic-buffer concept, *Dynamic Buffer: Design Rationale*<sup>[23]</sup>).
 
@@ -46,7 +46,7 @@ This paper asks for nothing.
 
 ## 2. Why Streams
 
-The question a stream concept answers is: given a transport, how does generic code read bytes from it and write bytes to it?
+The question a stream concept answers is: Given a transport, how does generic code read bytes from it and write bytes to it?
 
 The question is forty years old. BSD answered it in 1983 with `read()` and `write()`. The shape has not changed since. What has changed is the delivery mechanism - blocking calls became callbacks, callbacks became futures, futures became coroutine awaitables. The two operations at the core are the same.
 
@@ -186,7 +186,7 @@ Coroutine-native type erasure eliminates it. The coroutine frame - which already
 
 ### 4.3 Buffer Sequences Across the Virtual Boundary
 
-A virtual function cannot be a template. `read_some` must accept a concrete type, not a concept. The buffer-ranges vocabulary solves this: the virtual function accepts `mutable_buffer` (a single buffer) or `std::span<mutable_buffer>` (a materialized sequence). The caller-side template captures the user's arbitrary `MutableBufferSequence`, materializes it into a span, and passes the span across the virtual boundary.
+A virtual function cannot be a template. `read_some` must accept a concrete type, not a concept. The buffer-ranges vocabulary solves this: The virtual function accepts `mutable_buffer` (a single buffer) or `std::span<mutable_buffer>` (a materialized sequence). The caller-side template captures the user's arbitrary `MutableBufferSequence`, materializes it into a span, and passes the span across the virtual boundary.
 
 Capy's `buffer_param<BS>` adapter (documented in *I/O Buffer Ranges: Design Rationale*<sup>[22]</sup> Section 5.4) handles the materialization. It slides a fixed-capacity window of buffer descriptors over the user's sequence, passing each window as a span. No heap allocation. The windowing is transparent to both sides of the virtual boundary.
 
@@ -314,7 +314,7 @@ For the user who needs zero overhead, the native layer exists. `native_tcp_socke
 
 ### 8.3 "But Two Families of Concepts Is Too Complex"
 
-Two families exist because two ownership models exist. The caller-owned family (`ReadStream`, `WriteStream`, `Stream`) covers the common case: the application has a buffer and wants bytes in it. The callee-owned family (`BufferSource`, `BufferSink`) covers the zero-copy case: the stream owns the buffer because it must (TLS decryption, decompression, protocol framing).
+Two families exist because two ownership models exist. The caller-owned family (`ReadStream`, `WriteStream`, `Stream`) covers the common case: The application has a buffer and wants bytes in it. The callee-owned family (`BufferSource`, `BufferSink`) covers the zero-copy case: The stream owns the buffer because it must (TLS decryption, decompression, protocol framing).
 
 A single family would either force every stream to own a buffer (wasting memory when the caller already has one) or force every caller to provide a buffer (forcing a copy when the stream already has the data). Two families is the minimum that avoids both wastes.
 

@@ -58,7 +58,7 @@ The committee's voting record raises a question about institutional coherence. T
 
 ### 3.1 The Evolutionary Foundation
 
-Human beings are the only primates whose females outlive their reproductive years by decades. In 2012, a computer simulation at the University of Utah demonstrated why: introducing menopause and grandmothering into a hypothetical primate species model produced evolution toward human-like lifespans over 60,000 years<sup>[10]</sup>. Grandmothers caring for grandchildren enabled mothers to have more offspring at shorter intervals. Extended longevity correlates with extended brain development, enabling the larger brains characteristic of humans<sup>[11]</sup>.
+Human beings are the only primates whose females outlive their reproductive years by decades. In 2012, a computer simulation at the University of Utah demonstrated why: Introducing menopause and grandmothering into a hypothetical primate species model produced evolution toward human-like lifespans over 60,000 years<sup>[10]</sup>. Grandmothers caring for grandchildren enabled mothers to have more offspring at shorter intervals. Extended longevity correlates with extended brain development, enabling the larger brains characteristic of humans<sup>[11]</sup>.
 
 The traits that make civilization possible - longer lifespans, larger brains, pair bonding, cooperative behavior - are downstream of elder care<sup>[10, 11]</sup>. The evolutionary argument is simple. Elder care is not charity. It is the mechanism that produced the species.
 
@@ -120,7 +120,7 @@ Beginning in November 2022, a series of government actions created an external t
 
 Executive Order 14028 remains in force<sup>[25]</sup>. The underlying policy documents remain published. The enforcement mechanism was rescinded in January 2026; the direction was not. A future administration can reinstate or strengthen the mandate overnight.
 
-The committee's deliberative process is designed for careful, considered language evolution. The regulatory threat operates on a political calendar. Without the profiles framework, every future safety response requires a new multi-year standardization effort. With it, the committee has a standing instrument: new safety guarantees can be defined, named, and enforced without further language changes<sup>[2]</sup>.
+The committee's deliberative process is designed for careful, considered language evolution. The regulatory threat operates on a political calendar. Without the profiles framework, every future safety response requires a new multi-year standardization effort. With it, the committee has a standing instrument: New safety guarantees can be defined, named, and enforced without further language changes<sup>[2]</sup>.
 
 The committee has voted for the instrument. The instrument has not been built.
 

@@ -90,7 +90,7 @@ concept ReadStream =
     };
 ```
 
-`read_some` transfers at least one byte and at most `buffer_size(buf)` bytes into the caller's buffer. Completion with zero bytes indicates end-of-stream. The operation is partial: the caller must loop to read a complete message.
+`read_some` transfers at least one byte and at most `buffer_size(buf)` bytes into the caller's buffer. Completion with zero bytes indicates end-of-stream. The operation is partial: The caller must loop to read a complete message.
 
 ```cpp
 std::io::task<std::size_t>
@@ -120,7 +120,7 @@ concept WriteStream =
     };
 ```
 
-`write_some` transfers at least one byte and at most `buffer_size(buf)` bytes from the caller's buffer. The operation is partial: the caller must loop to write a complete message.
+`write_some` transfers at least one byte and at most `buffer_size(buf)` bytes from the caller's buffer. The operation is partial: The caller must loop to write a complete message.
 
 ### 3.3 `Stream`
 
@@ -186,7 +186,7 @@ concept BufferSource =
 
 `pull()` fills the internal buffer from the underlying transport. `data()` returns a read-only view of the buffered bytes. `consume(n)` discards `n` bytes from the front. The caller never allocates a read buffer. The `BufferSource` owns it.
 
-Zero-copy decompression, base64 decoding, and TLS record processing are natural `BufferSource` implementations: the internal buffer holds the decoded output; the caller inspects and consumes without copying.
+Zero-copy decompression, base64 decoding, and TLS record processing are natural `BufferSource` implementations: The internal buffer holds the decoded output; the caller inspects and consumes without copying.
 
 ### 4.4 `BufferSink`
 

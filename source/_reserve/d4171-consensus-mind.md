@@ -10,7 +10,7 @@ reply-to:
 
 ## Abstract
 
-Six academic disciplines independently describe the same phenomenon: consensus bodies change how their members think.
+Six academic disciplines independently describe the same phenomenon: Consensus bodies change how their members think.
 
 Organizational sociology, social psychology, regulatory theory, political science, fisheries ecology, and diplomatic studies each name a force that acts on deliberative institutions. The forces are documented, the mechanisms are published, and the predictions are testable. This paper introduces the six forces, derives one prediction from each, and tests each prediction against WG21's published record. The paper takes no position on whether the observed effects are beneficial, harmful, or neutral. It provides a vocabulary.
 
@@ -82,7 +82,7 @@ This is sometimes called regulatory capture. It operates through participation, 
 
 Michels studied European socialist parties - organizations explicitly committed to democratic governance - and found that they inevitably developed oligarchies. Large organizations require delegation. Delegation creates administrators. Administrators develop specialized knowledge about the organization's procedures. That procedural knowledge becomes a form of power that rank-and-file members cannot easily replicate or challenge. Michels summarized: "Who says organization, says oligarchy."
 
-Pournelle restated the principle for modern bureaucracies: "In any bureaucracy, the people devoted to the benefit of the bureaucracy itself always get in control, and those dedicated to the goals the bureaucracy is supposed to accomplish have less and less influence, and sometimes are eliminated entirely." Pournelle identified the selection mechanism: people skilled at navigating the organization's internal procedures are better at accumulating influence within the organization than people skilled at the organization's stated mission. The institution selects for procedural competence.
+Pournelle restated the principle for modern bureaucracies: "In any bureaucracy, the people devoted to the benefit of the bureaucracy itself always get in control, and those dedicated to the goals the bureaucracy is supposed to accomplish have less and less influence, and sometimes are eliminated entirely." Pournelle identified the selection mechanism: People skilled at navigating the organization's internal procedures are better at accumulating influence within the organization than people skilled at the organization's stated mission. The institution selects for procedural competence.
 
 Neither Michels nor Pournelle characterized the phenomenon as intentional. Both characterized it as structural.
 
@@ -96,7 +96,7 @@ Pauly observed that each generation of fisheries scientists accepts the stock si
 
 The mechanism is perceptual, not political. The scientists are not lying about the stock. They are accurately measuring change relative to the baseline they inherited. The problem is that the baseline itself represents a decline from the previous generation's baseline. Over multiple generations, significant cumulative decline goes unrecognized because no single generation observed it.
 
-Pauly's original domain was fisheries. The concept has since been applied to environmental policy, urban planning, and institutional governance. The mechanism is the same in each domain: participants inherit a reference point and measure change from that reference point rather than from an absolute standard.
+Pauly's original domain was fisheries. The concept has since been applied to environmental policy, urban planning, and institutional governance. The mechanism is the same in each domain: Participants inherit a reference point and measure change from that reference point rather than from an absolute standard.
 
 ### 2.6 Going Native
 
@@ -106,7 +106,7 @@ Pauly's original domain was fisheries. The concept has since been applied to env
 
 Checkel studied members of the Council of Europe's Committee of Experts on Nationality and asked whether their preferences changed as a result of participating in the institution. He found that the quality of social interaction - not merely the duration of contact - determined whether participants adopted institutional perspectives. Deliberation and sustained engagement with peers produced genuine preference change. Casual contact did not.
 
-In diplomatic theory, "going native" describes an ambassador who begins to advocate for the host country's interests rather than their home country's interests. The mechanism is proximity: the ambassador's daily social environment is the host country. Approval and disapproval signals come from the local context, not from the distant principal. Over time, the local context becomes the primary reference frame.
+In diplomatic theory, "going native" describes an ambassador who begins to advocate for the host country's interests rather than their home country's interests. The mechanism is proximity: The ambassador's daily social environment is the host country. Approval and disapproval signals come from the local context, not from the distant principal. Over time, the local context becomes the primary reference frame.
 
 Checkel's contribution was to specify the mechanism. It is not mere exposure. It is the quality and depth of social engagement that produces the shift. Participants who deliberate - who engage in sustained, substantive discussion with institutional peers - are the ones whose preferences change.
 
@@ -184,7 +184,7 @@ Prediction 2 stated that long-tenured and short-tenured participants would use d
 
 [P3962R0](https://wg21.link/p3962r0)<sup>[18]</sup> (Nina Ranns and 17 implementer co-authors, 2026) reports: "Implementation feedback is often introduced late, treated as adversarial, or framed primarily as an obstacle to progress rather than as essential design input." The implementers - participants whose daily work is shipping code to users - describe a reception pattern in which outcome-oriented feedback is reframed as procedural obstruction.
 
-The same paper states: "Full conformance to recent standards remains difficult in practice, with some implementations still working toward C++20 conformance with limited capacity to adopt newer standards." This is an outcome measurement - a statement about what users can and cannot access. The response to implementer concerns, as the implementers describe it, is procedural: the concern is "framed primarily as an obstacle to progress."
+The same paper states: "Full conformance to recent standards remains difficult in practice, with some implementations still working toward C++20 conformance with limited capacity to adopt newer standards." This is an outcome measurement - a statement about what users can and cannot access. The response to implementer concerns, as the implementers describe it, is procedural: The concern is "framed primarily as an obstacle to progress."
 
 [P2138R4](https://wg21.link/p2138r4)<sup>[19]</sup> (Ville Voutilainen, 2021) proposed a "Tentatively Plenary" state requiring implementation and deployment experience review before plenary votes. The LEWG poll to adopt the proposal failed to reach consensus<sup>[20]</sup>:
 
@@ -192,7 +192,7 @@ The same paper states: "Full conformance to recent standards remains difficult i
 | -: | -: | -: | -: | -: |
 |  5 | 14 |  2 |  6 |  6 |
 
-Nineteen delegates favored adoption. Twelve opposed. The objections centered on gatekeeping, discouraging participation, and slowing the process - procedural concerns. The proposal itself was an outcome-oriented measure: require evidence that the feature works before making it permanent.
+Nineteen delegates favored adoption. Twelve opposed. The objections centered on gatekeeping, discouraging participation, and slowing the process - procedural concerns. The proposal itself was an outcome-oriented measure: Require evidence that the feature works before making it permanent.
 
 The record is consistent with Prediction 2. Outcome-oriented vocabulary (deployment, implementation, field experience) and process-oriented vocabulary (progress, consensus, schedule) are observably present in different participant populations.
 
@@ -218,7 +218,7 @@ Stackful coroutines were proposed by Oliver Kowalke and Nat Goodspeed, community
 
 The Networking TS was based on Boost.Asio - the most deployed asynchronous library in C++, with decades of field experience<sup>[24]</sup>. `std::execution` ([P2300R10](https://wg21.link/p2300r10)<sup>[25]</sup>) was authored primarily by delegates from NVIDIA, Meta, and other organizations with significant committee presence. At Kona in November 2023, SG4 polled that networking should use a sender/receiver model. The Networking TS, despite its deployment record, was set aside.
 
-Both cases show the same pattern: the proposal with stronger institutional backing advanced faster than the proposal with stronger deployment evidence. The record is consistent with Prediction 4.
+Both cases show the same pattern: The proposal with stronger institutional backing advanced faster than the proposal with stronger deployment evidence. The record is consistent with Prediction 4.
 
 ### 4.5 Observation 5: Pace Perception
 
@@ -238,7 +238,7 @@ Prediction 6 stated that participants whose careers depend on institutional appr
 
 Profiles were endorsed by the Direction Group unanimously in [P2759R1](https://wg21.link/p2759r1)<sup>[30]</sup> (2023). The resulting vote at Issaquah was 47-2<sup>[31]</sup>. SG23 at Wroclaw gave 18-1 consensus to the initialization profile and forwarded [P3081R0](https://wg21.link/p3081r0)<sup>[32]</sup> to EWG for C++26. In January 2026, six senior committee members co-signed [P3970R0](https://wg21.link/p3970r0)<sup>[33]</sup>, a call to action urging the committee to build on the profiles framework. Profiles are not in C++26.
 
-The record shows a sequence: the body endorsed a direction by supermajority, reaffirmed it by near-unanimity, reaffirmed it again by white paper, and did not execute it. The body's stated priority (profiles) and the body's revealed priority (the features that actually shipped) diverged. A participant who adopted the body's stated priorities as their own would have expected profiles to ship. A participant who adopted the body's revealed priorities would have expected the features that had stronger procedural momentum to ship instead.
+The record shows a sequence: The body endorsed a direction by supermajority, reaffirmed it by near-unanimity, reaffirmed it again by white paper, and did not execute it. The body's stated priority (profiles) and the body's revealed priority (the features that actually shipped) diverged. A participant who adopted the body's stated priorities as their own would have expected profiles to ship. A participant who adopted the body's revealed priorities would have expected the features that had stronger procedural momentum to ship instead.
 
 Checkel's framework predicts that sustained institutional engagement produces genuine preference change. The profiles record does not directly test this prediction - it tests whether the body's own stated preferences predict its outputs. The divergence between stated and revealed preference is observable. Whether that divergence reflects goal displacement (Section 2.1), the iron law (Section 2.4), or some other force is a question the record does not resolve.
 

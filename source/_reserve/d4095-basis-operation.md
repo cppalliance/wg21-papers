@@ -99,7 +99,7 @@ These are real deficiencies of the `execute(F&&)` signature. The sender/receiver
 
 ## 3. What P1525R0 Did Not Analyze
 
-[P4094R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r0.pdf)<sup>[2]</sup> Section 6 documented a terminology shift: what began as continuation-scheduling primitives (`dispatch`/`post`/`defer`) was progressively renamed to `execute(F&&)`. The continuation framing - where the callable is a resumption handle and the operating system performs the work - was no longer visible on the API surface by the time [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[1]</sup> was written.
+[P4094R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r0.pdf)<sup>[2]</sup> Section 6 documented a terminology shift: What began as continuation-scheduling primitives (`dispatch`/`post`/`defer`) was progressively renamed to `execute(F&&)`. The continuation framing - where the callable is a resumption handle and the operating system performs the work - was no longer visible on the API surface by the time [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[1]</sup> was written.
 
 ### 3.1 The Continuation Framing
 
@@ -152,7 +152,7 @@ This section applies both framings to each of [P1525R0](https://www.open-std.org
 
 Under the work framing, this is true. The caller submitted work and continued. The caller is alive, running, and expects to learn what happened. The error has no channel back to the caller.
 
-Under the continuation framing, the caller returned. There is no live caller on the other end to receive a report. The executor accepted a resumption handle. The I/O has not completed. The operating system has not returned a result. There is no error code. There is no byte count. The only thing passed to the executor is: this is how you resume me. An error channel for a resumption handle would report on work that has not happened.
+Under the continuation framing, the caller returned. There is no live caller on the other end to receive a report. The executor accepted a resumption handle. The I/O has not completed. The operating system has not returned a result. There is no error code. There is no byte count. The only thing passed to the executor is: This is how you resume me. An error channel for a resumption handle would report on work that has not happened.
 
 ### 4.2 Cancellation
 
@@ -184,7 +184,7 @@ The allocation concern in [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs
 
 Under the work framing, this is true. `execute` has no error channel, so `schedule`'s Sender cannot deliver errors to a Receiver.
 
-Under the continuation framing, the executor does not need to implement `schedule`. The executor schedules continuations. Composition is provided by `async_result` ([N3747](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3747.pdf)<sup>[9]</sup>) on the completion-model axis and by `co_await` on the operation-composition axis. The asymmetry that [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[1]</sup> identified is real under the work framing. Under the continuation framing, the question is different: the executor is not the composition mechanism.
+Under the continuation framing, the executor does not need to implement `schedule`. The executor schedules continuations. Composition is provided by `async_result` ([N3747](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3747.pdf)<sup>[9]</sup>) on the completion-model axis and by `co_await` on the operation-composition axis. The asymmetry that [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[1]</sup> identified is real under the work framing. Under the continuation framing, the question is different: The executor is not the composition mechanism.
 
 ### 4.5 Summary
 

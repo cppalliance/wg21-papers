@@ -12,7 +12,7 @@ reply-to:
 
 An organisation that cannot correct its mistakes will become overwhelmed by them.
 
-The process that governs WG21 is structurally asymmetric: adding a feature requires one paper and one set of favourable polls; removing or replacing a feature requires deprecation, a migration path, ABI coordination across every major implementation, and the political will to say the committee was wrong. The language's designer recorded this asymmetry in 1994. The committee's record since then confirms it. This paper examines what the record shows.
+The process that governs WG21 is structurally asymmetric: Adding a feature requires one paper and one set of favourable polls; removing or replacing a feature requires deprecation, a migration path, ABI coordination across every major implementation, and the political will to say the committee was wrong. The language's designer recorded this asymmetry in 1994. The committee's record since then confirms it. This paper examines what the record shows.
 
 ---
 
@@ -48,7 +48,7 @@ The process is structurally asymmetric. Bjarne Stroustrup recorded the observati
 
 > "It is much easier to accept a proposal than to reject it."
 
-This asymmetry is not a flaw in the process. It is the process. The committee is designed to add. It is not designed to subtract. The result is a ratchet: each cycle turns one direction.
+This asymmetry is not a flaw in the process. It is the process. The committee is designed to add. It is not designed to subtract. The result is a ratchet: Each cycle turns one direction.
 
 **One direction.**
 
@@ -72,7 +72,7 @@ The Networking TS was first proposed for TR2 in 2006<sup>[5]</sup>. Twenty years
 
 `volatile` compound assignment and increment/decrement were deprecated in C++20 via [P1152R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1152r4.html)<sup>[6]</sup>. Six years later, the deprecation stands. No removal has been proposed.
 
-The pattern: the committee can add. The committee can deprecate. The committee has completed two removals in its history, both in the same paper, both under ideal conditions.
+The pattern: The committee can add. The committee can deprecate. The committee has completed two removals in its history, both in the same paper, both under ideal conditions.
 
 **Two removals. One paper. Thirty years.**
 

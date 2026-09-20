@@ -49,7 +49,7 @@ std::tuple result{ f1(), f2(), ..., fN() };
 
 If any of `f1`...`fN` fails, the caller gets the error. The tuple only exists on the success path.
 
-An I/O-aware `when_all` follows the same principle. The combinator knows the result convention: the return type destructures with `error_code` in the first position. Success means `!ec`. Failure means `ec`.
+An I/O-aware `when_all` follows the same principle. The combinator knows the result convention: The return type destructures with `error_code` in the first position. Success means `!ec`. Failure means `ec`.
 
 ### 2.1 `io_result`
 
@@ -293,17 +293,17 @@ Heap Allocation eLision Optimization (HALO) cannot elide the frame because `when
 
 ### 5.2 Call-Site Boilerplate
 
-Every call site must wrap every child in `io_adapt`. The "write it once" argument for generic `when_all` is negated: users write `io_adapt(...)` at every call site. This is effectively a per-call-site second implementation of the error-dispatch logic.
+Every call site must wrap every child in `io_adapt`. The "write it once" argument for generic `when_all` is negated: Users write `io_adapt(...)` at every call site. This is effectively a per-call-site second implementation of the error-dispatch logic.
 
 ### 5.3 Code Size
 
-Chuanqi Xu (Alibaba) reported on the LEWG reflector (March 2026) that replacing `future.then().then()` chains with coroutines reduced binary size because every `then` clause creates a new symbol<sup>[6]</sup>. `io_adapt` has the same property: each instantiation at each call site creates a new template specialization and a new symbol. Code size scales with the number of `when_all` call sites.
+Chuanqi Xu (Alibaba) reported on the LEWG reflector (March 2026) that replacing `future.then().then()` chains with coroutines reduced binary size because every `then` clause creates a new symbol<sup>[6]</sup>. `io_adapt` has the same property: Each instantiation at each call site creates a new template specialization and a new symbol. Code size scales with the number of `when_all` call sites.
 
 ### 5.4 The "Write It Once" Inversion
 
 The argument for task-as-sender is that `when_all` need only be written once. One `when_all` serves all domains.
 
-With the adapter, the user writes `io_adapt(...)` around every I/O child at every `when_all` call site. The domain-specific error-dispatch logic is not written once. It is written N times, where N is the number of I/O children across all `when_all` call sites in the program. The "write it once" benefit has inverted: one generic `when_all` plus N adapters is more total code than two `when_all` implementations (one generic, one I/O-aware) plus zero adapters.
+With the adapter, the user writes `io_adapt(...)` around every I/O child at every `when_all` call site. The domain-specific error-dispatch logic is not written once. It is written N times, where N is the number of I/O children across all `when_all` call sites in the program. The "write it once" benefit has inverted: One generic `when_all` plus N adapters is more total code than two `when_all` implementations (one generic, one I/O-aware) plus zero adapters.
 
 ---
 
@@ -396,9 +396,9 @@ Dietmar K&uuml;hl identified the irreplaceable sender algorithms inside a corout
 
 Inside a coroutine body, most sender algorithms have direct C++ equivalents. `then` is `auto x = co_await sndr; f(x);`. `let_value` is `auto x = co_await sndr; co_await f(x);`. `upon_error` is `if (ec) handle(ec);`. The one sender algorithm that is genuinely irreplaceable inside a coroutine body is `when_all` - a coroutine body is sequential, and expressing concurrency requires a combinator.
 
-The "write it once" argument for generic `when_all` does not hold for I/O. The generic version dispatches on channel tags. I/O errors arrive on the value channel. The combinator does not see them. Three strategies for routing compound results through the three-channel model were examined. All three fail: the value-channel strategy leaves `when_all` blind, the error-channel strategy corrupts downstream composition, and the predicate strategy repeats domain logic at every call site.
+The "write it once" argument for generic `when_all` does not hold for I/O. The generic version dispatches on channel tags. I/O errors arrive on the value channel. The combinator does not see them. Three strategies for routing compound results through the three-channel model were examined. All three fail: The value-channel strategy leaves `when_all` blind, the error-channel strategy corrupts downstream composition, and the predicate strategy repeats domain logic at every call site.
 
-Domain-aware combinators resolve this. A single `when_all` dispatches at compile time: the IoAwaitable overload inspects the result directly with zero adapter overhead, and the sender overload delegates to `std::execution::when_all` with no change to the existing behavior. Two implementations behind one name, selected by the type system, is a stronger design than one implementation that requires per-call-site adaptation to work correctly for I/O.
+Domain-aware combinators resolve this. A single `when_all` dispatches at compile time: The IoAwaitable overload inspects the result directly with zero adapter overhead, and the sender overload delegates to `std::execution::when_all` with no change to the existing behavior. Two implementations behind one name, selected by the type system, is a stronger design than one implementation that requires per-call-site adaptation to work correctly for I/O.
 
 ---
 

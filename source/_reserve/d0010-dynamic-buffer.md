@@ -38,7 +38,7 @@ This paper documents the dynamic-buffer concept and its concrete implementations
 
 The [Networking TS](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/n4771.pdf)<sup>[2]</sup> defined `DynamicBuffer` as a named requirement. The shape in this paper is the same shape, recovered as a C++20 concept on a parallel track to the Network Endeavor.
 
-A limitation of the proposed concept shape is honestly noted: the concept is not allocator-aware. Concrete implementations may be allocator-aware - `vector_dynamic_buffer` inherits the allocator of the wrapped `std::vector`<sup>[9]</sup> - but the concept does not require it. Section 8.1 records the deferral.
+A limitation of the proposed concept shape is honestly noted: The concept is not allocator-aware. Concrete implementations may be allocator-aware - `vector_dynamic_buffer` inherits the allocator of the wrapped `std::vector`<sup>[9]</sup> - but the concept does not require it. Section 8.1 records the deferral.
 
 This paper is Paper 5 in the [Network Endeavor](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf) ([P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf)<sup>[4]</sup>). It depends on Paper 4 (the buffer-ranges concepts) only - and that dependency is the type the concept's associated typedefs satisfy.
 
@@ -149,7 +149,7 @@ The header set lives at `boost/capy/buffers/`<sup>[1]</sup>. Each header is unde
 
 `flat_dynamic_buffer` is a single contiguous region. `prepare(n)` extends the writable area within the storage; `commit` advances the readable boundary; `consume` advances the read cursor. When `consume` advances past half the storage, the implementation may compact the readable bytes to the start to free space at the back.
 
-The caller-owned-storage choice is deliberate: the dynamic buffer is the bookkeeping, not the allocation. A user who wants stack storage uses a stack array; a user who wants heap storage uses a heap array; a user who wants pool-allocated storage uses a pool. The dynamic buffer does not care.
+The caller-owned-storage choice is deliberate: The dynamic buffer is the bookkeeping, not the allocation. A user who wants stack storage uses a stack array; a user who wants heap storage uses a heap array; a user who wants pool-allocated storage uses a pool. The dynamic buffer does not care.
 
 ### 5.2 The Circular Case
 
@@ -194,7 +194,7 @@ The user who needs the vector shape and only the vector shape can use `std::vect
 
 ### 7.2 "But `std::stringstream` Already Works"
 
-`std::stringstream` provides a buffer with prepare/commit-like semantics through `std::stringbuf`'s `pbase`, `pptr`, `epptr`, `gbase`, `gptr`, and `egptr`. The shape predates the dynamic buffer concept. It is also not a buffer sequence: there is no scatter/gather, no integration with platform `readv`/`writev`, no way to use it with an I/O algorithm that expects a `MutableBufferSequence` for `read_some`.
+`std::stringstream` provides a buffer with prepare/commit-like semantics through `std::stringbuf`'s `pbase`, `pptr`, `epptr`, `gbase`, `gptr`, and `egptr`. The shape predates the dynamic buffer concept. It is also not a buffer sequence: There is no scatter/gather, no integration with platform `readv`/`writev`, no way to use it with an I/O algorithm that expects a `MutableBufferSequence` for `read_some`.
 
 The dynamic buffer concept's `mutable_buffers_type` and `const_buffers_type` integrate with the buffer-ranges vocabulary in *I/O Buffer Ranges: Design Rationale*<sup>[8]</sup>. `stringstream` does not.
 
@@ -216,7 +216,7 @@ Four deferrals. Each is named so the scope is unambiguous.
 
 The proposed concept is allocation-agnostic. Concrete implementations may be allocator-aware - `vector_dynamic_buffer` inherits the allocator of the wrapped `std::vector`<sup>[9]</sup>, `string_dynamic_buffer` inherits the allocator of the wrapped `std::basic_string` - but the concept does not require it.
 
-An allocator-aware variant of the concept would parameterize each `prepare` and `commit` on the allocator, or require a member typedef `allocator_type`, or both. The choice depends on whether allocator-awareness is part of the concept's contract or a refinement that some types satisfy and others do not. This paper takes the latter view: the concept is the smallest useful contract; allocator-awareness is a refinement.
+An allocator-aware variant of the concept would parameterize each `prepare` and `commit` on the allocator, or require a member typedef `allocator_type`, or both. The choice depends on whether allocator-awareness is part of the concept's contract or a refinement that some types satisfy and others do not. This paper takes the latter view: The concept is the smallest useful contract; allocator-awareness is a refinement.
 
 ### 8.2 Owned-Storage Variant
 
@@ -238,7 +238,7 @@ This paper proposes the concept. It does not propose `std::io::flat_dynamic_buff
 
 Asio shipped the `DynamicBuffer` named requirement in 2003. The Networking TS carried it forward. .NET shipped `IBufferWriter<T>` in 2018. Capy ships four implementations today. The shape is twenty-three years old in production deployment. The C++ standard library does not have it.
 
-The reason for now is the same reason the buffer-ranges paper is for now: the Network Endeavor frames this work as a fourteen-paper series ([P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf)<sup>[4]</sup>), and the buffer concepts are the foundation that the stream concepts build on. Without the dynamic buffer concept, the stream concepts cannot express the read-into-growable-buffer pattern that protocol parsers, HTTP message readers, and TLS record buffers all use.
+The reason for now is the same reason the buffer-ranges paper is for now: The Network Endeavor frames this work as a fourteen-paper series ([P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf)<sup>[4]</sup>), and the buffer concepts are the foundation that the stream concepts build on. Without the dynamic buffer concept, the stream concepts cannot express the read-into-growable-buffer pattern that protocol parsers, HTTP message readers, and TLS record buffers all use.
 
 **The vocabulary every C++ I/O system already speaks. The standard library is the place that does not have it.**
 

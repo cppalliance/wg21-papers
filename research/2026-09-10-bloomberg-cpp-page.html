@@ -1,0 +1,857 @@
+
+
+<!doctype html>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8"><script type="text/javascript">(window.NREUM||(NREUM={})).init={ajax:{deny_list:["bam.nr-data.net"]}};(window.NREUM||(NREUM={})).loader_config={licenseKey:"cd0676da66",applicationID:"566665108",browserID:"601678366"};;/*! For license information please see nr-loader-rum-1.321.0.min.js.LICENSE.txt */
+(()=>{var e={8122(e,t,r){"use strict";r.d(t,{a:()=>i});var n=r(944);function i(e,t){try{if(!e||"object"!=typeof e)return(0,n.R)(3);if(!t||"object"!=typeof t)return(0,n.R)(4);const r=Object.create(Object.getPrototypeOf(t),Object.getOwnPropertyDescriptors(t)),a=0===Object.keys(r).length?e:r;for(let s in a)if(void 0!==e[s])try{if(null===e[s]){r[s]=null;continue}Array.isArray(e[s])&&Array.isArray(t[s])?r[s]=Array.from(new Set([...e[s],...t[s]])):e[s]instanceof Map||e[s]instanceof Set||e[s]instanceof Date||e[s]instanceof RegExp?r[s]=e[s]:"object"==typeof e[s]&&null!==t[s]&&"object"==typeof t[s]?r[s]=i(e[s],t[s]):r[s]=e[s]}catch(e){r[s]||(0,n.R)(1,e)}return r}catch(e){(0,n.R)(2,e)}}},2555(e,t,r){"use strict";r.d(t,{f:()=>s});var n=r(384),i=r(8122);const a={beacon:n.NT.beacon,errorBeacon:n.NT.errorBeacon,licenseKey:void 0,applicationID:void 0,sa:void 0,queueTime:void 0,applicationTime:void 0,ttGuid:void 0,user:void 0,account:void 0,product:void 0,extra:void 0,jsAttributes:{},userAttributes:void 0,atts:void 0,transactionName:void 0,tNamePlain:void 0};function s(e){try{return!!e.licenseKey&&!!e.errorBeacon&&!!e.applicationID}catch(e){return!1}}r.d(t,["D",0,e=>(0,i.a)(e,a)])},7699(e,t,r){"use strict";var n=r(860);const i={[n.K7.logging]:!0,[n.K7.genericEvents]:!0,[n.K7.jserrors]:!0,[n.K7.ajax]:!0};r.d(t,["It",0,1e6,"KC",0,i,"qh",0,"SESSION_ERROR"])},9324(e,t,r){"use strict";r.d(t,["xv",0,"1.321.0"])},981(e,t,r){"use strict";r.d(t,["R",0,{AJAX:"AjaxRequest",PA:"PageAction",UA:"UserAction",BP:"BrowserPerformance",WS:"WebSocket",SPV:"SecurityPolicyViolation",JSE:"JavaScriptError",LOG:"Log",PVE:"PageView",PVT:"PageViewTiming",SR:"SessionReplay",ST:"SessionTrace",BI:"BrowserInteraction"}])},6154(e,t,r){"use strict";var n=r(1863);const i="undefined"!=typeof window&&!!window.document,a="undefined"!=typeof WorkerGlobalScope&&("undefined"!=typeof self&&self instanceof WorkerGlobalScope&&self.navigator instanceof WorkerNavigator||"undefined"!=typeof globalThis&&globalThis instanceof WorkerGlobalScope&&globalThis.navigator instanceof WorkerNavigator),s=i?window:"undefined"!=typeof WorkerGlobalScope&&("undefined"!=typeof self&&self instanceof WorkerGlobalScope&&self||"undefined"!=typeof globalThis&&globalThis instanceof WorkerGlobalScope&&globalThis),o=Boolean("hidden"===s?.document?.visibilityState),c=""+s?.location,u=/iPad|iPhone|iPod/.test(s.navigator?.userAgent),d=u&&"undefined"==typeof SharedWorker,l=((()=>{const e=s.navigator?.userAgent?.match(/Firefox[/\s](\d+\.\d+)/);Array.isArray(e)&&e.length>=2&&e[1]})(),Date.now()-(0,n.t)());r.d(t,["OF",0,u,"RI",0,i,"WN",0,l,"bv",0,a,"gm",0,s,"m",0,c,"mw",0,o,"sb",0,d,"zk",0,()=>{const e=s?.performance?.getEntriesByType?.("navigation")?.[0];if(e&&e.responseStart>0&&e.responseStart<s.performance.now())return e}])},3241(e,t,r){"use strict";r.d(t,{W:()=>i});var n=r(6154);function i(e={}){try{n.gm.dispatchEvent(new CustomEvent("newrelic",{detail:e}))}catch(e){}}},1687(e,t,r){"use strict";r.d(t,{Ak:()=>o,Ze:()=>u,x3:()=>c});var n=r(3241),i=r(3606),a=r(860),s=r(2646);function o(e,t){if(!e)return;const r={staged:!1,priority:a.P3[t]||0};e.runtime.drainRegistry.get(t)||e.runtime.drainRegistry.set(t,r)}function c(e,t){if(!e)return;const r=e.runtime.drainRegistry;r&&(r.get(t)&&r.delete(t),l(e,t,!1),r.size&&d(e))}function u(e,t="feature",r=!1){if(e){if(!e.runtime.drainRegistry.get(t)||r)return l(e,t);e.runtime.drainRegistry.get(t).staged=!0,d(e)}}function d(e){if(!e)return;const t=Array.from(e.runtime.drainRegistry);t.every(([e,t])=>t.staged)&&(t.sort((e,t)=>e[1].priority-t[1].priority),t.forEach(([t])=>{e.runtime.drainRegistry.delete(t),l(e,t)}))}function l(e,t,r=!0){if(!e)return;const a=e.ee,o=i.i.handlers;if(a&&!a.aborted&&a.backlog&&o){if((0,n.W)({type:"lifecycle",name:"drain",feature:t}),r){const e=a.backlog[t],r=o[t];if(r){for(let t=0;e&&t<e.length;++t)f(e[t],r);Object.entries(r).forEach(([e,t])=>{Object.values(t||{}).forEach(t=>{t[0]?.on&&t[0].context()instanceof s.y&&!t[0].listeners(e).includes(t[1])&&t[0].on(e,t[1])})})}}a.isolatedBacklog||delete o[t],a.backlog[t]=null,a.emit("drain-"+t,[])}}function f(e,t){var r=e[1];Object.values(t[r]||{}).forEach(t=>{var r=e[0];if(t[0]===r){var n=t[1],i=e[3],a=e[2];n.apply(i,a)}})}},7836(e,t,r){"use strict";var n=r(384),i=r(8990),a=r(2646),s=r(5607);const o="nr@context:".concat(s.W),c=function e(t,r){var n={},s={},d={},l=!1;try{l=16===r.length&&u.initializedAgents?.[r]?.runtime.isolatedBacklog}catch(e){}var f={on:p,addEventListener:p,removeEventListener:function(e,t){var r=n[e];if(!r)return;for(var i=0;i<r.length;i++)r[i]===t&&r.splice(i,1)},emit:function(e,r,n,i,a){!1!==a&&(a=!0);if(c.aborted&&!i)return;t&&a&&t.emit(e,r,n);var o=g(n);m(e).forEach(e=>{e.apply(o,r)});var u=v()[s[e]];u&&u.push([f,e,r,o]);return o},get:h,listeners:m,context:g,buffer:function(e,t){const r=v();if(t=t||"feature",f.aborted)return;Object.entries(e||{}).forEach(([e,n])=>{s[n]=t,t in r||(r[t]=[])})},abort:function(){f._aborted=!0,Object.keys(f.backlog).forEach(e=>{delete f.backlog[e]})},isBuffering:function(e){return!!v()[s[e]]},debugId:r,backlog:l?{}:t&&"object"==typeof t.backlog?t.backlog:{},isolatedBacklog:l};return Object.defineProperty(f,"aborted",{get:()=>{let e=f._aborted||!1;return e||(t&&(e=t.aborted),e)}}),f;function g(e){return e&&e instanceof a.y?e:e?(0,i.I)(e,o,()=>new a.y(o)):new a.y(o)}function p(e,t){n[e]=m(e).concat(t)}function m(e){return n[e]||[]}function h(t){return d[t]=d[t]||e(f,t)}function v(){return f.backlog}}(void 0,"globalEE"),u=(0,n.Zm)();u.ee||(u.ee=c),r.d(t,["P",0,o,"ee",0,c])},2646(e,t,r){"use strict";r.d(t,{y:()=>n});class n{constructor(e){this.contextId=e}}},9908(e,t,r){"use strict";r.d(t,{d:()=>n,p:()=>i});var n=r(7836).ee.get("handle");function i(e,t,r,i,a){a?(a.buffer([e],i),a.emit(e,t,r)):(n.buffer([e],i),n.emit(e,t,r))}},3606(e,t,r){"use strict";r.d(t,{i:()=>a});var n=r(9908);a.on=s;var i=a.handlers={};function a(e,t,r,a){s(a||n.d,i,e,t,r)}function s(e,t,r,i,a){a||(a="feature"),e||(e=n.d);var s=t[a]=t[a]||{};(s[r]=s[r]||[]).push([e,i])}},3878(e,t,r){"use strict";function n(e,t){return{capture:e,passive:!1,signal:t}}function i(e,t,r=!1,i){window.addEventListener(e,t,n(r,i))}function a(e,t,r=!1,i){document.addEventListener(e,t,n(r,i))}r.d(t,{DD:()=>a,jT:()=>n,sp:()=>i})},5607(e,t,r){"use strict";const n=(0,r(9566).bz)();r.d(t,["W",0,n])},9566(e,t,r){"use strict";r.d(t,{LA:()=>s,bz:()=>a});var n=r(6154);function i(e,t){return e?15&e[t]:16*Math.random()|0}function a(){const e=n.gm?.crypto||n.gm?.msCrypto;let t,r=0;return e&&e.getRandomValues&&(t=e.getRandomValues(new Uint8Array(30))),"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".split("").map(e=>"x"===e?i(t,r++).toString(16):"y"===e?(3&i()|8).toString(16):e).join("")}function s(e){const t=n.gm?.crypto||n.gm?.msCrypto;let r,a=0;t&&t.getRandomValues&&(r=t.getRandomValues(new Uint8Array(e)));const s=[];for(var o=0;o<e;o++)s.push(i(r,a++).toString(16));return s.join("")}},2614(e,t,r){"use strict";r.d(t,["BB",0,18e5,"Wt",0,"NRBA_SESSION::","iL",0,{SAME_TAB:"same-tab",CROSS_TAB:"cross-tab"},"tS",0,{STARTED:"session-started",PAUSE:"session-pause",RESET:"session-reset",RESUME:"session-resume",UPDATE:"session-update"},"wk",0,144e5])},1863(e,t,r){"use strict";function n(){return Math.floor(performance.now())}r.d(t,{t:()=>n})},944(e,t,r){"use strict";r.d(t,{R:()=>i});var n=r(3241);function i(e,t){"function"==typeof console.debug&&(console.debug("New Relic Warning: https://github.com/newrelic/newrelic-browser-agent/blob/main/docs/warning-codes.md#".concat(e),t),(0,n.W)({drained:null,type:"data",name:"warn",feature:"warn",data:{code:e,secondary:t}}))}},8990(e,t,r){"use strict";r.d(t,{I:()=>i});var n=Object.prototype.hasOwnProperty;function i(e,t,r){if(n.call(e,t))return e[t];var i=r();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,t,{value:i,writable:!0,enumerable:!1}),i}catch(e){}return e[t]=i,i}},6389(e,t,r){"use strict";function n(e,t=500,r={}){const n=r?.leading||!1;let i;return(...r)=>{n&&void 0===i&&(e.apply(this,r),i=setTimeout(()=>{i=clearTimeout(i)},t)),n||(clearTimeout(i),i=setTimeout(()=>{e.apply(this,r)},t))}}function i(e){let t=!1;return(...r)=>{t||(t=!0,e.apply(this,r))}}r.d(t,{J:()=>i,s:()=>n})},1910(e,t,r){"use strict";r.d(t,{i:()=>a});var n=r(944);const i=new Map;function a(...e){return e.every(e=>{if(i.has(e))return i.get(e);const t="function"==typeof e?e.toString():"",r=t.includes("[native code]"),a=t.includes("nrWrapper");return r||a||(0,n.R)(64,e?.name||t),i.set(e,r),r})}},5289(e,t,r){"use strict";r.d(t,{GG:()=>s,Qr:()=>c,sB:()=>o});var n=r(3878),i=r(6389);function a(){return"undefined"==typeof document||"complete"===document.readyState}function s(e,t){if(a())return e();const r=(0,i.J)(e),s=setInterval(()=>{a()&&(clearInterval(s),r())},500);(0,n.sp)("load",r,t)}function o(e){if(a())return e();(0,n.DD)("DOMContentLoaded",e)}function c(e){if(a())return e();(0,n.sp)("popstate",e)}},384(e,t,r){"use strict";r.d(t,{Zm:()=>c,bQ:()=>d,dV:()=>u,pV:()=>l});var n=r(6154),i=r(1863),a=r(944),s=r(1910);const o={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net"};function c(){return n.gm.NREUM||(n.gm.NREUM={}),void 0===n.gm.newrelic&&(n.gm.newrelic=n.gm.NREUM),n.gm.NREUM}function u(){let e=c();return e.o||(e.o={ST:n.gm.setTimeout,SI:n.gm.setImmediate||n.gm.setInterval,CT:n.gm.clearTimeout,XHR:n.gm.XMLHttpRequest,REQ:n.gm.Request,EV:n.gm.Event,PR:n.gm.Promise,MO:n.gm.MutationObserver,FETCH:n.gm.fetch,WS:n.gm.WebSocket},(0,s.i)(...Object.values(e.o))),e}function d(e,t){let r=c();r.initializedAgents??={},t.initializedAt={ms:(0,i.t)(),date:new Date},r.initializedAgents[e]=t,2===Object.keys(r.initializedAgents).length&&(0,a.R)(69)}function l(){return function(){let e=c();const t=e.info||{};e.info={beacon:o.beacon,errorBeacon:o.errorBeacon,...t}}(),function(){let e=c();const t=e.init||{};e.init={...t}}(),u(),function(){let e=c();const t=e.loader_config||{};e.loader_config={...t}}(),c()}r.d(t,["NT",0,o])},2843(e,t,r){"use strict";r.d(t,{G:()=>a,u:()=>i});var n=r(3878);function i(e,t=!1,r,i){(0,n.DD)("visibilitychange",function(){if(t)return void("hidden"===document.visibilityState&&e());e(document.visibilityState)},r,i)}function a(e,t,r){(0,n.sp)("pagehide",e,t,r)}},9300(e,t,r){"use strict";r(860).K7.ajax;r.d(t,["mo",0,{NONE:"none",FAILURES:"failures",ALL:"all"}])},3969(e,t,r){"use strict";const n=r(860).K7.metrics;r.d(t,["TZ",0,n,"XG",0,"storeEventMetrics","xV",0,"storeSupportabilityMetrics"])},6630(e,t,r){"use strict";const n=r(860).K7.pageViewEvent;r.d(t,["T",0,n])},782(e,t,r){"use strict";const n=r(860).K7.pageViewTiming;r.d(t,["T",0,n])},4234(e,t,r){"use strict";r.d(t,{W:()=>i});var n=r(1687);class i{constructor(e,t){this.agentRef=e,this.ee=e?.ee,this.featureName=t,this.blocked=!1}deregisterDrain(){(0,n.x3)(this.agentRef,this.featureName)}}},7767(e,t,r){"use strict";var n=r(6154);r.d(t,["V",0,e=>n.RI&&!0===e?.privacy.cookies_enabled])},8362(e,t,r){"use strict";r.d(t,{d:()=>a});var n=r(9566),i=r(1741);class a extends i.W{agentIdentifier=(0,n.LA)(16)}},1741(e,t,r){"use strict";r.d(t,{W:()=>a});var n=r(944),i=r(4261);class a{#e(e,...t){if(this[e]!==a.prototype[e])return this[e](...t);(0,n.R)(35,e)}addPageAction(e,t){return this.#e(i.hG,e,t)}register(e){return this.#e(i.eY,e)}recordCustomEvent(e,t){return this.#e(i.fF,e,t)}setPageViewName(e,t){return this.#e(i.Fw,e,t)}setCustomAttribute(e,t,r){return this.#e(i.cD,e,t,r)}noticeError(e,t){return this.#e(i.o5,e,t)}setUserId(e,t=!1){return this.#e(i.Dl,e,t)}setApplicationVersion(e){return this.#e(i.nb,e)}setErrorHandler(e){return this.#e(i.bt,e)}addRelease(e,t){return this.#e(i.k6,e,t)}log(e,t){return this.#e("log",e,t)}start(){return this.#e("start")}finished(e){return this.#e(i.BL,e)}recordReplay(){return this.#e(i.CH)}pauseReplay(){return this.#e(i.Tb)}addToTrace(e){return this.#e(i.U2,e)}setCurrentRouteName(e){return this.#e(i.PA,e)}interaction(e){return this.#e(i.dT,e)}wrapLogger(e,t,r){return this.#e(i.Wb,e,t,r)}measure(e,t){return this.#e(i.V1,e,t)}consent(e){return this.#e(i.Pv,e)}}},4261(e,t,r){"use strict";r.d(t,["BL",0,"finished","CH",0,"recordReplay","Dl",0,"setUserId","Fw",0,"setPageViewName","PA",0,"setCurrentRouteName","Pv",0,"consent","Tb",0,"pauseReplay","U2",0,"addToTrace","V1",0,"measure","Wb",0,"wrapLogger","bt",0,"setErrorHandler","cD",0,"setCustomAttribute","dT",0,"interaction","eY",0,"register","fF",0,"recordCustomEvent","hG",0,"addPageAction","k6",0,"addRelease","nb",0,"setApplicationVersion","o5",0,"noticeError"])},1738(e,t,r){"use strict";r.d(t,{U:()=>l,Y:()=>d});var n=r(3241),i=r(9908),a=r(1863),s=r(944),o=r(3969),c=r(8362),u=r(860);function d(e,t,r,a){const d=a||r;!d||d[e]&&d[e]!==c.d.prototype[e]||(d[e]=function(){(0,i.p)(o.xV,["API/"+e+"/called"],void 0,u.K7.metrics,r.ee),(0,n.W)({drained:!!r.runtime?.activatedFeatures,type:"data",name:"api",feature:"api-"+e,data:{}});try{return t.apply(this,arguments)}catch(e){(0,s.R)(23,e)}})}function l(e,t,r,n,s){const o=e.info;null===r?delete o.jsAttributes[t]:o.jsAttributes[t]=r,(s||null===r)&&(0,i.p)("api-"+n,[(0,a.t)(),t,r],void 0,"session",e.ee)}},8374(e,t,r){r.nc=(()=>{try{return document?.currentScript?.nonce}catch(e){}return""})()},860(e,t,r){"use strict";const n="events",i="jserrors",a="browser/blobs",s="browser/logs",o={ajax:"ajax",genericEvents:"generic_events",jserrors:i,logging:"logging",metrics:"metrics",pageAction:"page_action",pageViewEvent:"page_view_event",pageViewTiming:"page_view_timing",sessionReplay:"session_replay",sessionTrace:"session_trace",softNav:"soft_navigations"},c={[o.pageViewEvent]:1,[o.pageViewTiming]:2,[o.metrics]:3,[o.jserrors]:4,[o.softNav]:5,[o.ajax]:6,[o.sessionTrace]:7,[o.sessionReplay]:8,[o.logging]:9,[o.genericEvents]:10},u={[o.pageViewEvent]:"rum",[o.pageViewTiming]:n,[o.ajax]:n,[o.softNav]:n,[o.metrics]:i,[o.jserrors]:i,[o.sessionTrace]:a,[o.sessionReplay]:a,[o.logging]:s,[o.genericEvents]:"ins"};r.d(t,["$J",0,u,"K7",0,o,"P3",0,c,"XX",0,i,"Yy",0,s,"df",0,a,"hg",0,"connect"])}};const t={};function r(n){const i=t[n];if(void 0!==i)return i.exports;const a=t[n]={exports:{}};return e[n](a,a.exports,r),a.exports}r.m=e,r.d=(e,t)=>{if(Array.isArray(t))for(var n=0;n<t.length;){var i=t[n++],a=t[n++];r.o(e,i)?0===a&&n++:0===a?Object.defineProperty(e,i,{enumerable:!0,value:t[n++]}):Object.defineProperty(e,i,{enumerable:!0,get:a})}else for(var i in t)r.o(t,i)&&!r.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:t[i]})},r.f={},r.e=e=>Promise.all(Object.keys(r.f).reduce((t,n)=>(r.f[n](e,t),t),[])),r.u=e=>"nr-rum-1.321.0.min.js",r.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{const e={},t="NRBA-1.321.0.PROD:";r.l=(n,i,a,s)=>{if(e[n])return void e[n].push(i);let o,c;if(void 0!==a){const e=document.getElementsByTagName("script");for(var u=0;u<e.length;u++){const r=e[u];if(r.getAttribute("src")==n||r.getAttribute("data-webpack")==t+a){o=r;break}}}if(!o){c=!0;var d={296:"sha512-auOJN989wXoxmQeiyRE/ZlrR6yqeuq5/WjLH1btsNQ6Iqm/RK+IqmjTuvad7oOBZyozPaWg6y2Uu2qAZy3e0cQ=="};o=document.createElement("script"),o.charset="utf-8",r.nc&&o.setAttribute("nonce",r.nc),o.setAttribute("data-webpack",t+a),o.src=n,0!==o.src.indexOf(window.location.origin+"/")&&(o.crossOrigin="anonymous"),d[s]&&(o.integrity=d[s])}e[n]=[i];const l=(t,r)=>{o.onerror=o.onload=null,clearTimeout(f);const i=e[n];if(delete e[n],o.parentNode?.removeChild(o),i?.forEach(e=>e(r)),t)return t(r)},f=setTimeout(l.bind(null,void 0,{type:"timeout",target:o}),12e4);o.onerror=l.bind(null,o.onerror),o.onload=l.bind(null,o.onload),c&&document.head.appendChild(o)}})(),r.r=e=>{Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},r.p="https://js-agent.newrelic.com/",(()=>{const e={374:0,840:0};r.f.j=(t,n)=>{let i=r.o(e,t)?e[t]:void 0;if(0!==i)if(i)n.push(i[2]);else{const a=new Promise((r,n)=>i=e[t]=[r,n]);n.push(i[2]=a);const s=r.p+r.u(t),o=new Error,c=n=>{if(r.o(e,t)&&(i=e[t],0!==i&&(e[t]=void 0),i)){const e=n&&("load"===n.type?"missing":n.type),r=n&&n.target&&n.target.src;o.message="Loading chunk "+t+" failed: ("+e+": "+r+")",o.name="ChunkLoadError",o.type=e,o.request=r,i[1](o)}};r.l(s,c,"chunk-"+t,t)}};const t=(t,n)=>{let[i,a,s]=n;var o,c,u=0;if(i.some(t=>0!==e[t])){for(o in a)r.o(a,o)&&(r.m[o]=a[o]);if(s)s(r)}for(t&&t(n);u<i.length;u++)c=i[u],r.o(e,c)&&e[c]&&e[c][0](),e[c]=0},n=self["webpackChunk:NRBA-1.321.0.PROD"]=self["webpackChunk:NRBA-1.321.0.PROD"]||[];n.forEach(t.bind(null,0)),n.push=t.bind(null,n.push.bind(n))})(),(()=>{"use strict";r(8374);var e=r(8362),t=r(860);const n=Object.values(t.K7);var i=r(384),a=r(1741);var s=r(2555),o=r(981);t.K7.genericEvents,o.R.PA,o.R.UA,o.R.BP;const c={RESOURCES:"experimental.resources",REGISTER:"register"};var u=r(9300);const d=e=>{if(!e||"string"!=typeof e)return!1;try{document.createDocumentFragment().querySelector(e)}catch{return!1}return!0};var l=r(2614),f=r(944),g=r(8122);const p="[data-nr-mask]",m=e=>(0,g.a)(e,(()=>{const e={feature_flags:[],experimental:{register:!1,resources:!1,iframe_bridge:!1,iframe_domains:[]},mask_selector:"*",block_selector:"[data-nr-block]",mask_input_options:{color:!1,date:!1,"datetime-local":!1,email:!1,month:!1,number:!1,range:!1,search:!1,tel:!1,text:!1,time:!1,url:!1,week:!1,textarea:!1,select:!1,password:!0}};return{ajax:{deny_list:void 0,block_internal:!0,enabled:!0,autoStart:!0,capture_payloads:u.mo.NONE},api:{register:{get enabled(){return e.feature_flags.includes(c.REGISTER)||e.experimental.register},set enabled(t){e.experimental.register=t},duplicate_data_to_container:!1,get allow_iframe_bridge(){return e.feature_flags.includes(c.IFRAME_BRIDGE)||e.experimental.iframe_bridge},set allow_iframe_bridge(t){e.experimental.iframe_bridge=t},get iframe_domains(){return e.experimental.iframe_domains},set iframe_domains(t){Array.isArray(t)?e.experimental.iframe_domains=t:(0,f.R)(1,t)}}},browser_consent_mode:{enabled:!1},distributed_tracing:{enabled:void 0,exclude_newrelic_header:void 0,cors_use_newrelic_header:void 0,cors_use_tracecontext_headers:void 0,allowed_origins:void 0},get feature_flags(){return e.feature_flags},set feature_flags(t){e.feature_flags=t},generic_events:{enabled:!0,autoStart:!0},harvest:{interval:30},jserrors:{enabled:!0,autoStart:!0},logging:{enabled:!0,autoStart:!0},metrics:{enabled:!0,autoStart:!0},obfuscate:void 0,page_action:{enabled:!0},page_view_event:{enabled:!0,autoStart:!0},page_view_timing:{enabled:!0,autoStart:!0},performance:{capture_marks:!1,capture_measures:!1,capture_detail:!0,resources:{get enabled(){return e.feature_flags.includes(c.RESOURCES)||e.experimental.resources},set enabled(t){e.experimental.resources=t},asset_types:[],first_party_domains:[],ignore_newrelic:!0}},privacy:{cookies_enabled:!0},proxy:{assets:void 0,beacon:void 0},session:{expiresMs:l.wk,inactiveMs:l.BB},session_replay:{autoStart:!0,enabled:!1,preload:!1,sampling_rate:10,error_sampling_rate:100,collect_fonts:!1,inline_images:!1,fix_stylesheets:!0,mask_all_inputs:!0,get mask_text_selector(){return e.mask_selector},set mask_text_selector(t){d(t)?e.mask_selector="".concat(t,",").concat(p):""===t||null===t?e.mask_selector=p:(0,f.R)(5,t)},get block_class(){return"nr-block"},get ignore_class(){return"nr-ignore"},get mask_text_class(){return"nr-mask"},get block_selector(){return e.block_selector},set block_selector(t){d(t)?e.block_selector+=",".concat(t):""!==t&&(0,f.R)(6,t)},get mask_input_options(){return e.mask_input_options},set mask_input_options(t){t&&"object"==typeof t?e.mask_input_options={...t,password:!0}:(0,f.R)(7,t)}},session_trace:{enabled:!0,autoStart:!0},soft_navigations:{enabled:!0,autoStart:!0},ssl:void 0,user_actions:{enabled:!0,elementAttributes:["id","className","tagName","type"]},web_sockets:{enabled:!1}}})());var h=r(6154),v=r(9324);let b=0;const y={buildEnv:"PROD",distMethod:"CDN",version:v.xv,originTime:h.WN},_={consented:!1},w={activatedFeatures:void 0,appMetadata:{},configured:!1,get consented(){return this.session?.state?.consent||_.consented},set consented(e){_.consented=e},customTransaction:void 0,denyList:[],disabled:!1,drainRegistry:new Map,connector:void 0,harvester:void 0,v2Target:void 0,isolatedBacklog:!1,isRecording:!1,loaderType:void 0,maxBytes:3e4,obfuscator:void 0,onerror:void 0,ptid:void 0,releaseIds:{},session:void 0,timeKeeper:void 0,registeredEntities:[],jsAttributesMetadata:{bytes:0},get harvestCount(){return++b},listeningForIframeMessages:!1},R="BA";var A=r(7836),x=r(3241);const E={accountID:void 0,trustKey:void 0,agentID:void 0,licenseKey:void 0,applicationID:void 0,xpid:void 0};var S=r(9908);const k="newrelic-iframe-";function T(e,t={},n,o){let{init:c,info:u,loader_config:d,runtime:l={},exposed:f=!0}=t;if(!u){const e=(0,i.pV)();c=e.init,u=e.info,d=e.loader_config}var p;e.init=m(c||{}),e.loader_config=(p=d||{},(0,g.a)(p,E)),u.jsAttributes??={},h.bv&&(u.jsAttributes.isWorker=!0),e.info=(0,s.D)(u);const v=e.init;e.runtime??=(e=>{const t=(0,g.a)(e,w),r=Object.keys(y).reduce((e,t)=>(e[t]={value:y[t],writable:!1,configurable:!0,enumerable:!0},e),{});return Object.defineProperties(t,r)})(l),e.runtime.v2Target??={type:R,instance:e.agentIdentifier,get id(){return e.runtime.appMetadata?.agents?.[0]?.entityGuid},get attributes(){return{"entity.guid":this.id,appId:e.info.applicationID}}},v.proxy.assets&&(e=>{const t=e.startsWith("http");e+="/",r.p=t?e:"https://"+e})(v.proxy.assets),e.runtime.configured||(Object.defineProperty(e,"beacons",{get:()=>[e.info.beacon,e.info.errorBeacon,e.init.proxy.assets,e.init.proxy.beacon].filter(Boolean)}),Object.defineProperty(e.runtime,"denyList",{get:()=>[...e.init.ajax.deny_list||[],...e.init.ajax.block_internal?e.beacons:[]]}),e.runtime.ptid=e.agentIdentifier,function(e){const t=(0,i.pV)();Object.getOwnPropertyNames(a.W.prototype).forEach(r=>{const n=a.W.prototype[r];if("function"!=typeof n||"constructor"===n)return;let i=t[r];e[r]&&!1!==e.exposed&&"micro-agent"!==e.runtime?.loaderType&&(t[r]=(...t)=>{const n=e[r](...t);return i?i(...t):n})})}(e),e.runtime.loaderType=n,e.ee=A.ee.get(e.agentIdentifier),e.exposed=f,(0,x.W)({drained:!!e.runtime.activatedFeatures,type:"lifecycle",name:"initialize",feature:void 0,data:e.config}),e.init.api.register.allow_iframe_bridge&&h.gm.addEventListener("message",t=>{"string"==typeof t.data?.type&&t.data.type.startsWith(k)&&(0,S.p)("iframe-message",[t],void 0,"IFRAME",e.ee)}),e.runtime.configured=!0)}var j=r(1863),P=r(4261),N=r(1738);var O=r(1687),M=r(4234),I=r(5289),D=r(7767);function V(e){return!!(0,i.dV)().o.MO&&(0,D.V)(e)&&!0===e?.session_trace.enabled}var W=r(6389),B=r(7699);const C=new WeakSet,K=new WeakMap;class U extends M.W{constructor(e,t){super(e,t),this.abortHandler=void 0,this.featAggregate=void 0,this.loadedSuccessfully=void 0,this.onAggregateImported=new Promise(e=>{this.loadedSuccessfully=e}),this.deferred=Promise.resolve(),!1===e.init[this.featureName].autoStart?this.deferred=new Promise((t,r)=>{this.ee.on("manual-start-all",(0,W.J)(()=>{(0,O.Ak)(e,this.featureName),t()}))}):(0,O.Ak)(e,t)}importAggregator(e,t,n={}){if(this.featAggregate)return;const i=async()=>{if(await this.deferred,this.#t(e),!(0,s.f)(e.info))return(0,f.R)(43),e.ee.abort(),void this.loadedSuccessfully(!1);try{await async function(e,t,n){if(K.has(e))return K.get(e);const i=(async()=>{if((0,D.V)(e.init))try{const{setupAgentSession:t}=await r.e(296).then(r.bind(r,8391));t(e)}catch(e){(0,f.R)(20,e),t.emit("internal-error",[e]),(0,S.p)(B.qh,[e],void 0,n,t)}if(e.init.api.register.allow_iframe_bridge)try{const{setupIframeMFEMessageListener:t}=await Promise.resolve().then(function(){const e=new Error("Cannot find module '../../loaders/configure/iframe-message-handler'");throw e.code="MODULE_NOT_FOUND",e});t(e)}catch(e){(0,f.R)(23,e)}const[{Connector:i},{Harvester:a}]=await Promise.all([r.e(296).then(r.bind(r,6589)),r.e(296).then(r.bind(r,5237))]);e.runtime.connector=new i(e),e.runtime.harvester=new a(e);const s=Object.values(e.features).filter(t=>e.runtime.drainRegistry.has(t.featureName));Promise.all(s.map(e=>e.onAggregateImported)).then(()=>e.runtime.harvester.startTimer())})();K.set(e,i),await i}(e,this.ee,this.featureName)}catch(e){return(0,f.R)(79,e),this.ee.abort(),void this.loadedSuccessfully(!1)}try{if(!this.#r(this.featureName,e.runtime.session,e.init))return this.abortHandler?.(),(0,O.Ze)(this.agentRef,this.featureName),void this.loadedSuccessfully(!1);const{Aggregate:r}=await t();this.featAggregate=new r(e,n),e.runtime.harvester.initializedAggregates.push(this.featAggregate),this.loadedSuccessfully(!0)}catch(e){(0,f.R)(34,e),this.abortHandler?.(),(0,O.Ze)(this.agentRef,this.featureName,!0),this.loadedSuccessfully(!1)}};h.RI?(0,I.GG)(()=>i(),!0):i()}#r(e,r,n){if(this.blocked)return!1;switch(e){case t.K7.sessionReplay:return V(n)&&!!r;case t.K7.sessionTrace:return!!r;default:return!0}}#t(e){if(!C.has(e)&&(C.add(e),!(0,s.f)(e.info))){const t=(0,i.pV)();let r={...t.info?.jsAttributes};try{r={...r,...e.info?.jsAttributes}}catch(e){}T(e,{...t,info:{...t.info,jsAttributes:r},runtime:e.runtime},e.runtime.loaderType)}}}var L=r(6630);class F extends U{static featureName=L.T;constructor(e){var t;super(e,L.T),this.setupInspectionEvents(),t=e,(0,N.Y)(P.Fw,function(e,r){"string"==typeof e&&("/"!==e.charAt(0)&&(e="/"+e),t.runtime.customTransaction=(r||"http://custom.transaction")+e,(0,S.p)("api-"+P.Fw,[(0,j.t)()],void 0,void 0,t.ee))},t),this.importAggregator(e,()=>e.init.feature_flags.includes("rum_v2")?r.e(296).then(r.bind(r,908)):r.e(296).then(r.bind(r,7927)))}setupInspectionEvents(){const e=(e,t)=>{e&&(0,x.W)({timeStamp:e.timeStamp,loaded:"complete"===e.target.readyState,type:"window",name:t,data:e.target.location+""})};(0,I.sB)(t=>{e(t,"DOMContentLoaded")}),(0,I.GG)(t=>{e(t,"load")}),(0,I.Qr)(t=>{e(t,"navigate")}),this.ee.on(l.tS.UPDATE,(e,t)=>{(0,x.W)({type:"lifecycle",name:"session",data:t})})}}class G extends e.d{constructor(e){var t;(super(),h.gm)?(this.features={},(0,i.bQ)(this.agentIdentifier,this),this.desiredFeatures=new Set(e.features||[]),this.desiredFeatures.add(F),T(this,e,e.loaderType||"agent"),t=this,(0,N.Y)(P.cD,function(e,r,n=!1){if("string"==typeof e){if(["string","number","boolean"].includes(typeof r)||null===r)return(0,N.U)(t,e,r,P.cD,n);(0,f.R)(40,typeof r)}else(0,f.R)(39,typeof e)},t),function(e){(0,N.Y)(P.Dl,function(t,r=!1){if("string"!=typeof t&&null!==t)return void(0,f.R)(41,typeof t);const n=e.info.jsAttributes["enduser.id"];r&&null!=n&&n!==t?(0,S.p)("api-setUserIdAndResetSession",[t],void 0,"session",e.ee):(0,N.U)(e,"enduser.id",t,P.Dl,!0)},e)}(this),function(e){(0,N.Y)(P.nb,function(t){if("string"==typeof t||null===t)return(0,N.U)(e,"application.version",t,P.nb,!1);(0,f.R)(42,typeof t)},e)}(this),function(e){(0,N.Y)("start",function(){e.ee.emit("manual-start-all")},e)}(this),function(e){(0,N.Y)(P.Pv,function(t=!0){if("boolean"==typeof t){if((0,S.p)("api-"+P.Pv,[t],void 0,"session",e.ee),e.runtime.consented=t,t){const t=e.features.page_view_event;t.onAggregateImported.then(e=>{const r=t.featAggregate;e&&!r.sentRum&&r.sendRum?.()})}}else(0,f.R)(65,typeof t)},e)}(this),this.run()):(0,f.R)(21)}get config(){return{info:this.info,init:this.init,loader_config:this.loader_config,runtime:this.runtime}}get api(){return this}run(){try{const e=function(e){const t={};return n.forEach(r=>{t[r]=!!e[r]?.enabled}),t}(this.init),r=[...this.desiredFeatures],i=this.init.feature_flags.includes("rum_v2");r.sort((e,r)=>t.P3[e.featureName]-t.P3[r.featureName]),r.forEach(r=>{if(!e[r.featureName]&&(i||r.featureName!==t.K7.pageViewEvent))return;const n=function(e){switch(e){case t.K7.ajax:return[t.K7.jserrors];case t.K7.sessionTrace:return[t.K7.ajax,t.K7.pageViewEvent];case t.K7.sessionReplay:return[t.K7.sessionTrace];case t.K7.pageViewTiming:return[t.K7.pageViewEvent];default:return[]}}(r.featureName).filter(e=>!(e in this.features));n.length>0&&(0,f.R)(36,{targetFeature:r.featureName,missingDependencies:n}),this.features[r.featureName]=new r(this)})}catch(e){(0,f.R)(22,e);for(const e in this.features)this.features[e].abortHandler?.();const t=(0,i.Zm)();delete t.initializedAgents[this.agentIdentifier]?.features,delete this.sharedAggregator;return t.ee.get(this.agentIdentifier).abort(),!1}}}var H=r(2843),z=r(782);class Y extends U{static featureName=z.T;constructor(e){super(e,z.T),h.RI&&((0,H.u)(()=>(0,S.p)("docHidden",[(0,j.t)()],void 0,z.T,this.ee),!0),(0,H.G)(()=>(0,S.p)("winPagehide",[(0,j.t)()],void 0,z.T,this.ee)),this.importAggregator(e,()=>r.e(296).then(r.bind(r,9981))))}}var Z=r(3969);class q extends U{static featureName=Z.TZ;constructor(e){super(e,Z.TZ),this.importAggregator(e,()=>r.e(296).then(r.bind(r,9623)))}}new G({features:[F,Y,q],loaderType:"lite"})})()})();</script>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<script>window._sp_queue = []; window._sp_ = {"config":{"accountId":2058,"baseEndpoint":"https:\/\/cdn.privacy-mgmt.com","propertyId":42541,"propertyHref":"https:\/\/bloomberg.com.company","joinHref":true,"globalcmp":{"groupPmId":1474445}}};</script>
+<link rel="preconnect" href="https://cdn.privacy-mgmt.com" crossorigin>
+<script src="https://cdn.privacy-mgmt.com/unified/wrapperMessagingWithoutDetection.js" async></script>
+
+	<!-- Google Tag Manager -->
+	<script>
+	function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("consent","default",{ad_user_data:"denied",ad_personalization:"denied",ad_storage:"denied",analytics_storage:"denied",wait_for_update:500});
+	(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+	new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+	j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+	'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+	})(window,document,'script','dataLayer','GTM-TR2VFR4');
+	</script>
+	<!-- End Google Tag Manager -->
+<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+<link rel='manifest' crossorigin='use-credentials' href='https://www.bloomberg.com/company/wp-json/bloomberg/v1/manifest'>
+<meta name='theme-color' content='#000000'>
+	<!-- This site is optimized with the Yoast SEO plugin v19.11 - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Bloomberg&#039;s thought leadership in C++ | Bloomberg L.P.</title>
+	<meta name="description" content="Our community of C++ developers is constantly pushing the boundaries of the language, from building low-level libraries and contributing to the C++..." />
+	<link rel="canonical" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Bloomberg&#039;s thought leadership in C++ | Bloomberg L.P." />
+	<meta property="og:description" content="Our community of C++ developers is constantly pushing the boundaries of the language, from building low-level libraries and contributing to the C++..." />
+	<meta property="og:url" content="https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/" />
+	<meta property="og:site_name" content="Bloomberg L.P." />
+	<meta property="article:publisher" content="https://www.facebook.com/bloomberglp/" />
+	<meta property="article:modified_time" content="2026-09-09T23:41:09+00:00" />
+	<meta property="og:image" content="https://assets.bbhub.io/company/sites/51/2022/03/C-Plus-Plus_exclusive.jpg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:image" content="https://assets.bbhub.io/company/sites/51/2022/03/C-Plus-Plus_exclusive.jpg" />
+	<meta name="twitter:site" content="@bloomberg" />
+	<meta name="twitter:label1" content="Est. reading time" />
+	<meta name="twitter:data1" content="4 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/","url":"https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/","name":"Bloomberg's thought leadership in C++ | Bloomberg L.P.","isPartOf":{"@id":"https://www.bloomberg.com/company/#website"},"primaryImageOfPage":{"@id":"https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/#primaryimage"},"image":{"@id":"https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/#primaryimage"},"thumbnailUrl":"https://assets.bbhub.io/image/v1/resize?width=auto&type=webp&url=https://assets.bbhub.io/company/sites/51/2022/03/C-Plus-Plus_exclusive.jpg","datePublished":"2022-01-10T18:23:04+00:00","dateModified":"2026-09-09T23:41:09+00:00","description":"Our community of C++ developers is constantly pushing the boundaries of the language, from building low-level libraries and contributing to the C++...","breadcrumb":{"@id":"https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/#primaryimage","url":"https://assets.bbhub.io/image/v1/resize?width=auto&type=webp&url=https://assets.bbhub.io/company/sites/51/2022/03/C-Plus-Plus_exclusive.jpg","contentUrl":"https://assets.bbhub.io/image/v1/resize?width=auto&type=webp&url=https://assets.bbhub.io/company/sites/51/2022/03/C-Plus-Plus_exclusive.jpg","width":"1200","height":"630"},{"@type":"BreadcrumbList","@id":"https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/#breadcrumb","itemListElement":[{"@type":"ListItem","position":"1","name":"Home","item":"https://www.bloomberg.com/company/"},{"@type":"ListItem","position":"2","name":"Values","item":"https://www.bloomberg.com/company/values/"},{"@type":"ListItem","position":"3","name":"Tech at Bloomberg","item":"https://www.bloomberg.com/company/values/tech-at-bloomberg/"},{"@type":"ListItem","position":"4","name":"C++"}]},{"@type":"WebSite","@id":"https://www.bloomberg.com/company/#website","url":"https://www.bloomberg.com/company/","name":"Bloomberg L.P.","description":"Bloomberg L.P. is the leader in global business and financial information, enabling customers to make smarter, faster, more informed business decisions.","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.bloomberg.com/company/?s={search_term_string}"},"query-input":"required name=search_term_string"}],"inLanguage":"en-US"}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//www.bbthat.com' />
+<link rel='dns-prefetch' href='//www.bloomberg.com' />
+<link rel='dns-prefetch' href='//view.ceros.com' />
+<link rel='dns-prefetch' href='//polyfill.bbhub.io' />
+<link rel='dns-prefetch' href='//www.googleoptimize.com' />
+<link rel='dns-prefetch' href='//assets.bwbx.io' />
+<link rel='stylesheet' id='that-data-0-css' href='https://assets.bwbx.io/font-service/css/AvenirNextPForBBG:400,600/styled-font-face.css' type='text/css' media='all' />
+<link rel='stylesheet' id='that-data-1-css' href='https://www.bbthat.com/assets/v2.7.0/that.css' type='text/css' media='all' />
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel='stylesheet' id='font-service-css' href='https://assets.bwbx.io/font-service/css/AvenirNextPForBBG:400,400i,600,600i/styled-font-face.css' type='text/css' media='all' />
+<link rel='stylesheet' id='font-japan-css' href='https://www.bloomberg.com/company/content/themes/company2019/dist/jpfont.61282c48.css' type='text/css' media='all' />
+<link rel='stylesheet' id='font-china-css' href='https://www.bloomberg.com/company/content/themes/company2019/dist/cnfont.82b24607.css' type='text/css' media='all' />
+<link rel='stylesheet' id='main-css-css' href='https://www.bloomberg.com/company/content/themes/company2019/dist/main.ed873a38.css' type='text/css' media='all' />
+<script type="text/javascript" id="sourcepointFooterJs-js-before">
+/* <![CDATA[ */
+window.__SP_FOOTER__ = {"useExistingLink":true,"linkName":"cookie-consent-link-footer","linkNameType":"ID","id":false,"linkText":false};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.bloomberg.com/company/content/plugins/bloomberg-cookie-consent/Includes/../dist/sourcepointFooter.js?ver=1787169522" id="sourcepointFooterJs-js" defer="defer" data-wp-strategy="defer"></script>
+<script type="text/javascript" src="https://polyfill.bbhub.io/v3/polyfill.min.js?features=Array.from%2CArray.prototype.%40%40iterator%2CArray.prototype.entries%2CArray.prototype.findIndex%2CArray.prototype.includes%2CArray.prototype.slice%2CArray.prototype.values%2CDOMTokenList.prototype.%40%40iterator%2CElement.prototype.closest%2CElement.prototype.dataset%2CElement.prototype.matches%2CElement.prototype.remove%2CFunction.prototype.name%2CHTMLTemplateElement%2CIntersectionObserver%2CMap%2CNodeList.prototype.%40%40iterator%2CNodeList.prototype.forEach%2CNumber.parseFloat%2CNumber.parseInt%2CObject.assign%2CObject.entries%2CObject.freeze%2CObject.keys%2CObject.setPrototypeOf%2CObject.values%2CPromise%2CString.prototype.%40%40iterator%2CString.prototype.includes%2CString.prototype.startsWith%2CSymbol%2CSymbol.iterator%2CSymbol.toStringTag%2CURL%2CWeakMap%2CWebAnimations%2Cfetch%2CrequestAnimationFrame&amp;flags=gated" id="polyfills-js"></script>
+<script type="text/javascript" src="https://www.googleoptimize.com/optimize.js?id=OPT-58JPSJK&amp;ver=9708fe87798eb41ecf976c5b0b2bbbfffa2ff9d46b25fdc87fedcd1aed5c1442" id="google-optimize-js"></script>
+<link rel="https://api.w.org/" href="https://www.bloomberg.com/company/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://www.bloomberg.com/company/wp-json/wp/v2/pages/15843" />
+<link rel='shortlink' href='https://www.bloomberg.com/company/?p=15843' />
+<style type="text/css" data-type="vc_custom-css">.bbg-statistic-block--l{
+    font-size:80px;
+}</style><script>
+	(function(window){
+		const flags = ["cookie_consent_cache"];
+		
+		window.bbgFeatureFlag = {};
+		bbgFeatureFlag.isEnabled = function(flag) {
+			return flags.includes(flag);
+		};
+
+	})(window);
+</script><meta name="generator" content="Powered by WPBakery Page Builder - drag and drop page builder for WordPress."/>
+<link rel="icon" href="https://assets.bbhub.io/image/v1/resize?width=auto&#038;type=webp&#038;url=https://assets.bbhub.io/company/sites/51/2025/03/black-512x512-1-150x150.png" sizes="32x32" />
+<link rel="icon" href="https://assets.bbhub.io/image/v1/resize?width=auto&#038;type=webp&#038;url=https://assets.bbhub.io/company/sites/51/2025/03/black-512x512-1-300x300.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://assets.bbhub.io/image/v1/resize?width=auto&#038;type=webp&#038;url=https://assets.bbhub.io/company/sites/51/2025/03/black-512x512-1-190x190.png" />
+<meta name="msapplication-TileImage" content="https://assets.bbhub.io/image/v1/resize?width=auto&#038;type=webp&#038;url=https://assets.bbhub.io/company/sites/51/2025/03/black-512x512-1-300x300.png" />
+		<style type="text/css" id="wp-custom-css">
+			/*main article .bbg-row--content {
+   transition: all .3s !important;
+   transition-delay: .3s;
+   transition-timing-function: ease-in;
+}*/
+/* support android internal browser on app to not show gray background */
+body.single-post, body.single-press {
+	background-color:#fff;
+}
+
+@media (max-width: 767px) {
+.site-footer__legal__links {
+    flex-wrap: wrap;
+    max-width: 100vw;
+}
+	.site-footer__legal__links__item {
+		flex:none;
+	}	
+}
+h1,h2,h3{
+	margin-bottom:16px!important;
+}
+.bb-separator{
+    margin-bottom:32px!important;
+}
+hr{
+    margin-bottom:32px!important;
+}
+code{
+    padding: 2px 4px;
+    font-size:90%;
+    color:#c7254e;
+    background:#f9f2f4;
+    border-radius:4px;
+}
+div.code-container,pre{
+    display:block;
+    padding:8px;
+    font-size:12px;
+    color:#333;
+    word-break:break-all!important;
+    overflow-wrap:anywhere!important;
+    background:#f5f5f5;
+    border:solid 1px #cccccc;
+    border-radius:4px;
+    margin-bottom:32px;
+	overflow:auto;
+}
+table{
+	border-collapse:collapse;
+	width:100%;
+	margin-bottom:32px;
+}
+.bbg-column.bbg-column--has-border{
+	border:solid 1px #cdcdcd!important;
+}
+article .bb-wysiwyg ul li~li{
+	margin-top:0px!important;
+}
+a.externalLink:after{
+	font-size:16px!important;
+}
+a.interstitial__link:hover{
+	background-color:#444444;
+}
+article ul{
+    margin-bottom:0px!important;
+}
+
+.site-footer__accommodations__text{
+	margin-top:0px!important;
+}
+.bbg-bg--black .bbg-button{
+	max-width:100%!important;
+}
+.bbg-button--size-large{
+	max-width:100%!important;
+}
+article ul{
+    margin-bottom:32px!important;
+}
+.bbg-career-feed__filter__category__list{
+	margin-bottom:0px!important;
+}
+.site-footer__accommodations{
+	margin-top:0px!important;
+}
+article .bb-wysiwyg p.wysiwyg-highlight::before{
+	width:3px;
+}
+.wysiwyg-highlight{
+    font-weight:bold!important;
+}
+.menu-header__title{
+	margin-bottom:0px!important;
+}
+.first-accordion{
+    border-top: none!important;
+}
+.bloomberg-video{
+    margin:none!important;
+    width:100%!important;
+    height:auto!important;
+}
+
+/* new Form Builder thankyou override size 11/2024 */
+.fba h2 {
+    font-size: 20px;
+}		</style>
+		<style type="text/css" data-type="vc_custom-css">.bbg-statistic-block--l{
+    font-size:80px;
+}</style><noscript><style> .wpb_animate_when_almost_visible { opacity: 1; }</style></noscript><script>window.bbg_that_exc_urls = ["https:\/\/about.bgov.com","https:\/\/www.bna.com","https:\/\/bol.bna.com","https:\/\/bba.bloomberg.net","https:\/\/service.bloomberg.com\/portal\/sessions\/new","https:\/\/www.bloombergmedia.com","https:\/\/www.bloomberg.com\/markets","https:\/\/www.bloomberg.com\/technology","https:\/\/www.bloomberg.com\/pursuits","https:\/\/www.bloomberg.com\/politics","https:\/\/www.bloomberg.com\/view","https:\/\/www.bloomberg.com\/businessweek","https:\/\/www.bloomberg.com\/live","https:\/\/www.bloombergradio.com","https:\/\/www.bloomberglive.com","https:\/\/www.bloomberg.com\/mobile","https:\/\/www.bloomberg.com\/distribution","https:\/\/www.bloomberg.com\/opinion","https:\/\/pro.bloomberglaw.com","https:\/\/pro.bloombergtax.com"];</script><style type="text/css">@media (min-width: 768px) { #bb-that .bb-that-header.bb-that--container { width: 704px; } }@media (min-width: 1024px) { #bb-that .bb-that-header.bb-that--container { width: 964px; } }@media (min-width: 1280px) { #bb-that .bb-that-header.bb-that--container { width: 1216px; } }</style>	</head>
+
+	<body class="page-template-default page page-id-15843 page-child parent-pageid-413 has-ga4-enabled header-color-invert wpb-js-composer js-comp-ver-6.4.1 vc_responsive has-bb-that has-utm-that">
+		<!-- Google Tag Manager -->
+<noscript>
+	<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TR2VFR4" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager -->
+<style>#bb-that a{text-decoration:none}#bb-that .bb-that__sitemap{overflow:hidden;position:relative;max-height:0;visibility:hidden;-webkit-transition:max-height 0.6s ease-in-out,visibility 0.6s ease-in-out;-o-transition:max-height 0.6s ease-in-out,visibility 0.6s ease-in-out;transition:max-height 0.6s ease-in-out,visibility 0.6s ease-in-out}#bb-that{font-family:AvenirNextPForBBG,"Helvetica Neue",Helvetica,Arial,sans-serif;background:#000;position:relative}@media (max-width: 759px){#bb-that .bb-that{display:none}}#bb-that *{font-family:AvenirNextPForBBG,"Helvetica Neue",Helvetica,Arial,sans-serif !important}#bb-that .bb-that--container{margin:0 auto;padding:0 30px;box-sizing:content-box}@media (min-width: 1020px){#bb-that .bb-that--container{padding:0}}#bb-that .bb-that--container:before,#bb-that .bb-that--container:after{content:" ";display:table}#bb-that .bb-that--container:after{clear:both}@media (min-width: 760px){#bb-that .bb-that--container{width:700px}}@media (min-width: 1020px){#bb-that .bb-that--container{width:980px}}@media (min-width: 1280px){#bb-that .bb-that--container{width:1160px}}#bb-that .bb-that-header{font-weight:600;font-size:15px;line-height:30px;padding:15px}@media (min-width: 760px){#bb-that .bb-that-header{font-size:12px;height:30px;padding:0}}#bb-that .bb-that-header__link{position:relative;display:block;outline-offset:2px}@media (min-width: 760px){#bb-that .bb-that-header__link{display:inline-block;padding:0 10px}}#bb-that .bb-that-header__link,#bb-that .bb-that-header__link>span{color:#f3f4ef;font-family:inherit;font-size:inherit;line-height:inherit}@media (min-width: 760px){#bb-that .bb-that-header__link,#bb-that .bb-that-header__link>span{line-height:1;-webkit-font-smoothing:subpixel-antialiased;-moz-osx-font-smoothing:auto}}@media (max-width: 1019px){#bb-that .bb-that-header__link,#bb-that .bb-that-header__link>span{font-size:11px}}#bb-that .bb-that-header__link[href*="bba.bloomberg.net"]:before{display:inline-block;content:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25.32 19'%3E%3Cdefs%3E%3Cstyle%3E.cls-1%7Bfill:%23fff;stroke:%23fff;stroke-miterlimit:10;stroke-width:.5px%7D%3C/style%3E%3C/defs%3E%3Cpath d='M0 0h25.32v19H0z'/%3E%3Crect class='cls-1' x='.32' y='1.81' width='11.74' height='9.39' rx='.47' ry='.47'/%3E%3Crect class='cls-1' x='13.23' y='1.8' width='11.74' height='9.39' rx='.47' ry='.47'/%3E%3Cpath class='cls-1' d='M11.4 13.75v.8c0 .29.53.53 1.18.53s1.17-.24 1.17-.53v-.8h.06c1.83.2 3.11.87 3.11 1.68 0 1-1.93 1.76-4.31 1.76s-4.32-.79-4.32-1.76c0-.8 1.3-1.47 3.09-1.69z'/%3E%3C/svg%3E");height:16px;width:16px;line-height:initial;right:3px;top:2px;position:relative}#bb-that .bb-that-header__link[href*="bba.bloomberg.net"],#bb-that .bb-that-header__link[href*="bba.bloomberg.net"]>span{color:#FFA028}#bb-that .bb-that-header__link[href*="/service"]:before{display:inline-block;content:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25'%3E%3Cpath fill='%23231f20' d='M0 0h25v25H0z'/%3E%3Crect x='1.53' y='1.33' width='21.91' height='21.91' rx='2.63' ry='2.63' fill='%231bbc3c'/%3E%3Ctext transform='translate(1.53 19.79)' style='isolation:isolate' font-size='10.19' font-family='AvenirNextPForBBG-Medium,Avenir Next P for BBG' letter-spacing='-.02em' fill='%23231f20'%3EHelp%3C/text%3E%3C/svg%3E");height:16px;width:16px;line-height:initial;right:3px;top:2px;position:relative}#bb-that .bb-that-header__link:first-child{padding-left:0}#bb-that .bb-that-header__link:after{font-size:9px;position:absolute}@media (min-width: 760px){#bb-that .bb-that-header__link+.bb-that-header__link{border-left:1px solid #b3b3b3}#bb-that .bb-that-header__link+.bb-that-header__link:after{top:-3px}}#bb-that .bb-that-header__link>span{pointer-events:none}#bb-that .bb-that-header__link>span:first-of-type{display:inline}#bb-that .bb-that-header__link>span:first-of-type+span{display:none}@media (max-width: 1019px){#bb-that .bb-that-header__link>span:first-of-type{display:none}#bb-that .bb-that-header__link>span:first-of-type+span{display:inline}}#bb-that .bb-that-header--sitemap-trigger{padding:0 27px 0 10px}#bb-that .bb-that-header--sitemap-trigger:after{display:inline-block;content:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2015%2015%27%3E%3Cpath%20d%3D%27M0,2.5l7.5,10l7.5-10H0z%27%20fill%3D%27%23fff%27%2F%3E%3C%2Fsvg%3E");height:9px;width:9px;line-height:initial;opacity:0.7;-webkit-transition:opacity 0.1s ease-out;-o-transition:opacity 0.1s ease-out;transition:opacity 0.1s ease-out}#bb-that .bb-that-header--sitemap-trigger:hover:after{opacity:1}#bb-that .bb-that-header--sitemap-trigger:after{height:9px;width:9px;-webkit-transform:rotate(0);-ms-transform:rotate(0);-o-transform:rotate(0);transform:rotate(0);-webkit-transition:transform 0.35s ease;-o-transition:transform 0.35s ease;transition:transform 0.35s ease}@media (min-width: 760px){#bb-that .bb-that-header--sitemap-trigger:after{right:12px;top:2px;line-height:1}}@media (min-width: 1020px){#bb-that .bb-that--open{border-bottom:1px solid #474747}}#bb-that .bb-that--open .bb-that-header--sitemap-trigger:after{-webkit-transform:rotate(180deg);-ms-transform:rotate(180deg);-o-transform:rotate(180deg);transform:rotate(180deg)}
+</style>
+<div id="bb-that" data-spotlight-service="https://www.bbthat.com/api/spotlights?site=company">
+	<nav class="bb-that">
+		<a href="#that-jump-content--default" class="bb-that__skip-to-content" aria-label="Skip to content" role="button" tabindex="0">Skip to content</a>
+    <div class="bb-that-header bb-that--container">
+        <a class="bb-that-header__link bb-that-header--sitemap-trigger" href="https://www.bloomberg.com/company/?utm_source=bloomberg-menu&amp;utm_medium=company" role="button" aria-controls="bb-that--container" aria-expanded="false" data-element="tophat-link" data-description="Bloomberg the Company &amp; Its Products" data-label="company"><span>Bloomberg the Company &amp; Its Products</span><span>The Company &amp; its Products</span></a><a class="bb-that-header__link" href="https://www.bloomberg.com/professional/contact-menu/?utm_source=bloomberg-menu&amp;utm_medium=company&amp;bbgsum=DG-WS-PROF-DEMO-bbgmenu" data-element="tophat-link" data-description="Bloomberg Terminal Demo Request" data-label="company">Bloomberg Terminal Demo Request</a><a class="bb-that-header__link" href="https://bba.bloomberg.net/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Anywhere Remote Login" data-label="company"><span>Bloomberg Anywhere Remote Login</span><span>Bloomberg Anywhere Login</span></a><a class="bb-that-header__link" href="https://www.bloomberg.com/professional/support/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Customer Support" data-label="company"><span>Bloomberg Customer Support</span><span>Customer Support</span></a>    </div>
+		<div id="bb-that--container" class="bb-that__sitemap bb-that--container" tabindex="-1" role="dialog">
+    
+    <ul class="bb-that__sitemap-sections bb-that--visible-md bb-that--visible-lg">
+                    <li class="bb-that__col bb-that__col--md">
+            <section class="bb-that-category">
+    <h3 id="that-list--bloomberg--1" class="bb-that-category__title">Bloomberg</h3><div class="bb-that-category__content"><p class="bb-that-category__text">Connecting decision makers to a dynamic network of information, people and ideas, Bloomberg quickly and accurately delivers business and financial information, news and insight around the world</p></div></section>            <section class="bb-that-category">
+    <h3 id="that-list--for_customers--2" class="bb-that-category__title">For Customers</h3><ul class="bb-that-category__content" aria-labelledby="that-list--for_customers--2"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://bba.bloomberg.net/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Anywhere Remote Login" data-label="company" tabindex="0">Bloomberg Anywhere Remote Login</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/support/customer-support/software-updates/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Software Updates" data-label="company" tabindex="0">Software Updates</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://service.bloomberg.com/portal/sessions/new?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Manage Products and Account Information" data-label="company" tabindex="0">Manage Products and Account Information</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--support--3" class="bb-that-category__title">Support</h3><div class="bb-that-category__content"><p class="bb-that-category__text"><span>Americas</span>+1 212 318 2000</p><p class="bb-that-category__text"><span>EMEA</span>+44 20 7330 7500</p><p class="bb-that-category__text"><span>Asia Pacific</span>+65 6212 1000</p></div></section>    </li>
+                    <li class="bb-that__col bb-that__col--md">
+            <section class="bb-that-category">
+    <h3 id="that-list--company--4" class="bb-that-category__title">Company</h3><ul class="bb-that-category__content" aria-labelledby="that-list--company--4"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="About" data-label="company" tabindex="0">About</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/what-we-do/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Careers" data-label="company" tabindex="0">Careers</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/values/inclusion/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Inclusion at Bloomberg" data-label="company" tabindex="0">Inclusion at Bloomberg</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Tech at Bloomberg" data-label="company" tabindex="0">Tech at Bloomberg</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/philanthropy/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Philanthropy" data-label="company" tabindex="0">Philanthropy</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/sustainability/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Sustainability" data-label="company" tabindex="0">Sustainability</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/bloomberg-beta/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Beta" data-label="company" tabindex="0">Bloomberg Beta</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--communications--5" class="bb-that-category__title">Communications</h3><ul class="bb-that-category__content" aria-labelledby="that-list--communications--5"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/announcements/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Press Announcements" data-label="company" tabindex="0">Press Announcements</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/press-contacts/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Press Contacts" data-label="company" tabindex="0">Press Contacts</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--follow--6" class="bb-that-category__title">Follow</h3><ul class="bb-that-category__content" aria-labelledby="that-list--follow--6"><li class="bb-that-category__item"><a href="https://www.facebook.com/Bloomberglp" class="bb-that-category__social-link bb-that--icon-facebook" data-element="tophat-link" data-description="Facebook" data-label="company" target="_blank" rel="noopener" tabindex="0">Facebook</a></li><li class="bb-that-category__item"><a href="https://www.instagram.com/bloomberg/" class="bb-that-category__social-link bb-that--icon-instagram" data-element="tophat-link" data-description="Instagram" data-label="company" target="_blank" rel="noopener" tabindex="0">Instagram</a></li><li class="bb-that-category__item"><a href="https://www.linkedin.com/company/2494" class="bb-that-category__social-link bb-that--icon-linkedin" data-element="tophat-link" data-description="LinkedIn" data-label="company" target="_blank" rel="noopener" tabindex="0">LinkedIn</a></li><li class="bb-that-category__item"><a href="https://www.youtube.com/@bloomberglp" class="bb-that-category__social-link bb-that--icon-youtube" data-element="tophat-link" data-description="YouTube" data-label="company" target="_blank" rel="noopener" tabindex="0">YouTube</a></li></ul></section>    </li>
+                    <li class="bb-that__col bb-that__col--md">
+            <section class="bb-that-category">
+    <h3 id="that-list--products--7" class="bb-that-category__title">Products</h3><ul class="bb-that-category__content" aria-labelledby="that-list--products--7"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://bloomberg.com/professional?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Professional Services" data-label="company" tabindex="0">Bloomberg Professional Services</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/bloomberg-terminal/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Terminal" data-label="company" tabindex="0">Bloomberg Terminal</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/data/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Data" data-label="company" tabindex="0">Data</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/trading/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Trading" data-label="company" tabindex="0">Trading</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/risk/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Risk" data-label="company" tabindex="0">Risk</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/compliance/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Compliance" data-label="company" tabindex="0">Compliance</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/indices/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Indices" data-label="company" tabindex="0">Indices</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--industry_products--8" class="bb-that-category__title">Industry Products</h3><ul class="bb-that-category__content" aria-labelledby="that-list--industry_products--8"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://pro.bloomberglaw.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Law" data-label="company" tabindex="0">Bloomberg Law</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://pro.bloombergtax.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Tax" data-label="company" tabindex="0">Bloomberg Tax</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://about.bgov.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Government" data-label="company" tabindex="0">Bloomberg Government</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://about.bnef.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="BloombergNEF" data-label="company" tabindex="0">BloombergNEF</a></li></ul></section>    </li>
+                    <li class="bb-that__col bb-that__col--md">
+            <section class="bb-that-category">
+    <h3 id="that-list--media--9" class="bb-that-category__title">Media</h3><ul class="bb-that-category__content" aria-labelledby="that-list--media--9"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/markets/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Markets" data-label="company" tabindex="0">Bloomberg Markets</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/technology/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Technology" data-label="company" tabindex="0">Bloomberg Technology</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/pursuits/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Pursuits" data-label="company" tabindex="0">Bloomberg Pursuits</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/politics/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Politics" data-label="company" tabindex="0">Bloomberg Politics</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/opinion/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Opinion" data-label="company" tabindex="0">Bloomberg Opinion</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/businessweek/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Businessweek" data-label="company" tabindex="0">Bloomberg Businessweek</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberglive.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Live Conferences" data-label="company" tabindex="0">Bloomberg Live Conferences</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloombergradio.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Radio" data-label="company" tabindex="0">Bloomberg Radio</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/live?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Television" data-label="company" tabindex="0">Bloomberg Television</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/news-bureaus/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="News Bureaus" data-label="company" tabindex="0">News Bureaus</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--media_services--10" class="bb-that-category__title">Media Services</h3><ul class="bb-that-category__content" aria-labelledby="that-list--media_services--10"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/distribution?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Media Distribution" data-label="company" tabindex="0">Bloomberg Media Distribution</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloombergmedia.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Advertising" data-label="company" tabindex="0">Advertising</a></li></ul></section>    </li>
+            </ul>
+
+        <ul class="bb-that__sitemap-sections bb-that--visible-sm">
+                    <li class="bb-that__col bb-that__col--sm">
+            <section class="bb-that-category">
+    <h3 id="that-list--company--11" class="bb-that-category__title">Company</h3><ul class="bb-that-category__content" aria-labelledby="that-list--company--11"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="About" data-label="company" tabindex="0">About</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/what-we-do/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Careers" data-label="company" tabindex="0">Careers</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/values/inclusion/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Inclusion at Bloomberg" data-label="company" tabindex="0">Inclusion at Bloomberg</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Tech at Bloomberg" data-label="company" tabindex="0">Tech at Bloomberg</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/philanthropy/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Philanthropy" data-label="company" tabindex="0">Philanthropy</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/sustainability/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Sustainability" data-label="company" tabindex="0">Sustainability</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/bloomberg-beta/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Beta" data-label="company" tabindex="0">Bloomberg Beta</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--communications--12" class="bb-that-category__title">Communications</h3><ul class="bb-that-category__content" aria-labelledby="that-list--communications--12"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/announcements/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Press Announcements" data-label="company" tabindex="0">Press Announcements</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/press-contacts/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Press Contacts" data-label="company" tabindex="0">Press Contacts</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--follow--13" class="bb-that-category__title">Follow</h3><ul class="bb-that-category__content" aria-labelledby="that-list--follow--13"><li class="bb-that-category__item"><a href="https://www.facebook.com/Bloomberglp" class="bb-that-category__social-link bb-that--icon-facebook" data-element="tophat-link" data-description="Facebook" data-label="company" target="_blank" rel="noopener" tabindex="0">Facebook</a></li><li class="bb-that-category__item"><a href="https://www.instagram.com/bloomberg/" class="bb-that-category__social-link bb-that--icon-instagram" data-element="tophat-link" data-description="Instagram" data-label="company" target="_blank" rel="noopener" tabindex="0">Instagram</a></li><li class="bb-that-category__item"><a href="https://www.linkedin.com/company/2494" class="bb-that-category__social-link bb-that--icon-linkedin" data-element="tophat-link" data-description="LinkedIn" data-label="company" target="_blank" rel="noopener" tabindex="0">LinkedIn</a></li><li class="bb-that-category__item"><a href="https://www.youtube.com/@bloomberglp" class="bb-that-category__social-link bb-that--icon-youtube" data-element="tophat-link" data-description="YouTube" data-label="company" target="_blank" rel="noopener" tabindex="0">YouTube</a></li></ul></section>    </li>
+                    <li class="bb-that__col bb-that__col--sm">
+            <section class="bb-that-category">
+    <h3 id="that-list--products--14" class="bb-that-category__title">Products</h3><ul class="bb-that-category__content" aria-labelledby="that-list--products--14"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://bloomberg.com/professional?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Professional Services" data-label="company" tabindex="0">Bloomberg Professional Services</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/bloomberg-terminal/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Terminal" data-label="company" tabindex="0">Bloomberg Terminal</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/data/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Data" data-label="company" tabindex="0">Data</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/trading/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Trading" data-label="company" tabindex="0">Trading</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/risk/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Risk" data-label="company" tabindex="0">Risk</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/compliance/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Compliance" data-label="company" tabindex="0">Compliance</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/products/indices/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Indices" data-label="company" tabindex="0">Indices</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--industry_products--15" class="bb-that-category__title">Industry Products</h3><ul class="bb-that-category__content" aria-labelledby="that-list--industry_products--15"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://pro.bloomberglaw.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Law" data-label="company" tabindex="0">Bloomberg Law</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://pro.bloombergtax.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Tax" data-label="company" tabindex="0">Bloomberg Tax</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://about.bgov.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Government" data-label="company" tabindex="0">Bloomberg Government</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://about.bnef.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="BloombergNEF" data-label="company" tabindex="0">BloombergNEF</a></li></ul></section>    </li>
+                    <li class="bb-that__col bb-that__col--sm">
+            <section class="bb-that-category">
+    <h3 id="that-list--media--16" class="bb-that-category__title">Media</h3><ul class="bb-that-category__content" aria-labelledby="that-list--media--16"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/markets/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Markets" data-label="company" tabindex="0">Bloomberg Markets</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/technology/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg[br] Technology" data-label="company" tabindex="0">Bloomberg<br /> Technology</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/pursuits/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Pursuits" data-label="company" tabindex="0">Bloomberg Pursuits</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/politics/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Politics" data-label="company" tabindex="0">Bloomberg Politics</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/opinion/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Opinion" data-label="company" tabindex="0">Bloomberg Opinion</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/businessweek/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg[br] Businessweek" data-label="company" tabindex="0">Bloomberg<br /> Businessweek</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberglive.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Live Conferences" data-label="company" tabindex="0">Bloomberg Live Conferences</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloombergradio.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Radio" data-label="company" tabindex="0">Bloomberg Radio</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/live?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Television" data-label="company" tabindex="0">Bloomberg Television</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/company/news-bureaus/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="News Bureaus" data-label="company" tabindex="0">News Bureaus</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--media_services--17" class="bb-that-category__title">Media Services</h3><ul class="bb-that-category__content" aria-labelledby="that-list--media_services--17"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/distribution?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Media Distribution" data-label="company" tabindex="0">Bloomberg Media Distribution</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloombergmedia.com/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Advertising" data-label="company" tabindex="0">Advertising</a></li></ul></section>    </li>
+                    <li class="bb-that__col bb-that__col--sm">
+            <section class="bb-that-category">
+    <h3 id="that-list--bloomberg--18" class="bb-that-category__title">Bloomberg</h3><div class="bb-that-category__content"><p class="bb-that-category__text">Connecting decision makers to a dynamic network of information, people and ideas, Bloomberg quickly and accurately delivers business and financial information, news and insight around the world</p></div></section>            <section class="bb-that-category">
+    <h3 id="that-list--for_customers--19" class="bb-that-category__title">For Customers</h3><ul class="bb-that-category__content" aria-labelledby="that-list--for_customers--19"><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://bba.bloomberg.net/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Bloomberg Anywhere Remote Login" data-label="company" tabindex="0">Bloomberg Anywhere Remote Login</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://www.bloomberg.com/professional/support/customer-support/software-updates/?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Software Updates" data-label="company" tabindex="0">Software Updates</a></li><li class="bb-that-category__item"><a class="bb-that-category__link" href="https://service.bloomberg.com/portal/sessions/new?utm_source=bloomberg-menu&amp;utm_medium=company" data-element="tophat-link" data-description="Manage Contracts and Orders" data-label="company" tabindex="0">Manage Contracts and Orders</a></li></ul></section>            <section class="bb-that-category">
+    <h3 id="that-list--support--20" class="bb-that-category__title">Support</h3><div class="bb-that-category__content"><p class="bb-that-category__text"><span>Americas</span>+1 212 318 2000</p><p class="bb-that-category__text"><span>EMEA</span>+44 20 7330 7500</p><p class="bb-that-category__text"><span>Asia Pacific</span>+65 6212 1000</p></div></section>    </li>
+            </ul>
+
+    <button class="bb-that__close" aria-label="Close" tabindex="0"></button>
+</div>	</nav>
+</div>
+<div id="that-jump-content--default" tabindex="-1"></div>
+						<!-- content wrapper -->
+		<main class="site-content">
+
+			<!-- site-header inside site-content to implement sticky footer -->
+			<header class="site-header bbg-row">
+				<div class="bbg-row--content no-padding">
+
+					<!-- Site logo -->
+					<div class="logo-header bbg-column bbg-column--s-width-2 bbg-column--m-width-2 bbg-column--width-4" itemscope itemtype="http://schema.org/Organization">
+						<a
+							href="https://www.bloomberg.com/company/"
+							rel="home"
+							itemprop="url"
+							class="logo-header__link"
+						>
+														<img
+								itemprop="logo"
+								class="logo-header__image asdf"
+								src="https://www.bloomberg.com/company/content/themes/company2019/public/assets/logo.svg"
+								alt="Bloomberg"
+							>
+														</a>
+					</div>
+
+					<div class="site-header__mobile-toggle bbg-column bbg-column--s-width-1 bbg-column--s-offset-1">
+						<button class="site-header__mobile-toggle__button" aria-haspopup="true" aria-expanded="false">Menu</button>
+					</div>
+
+					<!-- Header navigation menu -->
+					<nav class="menu-header bbg-column bbg-column--m-width-6 bbg-column--width-8"></nav>
+				</div>
+							</header>
+		<article class="post-15843 page type-page status-publish has-post-thumbnail hentry">
+			<div class='bbg-row bbg-bg--black bbg-bg--has-media' data-anchor='row-6aa2ceda5a70d'>
+  
+	<style>
+
+    video.video {
+        background-image: url(https://assets.bbhub.io/image/v1/resize?width=auto&type=webp&url=https://assets.bbhub.io/company/sites/51/2022/02/C-at-Bloomberg-Thumb-1.jpg);
+    }
+
+    @media screen and ( min-width: 760px ) and ( max-width: 1020px ) {
+        .video-container {
+            background-image: url();
+        }
+    }
+
+    @media screen and ( max-width: 759px ) {
+        .video-container {
+            background-image: url();
+        }
+    }
+
+</style>
+
+<div id="video-bg-6aa2ceda5abab" class="video-container" data-src="https://player.vimeo.com/progressive_redirect/playback/674865943/rendition/1080p?loc=external&amp;signature=0363bacf504dcd3bd34fb01887ae6d93aa63a8cdac74ad788046b8bc0e9e4b51" data-src-tablet="" data-src-mobile=""></div>
+
+<script>
+  !(function() {
+    var setVideo = function() {
+      var videoEl = document.querySelector("#video-bg-6aa2ceda5abab");
+
+      if (videoEl) {
+        var defaultVideo = videoEl.dataset.src;
+
+        if (document.body.offsetWidth < 760) {
+          defaultVideo = videoEl.dataset.srcMobile || defaultVideo;
+        } else if (document.body.offsetWidth < 1020) {
+          defaultVideo = videoEl.dataset.srcTablet || defaultVideo;
+        }
+
+        var videoIdName = "container-video-bg-6aa2ceda5abab";
+        var buttonIdName = "button-"+videoIdName;
+
+        videoEl.innerHTML = (
+          '<video playsinline autoplay muted loop poster="https://assets.bbhub.io/image/v1/resize?width=auto&type=webp&url=https://assets.bbhub.io/company/sites/51/2022/02/C-at-Bloomberg-Thumb-1.jpg" class="video" id="'+videoIdName+'"">' +
+            '<source data-src="' + defaultVideo + '" src="' + defaultVideo + '" type="video/mp4">' +
+          '</video>'
+        );
+
+        var video = document.querySelector('#' + videoIdName);
+      }
+    };
+
+    setVideo();
+
+    var tid;
+    window.addEventListener(
+      "resize",
+      function() {
+        window.clearTimeout(tid);
+        tid = window.setTimeout(setVideo, 250);
+      },
+      false
+    );
+  })();
+</script>
+
+	
+	<div class="bbg-row--content bbg-height--40">
+		
+			<div class='bbg-column bbg-column--width-10 bbg-column--valign-middle'>
+	<div class="bbg-heading bbg-heading--has-pretext bbg-heading--has-heading"><a class="bbg-heading__pretext" href="">Tech At Bloomberg</a><h1 class="bbg-heading__heading">C++</h1></div><div class="bbg-cta bbg-cta--color-default bbg-cta--align-left bbg-cta--type-link"><a class="bbg-button bbg-button--align-left bbg-button--size-medium" href="https://bloomberg.avature.net/en_US/careers/SearchJobs/c%2B%2B?listFilterMode=1&#038;jobRecordsPerPage=12&#038;" id="bbg-button-6aa2ceda5a9d0" data-element="cta-button" data-description="Search C++ jobs" target="_blank" rel="noopener external">Search C++ jobs</a></div>
+
+</div>
+
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--grey ' data-anchor='row-6aa2ceda5c85d'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column bbg-column--width-10'>
+	<div class='bb-wysiwyg'>
+    
+    <p class="emphasis">C++ is central to how we work at Bloomberg.</p>
+<p>Our systems handle more than 400 billion ticks of data every day – in real time – ranging from live market data to news stories, financial tweets and instant messages. Our engineers build thousands of applications to not only process that information, but turn it into actionable insights for our clients.</p>
+
+</div>
+
+
+</div>
+
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--black ' data-anchor='row-6aa2ceda5dd10'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column bbg-column--width-4'>
+	<div class='bb-wysiwyg'>
+    
+    <h2>Come hear our engineers speak at CppCon 2026</h2>
+
+</div>
+<div class="bbg-cta bbg-cta--color-default bbg-cta--align-left bbg-cta--type-link"><a class="bbg-button bbg-button--align-left bbg-button--size-medium" href="https://cppcon2026.sched.com/" id="bbg-button-6aa2ceda5e890" data-element="cta-button" data-description="CHECK THE SCHEDULE" target="_blank" rel="noopener external">CHECK THE SCHEDULE</a></div>
+
+</div>
+<div class='bbg-column bbg-column--width-7 bbg-column--valign-middle bbg-column--offset-1'>
+	<div class='bb-wysiwyg'>
+    
+    <h3>Saturday, September 12, 2026</h3>
+<ul>
+<li>9:00 AM-5:15 PM: <a href="https://cppcon2026.sched.com/event/2Uuad/talking-tech" target="_blank" rel="noopener">Talking Tech</a> | Sherry Sontag, Phil Nash, and Peter Muldoon (with John Pavan joining in)</li>
+</ul>
+<h3>Sunday, September 13, 2026</h3>
+<ul>
+<li>9:00 AM-5:15 PM: <a href="https://cppcon2026.sched.com/event/2Uual/talking-tech" target="_blank" rel="noopener">Talking Tech</a> | Sherry Sontag, Phil Nash, and Peter Muldoon (with John Pavan joining in)</li>
+</ul>
+<h3>Monday, September 14, 2026</h3>
+<ul>
+<li>11:00 AM-12:00 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT7J/are-you-smarter-than-a-branch-predictor" target="_blank" rel="noopener">Are You Smarter Than A Branch Predictor?</a> | Michelle D’Souza</li>
+<li>2:00-3:00 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT4D/familiar-c++-patterns-that-fail-at-scale-and-the-design-shifts-that-prevent-them" target="_blank" rel="noopener">Familiar C++ Patterns That Fail at Scale and the Design Shifts That Prevent Them</a> | Divya Chandrasekar &amp; Devpriya Dave</li>
+</ul>
+<h3>Tuesday, September 15, 2026</h3>
+<ul>
+<li>3:15-4:15 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT5W/lock-free-timer-scheduling-with-c++-atomics" target="_blank" rel="noopener">Lock-Free Timer Scheduling With C++ Atomics</a> | Maxim Gurschi</li>
+<li>4:45-5:45 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT4q/ensuring-code-quality-in-the-age-of-ai-more-code-less-engineering" target="_blank" rel="noopener">Ensuring Code Quality in the Age of AI: More Code, Less Engineering!</a> | Peter Muldoon</li>
+</ul>
+<h3>Wednesday, September 16, 2026</h3>
+<ul>
+<li>2:00-3:00 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT66/the-ghost-in-the-heap-defeating-a-memory-thief" target="_blank" rel="noopener">The Ghost in the Heap: Defeating a Memory Thief</a> | Nicolas Arroyo</li>
+<li>3:15-4:15 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT6I/readable-async-workflows-in-modern-c++-coroutines-meet-stdexpected" target="_blank" rel="noopener">Readable Async Workflows in Modern C++: Coroutines Meet std::expected</a> | Futong Liu</li>
+</ul>
+<h3>Thursday, September 17, 2026</h3>
+<ul>
+<li>9:00-10:00 AM MDT: <a href="https://cppcon2026.sched.com/event/2RT3y/composing-the-future-async-workflows-with-stdexecution" target="_blank" rel="noopener">Composing the Future: Async Workflows with std::execution</a> | Alistair Fisher &amp; Ivy Zhang</li>
+<li>9:00-10:00 AM MDT: <a href="https://cppcon2026.sched.com/event/2RT6c/writing-low-latency-c++-predictability-cache-and-the-architectures-underneath" target="_blank" rel="noopener">Writing Low-Latency C++: Predictability, Cache, and the Architectures Underneath</a> | Sampad Acharya</li>
+<li>2:00-3:00 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT7t/generating-language-bindings-using-c++-reflection" target="_blank" rel="noopener">Generating Language Bindings using C++ Reflection</a> | Callum Piper</li>
+<li>2:00-3:00 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT6r/when-zero-cost-abstractions-arent-zero-cost" target="_blank" rel="noopener">When Zero-Cost Abstractions Aren’t Zero-Cost</a> | Steve Sorkin</li>
+<li>2:00-3:00 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT6s/what-is-your-algorithmic-core" target="_blank" rel="noopener">What Is Your Algorithmic Core?</a> | Egor Suvorov</li>
+<li>3:15-4:15 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT82/modernizing-legacy-codebases-without-stopping-the-world" target="_blank" rel="noopener">Modernizing Legacy Codebases without Stopping the World</a> | Peter Muldoon</li>
+<li>4:45-5:45 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT6U/meet-guy-davidson" target="_blank" rel="noopener">Meet Guy Davidson</a> | Fireside Chat with Sherry Sontag</li>
+</ul>
+<h3>Friday, September 18, 2026</h3>
+<ul>
+<li>10:30-11:30 AM MDT: <a href="https://cppcon2026.sched.com/event/2RT5Z/mock-any-function-in-c++-without-changing-a-single-line-of-code" target="_blank" rel="noopener">Mock Any Function in C++ Without Changing a Single Line of Code</a> | Ilya Ermakov, Brian Rudo-Hutt, and Ruifeng Zhang</li>
+<li>10:30-11:30 AM MDT: <a href="https://cppcon2026.sched.com/event/2RT7j/incremental-modernization-refactoring-legacy-oop-application-code-using-type-erasure-and-functional-c++" target="_blank" rel="noopener">Incremental Modernization: Refactoring Legacy OOP Application Code using Type Erasure and Functional C++</a> | Jessica Ding</li>
+<li>2:45-3:45 PM MDT: <a href="https://cppcon2026.sched.com/event/2RT5k/the-value-of-idiomatic-code" target="_blank" rel="noopener">The Value of Idiomatic Code</a> | John Pavan</li>
+</ul>
+
+</div>
+
+
+</div>
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--grey ' data-anchor='row-6aa2ceda6038b'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column bbg-column--width-5'>
+	<div class='bb-wysiwyg'>
+    
+    <h2 class="emphasis">A collaborative effort</h2>
+
+</div>
+
+
+</div>
+<div class='bbg-column bbg-column--width-6 bbg-column--offset-1'>
+	<div class='bb-wysiwyg'>
+    
+    <p>Our community of C++ developers is constantly pushing the boundaries of the language, from building low-level libraries and contributing to the C++ Standards Committee (WG21), to building some of the most highly performant financial applications, analytics and trading systems in the world.</p>
+
+</div>
+
+
+</div>
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--white ' data-anchor='row-6aa2ceda620fc'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column bbg-column--width-5 bbg-column--sticky'>
+	<div class='bb-wysiwyg'>
+    
+    <h2>A leading contributor to the C++ community</h2>
+
+</div>
+<div class='bb-wysiwyg'>
+    
+    <p><span style="font-weight: 400;">Bloomberg engineers are active participants in steering the direction of the C++ language. In addition to having published the </span><a href="https://github.com/bloomberg/bde" target="_blank" rel="noopener noreferrer"><span style="font-weight: 400;">Bloomberg Development Environment (BDE)</span></a><span style="font-weight: 400;">, the company’s foundational libraries for C++ development, as <a href="https://www.bloomberg.com/company/values/tech-at-bloomberg/open-source/">open source</a>, a number of the company’s engineers have led and continue to participate in the C++ standardization process as voting members and through various WG21 working groups (e.g., Library Wording WG, Core Language Evolution WG). Some of the major contributions from Bloomberg include Allocators (led to the PMR model in C++17), chairing the work for the Reflection TS, implementation experience for Contracts, and insights on Modules and tooling at scale.</span></p>
+<p><span style="font-weight: 400;">We are the primary authors of several finished and upcoming C++ features both large and small. The Reflection TS is a milestone that greatly expands the power of compile-time programming. Pattern matching brings a long-needed lift-up to control flow branching, inspired by functional languages. In addition, our work on Contracts underlines the Design-by-Contract paradigm that keeps quality high in our code. We’ll continue our support of these efforts, thereby keeping C++ the go-to language for software engineers everywhere.</span></p>
+<p><span style="font-weight: 400;">We are also regular sponsors of and speakers at conferences, including ACCU, CppCon, C++ Now, C++ On Sea, and Meeting C++. </span></p>
+
+</div>
+
+</div>
+<div class='bbg-column bbg-column--width-6 bbg-column--offset-1'>
+	<div class="bbg-content-feed"
+					data-type="post"
+					data-display-image="post,press"
+					data-style="small"
+					data-post-type="post"
+					data-post-id="41904"
+					data-press-id=""
+					data-number-items="1"
+					data-categories=""
+					data-post-tags=""
+					data-press-tags=""
+					data-manual-title=""
+					data-manual-cat-title=""
+					data-manual-date=""
+					data-manual-description=""
+					data-manual-image=""
+					data-manual-link=""
+					data-manual-target=""
+					data-current-page="1"
+					data-page-type=""
+					data-term-override=""
+					data-display-primary-category="article-press"></div><div class="bbg-content-feed"
+					data-type="manual"
+					data-display-image="post,press"
+					data-style="small"
+					data-post-type="manual"
+					data-post-id=""
+					data-press-id=""
+					data-number-items="1"
+					data-categories=""
+					data-post-tags=""
+					data-press-tags=""
+					data-manual-title="``The best C++ engineers in the industry work for Bloomberg`` (eFinancialCareers)"
+					data-manual-cat-title="Media Coverage"
+					data-manual-date="April 5, 2022"
+					data-manual-description=""
+					data-manual-image="https://assets.bbhub.io/image/v1/resize?width=auto&amp;type=webp&amp;url=https://assets.bbhub.io/company/sites/51/2022/04/eFinanicialCareers.png"
+					data-manual-link="https://www.efinancialcareers.com/news/2022/04/bloomberg-c-developers"
+					data-manual-target="_blank"
+					data-current-page="1"
+					data-page-type=""
+					data-term-override=""
+					data-display-primary-category="article-press"></div><div class="bbg-content-feed"
+					data-type="post"
+					data-display-image="post,press"
+					data-style="small"
+					data-post-type="post"
+					data-post-id="20462"
+					data-press-id=""
+					data-number-items="1"
+					data-categories=""
+					data-post-tags=""
+					data-press-tags=""
+					data-manual-title=""
+					data-manual-cat-title=""
+					data-manual-date=""
+					data-manual-description=""
+					data-manual-image=""
+					data-manual-link=""
+					data-manual-target=""
+					data-current-page="1"
+					data-page-type=""
+					data-term-override=""
+					data-display-primary-category="article-press"></div><div class="bbg-content-feed"
+					data-type="post"
+					data-display-image="post,press"
+					data-style="small"
+					data-post-type="post"
+					data-post-id="20555"
+					data-press-id=""
+					data-number-items="1"
+					data-categories=""
+					data-post-tags=""
+					data-press-tags=""
+					data-manual-title=""
+					data-manual-cat-title=""
+					data-manual-date=""
+					data-manual-description=""
+					data-manual-image=""
+					data-manual-link=""
+					data-manual-target=""
+					data-current-page="1"
+					data-page-type=""
+					data-term-override=""
+					data-display-primary-category="article-press"></div><div class='bb-wysiwyg'>
+    
+    <div style="margin-top: 32px!important; font-size: 20px!important;"><a class="arrow" href="https://www.bloomberg.com/company/stories/tag/c-plus-plus/">Read our latest stories</a></div>
+
+</div>
+
+</div>
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--black  bbg-row--margin-bottom-compact' data-anchor='row-6aa2ceda66129'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column bbg-column--width-8'>
+	<div class='bb-wysiwyg'>
+    
+    <h2>Explore <a href="https://www.bloomberg.com/company/values/tech-at-bloomberg/">Tech At Bloomberg</a></h2>
+
+</div>
+
+
+</div>
+
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--black  bbg-row--margin-top-none bbg-row--margin-bottom-none' data-anchor='row-6aa2ceda67704'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column bbg-column--width-6'>
+	<div class='bb-wysiwyg'>
+    
+    <h3>Areas of focus</h3>
+
+</div>
+
+
+</div>
+
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--black  bbg-row--margin-top-none bbg-h-hide-mobile bbg-h-hide-tablet' data-anchor='row-6aa2ceda68ae1'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column bbg-column--width-4'>
+	<div class='bb-wysiwyg'>
+    
+    <p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/">C++</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/artificial-intelligence-ai/">Artificial Intelligence</a></p>
+<p><a class="externalLink" href="https://www.bloomberg.com/ux/" target="_blank" rel="noopener noreferrer">UX</a></p>
+
+</div>
+
+
+</div>
+<div class='bbg-column bbg-column--width-4 bbg-column--collapse-top-margin-on-tablet bbg-column--collapse-top-margin-on-mobile'>
+	<div class='bb-wysiwyg'>
+    
+    <p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/javascript/">JavaScript/TypeScript</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/data-science/">Data Science</a></p>
+
+</div>
+
+
+</div>
+<div class='bbg-column bbg-column--width-4'>
+	<div class='bb-wysiwyg'>
+    
+    <p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/python/">Python</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/open-source/">Open Source</a></p>
+
+</div>
+
+
+</div>
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--black  bbg-row--margin-top-none bbg-h-hide-mobile bbg-h-hide-desktop' data-anchor='row-6aa2ceda6b00c'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column bbg-column--width-6 bbg-column--m-width-4'>
+	<div class='bb-wysiwyg'>
+    
+    <p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/">C++</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/javascript/">JavaScript/TypeScript</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/python/">Python</a></p>
+
+</div>
+
+
+</div>
+<div class='bbg-column bbg-column--width-6 bbg-column--m-width-4'>
+	<div class='bb-wysiwyg'>
+    
+    <p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/artificial-intelligence-ai/">Artificial Intelligence</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/data-science/">Data Science</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/open-source/">Open Source</a></p>
+<p><a class="externalLink" href="https://www.bloomberg.com/ux/" target="_blank" rel="noopener noreferrer">UX</a></p>
+
+</div>
+
+
+</div>
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--black  bbg-row--margin-top-none bbg-h-hide-tablet bbg-h-hide-desktop' data-anchor='row-6aa2ceda6cf30'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column'>
+	<div class='bb-wysiwyg'>
+    
+    <p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/c-plus-plus/">C++</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/javascript/">JavaScript/TypeScript</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/python/">Python</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/artificial-intelligence-ai/">Artificial Intelligence</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/data-science/">Data Science</a></p>
+<p><a class="arrow" href="https://www.bloomberg.com/company/values/tech-at-bloomberg/open-source/">Open Source</a></p>
+<p><a class="externalLink" href="https://www.bloomberg.com/ux/" target="_blank" rel="noopener noreferrer">UX</a></p>
+
+</div>
+
+
+</div>
+
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--white ' data-anchor='row-6aa2ceda6e56f'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column'>
+	<div class="bb-separator" data-color="">
+	<hr class="bb-separator__rule">
+</div>
+
+
+</div>
+
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--white  bbg-row--margin-top-compact' data-anchor='row-6aa2ceda6f561'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column'>
+	<div class='bb-wysiwyg'>
+    
+    <h2 style="text-align: center;">Make it happen here.</h2>
+<p>&nbsp;</p>
+
+</div>
+<div class="bbg-cta bbg-cta--color-default bbg-cta--align-center bbg-cta--type-link"><a class="bbg-button" href="https://bloomberg.avature.net/en_US/careers/SearchJobs?utm_medium=mktg_site&#038;utm_content=company_values_techatbloomberg&#038;utm_source=website" id="bbg-button-6aa2ceda6fd6f" data-element="cta-button" data-description="SEARCH JOBS" target="_blank" rel="noopener external">SEARCH JOBS</a></div>
+
+</div>
+
+
+		
+	</div>
+</div>
+<div class='bbg-row bbg-bg--white ' data-anchor='row-6aa2ceda70a4d'>
+  
+	
+	
+	<div class="bbg-row--content">
+		
+			<div class='bbg-column'>
+	<div class="bb-separator" data-color="">
+	<hr class="bb-separator__rule">
+</div>
+
+
+</div>
+
+
+		
+	</div>
+</div>
+		</article>
+				<!-- end content wrapper opened on header.php-->
+		</main>
+
+		<footer id="site-footer" class="site-footer"></footer>
+		<div class="bbg-search bbg-h-hide-mobile" role="dialog" aria-modal="true"></div>
+
+		    <script>
+        window.__COUNTRY__ =  "us";
+        window.__REGION__  =  "ca";
+    </script><script defer type="text/javascript" src="https://www.bbthat.com/assets/v2.7.0/that.js" id="that-data-0-js"></script>
+<script type="text/javascript" src="https://www.bloomberg.com/company/content/plugins/bloomberg-video/dist/js/vimeo-iframes.js?ver=090a68dd66" id="bloomberg-video-vimeo-iframes-js"></script>
+<script type="text/javascript" src="https://view.ceros.com/scroll-proxy.min.js?ver=9708fe87798eb41ecf976c5b0b2bbbfffa2ff9d46b25fdc87fedcd1aed5c1442" id="ceros-js"></script>
+<script type="text/javascript" id="main-js-js-extra">
+/* <![CDATA[ */
+var BBGTranslations = {"menuHeaderSubnavLinkText":"Find out more","careerFeedSelectCategories":"All programs","careerFeedSelectRegions":"All regions","careerFeedViewItem":"VIEW DETAILS","careerFeedNoItemsFound":"No items found, please select a different program or region.","careerTableJobTitle":"Open positions","careerTableSpecialty":"Role","careerTableFunction":"Team","careerTableCity":"Location","paginationNextPage":"Go to next page","paginationPrevPage":"Go to previous page","paginationGoToPage":"Go to page %d","titleArchive":"%%term_title%% Archives %%page%% - Bloomberg L.P.","categorySelection":"Category Selection","regionSelection":"Region Selection","headerNavAriaLabel":"Header","locale":"en_US"};
+/* ]]> */
+</script>
+<script type="text/javascript" id="main-js-js-before">
+/* <![CDATA[ */
+window.__SITE_URL__ = "/company";
+window.__PUBLIC_PATH__ = "https://www.bloomberg.com/company/content/themes/company2019/dist/";
+window.__POST_ID__ = 15843;
+window.__ACTIVE_NAV_POST_ID__ = 0;
+window.dataLayer = window.dataLayer || [];
+!function(e){function t(t){for(var n,o,f=t[0],u=t[1],i=t[2],d=0,s=[];d<f.length;d++)o=f[d],Object.prototype.hasOwnProperty.call(a,o)&&a[o]&&s.push(a[o][0]),a[o]=0;for(n in u)Object.prototype.hasOwnProperty.call(u,n)&&(e[n]=u[n]);for(l&&l(t);s.length;)s.shift()();return c.push.apply(c,i||[]),r()}function r(){for(var e,t=0;t<c.length;t++){for(var r=c[t],n=!0,o=1;o<r.length;o++){var u=r[o];0!==a[u]&&(n=!1)}n&&(c.splice(t--,1),e=f(f.s=r[0]))}return e}var n={},o={0:0},a={0:0},c=[];function f(t){if(n[t])return n[t].exports;var r=n[t]={i:t,l:!1,exports:{}};return e[t].call(r.exports,r,r.exports,f),r.l=!0,r.exports}f.e=function(e){var t=[];o[e]?t.push(o[e]):0!==o[e]&&{6:1,7:1,8:1,9:1,10:1,11:1,13:1,14:1,15:1,16:1}[e]&&t.push(o[e]=new Promise((function(t,r){for(var n=({}[e]||e)+"."+{6:"31f81220",7:"083cd8d4",8:"560cbfb4",9:"b4ae5d35",10:"fe1bfc2f",11:"7e45147c",12:"31d6cfe0",13:"59f28cae",14:"30b968f4",15:"3887466a",16:"5089db8d",17:"31d6cfe0",18:"31d6cfe0",19:"31d6cfe0",20:"31d6cfe0",21:"31d6cfe0",22:"31d6cfe0",23:"31d6cfe0",24:"31d6cfe0",25:"31d6cfe0",26:"31d6cfe0"}[e]+".css",a=f.p+n,c=document.getElementsByTagName("link"),u=0;u<c.length;u++){var i=(l=c[u]).getAttribute("data-href")||l.getAttribute("href");if("stylesheet"===l.rel&&(i===n||i===a))return t()}var d=document.getElementsByTagName("style");for(u=0;u<d.length;u++){var l;if((i=(l=d[u]).getAttribute("data-href"))===n||i===a)return t()}var s=document.createElement("link");s.rel="stylesheet",s.type="text/css",s.onload=t,s.onerror=function(t){var n=t&&t.target&&t.target.src||a,c=new Error("Loading CSS chunk "+e+" failed.\n("+n+")");c.code="CSS_CHUNK_LOAD_FAILED",c.request=n,delete o[e],s.parentNode.removeChild(s),r(c)},s.href=a,document.getElementsByTagName("head")[0].appendChild(s)})).then((function(){o[e]=0})));var r=a[e];if(0!==r)if(r)t.push(r[2]);else{var n=new Promise((function(t,n){r=a[e]=[t,n]}));t.push(r[2]=n);var c,u=document.createElement("script");u.charset="utf-8",u.timeout=120,f.nc&&u.setAttribute("nonce",f.nc),u.src=function(e){return f.p+""+({}[e]||e)+"."+{6:"a0961ecb",7:"26281e28",8:"733d1586",9:"733decf7",10:"50408a1d",11:"e24a93b8",12:"5f812ae8",13:"cce35537",14:"a0692f5c",15:"f682476c",16:"21580be0",17:"7eccaedd",18:"29c1e2db",19:"924bcdc9",20:"984440ce",21:"60e9f177",22:"81a0672b",23:"1825c6a8",24:"5f4c4f19",25:"a9e92048",26:"f24aad7f"}[e]+".js"}(e);var i=new Error;c=function(t){u.onerror=u.onload=null,clearTimeout(d);var r=a[e];if(0!==r){if(r){var n=t&&("load"===t.type?"missing":t.type),o=t&&t.target&&t.target.src;i.message="Loading chunk "+e+" failed.\n("+n+": "+o+")",i.name="ChunkLoadError",i.type=n,i.request=o,r[1](i)}a[e]=void 0}};var d=setTimeout((function(){c({type:"timeout",target:u})}),12e4);u.onerror=u.onload=c,document.head.appendChild(u)}return Promise.all(t)},f.m=e,f.c=n,f.d=function(e,t,r){f.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},f.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},f.t=function(e,t){if(1&t&&(e=f(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(f.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var n in e)f.d(r,n,function(t){return e[t]}.bind(null,n));return r},f.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return f.d(t,"a",t),t},f.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},f.p="dist/",f.oe=function(e){throw console.error(e),e};var u=window.jsonpFuncCompany2019=window.jsonpFuncCompany2019||[],i=u.push.bind(u);u.push=t,u=u.slice();for(var d=0;d<u.length;d++)t(u[d]);var l=i;r()}([]);
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.bloomberg.com/company/content/themes/company2019/dist/main.6de8a11c.js" id="main-js-js"></script>
+	<script>
+		if (window.location.pathname.includes('/values/sustainability/')) {
+			if (window.location.hash === '#impact-report') {
+				window.location.hash = '#sustainability-report';
+			}
+			window.addEventListener('hashchange', () => {
+				if (window.location.hash === '#impact-report') {
+					window.location.hash = '#sustainability-report';
+				}
+			});
+		}
+	</script>
+	<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"cd0676da66","applicationID":"566665108","transactionName":"YQEHZRZXWkpVVhVbWlhLJFIQX1tXG1wPVlBO","queueTime":0,"applicationTime":385,"atts":"TUYEE15NSUQ=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>
+

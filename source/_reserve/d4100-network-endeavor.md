@@ -113,7 +113,7 @@ C++20 coroutines were designed for generality: async patterns, lazy evaluation, 
 
 2. **Promise customization.** `promise_type` controls allocation, suspension, resumption, and error handling - exactly the control points I/O needs. The IoAwaitable protocol uses `await_suspend` to propagate the executor, stop token, and frame allocator. No language extensions required.
 
-3. **Stackless frames.** Each coroutine frame is independently allocated, independently suspendable, independently resumable. This maps directly to how operating systems do I/O: each operation suspends independently, the kernel completes them in any order, the reactor resumes them individually.
+3. **Stackless frames.** Each coroutine frame is independently allocated, independently suspendable, independently resumable. This maps directly to how operating systems do I/O: Each operation suspends independently, the kernel completes them in any order, the reactor resumes them individually.
 
 4. **Symmetric transfer.** `await_suspend` returning `coroutine_handle<>` enables zero-overhead context switching. If already on the correct thread, return the handle for direct resumption; otherwise post and return `noop_coroutine()`. No stack buildup.
 
@@ -252,7 +252,7 @@ We are:
 * Implementors second, and
 * Proposers third.
 
-The series is layered: each paper builds on the last, each is backed by implementation experience, and each delivers value on its own. Two stages mirror the library split. The Stage One papers correspond to Capy; the remainder correspond to Corosio.
+The series is layered: Each paper builds on the last, each is backed by implementation experience, and each delivers value on its own. Two stages mirror the library split. The Stage One papers correspond to Capy; the remainder correspond to Corosio.
 
 ### 7.1 Stage One: Pure C++ Abstractions
 
@@ -310,7 +310,7 @@ The coroutine execution model for I/O. Depends on nothing.
 
 **Shipping status.** Capy implements the full protocol. Corosio builds a complete networking stack on it. Shipping today on Windows, Linux, and macOS.
 
-**Standalone value.** The protocol layer that every subsequent paper builds on. The Asio adapter (Section 5.1) wraps any Asio executor to satisfy the `Executor` concept. The IoAwaitable protocol is the interoperability point: any coroutine library that satisfies it composes with the rest of the series.
+**Standalone value.** The protocol layer that every subsequent paper builds on. The Asio adapter (Section 5.1) wraps any Asio executor to satisfy the `Executor` concept. The IoAwaitable protocol is the interoperability point: Any coroutine library that satisfies it composes with the rest of the series.
 
 ### 8.2 Paper 2: Coroutine Task
 
@@ -350,7 +350,7 @@ The growable buffer (prepare/commit) concept that R0 of this paper bundled with 
 
 **Shipping status.** Shipping in Capy. Used by every Corosio I/O operation.
 
-**Standalone value.** Today, every C++ project that does I/O invents its own buffer types. Standard buffer concepts create shared vocabulary: a database driver that accepts `MutableBufferSequence` works with any I/O stack that speaks the same concepts. This paper advances independently of Paper 1 on a parallel track.
+**Standalone value.** Today, every C++ project that does I/O invents its own buffer types. Standard buffer concepts create shared vocabulary: A database driver that accepts `MutableBufferSequence` works with any I/O stack that speaks the same concepts. This paper advances independently of Paper 1 on a parallel track.
 
 ### 8.5 Paper 5: Dynamic Buffer
 
@@ -426,7 +426,7 @@ The standard specifies the shape. The platform provides the encryption.
 
 **Shipping status.** Shipping in Corosio with OpenSSL and WolfSSL backends. Both engines use the same abstract `tls_context` API.
 
-The risk profile is lopsided: the implementation carries the risk; the interface carries none. The wrapper API has been stable since SSLv3 in 1996. Standardize the riskless part. Offload the risky implementation to the OS and ecosystem.
+The risk profile is lopsided: The implementation carries the risk; the interface carries none. The wrapper API has been stable since SSLv3 in 1996. Standardize the riskless part. Offload the risky implementation to the OS and ecosystem.
 
 ---
 
@@ -533,7 +533,7 @@ Target: all papers through LEWG by end of 2028. LWG wording through 2029H1.
 
 We continue to maintain Capy and Corosio after standardization.
 
-Production C++ lags the standard by three to seven years. A feature that lands in C++29 is not available to most production users until 2032-2036. Users who adopt Capy and Corosio today on C++20 need the Boost versions for years after the standard ships. This is the Boost.Filesystem pattern: precede the standard, coexist with it, persist for users on older compilers. Migration happens at the user's pace.
+Production C++ lags the standard by three to seven years. A feature that lands in C++29 is not available to most production users until 2032-2036. Users who adopt Capy and Corosio today on C++20 need the Boost versions for years after the standard ships. This is the Boost.Filesystem pattern: Precede the standard, coexist with it, persist for users on older compilers. Migration happens at the user's pace.
 
 ---
 

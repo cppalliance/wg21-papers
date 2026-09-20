@@ -98,7 +98,7 @@ Build the hardest example. If the hardest example works, the easy ones follow. I
 
 A brilliant engineer can bridge any two systems. Given enough expertise, any domain's operations can be expressed in any sufficiently general framework. The bridge compiles. The proof is valid. The conclusion - that the framework fits the domain - does not follow.
 
-Expressibility asks: can the domain's operations be represented in the framework's vocabulary? Fitness asks: can a typical practitioner in that domain use the framework without sacrificing the properties they depend on, at a complexity level comparable to the framework's strong domain? These are different questions. A four-hundred-line adapter that requires intimate knowledge of the framework's operation state model to bridge two async paradigms is an existence proof, not a usability proof.
+Expressibility asks: Can the domain's operations be represented in the framework's vocabulary? Fitness asks: Can a typical practitioner in that domain use the framework without sacrificing the properties they depend on, at a complexity level comparable to the framework's strong domain? These are different questions. A four-hundred-line adapter that requires intimate knowledge of the framework's operation state model to bridge two async paradigms is an existence proof, not a usability proof.
 
 The danger is that the framework's strongest advocates are often its most capable engineers. They can make anything work. They write the bridge in an afternoon and present it as evidence. The audience sees the bridge and concludes the framework fits. What the audience does not see is that the bridge required skills the audience does not have, and that the domain's practitioners - the people who will actually use the framework in production - would not write that bridge, would not maintain that bridge, and would not trust that bridge.
 
@@ -116,7 +116,7 @@ A proof is not a user. If the framework requires its architects to demonstrate t
 
 The author's team built the framework. The author's employer uses it in production. These are necessary but not sufficient. The author's team understands the framework's idioms. The author's employer has access to the author for questions. Neither condition holds for the broader ecosystem.
 
-Independent adoption is the evidence that scales. The adoption ladder has five rungs: the authors built it, independent developers used it, independent libraries were built on top of it, independent applications were built on those libraries, and real users - not employees of the proposing organization - shipped production code. Each rung is evidence that the previous one was not enough.
+Independent adoption is the evidence that scales. The adoption ladder has five rungs: The authors built it, independent developers used it, independent libraries were built on top of it, independent applications were built on those libraries, and real users - not employees of the proposing organization - shipped production code. Each rung is evidence that the previous one was not enough.
 
 If the author believes that most users will interact with the framework through a higher-level interface - coroutines, for example - then most users are not exercising the framework's native claims. The evidence base is the minority who use the framework directly. The author should ask whether the minority's experience is sufficient to substantiate a universality claim that affects the majority.
 

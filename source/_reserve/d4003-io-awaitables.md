@@ -14,7 +14,7 @@ reply-to:
 
 C++20 coroutines suspend and resume, but the language does not determine where resumption occurs, how cancellation propagates, or where coroutine frames are allocated. No standard protocol exists for these concerns. Every library invents its own execution model, and tasks from one framework do not compose with executors from another.
 
-The _IoAwaitable_ protocol resolves three concerns at every suspension point: executor affinity determines where the coroutine resumes, stop token propagation carries cancellation forward, and frame allocator delivery controls where frames are allocated. The motivating use case is a single line:
+The _IoAwaitable_ protocol resolves three concerns at every suspension point: Executor affinity determines where the coroutine resumes, stop token propagation carries cancellation forward, and frame allocator delivery controls where frames are allocated. The motivating use case is a single line:
 
 ```cpp
 co_await f();
@@ -68,7 +68,7 @@ This paper asks LEWG to advance the _IoAwaitable_ protocol as a standard corouti
 * Added Section 9 "Evidence Framework" addressing P4133 requirements: competing designs, case against standardization, decision record, domain coverage, post-adoption metrics, retrospective commitment, prediction registry.
 * Expanded sequence diagram with explicit `set_environment`, `set_continuation`, and `handle.resume()` steps.
 * Renamed "Boost.Http" to "Http" in body and references.
-* Closed TLS spoilage gap in Section 5.4: intervening code between resume and child creation can overwrite the thread-local frame allocator. Introduced `safe_resume` save/restore protocol.
+* Closed TLS spoilage gap in Section 5.4: Intervening code between resume and child creation can overwrite the thread-local frame allocator. Introduced `safe_resume` save/restore protocol.
 * Added non-normative note to executor concept (Section 11.3.3) requiring event loop pump sites to save and restore TLS around `.resume()` calls.
 * Replaced `std::coroutine_handle<>` with `continuation` in the executor interface. The `continuation` struct embeds an intrusive list pointer, eliminating per-post heap allocation.
 * Editorial: fixed list formatting, code line wrapping, acknowledgements.
@@ -108,7 +108,7 @@ If only this proposal ships and nothing else, we get:
 
 The left column is the standard's commitment - eight named facilities. The right column is what library authors and users build against that surface: interoperable tasks, awaitables, launch functions, executors, and custom frame allocators from any vendor.
 
-This protocol is a companion to [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[6]</sup> `std::execution`. [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> evaluates four alternatives - sender/receiver, Boost.Asio completion handlers, pure coroutine libraries, and ecosystem-only - and concludes that each has structural limitations for I/O: sender/receiver requires a second template parameter on task types, Asio lacks standard frame allocator propagation, pure coroutine libraries are mutually incompatible, and twenty years of ecosystem behavior shows a shared vocabulary requires standardization. See [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> for the full design rationale and analysis.
+This protocol is a companion to [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[6]</sup> `std::execution`. [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> evaluates four alternatives - sender/receiver, Boost.Asio completion handlers, pure coroutine libraries, and ecosystem-only - and concludes that each has structural limitations for I/O: Sender/receiver requires a second template parameter on task types, Asio lacks standard frame allocator propagation, pure coroutine libraries are mutually incompatible, and twenty years of ecosystem behavior shows a shared vocabulary requires standardization. See [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> for the full design rationale and analysis.
 
 ---
 
@@ -142,7 +142,7 @@ The I/O payoff is immediate. Consider the awaitable for a platform operation:
 auto [ec, n] = co_await stream.read_some(buf);
 ```
 
-The same three concerns apply: the reactor completes the read and holds a coroutine handle that must resume on the right thread. Synchronous awaitables return `true` from `await_ready` and never suspend at all. The protocol handles both.
+The same three concerns apply: The reactor completes the read and holds a coroutine handle that must resume on the right thread. Synchronous awaitables return `true` from `await_ready` and never suspend at all. The protocol handles both.
 
 ### 3.2 How to Resume
 
@@ -313,7 +313,7 @@ public:
 };
 ```
 
-The `continuation` struct pairs a `coroutine_handle<>` with an intrusive `next` pointer, allowing executors to queue continuations without allocating a separate node - eliminating the last steady-state allocation in the hot path. `dispatch` returns a `coroutine_handle<>` for symmetric transfer: if the caller is already in the executor's context, it returns `c.h` directly for zero-overhead resumption. Otherwise it queues and returns `noop_coroutine()`. `post` always defers. The `executor_ref` type-erases any _Executor_ as two pointers - one indirection (~1-2 nanoseconds<sup>[8]</sup>) is negligible for I/O operations at 10,000+ nanoseconds. [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> Section 5.2 traces each of the seven executor concept requirements to a concrete failure on removal: nothrow copy/move for exception safety at suspension points, `context()` for frame allocator discovery, `on_work_started`/`on_work_finished` to prevent premature return from `ctx.run()`, and `operator==` as forward investment for strand support. See [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> for full semantics.
+The `continuation` struct pairs a `coroutine_handle<>` with an intrusive `next` pointer, allowing executors to queue continuations without allocating a separate node - eliminating the last steady-state allocation in the hot path. `dispatch` returns a `coroutine_handle<>` for symmetric transfer: If the caller is already in the executor's context, it returns `c.h` directly for zero-overhead resumption. Otherwise it queues and returns `noop_coroutine()`. `post` always defers. The `executor_ref` type-erases any _Executor_ as two pointers - one indirection (~1-2 nanoseconds<sup>[8]</sup>) is negligible for I/O operations at 10,000+ nanoseconds. [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> Section 5.2 traces each of the seven executor concept requirements to a concrete failure on removal: nothrow copy/move for exception safety at suspension points, `context()` for frame allocator discovery, `on_work_started`/`on_work_finished` to prevent premature return from `ctx.run()`, and `operator==` as forward investment for strand support. See [P4172R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4172r0.pdf)<sup>[1]</sup> for full semantics.
 
 ### 4.4 `execution_context`
 
@@ -475,7 +475,7 @@ auto [ec, counts] = co_await when_all(std::move(reads));
 auto result = co_await when_any(std::move(reads));
 ```
 
-The protocol satisfies structured concurrency: every operation has a known owner, every lifetime is lexically bounded, and cancellation propagates without escape.
+The protocol satisfies structured concurrency: Every operation has a known owner, every lifetime is lexically bounded, and cancellation propagates without escape.
 
 ### 5.1 Structurable Building Blocks Are More Fundamental
 
@@ -526,7 +526,7 @@ A full implementation is available in [Capy](https://github.com/cppalliance/capy
 
 The protocol provides the building block. `counting_scope` is one policy built
 on it. The argument that senders provide structured concurrency and coroutines
-do not has it backwards: the _IoAwaitable_ protocol is the layer from which
+do not has it backwards: The _IoAwaitable_ protocol is the layer from which
 structured concurrency constructs are assembled.
 
 ---
@@ -584,7 +584,7 @@ The completion channels follow the operation's result type, with the mapping [P4
 | any other single value `T`                      | `set_value(T)`                                              |
 | tuple-like `(error_code, payload...)`           | rejected at compile time                                    |
 
-For results that carry an `error_code`, the operation's own outcome selects the channel: a completion reporting `operation_canceled` surfaces as `set_stopped()`, and a successful result is delivered even when a stop request lands while the operation is finishing. The rejection in the last row is the abstraction floor from [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup>: completion channels are exclusive, so a partial success - an `error_code` alongside bytes already transferred - cannot cross on any single channel without dropping data. The constraint is structural: the `(error_code, size_t)` result of `read_some` from Section 3.1, `std::tuple<error_code, size_t>`, and any user-defined type of the same shape are refused alike.
+For results that carry an `error_code`, the operation's own outcome selects the channel: A completion reporting `operation_canceled` surfaces as `set_stopped()`, and a successful result is delivered even when a stop request lands while the operation is finishing. The rejection in the last row is the abstraction floor from [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup>: completion channels are exclusive, so a partial success - an `error_code` alongside bytes already transferred - cannot cross on any single channel without dropping data. The constraint is structural: The `(error_code, size_t)` result of `read_some` from Section 3.1, `std::tuple<error_code, size_t>`, and any user-defined type of the same shape are refused alike.
 
 The sender half consumes standard receiver environments. At `start()`, the operation state populates `io_env` from sender-side queries: the executor from a `get_io_executor` query when the environment provides one, otherwise from `std::execution::get_scheduler` - so `sync_wait` works unmodified - the stop token from `get_stop_token`, including stoppable tokens other than `std::stop_token`, and the frame allocator from `get_allocator` when the environment supplies a `std::pmr` allocator. The three concerns of Section 3 are filled from the sender vocabulary; `io_env` requires nothing the sender side cannot express.
 
@@ -602,7 +602,7 @@ ex::sync_wait(                      // as a sender
     ex::then(read_op{}, on_read));
 ```
 
-The test suite verifies that the two drives over the identical operation deliver the same result on the value, error, and stopped channels, and covers cancellation through `std::stop_token` and in-place stop tokens, adaptor pipelines, `sync_wait`, and allocator delivery. [P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[16]</sup> demonstrates the opposite direction - consuming senders from coroutine-native code. For generic code, the prototype's `ensure_sender` normalizes either kind of operation: one that already models _AwaitableSender_ passes through unchanged, and an awaitable-only operation is lifted with the `as_sender` wrapper from [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup>.
+The test suite verifies that the two drives over the identical operation deliver the same result on the value, error, and stopped channels, and covers cancellation through `std::stop_token` and in-place stop tokens, adaptor pipelines, `sync_wait`, and allocator delivery. [P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[16]</sup> demonstrates the opposite direction - consuming senders from coroutine-native code. For generic code, the prototype's `ensure_sender` normalizes either kind of operation: One that already models _AwaitableSender_ passes through unchanged, and an awaitable-only operation is lifted with the `as_sender` wrapper from [P4093R2](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r2.pdf)<sup>[15]</sup>.
 
 A type that satisfies _IoAwaitable_ can also satisfy the `std::execution` sender concept, with completion signatures deduced from the members it already has. Adopting the protocol selects a coroutine execution model for I/O while leaving the sender path open, and an operation author can serve both callers with one type.
 

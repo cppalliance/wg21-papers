@@ -89,7 +89,7 @@ No mutex. No lock guard. No window. The strand guarantees that while one corouti
 
 In callback-based models like [Boost.Asio](https://www.boost.org/doc/libs/release/doc/html/boost_asio.html)<sup>[5]</sup>, strands serialize completion handler dispatch. The completion handler is a function object that the reactor invokes when an I/O operation completes. The strand ensures that two handlers associated with the same strand are never invoked concurrently.
 
-In a coroutine-native model, there are no completion handlers. Coroutines suspend and resume. The strand serializes resumption instead of handler dispatch. The semantic guarantee is the same: no two pieces of work associated with the same strand execute concurrently. The mechanism is different: the strand's `dispatch` and `post` control coroutine resumption via `continuation` and symmetric transfer.
+In a coroutine-native model, there are no completion handlers. Coroutines suspend and resume. The strand serializes resumption instead of handler dispatch. The semantic guarantee is the same: No two pieces of work associated with the same strand execute concurrently. The mechanism is different: The strand's `dispatch` and `post` control coroutine resumption via `continuation` and symmetric transfer.
 
 The shift from handler dispatch to coroutine resumption is not a design choice - it is forced by the execution model. In the IoAwaitable protocol, I/O operations return awaitables, not completion tokens. The awaitable's `await_suspend` receives a `continuation` and dispatches through an executor. The strand wraps that executor and adds the serialization invariant. The mechanism maps directly to the protocol.
 
@@ -111,11 +111,11 @@ Mutexes cause deadlocks. A strand cannot deadlock because it never blocks. It ca
 
 The `Executor` concept in [P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[2]</sup> is satisfied by any type that provides `dispatch`, `post`, `context`, `on_work_started`, `on_work_finished`, and equality comparison. Different execution contexts produce different executor types: `io_context::executor_type`, `thread_pool::executor_type`, `strand<io_context::executor_type>`.
 
-Code that stores an executor polymorphically - a connection object, a service registry, a work queue - needs a single type that holds any executor. Templates are not the answer: a `connection<Executor>` template leaks the executor type into every consumer.
+Code that stores an executor polymorphically - a connection object, a service registry, a work queue - needs a single type that holds any executor. Templates are not the answer: A `connection<Executor>` template leaks the executor type into every consumer.
 
 ### 3.2 `executor_ref` vs `any_executor`
 
-[P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[2]</sup> defines `executor_ref` as a non-owning, two-pointer type-erased view of an executor. It lives inside `io_env` and is used at suspension points. It is the right tool for borrowing: the launch function owns the executor, and every coroutine in the chain borrows it through `executor_ref`.
+[P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[2]</sup> defines `executor_ref` as a non-owning, two-pointer type-erased view of an executor. It lives inside `io_env` and is used at suspension points. It is the right tool for borrowing: The launch function owns the executor, and every coroutine in the chain borrows it through `executor_ref`.
 
 `executor_ref` is not the right tool for storage. It does not own the executor. If the executor goes out of scope, the `executor_ref` dangles. A connection object that outlives the scope that created its executor cannot use `executor_ref`.
 
@@ -163,7 +163,7 @@ Five ecosystems provide serialization and executor type erasure. None designed t
 
 Go eliminates the problem by forbidding shared mutable state at the language level - goroutines communicate through channels. Rust's `tokio::sync::Mutex` is an async-aware mutex that yields the task instead of blocking the thread, achieving the same non-blocking property as a strand but through a different mechanism. .NET's `SynchronizationContext` posts continuations to a single-threaded context, providing serialization through thread affinity.
 
-The Asio strand is the direct ancestor. The coroutine-native strand in Capy inherits the guarantee and adapts the mechanism: where Asio strands serialize handler dispatch, Capy strands serialize coroutine resumption via `continuation` and symmetric transfer.
+The Asio strand is the direct ancestor. The coroutine-native strand in Capy inherits the guarantee and adapts the mechanism: Where Asio strands serialize handler dispatch, Capy strands serialize coroutine resumption via `continuation` and symmetric transfer.
 
 ### 4.2 Type Erasure
 
@@ -202,7 +202,7 @@ The SBO threshold is implementation-defined. Quality implementations should acco
 
 ### 5.4 `any_executor` Supports Comparison
 
-Executor equality is load-bearing. Two executors compare equal if they dispatch to the same execution context with the same properties. This is the foundation for strand identity: a strand's executor compares equal to itself regardless of how many copies exist. Without comparison, `strand` cannot detect whether a dispatch call is already within the strand.
+Executor equality is load-bearing. Two executors compare equal if they dispatch to the same execution context with the same properties. This is the foundation for strand identity: A strand's executor compares equal to itself regardless of how many copies exist. Without comparison, `strand` cannot detect whether a dispatch call is already within the strand.
 
 `any_executor` preserves comparison across the type erasure boundary. Two `any_executor` instances compare equal if they hold the same type and the underlying executors compare equal. This is the same contract as `std::any` would provide if `std::any` supported equality comparison - which it does not.
 
@@ -238,7 +238,7 @@ Strands serialize without blocking. The thread that posts a continuation to a st
 
 `std::execution` schedulers ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[6]</sup>) determine where work runs. They do not provide serialization guarantees. A scheduler that dispatches to a thread pool does not prevent concurrent execution of two senders scheduled on the same scheduler. Serialization in the sender model requires explicit synchronization primitives (`when_all` with sequenced dependencies, or async mutexes external to the sender algebra).
 
-A strand is not a scheduler. It is a serialization wrapper around an executor. The distinction is structural: a scheduler says "run this here," a strand says "run this here, and not at the same time as that."
+A strand is not a scheduler. It is a serialization wrapper around an executor. The distinction is structural: A scheduler says "run this here," a strand says "run this here, and not at the same time as that."
 
 The two models are complementary. A strand can be used inside a sender-based system by wrapping a scheduler's executor. Nothing in this proposal conflicts with `std::execution`.
 

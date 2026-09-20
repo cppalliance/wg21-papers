@@ -135,7 +135,7 @@ Karotkin and Paroush show that beyond an optimal committee size, per-member comp
 
 > "An informational cascade occurs when it is optimal for an individual, having observed the actions of those ahead of him, to follow the behavior of the preceding individual without regard to his own information."<sup>[[7]](#ref-7)</sup>
 
-The cascade mechanism: early "Against" votes on aesthetics are visible. A delegate with no strong opinion observes the early hands and follows. The room converges on a shared position that has no technical basis.
+The cascade mechanism: Early "Against" votes on aesthetics are visible. A delegate with no strong opinion observes the early hands and follows. The room converges on a shared position that has no technical basis.
 
 > "Although groups are initially 'wise,' knowledge about estimates of others narrows the diversity of opinions to such an extent that it undermines the wisdom of crowd effect."<sup>[[8]](#ref-8)</sup>
 
@@ -211,7 +211,7 @@ The rules survive. The reasons are lost.
 
 ## 5. The Control Group
 
-Seven language committees faced the same question: should trailing commas be permitted in function parameter lists? The table records their answers.
+Seven language committees faced the same question: Should trailing commas be permitted in function parameter lists? The table records their answers.
 
 | Language   | Decision          | Year | Process duration  |
 |------------|-------------------|------|-------------------|

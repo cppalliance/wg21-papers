@@ -71,11 +71,11 @@ This section describes the three executor models that existed before unification
 
 By 2014, three independent executor proposals existed, each deployed in its domain.
 
-**Kohlhoff (networking).** [N4046](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4046.pdf)<sup>[7]</sup> (2014). Executors as lightweight policy objects associated with an execution context. `dispatch`, `post`, and `defer` schedule continuations on that context. Designed for event-driven I/O - the Networking TS and Boost.Asio. The execution context is an I/O reactor: threads block in the kernel on `epoll_wait`, `GetQueuedCompletionStatus`, or `kevent`, waiting for I/O completions. Deployed in production for over a decade.
+**Kohlhoff (networking).** [N4046](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4046.pdf)<sup>[7]</sup> (2014). Executors as lightweight policy objects associated with an execution context. `dispatch`, `post`, and `defer` schedule continuations on that context. Designed for event-driven I/O - the Networking TS and Boost.Asio. The execution context is an I/O reactor: Threads block in the kernel on `epoll_wait`, `GetQueuedCompletionStatus`, or `kevent`, waiting for I/O completions. Deployed in production for over a decade.
 
 **Hoberock/Garland (GPU and parallel algorithms).** [N4406](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4406.pdf)<sup>[8]</sup> and [P0058R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0058r1.pdf)<sup>[9]</sup>. Executors as traits classes for bulk execution. Designed for parallel algorithms and GPU dispatch, where a single call creates thousands of execution agents with a shape parameter describing the index space. Deployed at NVIDIA.
 
-**Mysen (thread pools).** [N4414](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4414.pdf)<sup>[10]</sup>. Executors as handles to thread pools for submitting units of work. The execution context is a work queue: threads pull tasks and execute them in user space. Designed for Google's internal infrastructure. Deployed at Google.
+**Mysen (thread pools).** [N4414](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4414.pdf)<sup>[10]</sup>. Executors as handles to thread pools for submitting units of work. The execution context is a work queue: Threads pull tasks and execute them in user space. Designed for Google's internal infrastructure. Deployed at Google.
 
 Each was deployed in its domain. The requirements on executors differed across domains - networking needed continuation scheduling, GPU dispatch needed bulk execution with shape parameters, thread pools needed simple work submission.
 
@@ -200,7 +200,7 @@ These are the reasons the committee chose unification. Each is grounded in real 
 
 Section 3 presented the rationale. This section examines the evidence.
 
-An assertion is a claim about what users need or what the design will provide. Evidence is anything that tests the assertion against reality. The bar is deliberately low: a code snippet from a real codebase showing friction counts. A prototype that demonstrates the unified model working across domains counts. A survey of even a handful of users counts. An experiment comparing approaches counts. Even a hypothetical code example constructed by the author counts - this paper will note it and credit it.
+An assertion is a claim about what users need or what the design will provide. Evidence is anything that tests the assertion against reality. The bar is deliberately low: A code snippet from a real codebase showing friction counts. A prototype that demonstrates the unified model working across domains counts. A survey of even a handful of users counts. An experiment comparing approaches counts. Even a hypothetical code example constructed by the author counts - this paper will note it and credit it.
 
 The published record was searched systematically using available tools and all WG21 papers available to the author through the March 2026 mailing. The Evidence column below documents everything found, including partial evidence. Where the column says "(none found in the published record)," the search found nothing - not even a code snippet.
 
@@ -234,8 +234,8 @@ This section presents what is now measurable. The counterfactuals - what would h
 - [P1256R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1256r0.html)<sup>[23]</sup> (Vollmann, 2018): "SG1 has decided that the Networking TS should not be merged into the C++ working paper before executors go in."
 - [P2130R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p2130r0.pdf)<sup>[24]</sup> (Prague 2020 minutes): Pablo Halpern asks "How blocked is networking on the executors wording process?"
 - [P2464R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2464r0.html)<sup>[19]</sup> (Voutilainen, 2021): "Stop spending energy on standardizing the Networking TS for C++23."
-- [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[18]</sup> (October 2021): Poll 3 (stop pursuing the Networking TS) reached no consensus. The chair gave conditional guidance: adopt sender/receiver, address TLS.
-- 2026: networking is not in the C++ standard. Twenty-one years from [N1925](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1925.pdf)<sup>[21]</sup>.
+- [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[18]</sup> (October 2021): Poll 3 (stop pursuing the Networking TS) reached no consensus. The chair gave conditional guidance: Adopt sender/receiver, address TLS.
+- 2026: Networking is not in the C++ standard. Twenty-one years from [N1925](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1925.pdf)<sup>[21]</sup>.
 
 The coupling between networking and executors is documented in published papers. The timeline is observable. The committee did not vote to stop the Networking TS; it gave conditional guidance that required a redesign the architect did not pursue. The published record does not establish whether networking would have been delayed regardless. It establishes that the coupling existed and that networking has not shipped.
 
@@ -337,7 +337,7 @@ Three papers drove the second stage:
 
 The `continuation`/`not_continuation` properties were removed along with every other interface-changing property. A vestigial `relationship_t` property survived in [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html)<sup>[3]</sup>, but the continuation as a first-class concept was gone. That is the second stage.
 
-Two stages, two years apart, different authors. The result is the same: the continuation framing left the API surface.
+Two stages, two years apart, different authors. The result is the same: The continuation framing left the API surface.
 
 **What the published record does not contain:**
 
@@ -359,7 +359,7 @@ At Stage 1, the continuation framing survived. [P0688R0](https://www.open-std.or
 
 At Stage 2, the continuation framing was not carried forward into the analysis. [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[28]</sup> inherited `execute` and analyzed it as work submission. [P1660R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1660r0.pdf)<sup>[29]</sup> inherited `execute` and defined it as eagerly submitting work. Neither cited [P0113R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0113r0.html)<sup>[26]</sup>'s continuation definitions. Neither restated the rationale that the callable is a resumption handle rather than a unit of work. The Stage 2 authors understood continuations - [P1194R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1194r0.html)<sup>[33]</sup>, "The Compromise Executors Proposal" (Howes, Niebler, Shoop, Lelbach, Hollman, 2018), explicitly states "Receivers are Continuations," and several of its authors co-authored [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[28]</sup> and [P1660R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1660r0.pdf)<sup>[29]</sup>. The continuation concept was relocated to the sender/receiver framework rather than preserved in the `execute` API. What the published record does not contain is an analysis of this shift - no paper discusses why the continuation framing for `execute` was dropped, what was gained, or what was lost.
 
-The continuation framing for `execute` was carried by institutional knowledge rather than by the API surface or the type system. When the property hint was removed and the continuation concept relocated to receivers, the framing for the basis operation dropped out of the published analysis. This is not a criticism of any individual author - the authors understood the concept and chose to place it elsewhere. It is a structural property of multi-paper, multi-author standardization: when a design decision is made deliberately but the rationale is not published, it becomes invisible to future readers of the record.
+The continuation framing for `execute` was carried by institutional knowledge rather than by the API surface or the type system. When the property hint was removed and the continuation concept relocated to receivers, the framing for the basis operation dropped out of the published analysis. This is not a criticism of any individual author - the authors understood the concept and chose to place it elsewhere. It is a structural property of multi-paper, multi-author standardization: When a design decision is made deliberately but the rationale is not published, it becomes invisible to future readers of the record.
 
 The concept survived. The record of why it mattered did not.
 
@@ -369,7 +369,7 @@ The concept survived. The record of why it mattered did not.
 
 **The work framing.** `execute(F&&)` submits work. The callable is a unit of work. The executor runs it. If dropped, the work and its result are lost. Error handling, lifecycle, and composition are the executor's responsibility.
 
-The structural difference is in what happens to the caller. `post` ends the caller's chain of execution. The caller returns. There is no live caller on the other end to receive a report. The continuation will be resumed later, on a context, and the result will be delivered *to* the continuation when it wakes up. Under the work framing, `execute` is a fork: the caller submits work and continues. The caller is alive, running, and expects to learn what happened. A live caller needs an error channel. A caller that has returned does not.
+The structural difference is in what happens to the caller. `post` ends the caller's chain of execution. The caller returns. There is no live caller on the other end to receive a report. The continuation will be resumed later, on a context, and the result will be delivered *to* the continuation when it wakes up. Under the work framing, `execute` is a fork: The caller submits work and continues. The caller is alive, running, and expects to learn what happened. A live caller needs an error channel. A caller that has returned does not.
 
 The executor in the continuation framing is not trivially simple. Asio executors carry real complexity - strands for serialization, associated allocators for memory control, `dispatch` vs `post` semantics for reentrancy. That complexity governs *how* and *where* the continuation resumes. None of it involves reporting results back to a live caller, because there is no live caller. The caller returned. The complexity is scheduling policy, not result delivery.
 

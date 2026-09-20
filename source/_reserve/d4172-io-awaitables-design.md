@@ -108,7 +108,7 @@ They write this code once per project. Many application developers consume it.
 
 ### 3.3 I/O Library Authors
 
-A moderate population. They implement the leaf awaitables: `socket.read_some()`, `timer.wait()`, `dns::resolve()`, `tls::handshake()`. These are custom structs satisfying _IoAwaitable_ - not coroutines. They are the leaves of the coroutine call chain: they submit operations to the OS and suspend.
+A moderate population. They implement the leaf awaitables: `socket.read_some()`, `timer.wait()`, `dns::resolve()`, `tls::handshake()`. These are custom structs satisfying _IoAwaitable_ - not coroutines. They are the leaves of the coroutine call chain: They submit operations to the OS and suspend.
 
 *Expected skills:* Platform expertise - epoll, IOCP, kqueue, io_uring. Reactor patterns. OS-level cancellation primitives (`CancelIoEx`, `IORING_OP_ASYNC_CANCEL`, `close()`). They understand how to submit async operations and handle completions. They know the `await_ready`/`await_suspend`/`await_resume` contract. They use `continuation` + the executor for dispatch. They do not have to be experts in promise types, `await_transform`, frame allocation, or type erasure - those are framework concerns.
 
@@ -164,7 +164,7 @@ struct io_env
 
 *Why three fields and no others.* The executor, stop token, and frame allocator are the minimum that every I/O awaitable needs at suspension time. Additional context (buffer pools, logging handles, tenant IDs) can travel through the execution context's service model (Section 5.5) or through application-specific channels. Adding fields to `io_env` would force every awaitable to carry context it does not use.
 
-*Why pointer, not reference.* The launch function owns the `io_env`. Every coroutine in the chain borrows it. Pointer semantics make this ownership model explicit. Accidental copies are difficult. The lifetime invariant is structural: the `io_env` outlives every coroutine in the chain because the launch function that created it does not return until the chain completes.
+*Why pointer, not reference.* The launch function owns the `io_env`. Every coroutine in the chain borrows it. Pointer semantics make this ownership model explicit. Accidental copies are difficult. The lifetime invariant is structural: The `io_env` outlives every coroutine in the chain because the launch function that created it does not return until the chain completes.
 
 *Why const.* The environment is set at launch time and does not change during the chain's lifetime. `const` enforces this invariant. A coroutine that needs different environment parameters (a different executor, a different stop token) uses `run` (Section 7.2) to create a new `io_env` for a sub-chain.
 
@@ -235,14 +235,14 @@ dispatch(continuation& c) const;
 void post(continuation& c) const;
 ```
 
-*Why two operations, not one.* `dispatch` runs the continuation inline when the caller is already in the executor's context. This is the common case after an I/O completion: the reactor thread detects the completion and dispatches the waiting coroutine with zero overhead via symmetric transfer. `post` always defers. The distinction matters for correctness: dispatching while holding a lock can deadlock if the continuation tries to acquire the same lock. `post` guarantees the continuation runs after the current function returns.
+*Why two operations, not one.* `dispatch` runs the continuation inline when the caller is already in the executor's context. This is the common case after an I/O completion: The reactor thread detects the completion and dispatches the waiting coroutine with zero overhead via symmetric transfer. `post` always defers. The distinction matters for correctness: Dispatching while holding a lock can deadlock if the continuation tries to acquire the same lock. `post` guarantees the continuation runs after the current function returns.
 
 *Why `dispatch` returns `coroutine_handle<>`.* Symmetric transfer avoids stack buildup. Without it, a chain of N coroutines grows the call stack by N frames. [P2583R4](https://isocpp.org/files/papers/P2583R4.pdf)<sup>[16]</sup> provides the full analysis. `dispatch` returns `c.h` directly when inline execution is safe, or `noop_coroutine()` when it queues. The caller performs `return dispatch(c)` in its own `await_suspend`, and the compiler optimizes the tail call.
 
 *Each concept requirement is load-bearing.* [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html)<sup>[17]</sup> unified three executor models across 14 revisions; the unified design was never deployed. [P1738R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1738r0.pdf)<sup>[18]</sup> diagnosed the concept hierarchy as hostile to generic programming. [P1791R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1791r0.html)<sup>[19]</sup> recorded Rapperswil feedback that P0443R0 had too many concepts; its own analysis concluded that domain-specific requirements "are not universal" and should not be imposed on all executor types. The _IoAwaitable_ executor concept has seven requirements. Removing any one produces a concrete failure:
 
 - Nothrow copy/move: exception safety at suspension points
-- `context()`: launch functions discover the default frame allocator
+- `context()`: Launch functions discover the default frame allocator
 - `on_work_started`/`on_work_finished`: `ctx.run()` returns prematurely during `co_await run(worker_ex)(compute())` without them
 - `dispatch` returning `coroutine_handle<>`: symmetric transfer
 - `post`: always-defer resumption from foreign threads
@@ -368,9 +368,9 @@ public:
 
 The `executor_ref` type-erases any _Executor_ as two pointers. This is why `task<T>` needs only one template parameter.
 
-*The type erasure trade-off.* The ideal design would let the coroutine body see the concrete executor type - zero-overhead dispatch, full inlining - while hiding it from the caller behind `task<T>`. That requires the executor type as a template parameter on the task: `task<T, Executor>`. [P4089R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4089r0.pdf)<sup>[14]</sup> documents why this fails in practice: a second template parameter on the task type creates cross-library interoperability problems, prevents separate compilation, and destroys ABI stability. [N5014](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5014.pdf)<sup>[26]</sup> defines `task<T, E>` with `Environment` customizing behavior - the direct "two-parameter task" that _IoAwaitable_ avoids.
+*The type erasure trade-off.* The ideal design would let the coroutine body see the concrete executor type - zero-overhead dispatch, full inlining - while hiding it from the caller behind `task<T>`. That requires the executor type as a template parameter on the task: `task<T, Executor>`. [P4089R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4089r0.pdf)<sup>[14]</sup> documents why this fails in practice: A second template parameter on the task type creates cross-library interoperability problems, prevents separate compilation, and destroys ABI stability. [N5014](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5014.pdf)<sup>[26]</sup> defines `task<T, E>` with `Environment` customizing behavior - the direct "two-parameter task" that _IoAwaitable_ avoids.
 
-The protocol chooses the other side of the fork: type-erase the executor through `executor_ref`, keep `task<T>` at one template parameter, and accept one vtable indirection per `dispatch`/`post` call. The cost is bounded and constant - one pointer indirection, no allocation, no template instantiation. A coroutine returning `task<int>` can be defined in a `.cpp` file and called from any translation unit without exposing the executor type, the frame allocator, or the stop token in the public interface.
+The protocol chooses the other side of the fork: Type-erase the executor through `executor_ref`, keep `task<T>` at one template parameter, and accept one vtable indirection per `dispatch`/`post` call. The cost is bounded and constant - one pointer indirection, no allocation, no template instantiation. A coroutine returning `task<int>` can be defined in a `.cpp` file and called from any translation unit without exposing the executor type, the frame allocator, or the stop token in the public interface.
 
 C++20 coroutines allocate a frame for every invocation. For I/O coroutines, this allocation is unavoidable: Heap Allocation eLision Optimization (HALO) cannot apply when frame lifetime depends on an external event ([P2477R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2477r3.html)<sup>[27]</sup>). The frame already hides concrete types - sockets, SSL contexts, parsers - from the caller's type system. The executor is one more type that vanishes behind the same boundary.
 
@@ -380,7 +380,7 @@ C++20 coroutines allocate a frame for every invocation. For I/O coroutines, this
 
 ### 6.3 `memory_resource`
 
-A *frame allocator* is a `memory_resource` used exclusively for coroutine frame allocation. Coroutine frames follow a narrow pattern: sizes repeat, lifetimes nest, and deallocation order mirrors allocation order. A frame allocator exploits this pattern.
+A *frame allocator* is a `memory_resource` used exclusively for coroutine frame allocation. Coroutine frames follow a narrow pattern: Sizes repeat, lifetimes nest, and deallocation order mirrors allocation order. A frame allocator exploits this pattern.
 
 | Platform    | Frame Allocator  | Time (ms) | Speedup |
 |-------------|------------------|----------:|--------:|
@@ -425,7 +425,7 @@ int main()
 }
 ```
 
-The two-phase syntax - `run_async(ex)(my_task())` - exists because `operator new` executes before the coroutine body. The frame allocator must be set before `my_task()` is called. The first call (`run_async(ex)`) sets up the environment including the frame allocator. The second call (`(my_task())`) invokes the coroutine, whose `operator new` reads the frame allocator that is now in place. [P4127R0](https://isocpp.org/files/papers/P4127R0.pdf)<sup>[34]</sup> enumerates every C++20 coroutine customization point and proves the design space is closed: the parameter list and out-of-band state are the only two delivery channels.
+The two-phase syntax - `run_async(ex)(my_task())` - exists because `operator new` executes before the coroutine body. The frame allocator must be set before `my_task()` is called. The first call (`run_async(ex)`) sets up the environment including the frame allocator. The second call (`(my_task())`) invokes the coroutine, whose `operator new` reads the frame allocator that is now in place. [P4127R0](https://isocpp.org/files/papers/P4127R0.pdf)<sup>[34]</sup> enumerates every C++20 coroutine customization point and proves the design space is closed: The parameter list and out-of-band state are the only two delivery channels.
 
 Two-phase invocation was considered against single-call alternatives. The `operator new` timing constraint makes single-call impossible without language changes. The syntax is localized to launch sites. Application-level coroutines never see it.
 
@@ -461,7 +461,7 @@ co_await run(worker_ex, source.get_token(), pool)(
 
 ## 8. Frame Allocator Propagation
 
-The frame allocator must be in place when the compiler calls `operator new` to create the coroutine frame. [P4127R0](https://isocpp.org/files/papers/P4127R0.pdf)<sup>[34]</sup> enumerates every C++20 coroutine customization point and proves the design space is closed: the parameter list and out-of-band state are the only two delivery channels. This section documents both, explains why both must exist, and details the out-of-band implementation choices.
+The frame allocator must be in place when the compiler calls `operator new` to create the coroutine frame. [P4127R0](https://isocpp.org/files/papers/P4127R0.pdf)<sup>[34]</sup> enumerates every C++20 coroutine customization point and proves the design space is closed: The parameter list and out-of-band state are the only two delivery channels. This section documents both, explains why both must exist, and details the out-of-band implementation choices.
 
 ### 8.1 The Parameter List (`allocator_arg_t`)
 
@@ -506,7 +506,7 @@ route_task handle_upload(
 }
 ```
 
-Every `co_await` in the chain must forward the allocator. Containers in the standard library accept allocators because they are written once by experts and used many times. Coroutine handlers are the reverse: they are written by application developers, often in large numbers, for specific business logic. Burdening every handler with frame allocation plumbing is a significant ergonomic cost (Section 9 evaluates this against the audience skill model from Section 3).
+Every `co_await` in the chain must forward the allocator. Containers in the standard library accept allocators because they are written once by experts and used many times. Coroutine handlers are the reverse: They are written by application developers, often in large numbers, for specific business logic. Burdening every handler with frame allocation plumbing is a significant ergonomic cost (Section 9 evaluates this against the audience skill model from Section 3).
 
 Nothing in [P4003R3](https://isocpp.org/files/papers/P4003R3.pdf)<sup>[1]</sup> forbids a codebase from choosing `allocator_arg_t` propagation end to end when explicit signatures are preferable.
 
@@ -575,9 +575,9 @@ Every executor event loop and strand dispatch loop saves the slot before resumin
 
 ### 8.4 Concerns About Out-of-Band Propagation
 
-**Hidden behavior.** The out-of-band slot is a write-through cache with exactly one purpose: deliver a `memory_resource*` to `operator new`. It is written before every coroutine invocation and read in exactly one place. The canonical value lives in `io_env`, heap-stable and owned by the launch function, repopulated on every resume. No algorithm inspects it. No behavior changes based on its contents. It controls where memory comes from, not what the program does. `std::pmr::get_default_resource()` is a standard-library precedent for a process-wide allocator channel adopted in C++17.
+**Hidden behavior.** The out-of-band slot is a write-through cache with exactly one purpose: Deliver a `memory_resource*` to `operator new`. It is written before every coroutine invocation and read in exactly one place. The canonical value lives in `io_env`, heap-stable and owned by the launch function, repopulated on every resume. No algorithm inspects it. No behavior changes based on its contents. It controls where memory comes from, not what the program does. `std::pmr::get_default_resource()` is a standard-library precedent for a process-wide allocator channel adopted in C++17.
 
-**Thread migration.** Every resume path - `initial_suspend`, every subsequent `co_await` via `await_transform` - unconditionally writes the frame allocator from `io_env` into the slot before the coroutine body continues. The write always precedes the read on the new thread. No suspended coroutine depends on the slot retaining a value across a suspension point. Deallocation is thread-independent: each frame stores its `memory_resource*` in a footer.
+**Thread migration.** Every resume path - `initial_suspend`, every subsequent `co_await` via `await_transform` - unconditionally writes the frame allocator from `io_env` into the slot before the coroutine body continues. The write always precedes the read on the new thread. No suspended coroutine depends on the slot retaining a value across a suspension point. Deallocation is thread-independent: Each frame stores its `memory_resource*` in a footer.
 
 **Implicit propagation and lifetime.** Coroutine chains cannot outlive their launch site. The frame allocator outlives every frame that uses it - not by convention, but by the structural nesting of coroutine lifetimes.
 
@@ -624,7 +624,7 @@ Our evidence shows that the sender algebra is structurally suited to DAG-shaped 
 
 [P4094R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4094r0.pdf)<sup>[15]</sup> traces the executor unification arc from [P0443R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/p0443r14.html)<sup>[17]</sup> (14 revisions, never deployed as unified) through [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[32]</sup> (Cologne 2019) to [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[12]</sup>. [P4095R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4095r0.pdf)<sup>[31]</sup> demonstrates that under continuation framing, three of four deficiencies identified by [P1525R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1525r0.pdf)<sup>[32]</sup> do not arise. [P4096R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4096r0.pdf)<sup>[20]</sup> re-examines [P2464R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2464r0.html)<sup>[35]</sup> under the coroutine executor model. [P4097R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4097r0.pdf)<sup>[36]</sup> traces the evidence available at the time of the [P2453R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[8]</sup> "including networking" poll. [P4098R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4098r0.pdf)<sup>[37]</sup> tabulates claims against published evidence across the entire executor and networking timeline.
 
-**Bridges** make the partnership concrete. [P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[38]</sup> specifies **`await_sender`**: consume a `std::execution` sender from inside an _IoAwaitable_ coroutine and return to the I/O executor. [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[39]</sup> specifies **`as_sender`**: wrap an _IoAwaitable_ as a sender for algorithms that speak sender/receiver.
+**Bridges** make the partnership concrete. [P4092R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4092r0.pdf)<sup>[38]</sup> specifies **`await_sender`**: Consume a `std::execution` sender from inside an _IoAwaitable_ coroutine and return to the I/O executor. [P4093R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4093r0.pdf)<sup>[39]</sup> specifies **`as_sender`**: Wrap an _IoAwaitable_ as a sender for algorithms that speak sender/receiver.
 
 ```cpp
 task<> handle_request(tcp_stream& stream)
@@ -660,7 +660,7 @@ The protocol is recent. The patterns it captures are not. Type-erased executors,
 
 Four alternative approaches address the same problem space. Each is presented at its strongest.
 
-**Sender/receiver ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[12]</sup>).** The committee-adopted framework for structured asynchronous execution. Its advantages are real: generality across I/O, GPU, and parallel workloads; a formal algebra of sender composition; strong structured-concurrency guarantees. For domains that require DAG-shaped execution graphs, sender/receiver provides machinery that _IoAwaitable_ does not attempt. Where sender/receiver is less well suited is in the I/O-specific properties: it requires a second template parameter on the task type, it does not define a frame allocator propagation mechanism, and the sender composition algebra adds conceptual weight that I/O coroutines do not use. [P4007R3](https://isocpp.org/files/papers/P4007R3.pdf)<sup>[41]</sup> and [P4014R2](https://isocpp.org/files/papers/P4014R2.pdf)<sup>[42]</sup> examine this relationship in detail.
+**Sender/receiver ([P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[12]</sup>).** The committee-adopted framework for structured asynchronous execution. Its advantages are real: generality across I/O, GPU, and parallel workloads; a formal algebra of sender composition; strong structured-concurrency guarantees. For domains that require DAG-shaped execution graphs, sender/receiver provides machinery that _IoAwaitable_ does not attempt. Where sender/receiver is less well suited is in the I/O-specific properties: It requires a second template parameter on the task type, it does not define a frame allocator propagation mechanism, and the sender composition algebra adds conceptual weight that I/O coroutines do not use. [P4007R3](https://isocpp.org/files/papers/P4007R3.pdf)<sup>[41]</sup> and [P4014R2](https://isocpp.org/files/papers/P4014R2.pdf)<sup>[42]</sup> examine this relationship in detail.
 
 Independently, Ian Petersen has adopted the frame allocator pattern within stdexec itself: `exec::function<...>` ([NVIDIA/stdexec#2040](https://github.com/NVIDIA/stdexec/pull/2040)<sup>[43]</sup>, [exec/function.hpp](https://github.com/NVIDIA/stdexec/blob/main/include/exec/function.hpp)<sup>[44]</sup>) introduces a `get_frame_allocator` environment query to achieve the same amortized-zero-allocation behaviour for type-erased senders, explicitly crediting the Capy recycling allocator as the inspiration.
 
@@ -751,7 +751,7 @@ The solution is to invert the relationship between threads and I/O operations. T
 - **Windows**: I/O Completion Ports (IOCP) - queue-based completion notification
 - **BSD/macOS**: `kqueue` - unified event notification
 
-These mechanisms enable the proactor pattern: initiate an operation and receive notification when it finishes.
+These mechanisms enable the proactor pattern: Initiate an operation and receive notification when it finishes.
 
 ### A.4 Completion Handlers and Coroutines
 
@@ -777,7 +777,7 @@ I/O objects must be associated with an execution context that manages their life
 
 ### A.6 Executors
 
-An executor determines where and how work runs. `dispatch` runs work immediately if safe; `post` always defers. The distinction matters for correctness: dispatching while holding a mutex could deadlock.
+An executor determines where and how work runs. `dispatch` runs work immediately if safe; `post` always defers. The distinction matters for correctness: Dispatching while holding a mutex could deadlock.
 
 ### A.7 Strands: Serialization Without Locks
 

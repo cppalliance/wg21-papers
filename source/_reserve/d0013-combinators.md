@@ -134,7 +134,7 @@ auto when_any(Awaitables&&... awaitables)
 
 **Completion.** The caller resumes when the first child completes. The result of that child is the result of the `when_any` expression.
 
-**Cancellation of siblings.** When the first child completes, `when_any` triggers the stop token of every remaining child. `when_any` does not complete until every remaining child has acknowledged the cancellation and exited. This is the structured guarantee: no child outlives the `when_any` scope.
+**Cancellation of siblings.** When the first child completes, `when_any` triggers the stop token of every remaining child. `when_any` does not complete until every remaining child has acknowledged the cancellation and exited. This is the structured guarantee: No child outlives the `when_any` scope.
 
 **Stop token propagation.** Each child receives a stop token that is triggered in two cases: (a) a sibling completed first, or (b) the caller's own stop token was triggered. The child's stop token is a composite of both sources.
 
@@ -176,8 +176,8 @@ The mechanism is cooperative. A child that ignores its stop token delays the `wh
 
 If the caller's stop token is triggered while a combinator is running:
 
-- **`when_all`**: every child receives the stop request. `when_all` waits for all children to exit.
-- **`when_any`**: every child receives the stop request. `when_any` waits for all children to exit. The result is the first child that completed (which may be due to cancellation).
+- **`when_all`**: Every child receives the stop request. `when_all` waits for all children to exit.
+- **`when_any`**: Every child receives the stop request. `when_any` waits for all children to exit. The result is the first child that completed (which may be due to cancellation).
 
 In both cases, the combinator does not complete until all children have exited.
 

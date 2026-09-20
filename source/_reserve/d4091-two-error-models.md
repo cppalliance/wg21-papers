@@ -19,7 +19,7 @@ In March 2026, Andrzej Krzemie&nacute;ski asked the lib-ext reflector<sup>[1]</s
 
 The question launched a discussion. Ville Voutilainen, Ian Petersen, Jens Maurer, and the author explored the design space across several dozen messages. This paper follows that discussion and examines its implications for how the sender three-channel model interacts with compound I/O results.
 
-The finding: both coroutines and senders have an abstraction floor - a boundary where compound results are reduced to a single value. The coroutine floor is `throw`. The sender floor is `set_error`. Both destroy compound data when crossed. The difference is where the floor sits relative to composition. In coroutines, the floor is opt-in. In senders, the composition algebra lives above it.
+The finding: Both coroutines and senders have an abstraction floor - a boundary where compound results are reduced to a single value. The coroutine floor is `throw`. The sender floor is `set_error`. Both destroy compound data when crossed. The difference is where the floor sits relative to composition. In coroutines, the floor is opt-in. In senders, the composition algebra lives above it.
 
 ---
 
@@ -36,7 +36,7 @@ The finding: both coroutines and senders have an abstraction floor - a boundary 
 - Reframed in response to reflector discussion with Voutilainen, Petersen, Maurer, Sutter, and Krzemie&nacute;ski.
 - Replaced abstract with Krzemie&nacute;ski's reflector question and the abstraction floor finding.
 - Incorporated Ian Petersen's observation that a previous draft held senders and coroutines to different standards regarding their error channels.
-- Added the abstraction floor as a symmetric concept: both paradigms have one.
+- Added the abstraction floor as a symmetric concept: Both paradigms have one.
 - Replaced the "Four Defenses, Four Concessions" framing with an honest trade-off space (Section 11).
 - Added Sections 2 (The Question), 7 (The Equivalence), 8 (The Symmetry), 9 (The Boundary), 10 (The Abstraction Floor).
 - Added reflector quotes from Voutilainen, Petersen, Maurer, Kohlhoff, K&uuml;hl, Shoop, and Sutter throughout, with permission.
@@ -61,7 +61,7 @@ This paper asks for nothing.
 
 ## 2. The Question
 
-Krzemie&nacute;ski's question was direct: given a value on the value channel, how do I route it to different channels at runtime? Voutilainen, Petersen, Maurer, and the author spent the next several days working through the answer. The conversation was technical, constructive, and occasionally funny. Each participant contributed something the others had not seen.
+Krzemie&nacute;ski's question was direct: Given a value on the value channel, how do I route it to different channels at runtime? Voutilainen, Petersen, Maurer, and the author spent the next several days working through the answer. The conversation was technical, constructive, and occasionally funny. Each participant contributed something the others had not seen.
 
 This paper follows that conversation. The sections that follow present the technical background, then trace the discussion's arc: from the partition that makes compound results difficult, through the constructions that address them, to the equivalence and symmetry that emerged, and finally to the abstraction floor - a concept that applies to both paradigms.
 
@@ -109,7 +109,7 @@ The partition is not about I/O. It is about product types meeting channels.
 
 ### 3.3 Compound Results in Practice
 
-The compound-result pattern is how systems report outcomes when the result carries more than a boolean. io_uring delivers `(res, flags)` in one CQE.<sup>[6]</sup> IOCP delivers `(BOOL, lpNumberOfBytesTransferred, lpOverlapped)` in one call.<sup>[7]</sup> POSIX `read()` returns `ssize_t` with `errno`.<sup>[8]</sup> `std::from_chars` returns `{ptr, ec}`. Three OS families and the C++ standard library converge on the same shape: status and data arrive as a pair because they are a single result.
+The compound-result pattern is how systems report outcomes when the result carries more than a boolean. io_uring delivers `(res, flags)` in one CQE.<sup>[6]</sup> IOCP delivers `(BOOL, lpNumberOfBytesTransferred, lpOverlapped)` in one call.<sup>[7]</sup> POSIX `read()` returns `ssize_t` with `errno`.<sup>[8]</sup> `std::from_chars` returns `{ptr, ec}`. Three OS families and the C++ standard library converge on the same shape: Status and data arrive as a pair because they are a single result.
 
 ---
 
@@ -165,7 +165,7 @@ Chris Kohlhoff identified this in [P2430R0](https://www.open-std.org/jtc1/sc22/w
 
 > "Due to the limitations of the `set_error` channel (which has a single 'error' argument) and `set_done` channel (which takes no arguments), partial results must be communicated down the `set_value` channel."
 
-Two approaches emerged in the reflector discussion: route compound results through the error channel and handle them before they reach `task`, or keep everything on the value channel. Maurer framed the choice:
+Two approaches emerged in the reflector discussion: Route compound results through the error channel and handle them before they reach `task`, or keep everything on the value channel. Maurer framed the choice:
 
 > "That's all part of the design spectrum, I'd say, and depends on your particular situation. As you correctly observe, you either need to handle all errors before they reach 'task', or decide that certain errors should 'bubble up', causing an exception, maybe because they're fatal enough to terminate the world. If you wish to handle complicated success results, your surroundings must be prepared to deal with that somehow." - Jens Maurer<sup>[5]</sup>
 
@@ -201,7 +201,7 @@ The adapter preserves data because both factory functions receive the full resul
 
 The data can survive the channel crossing. The question is whether it survives the generic algorithms downstream.
 
-A natural response is that the `dispatch` adapter, if standardized, would close the gap within the sender model. The adapter solves the *local* problem: at the point of dispatch, both fields are visible and the programmer chooses a channel with full context. But the downstream algebra is channel-typed, not value-typed. Once `dispatch` routes `ec` to `set_error`, the byte count must travel separately - inside the error object (position 11.6), in a captured lambda (position 11.5), or not at all (position 11.1). `retry` does not receive the byte count through the channel; it receives `error_code`. The adapter moves the classification to the right layer. It does not change what the channels carry after classification.
+A natural response is that the `dispatch` adapter, if standardized, would close the gap within the sender model. The adapter solves the *local* problem: At the point of dispatch, both fields are visible and the programmer chooses a channel with full context. But the downstream algebra is channel-typed, not value-typed. Once `dispatch` routes `ec` to `set_error`, the byte count must travel separately - inside the error object (position 11.6), in a captured lambda (position 11.5), or not at all (position 11.1). `retry` does not receive the byte count through the channel; it receives `error_code`. The adapter moves the classification to the right layer. It does not change what the channels carry after classification.
 
 The local problem is solved. The downstream problem remains.
 
@@ -229,9 +229,9 @@ All non-zero error codes go to `set_error`. The byte count is discarded uncondit
 | `(ec, 0)` where ec is not eof | `set_error(ec)`     |
 | `(ec, n)` where n > 0         | `set_value(ec, n)`  |
 
-This is the only known mapping that preserves partial results on the error path. Dimov characterized it as "ad hoc."<sup>[12]</sup> The classification is context-free: the I/O layer decides which channel before the application can inspect the result.
+This is the only known mapping that preserves partial results on the error path. Dimov characterized it as "ad hoc."<sup>[12]</sup> The classification is context-free: The I/O layer decides which channel before the application can inspect the result.
 
-Both mappings demonstrate the same structural problem: any function from `(error_code, size_t)` to `{set_value, set_error, set_stopped}` must either lose data, embed domain-specific classification at the wrong layer, or bypass the channels entirely.
+Both mappings demonstrate the same structural problem: Any function from `(error_code, size_t)` to `{set_value, set_error, set_stopped}` must either lose data, embed domain-specific classification at the wrong layer, or bypass the channels entirely.
 
 ### 6.2 Prior Engagement
 
@@ -345,7 +345,7 @@ Both paradigms have one.
 
 The floor is not a sender problem or a coroutine problem. It is a property of any system with mutually exclusive error and value paths. Giving it a name helps us see it. Being honest about where it sits helps us design around it.
 
-The floors are structurally analogous but operationally opposite. Coroutines default to below-floor composition: the programmer stays below the floor unless an explicit `throw` crosses it. Below the floor, the programmer has `if`, `switch`, `for`, and every other C++ statement for dispatch. Senders default to above-floor composition: the composition algebra - `retry`, `when_all`, `upon_error` - lives above the floor. To use the algebra, the result must cross the floor. To preserve compound data, the result must stay below it. The programmer cannot do both simultaneously without application-specific wiring (Section 9).
+The floors are structurally analogous but operationally opposite. Coroutines default to below-floor composition: The programmer stays below the floor unless an explicit `throw` crosses it. Below the floor, the programmer has `if`, `switch`, `for`, and every other C++ statement for dispatch. Senders default to above-floor composition: The composition algebra - `retry`, `when_all`, `upon_error` - lives above the floor. To use the algebra, the result must cross the floor. To preserve compound data, the result must stay below it. The programmer cannot do both simultaneously without application-specific wiring (Section 9).
 
 Any async facility that separates error and value paths has an abstraction floor. Identifying where it sits relative to composition is a design decision, not an accident.
 
@@ -379,7 +379,7 @@ Keep the full tuple on the error channel, or capture the byte count in a lambda 
 
 ### 11.6 Bundle Compound Data Into the Error Type
 
-Call `set_error(io_result{ec, n})` where `io_result` carries both the error code and the byte count. The composition algebra participates: `retry` sees the error, `upon_error` sees the error. The data survives the floor crossing because it is inside the error object. [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[9]</sup> suggests this approach for partial failure (Section 6.3). The cost: every `upon_error` handler in the pipeline must accept `io_result` as a variant alongside `error_code`, `exception_ptr`, and any other error type in the completion signatures. `retry` must understand `io_result`. The error type proliferates across the pipeline. No published library implements this convention.
+Call `set_error(io_result{ec, n})` where `io_result` carries both the error code and the byte count. The composition algebra participates: `retry` sees the error, `upon_error` sees the error. The data survives the floor crossing because it is inside the error object. [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html)<sup>[9]</sup> suggests this approach for partial failure (Section 6.3). The cost: Every `upon_error` handler in the pipeline must accept `io_result` as a variant alongside `error_code`, `exception_ptr`, and any other error type in the completion signatures. `retry` must understand `io_result`. The error type proliferates across the pipeline. No published library implements this convention.
 
 ### 11.7 The Observable Trade-Offs
 
@@ -392,7 +392,7 @@ Call `set_error(io_result{ec, n})` where `io_result` carries both the error code
 | Application wiring (11.5)     | Yes                  | Yes                 | No      | Yes           |
 | Bundle into error type (11.6) | Yes                  | Yes                 | Partial | Yes           |
 
-Not all compound-result operations are equally affected. Operations without partial-success semantics - `accept()`, where the peer socket is meaningless on failure - degrade naturally to the three-channel model: the error routes through `set_error` with no data loss because there is no meaningful data to preserve. The compound-result tension is sharpest for operations like `read()` and `write()`, where the byte count carries meaningful data on every path, including failure. A design that handles the degradation case well does not automatically handle the partial-success case. Peter Dimov observed in the reflector discussion cited in Section 6.2 that the mapping "should degrade to the natural mapping when no partial successes are present," and that the value-channel-only approach (11.2) does not achieve this. An operation-level classification based on the presence of partial-success semantics would reduce the trade-off space for operations that lack it, while preserving the full six-position analysis for operations where partial success is real.
+Not all compound-result operations are equally affected. Operations without partial-success semantics - `accept()`, where the peer socket is meaningless on failure - degrade naturally to the three-channel model: The error routes through `set_error` with no data loss because there is no meaningful data to preserve. The compound-result tension is sharpest for operations like `read()` and `write()`, where the byte count carries meaningful data on every path, including failure. A design that handles the degradation case well does not automatically handle the partial-success case. Peter Dimov observed in the reflector discussion cited in Section 6.2 that the mapping "should degrade to the natural mapping when no partial successes are present," and that the value-channel-only approach (11.2) does not achieve this. An operation-level classification based on the presence of partial-success semantics would reduce the trade-off space for operations that lack it, while preserving the full six-position analysis for operations where partial success is real.
 
 ---
 
@@ -404,7 +404,7 @@ Compound results arise at individual I/O operations, which are sequential by nat
 
 **Q: The `dispatch` adapter (Section 6) would close the gap if standardized.**
 
-Section 6 documents that the adapter solves the local problem: at the point of dispatch, both fields are visible. The downstream algebra remains channel-typed. Once `dispatch` routes `ec` to `set_error`, the byte count must travel separately - inside the error object (position 11.6), in a captured lambda (position 11.5), or not at all (position 11.1).
+Section 6 documents that the adapter solves the local problem: At the point of dispatch, both fields are visible. The downstream algebra remains channel-typed. Once `dispatch` routes `ec` to `set_error`, the byte count must travel separately - inside the error object (position 11.6), in a captured lambda (position 11.5), or not at all (position 11.1).
 
 **Q: The three-channel model serves a real need.**
 

@@ -282,6 +282,25 @@ def find_refs_section(lines: list[str]) -> tuple[int, int]:
     return refs_start, refs_end
 
 
+def body_line_indices(
+    n_lines: int,
+    refs_start: int,
+    refs_end: int,
+    start: int = 0,
+) -> list[int]:
+    """Line indices that count as body, skipping the References section.
+
+    Anything after the References section - an appendix, for example -
+    is still body text, and citations in it are real. Scanning only up
+    to refs_start would report a reference cited solely from an appendix
+    as an orphan, and --fix would then delete it.
+    """
+    if refs_start < 0:
+        return list(range(start, n_lines))
+    return (list(range(start, refs_start))
+            + list(range(max(refs_end, start), n_lines)))
+
+
 def find_section_at_line(lines: list[str], line_idx: int) -> Optional[str]:
     """Return the section heading name that contains the given line."""
     for i in range(line_idx, -1, -1):
@@ -297,6 +316,7 @@ def extract_body_citations(
     lines: list[str],
     excluded: set[int],
     refs_start: int,
+    refs_end: int,
 ) -> tuple[list[tuple[int, int]], list[int], dict[int, int]]:
     """Walk body top-to-bottom, extract citations in first-appearance order.
 
@@ -308,9 +328,8 @@ def extract_body_citations(
     body_cites = []
     seen = set()
     first_appearance = []
-    end = refs_start if refs_start >= 0 else len(lines)
 
-    for i in range(end):
+    for i in body_line_indices(len(lines), refs_start, refs_end):
         if i in excluded:
             continue
         for m in CITE_RE.finditer(lines[i]):
@@ -410,6 +429,7 @@ def find_uncited_links(
     lines: list[str],
     excluded: set[int],
     refs_start: int,
+    refs_end: int,
     config: dict,
 ) -> list[UncitedLink]:
     """Find body hyperlinks not immediately followed by <sup>[N]</sup>.
@@ -417,9 +437,8 @@ def find_uncited_links(
     Excludes: fenced code blocks, exempt sections, exempt URLs.
     """
     uncited: list[UncitedLink] = []
-    end = refs_start if refs_start >= 0 else len(lines)
 
-    for i in range(end):
+    for i in body_line_indices(len(lines), refs_start, refs_end):
         if i in excluded:
             continue
 
@@ -501,6 +520,7 @@ def check_unversioned_refs(
     lines: list[str],
     excluded: set[int],
     refs_start: int,
+    refs_end: int,
 ) -> list[tuple[int, str]]:
     """Find bare P/D numbers without revision suffix in body prose.
 
@@ -508,10 +528,9 @@ def check_unversioned_refs(
     and URLs - these contexts use bare numbers intentionally.
     """
     results = []
-    end = refs_start if refs_start >= 0 else len(lines)
     fm_end = _find_front_matter_end(lines)
 
-    for i in range(fm_end, end):
+    for i in body_line_indices(len(lines), refs_start, refs_end, fm_end):
         if i in excluded:
             continue
         line = lines[i]
@@ -583,7 +602,8 @@ def scan(filepath: str, config: dict) -> AuditResult:
     r.refs_start, r.refs_end = find_refs_section(r.lines)
 
     r.body_cites, r.first_appearance, r.old_to_new = (
-        extract_body_citations(r.lines, r.excluded, r.refs_start))
+        extract_body_citations(
+            r.lines, r.excluded, r.refs_start, r.refs_end))
 
     identity = all(old == new for old, new in r.old_to_new.items())
     r.needs_renumber = not identity
@@ -642,7 +662,7 @@ def scan(filepath: str, config: dict) -> AuditResult:
         ))
 
     r.uncited_links = find_uncited_links(
-        r.lines, r.excluded, r.refs_start, config)
+        r.lines, r.excluded, r.refs_start, r.refs_end, config)
     for line_idx, text, url in r.uncited_links:
         r.findings.append(Finding(
             rule='uncited-link',
@@ -661,7 +681,7 @@ def scan(filepath: str, config: dict) -> AuditResult:
         ))
 
     r.unversioned = check_unversioned_refs(
-        r.lines, r.excluded, r.refs_start)
+        r.lines, r.excluded, r.refs_start, r.refs_end)
     for line_idx, paper in r.unversioned:
         r.findings.append(Finding(
             rule='unversioned-ref',
@@ -1784,7 +1804,8 @@ def _verify_citation_integrity(lines: list[str], filepath: str) -> None:
     refs_start, refs_end = find_refs_section(lines)
     if refs_start < 0:
         return
-    _, _, cite_map = extract_body_citations(lines, excluded, refs_start)
+    _, _, cite_map = extract_body_citations(
+        lines, excluded, refs_start, refs_end)
     out_refs = parse_references(lines, refs_start, refs_end)
     ref_nums = set(out_refs.keys())
     for cite_num in cite_map:
@@ -1913,7 +1934,7 @@ def write(
 
     excluded = build_exclusion_ranges(lines)
     _body_cites, _first_app, old_to_new = extract_body_citations(
-        lines, excluded, refs_start)
+        lines, excluded, refs_start, refs_end)
 
     needs_renumber = any(old != new for old, new in old_to_new.items())
 
@@ -1962,7 +1983,7 @@ def write(
             refs = parse_references(lines, refs_start, refs_end)
             excluded = build_exclusion_ranges(lines)
             _, _, post_map = extract_body_citations(
-                lines, excluded, refs_start)
+                lines, excluded, refs_start, refs_end)
             if any(o != n for o, n in post_map.items()):
                 content = renumber_content(post_map, excluded, lines)
                 lines = content.splitlines(keepends=True)

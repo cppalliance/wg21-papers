@@ -164,7 +164,7 @@ McDougall and co-authors identified who the entry gate favors in [P3297R0](https
 
 ### 4.2 Stage Two: Early Attrition
 
-The literature predicts that participants who leave after one or two meetings disproportionately cite confusion about process, frustration with pace, or desire for more direct impact. A trans activist collective documented this directly: exit interviews revealed that volunteers left because "this whole thing is chaos, I've no idea what you actually want me to do and that makes it impossible to do anything."<sup>[31]</sup>
+The literature predicts that participants who leave after one or two meetings disproportionately cite confusion about process, frustration with pace, or desire for more direct impact. A trans activist collective documented this directly: Exit interviews revealed that volunteers left because "this whole thing is chaos, I've no idea what you actually want me to do and that makes it impossible to do anything."<sup>[31]</sup>
 
 Voutilainen acknowledged the unwritten-rules problem in [P2138R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2138r4.pdf)<sup>[32]</sup>:
 

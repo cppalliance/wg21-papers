@@ -50,7 +50,7 @@ The author writes to build the evidentiary record for networking that the commit
 
 In October 2021, LEWG polled: "The sender/receiver model (P2300) is a good basis for most asynchronous use cases, including networking" - consensus in favor ([P2453R0](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2453r0.html)<sup>[5]</sup>). The word "networking" entered the consensus. No networking evidence accompanied it. The chair's published interpretation: "In the short term, this poll result doesn't mean much. We don't have a paper in hand that proposes networking based on the [P2300R2] model." Five years later, no such paper has shipped a networking implementation. The evidence column, for this domain, remains empty. The author fills it from outside.
 
-The shape of the question is itself a finding. Twenty-six of these papers are information-only: they request no floor time, ask for no polls, and compete with no proposal for a slot in any working draft. The question they draw is not "which claims are wrong?" - no specific claim in any of the twenty-six has been challenged in any committee venue. The question is "why do they exist?" A body that evaluated papers by content would ask the first. The body asks the second.
+The shape of the question is itself a finding. Twenty-six of these papers are information-only: They request no floor time, ask for no polls, and compete with no proposal for a slot in any working draft. The question they draw is not "which claims are wrong?" - no specific claim in any of the twenty-six has been challenged in any committee venue. The question is "why do they exist?" A body that evaluated papers by content would ask the first. The body asks the second.
 
 **The asked question challenges a person. The unasked question examines a record.**
 
@@ -74,7 +74,7 @@ The standard already accommodates complementary solutions: `stdio` and `iostream
 
 ### 3.4. Why two is enormous
 
-Accepting a second task type retroactively converts the first's universal claim into a scoped one. The 2021 poll said "most asynchronous use cases, including networking." A second task type says: networking was not included after all. The P2300 architects have structural reason to oppose `std::io::task` regardless of evidence, because its acceptance is a concession about their design's scope. The incentive exists independent of the people who hold it.
+Accepting a second task type retroactively converts the first's universal claim into a scoped one. The 2021 poll said "most asynchronous use cases, including networking." A second task type says: Networking was not included after all. The P2300 architects have structural reason to oppose `std::io::task` regardless of evidence, because its acceptance is a concession about their design's scope. The incentive exists independent of the people who hold it.
 
 At the SG14 video conference in March 2026, the room split bimodally on the networking question - the pattern Section 5 predicts when a universal claim meets a scoped alternative backed by evidence.
 
@@ -84,7 +84,7 @@ At the SG14 video conference in March 2026, the room split bimodally on the netw
 
 ## 4. The Thin Record
 
-The whole argument rests on one observable fact: the published record behind the networking claim does not contain the evidence the claim was announced as resting on.
+The whole argument rests on one observable fact: The published record behind the networking claim does not contain the evidence the claim was announced as resting on.
 
 ### 4.1. The search
 
@@ -96,7 +96,7 @@ The unification that preceded the poll rests on one code example. [P0761R2](http
 
 [P4098R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4098r1.pdf)<sup>[14]</sup> tabulated twenty years of published claims about executors and networking against the published evidence for each. The GPU and infrastructure deployments are real and documented. The networking cells are empty.
 
-C++20 coroutines prevent unbounded stack growth through symmetric transfer: a coroutine that awaits N synchronously-completing senders in a loop accumulates O(N) stack frames, while with symmetric transfer the same loop executes in O(1) stack space ([P2583R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2583r4.pdf)<sup>[17]</sup>). The phrase "symmetric transfer" appears in no revision of P2300R10, R0 through R10.
+C++20 coroutines prevent unbounded stack growth through symmetric transfer: A coroutine that awaits N synchronously-completing senders in a loop accumulates O(N) stack frames, while with symmetric transfer the same loop executes in O(1) stack space ([P2583R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2583r4.pdf)<sup>[17]</sup>). The phrase "symmetric transfer" appears in no revision of P2300R10, R0 through R10.
 
 The field experience of the model's largest production deployment points the same way. Ian Petersen, a maintainer of Meta's libunifex, [wrote](https://github.com/facebookexperimental/libunifex/issues/586#issuecomment-1845934903)<sup>[18]</sup> in December 2023: "Our experience at Meta has been that coroutines are easier to read, write, debug, and just generally maintain than composition-of-sender algorithms-style code... The advice we give to internal teams adopting Unifex is that they should prefer coroutines until they know that the overheads are unacceptable."
 
@@ -128,7 +128,7 @@ The dynamic has a cost that implementers have named directly. Eighteen implement
 
 ### 5.2. The author's ask sharpens this
 
-`std::io::task` makes the domain boundary explicit. Its acceptance converts the universal claim into a scoped one. The architects of P2300 have structural reason to oppose it regardless of its evidence - because the cost of accepting it is not a technical concession but a reputational one: the universal model was not universal after all. Non-engagement is the dominant strategy. The evidence does not need to be refuted if its author can be dismissed on other grounds.
+`std::io::task` makes the domain boundary explicit. Its acceptance converts the universal claim into a scoped one. The architects of P2300 have structural reason to oppose it regardless of its evidence - because the cost of accepting it is not a technical concession but a reputational one: The universal model was not universal after all. Non-engagement is the dominant strategy. The evidence does not need to be refuted if its author can be dismissed on other grounds.
 
 This does not reflect a moral failing in any individual. It represents rational behavior given the incentive structure. For this to change, the rules that make non-engagement a dominant strategy must be adjusted.
 
@@ -138,7 +138,7 @@ This does not reflect a moral failing in any individual. It represents rational 
 
 ## 6. Three Responses
 
-Game theory predicts how a tournament responds to a player who publishes evidence anyway. For every other player, engaging the substance is the worst available move: engagement legitimizes the evidence and risks losing on the merits. The dominant strategies, in order of cost, are three.
+Game theory predicts how a tournament responds to a player who publishes evidence anyway. For every other player, engaging the substance is the worst available move: Engagement legitimizes the evidence and risks losing on the merits. The dominant strategies, in order of cost, are three.
 
 ### 6.1. Attack the volume
 
@@ -146,7 +146,7 @@ Reframe the evidence as flooding. When quantity becomes the offense, content nev
 
 ### 6.2. Attack the provenance
 
-Dismiss on authorship. The author's papers are AI-assisted and disclose it. The dismissal converts the disclosure into the charge. The bar is asymmetric: a single imperfect citation in an AI-assisted paper is presented as proof of hallucination; the mailing archives contain decades of human-authored papers with citation errors, treated with errata lists and corrected revisions.
+Dismiss on authorship. The author's papers are AI-assisted and disclose it. The dismissal converts the disclosure into the charge. The bar is asymmetric: A single imperfect citation in an AI-assisted paper is presented as proof of hallucination; the mailing archives contain decades of human-authored papers with citation errors, treated with errata lists and corrected revisions.
 
 ### 6.3. Go silent
 
@@ -164,7 +164,7 @@ This does not reflect a moral failing. It represents rational behavior. Engaging
 
 ## 7. Why Papers
 
-The strategy follows from the position. The author returned to the committee after a long absence. He holds newcomer standing on a body that prices seniority. He cannot win polls: he commands no bloc, chairs no subgroup, and employs no delegation. Sections 5 and 6 describe the game such a participant loses by playing. There is exactly one game the structure cannot take away: the record.
+The strategy follows from the position. The author returned to the committee after a long absence. He holds newcomer standing on a body that prices seniority. He cannot win polls: He commands no bloc, chairs no subgroup, and employs no delegation. Sections 5 and 6 describe the game such a participant loses by playing. There is exactly one game the structure cannot take away: the record.
 
 Ask for nothing, document everything. Write the retrospectives the committee does not write for itself. Tabulate the claims against the evidence on file when the claims prevailed. Score the predictions. Publish the benchmarks, the field experience, the bridges, the staged proposal - and let them sit in the permanent record where every future participant finds them.
 

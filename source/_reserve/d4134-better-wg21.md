@@ -48,25 +48,25 @@ The structural property: WG21 has no proportional-deliberation requirement. A de
 
 [P4129R1](https://wg21.link/p4129r1)<sup>[2]</sup> surveyed the published poll record across three decades and documented six observable patterns: attendance-dependent outcome reversals, social pressure on participation, directional persistence, subgroup-plenary disagreements, the disproportionate weight of Strongly Against votes under the consensus threshold, and the influence of poll wording on outcomes.
 
-The structural property: the poll result is a function of three inputs the chair controls - the question asked, the interpretation of the answer, and the scheduling that determines who is in the room - in addition to the votes themselves.
+The structural property: The poll result is a function of three inputs the chair controls - the question asked, the interpretation of the answer, and the scheduling that determines who is in the room - in addition to the votes themselves.
 
 ### 2.3 Appointment Is Policy (P4130R0)
 
 [P4130R0](https://wg21.link/p4130r0)<sup>[3]</sup> documented the structural powers of the WG21 convenership - appointment of all subgroup chairs, creation and disbandment of study groups, control of plenary, and the meeting schedule - and presented on-camera testimony from senior committee members describing how those powers operate in practice. It presented the 2026 convenership transition as an opportunity for visible fairness, and identified five directions the new convener can take using powers the role already holds.
 
-The structural property: the convener appoints every chair. The chairs control every schedule. The schedule determines what ships. No open competition exists for any of these positions.
+The structural property: The convener appoints every chair. The chairs control every schedule. The schedule determines what ships. No open competition exists for any of these positions.
 
 ### 2.4 The Train Model (P4131R0)
 
 [P4131R0](https://wg21.link/p4131r0)<sup>[4]</sup> tested the train model's five claims - ship what is ready, pull features that are not ready, eliminate "now or never" pressure, higher specification quality, and closer compiler tracking - against the published record for each release from C++14 through C++26. It documented the implementers' own assessment ([P3962R0](https://wg21.link/p3962r0)<sup>[10]</sup>) that features accumulate faster than they can be implemented.
 
-The structural property: the train model promised that features would be pulled when not ready. The record shows they are pushed when almost ready. The safety valve is rarely used for large features because the social cost of pulling exceeds the social cost of shipping.
+The structural property: The train model promised that features would be pulled when not ready. The record shows they are pushed when almost ready. The safety valve is rarely used for large features because the social cost of pulling exceeds the social cost of shipping.
 
 ### 2.5 The Missing Feedback Loop (P4133R0)
 
 [P4133R0](https://wg21.link/p4133r0)<sup>[5]</sup> defined what a healthy feedback loop would contain for both library and language proposals - twelve elements including evidence of need, complete implementation, steel man arguments, post-adoption metrics, forced retrospectives, decision records, domain coverage, prediction registries, symmetric evidence bars, knowledge continuity, and outcome tracking. It audited the published record and found that ten of twelve elements are absent.
 
-The structural property: the committee measures whether the train runs on time. It does not measure whether the passengers arrived at the right destination.
+The structural property: The committee measures whether the train runs on time. It does not measure whether the passengers arrived at the right destination.
 
 ---
 

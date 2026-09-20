@@ -63,7 +63,7 @@ The Sender Sub-Language is not merely a fluent API. It is continuation-passing s
 
 ### 2.1 Continuations and CPS
 
-The [Lambda Papers](https://en.wikisource.org/wiki/Lambda_Papers)<sup>[5]</sup> (Steele and Sussman, 1975-1980) formalized continuation-passing style: every function receives an explicit continuation representing "what happens next." Instead of returning a value to its caller, a function passes its result forward into the continuation. The sender protocol works the same way. `connect(sndr, rcvr)` reifies the continuation - it binds a sender to its receiver, producing an operation state that holds the entire work graph as a concrete type. `start(op)` evaluates it.
+The [Lambda Papers](https://en.wikisource.org/wiki/Lambda_Papers)<sup>[5]</sup> (Steele and Sussman, 1975-1980) formalized continuation-passing style: Every function receives an explicit continuation representing "what happens next." Instead of returning a value to its caller, a function passes its result forward into the continuation. The sender protocol works the same way. `connect(sndr, rcvr)` reifies the continuation - it binds a sender to its receiver, producing an operation state that holds the entire work graph as a concrete type. `start(op)` evaluates it.
 
 Gordon Plotkin's 1975 paper on [call-by-value lambda calculus](<https://doi.org/10.1016/0304-3975(75)90017-1>)<sup>[7]</sup> established that CPS makes evaluation order explicit in the term structure. This is why optimizing compilers - [SML/NJ](https://www.smlnj.org/)<sup>[8]</sup>, [Chicken Scheme](https://www.call-cc.org/)<sup>[9]</sup> - use CPS as their intermediate representation, why [GHC](https://www.haskell.org/ghc/)<sup>[10]</sup> uses a closely related continuation-based model in its STG machine, and why the Sender Sub-Language can build zero-allocation pipelines and compile-time work graphs.
 
@@ -197,7 +197,7 @@ auto sndr = just(3, 4)
 // completes with set_value(25)
 ```
 
-The most natural operation in the Sub-Language: take what came before, apply a function, and carry the result forward. The reader will find this immediately familiar - it is function application, expressed as a pipeline stage.
+The most natural operation in the Sub-Language: Take what came before, apply a function, and carry the result forward. The reader will find this immediately familiar - it is function application, expressed as a pipeline stage.
 
 **Theory:** `then` is functor `fmap`. It transforms values without changing the structure of the pipeline - the sender still completes on the value channel, with a different value. Errors and stopped signals pass through untouched. If `f` throws, the exception is caught and delivered as `set_error(current_exception())`.
 
@@ -278,7 +278,7 @@ auto sndr = just(std::string("hello"))
 
 Here the Sub-Language reveals its expressive depth. Where `then` applies a function that returns a value, `let_value` applies a function that returns an entirely new sender - a new pipeline within the pipeline. The reader will find this a natural extension of the composition model.
 
-**Theory:** `let_value` is monadic bind. The function receives the predecessor's values and returns a sender which may itself be a multi-stage pipeline. The result is a sender whose completion type is determined by the inner sender, not by the function's return type directly. This is what makes `let_value` more powerful than `then`: the next stage of computation is itself a sender. The pattern is straightforward once the distinction between returning a value and returning a sender is clear.
+**Theory:** `let_value` is monadic bind. The function receives the predecessor's values and returns a sender which may itself be a multi-stage pipeline. The result is a sender whose completion type is determined by the inner sender, not by the function's return type directly. This is what makes `let_value` more powerful than `then`: The next stage of computation is itself a sender. The pattern is straightforward once the distinction between returning a value and returning a sender is clear.
 
 The equivalent program:
 
@@ -332,7 +332,7 @@ auto sndr = just_stopped()
 
 And for cancellation. The replacement for a stopped operation is itself a sender - a new computation that takes over where the cancelled one left off.
 
-`let_stopped` converts a cancellation into a new computation. The function receives no arguments - the stopped channel carries no data - and returns a sender whose completion replaces the stopped signal. The reader will recognize the pattern: each `let_*` variant handles one channel and routes its result into a new sender. Regular C++ has no cancellation equivalent.
+`let_stopped` converts a cancellation into a new computation. The function receives no arguments - the stopped channel carries no data - and returns a sender whose completion replaces the stopped signal. The reader will recognize the pattern: Each `let_*` variant handles one channel and routes its result into a new sender. Regular C++ has no cancellation equivalent.
 
 ---
 
@@ -493,7 +493,7 @@ auto sndr = read_env(get_scheduler)
 
 The pipeline asks its context a question. What scheduler am I on? What allocator should I use? The environment carries these answers, and `read_env` retrieves them.
 
-`read_env` is the introspection primitive. The sender does not carry the environment value itself - it reads it from the receiver at connection time, when the environment is known. This enables context-dependent behavior: the same pipeline can behave differently depending on which scheduler, allocator, or stop token the enclosing context provides. The composition reads naturally once the receiver's role as environment carrier is understood.
+`read_env` is the introspection primitive. The sender does not carry the environment value itself - it reads it from the receiver at connection time, when the environment is known. This enables context-dependent behavior: The same pipeline can behave differently depending on which scheduler, allocator, or stop token the enclosing context provides. The composition reads naturally once the receiver's role as environment carrier is understood.
 
 The equivalent program:
 
@@ -546,7 +546,7 @@ commit_transaction(db, txn);
 
 Run things at the same time, wait for all of them, and know that nothing outlives its scope. These algorithms give C++ something its statements alone cannot express - concurrent execution with structured lifetime guarantees.
 
-**Theory:** In Milner's process algebra<sup>[18]</sup>, parallel composition P | Q runs two processes independently and synchronizes them at a rendezvous. `when_all(S1, S2, ..., Sn)` is the n-ary tensor product in a symmetric monoidal category of senders, with a synchronization barrier at the join. The structured-lifetime guarantee - no child sender outlives the join point - is a region discipline imposed on the tensor: the scope of the product is delimited, and deallocation occurs at the closing delimiter. `when_all_with_variant` is the same tensor product composed with a coproduct injection on each factor, accommodating heterogeneous value completions.
+**Theory:** In Milner's process algebra<sup>[18]</sup>, parallel composition P | Q runs two processes independently and synchronizes them at a rendezvous. `when_all(S1, S2, ..., Sn)` is the n-ary tensor product in a symmetric monoidal category of senders, with a synchronization barrier at the join. The structured-lifetime guarantee - no child sender outlives the join point - is a region discipline imposed on the tensor: The scope of the product is delimited, and deallocation occurs at the closing delimiter. `when_all_with_variant` is the same tensor product composed with a coproduct injection on each factor, accommodating heterogeneous value completions.
 
 ### 8.1 `when_all`
 
@@ -593,7 +593,7 @@ auto sndr = when_all_with_variant(
 
 The same structured concurrency, but the senders may produce different types. Each result is wrapped in a variant - a natural accommodation for heterogeneous work.
 
-Each child of `when_all` must have exactly one value completion signature, though children may differ from each other in what that signature is - the results are concatenated in input order. `when_all_with_variant` relaxes the single-signature constraint: children with multiple possible value completion paths have each path wrapped in a `variant`, and the programmer destructures the variants at the join point.
+Each child of `when_all` must have exactly one value completion signature, though children may differ from each other in what that signature is - the results are concatenated in input order. `when_all_with_variant` relaxes the single-signature constraint: Children with multiple possible value completion paths have each path wrapped in a `variant`, and the programmer destructures the variants at the join point.
 
 The equivalent program:
 
@@ -605,7 +605,7 @@ auto result = combine(json, binary);
 
 ### 8.3 `split`
 
-`split(sndr)` converts a single-shot sender into a multi-shot sender. The result is shared: multiple downstream pipelines can consume the same sender's completion.
+`split(sndr)` converts a single-shot sender into a multi-shot sender. The result is shared: Multiple downstream pipelines can consume the same sender's completion.
 
 ```cpp
 auto shared = split(fetch_data(url));
@@ -802,7 +802,7 @@ std::for_each(std::execution::par,
 
 When work is spawned dynamically, someone has to keep track of it. These algorithms tie each sender's lifetime to a scope, so that shutdown waits for everything to finish.
 
-**Theory:** In Tofte and Talpin's framework<sup>[22]</sup>, a region is a lexically delimited lifetime boundary that no allocation may outlive. A `counting_scope` is a region - the join operation is its closing delimiter. `associate` is allocation within the region: the sender's lifetime is bounded by the region's scope. `spawn_future` is the same region binding with a return channel - the continuation that delivers the result when the inner computation completes. The structured guarantee is enforced dynamically (the count reaches zero) rather than statically (a type-level region variable), but the invariant is identical: no child outlives its region.
+**Theory:** In Tofte and Talpin's framework<sup>[22]</sup>, a region is a lexically delimited lifetime boundary that no allocation may outlive. A `counting_scope` is a region - the join operation is its closing delimiter. `associate` is allocation within the region: The sender's lifetime is bounded by the region's scope. `spawn_future` is the same region binding with a return channel - the continuation that delivers the result when the inner computation completes. The structured guarantee is enforced dynamically (the count reaches zero) rather than statically (a type-level region variable), but the invariant is identical: No child outlives its region.
 
 ### 11.1 `associate`
 
@@ -823,7 +823,7 @@ for (auto& conn : accepted_connections) {
 
 A sender's lifetime is tied to a scope. The scope does not shut down until the sender finishes - no dangling work, no orphaned operations.
 
-`associate` is the structured spawn. The sender runs independently - it is not piped into a continuation - but its lifetime is bounded by the scope. When the scope joins, all associated senders must have completed. This is how a server manages connection lifetimes: each connection is associated with the scope, and shutdown waits for all connections to drain.
+`associate` is the structured spawn. The sender runs independently - it is not piped into a continuation - but its lifetime is bounded by the scope. When the scope joins, all associated senders must have completed. This is how a server manages connection lifetimes: Each connection is associated with the scope, and shutdown waits for all connections to drain.
 
 The equivalent program:
 
@@ -865,7 +865,7 @@ auto result = process(future.get());
 
 ## 12. The `task` Coroutine Type
 
-[P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[2]</sup> adds `execution::task<T, C>` to C++26 - a coroutine type that is also a sender. [P3796R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3796r1.html) ("Coroutine Task Issues")<sup>[23]</sup> catalogs open design concerns. The `task` is the bridge between coroutine-style `co_await` and the sender pipeline model. The integration between the two worlds is seamless: a `task` can `co_await` any sender, and a `task` can be used as a sender in any pipeline.
+[P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html)<sup>[2]</sup> adds `execution::task<T, C>` to C++26 - a coroutine type that is also a sender. [P3796R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3796r1.html) ("Coroutine Task Issues")<sup>[23]</sup> catalogs open design concerns. The `task` is the bridge between coroutine-style `co_await` and the sender pipeline model. The integration between the two worlds is seamless: A `task` can `co_await` any sender, and a `task` can be used as a sender in any pipeline.
 
 ### 12.1 `task<T>`
 
@@ -883,7 +883,7 @@ int main() {
 }
 ```
 
-A `task` is lazy - the coroutine body does not execute until the task is connected to a receiver and started. It is a sender: it can be piped, composed, passed to `sync_wait`, or used as a child of `when_all`. The completion signatures are `set_value_t(T)`, `set_error_t(exception_ptr)`, and `set_stopped_t()`.
+A `task` is lazy - the coroutine body does not execute until the task is connected to a receiver and started. It is a sender: It can be piped, composed, passed to `sync_wait`, or used as a child of `when_all`. The completion signatures are `set_value_t(T)`, `set_error_t(exception_ptr)`, and `set_stopped_t()`.
 
 ### 12.2 `co_await` a Sender
 
@@ -914,7 +914,7 @@ sync_wait(
               work()));
 ```
 
-The `task_scheduler` uses small-object optimization to avoid allocation for common scheduler types. The type erasure is the cost of not knowing the scheduler type at coroutine definition time. The programmer has everything they need: the scheduler is obtained automatically, the affinity is maintained transparently, and the type erasure overhead is minimal.
+The `task_scheduler` uses small-object optimization to avoid allocation for common scheduler types. The type erasure is the cost of not knowing the scheduler type at coroutine definition time. The programmer has everything they need: The scheduler is obtained automatically, the affinity is maintained transparently, and the type erasure overhead is minimal.
 
 ### 12.4 `inline_scheduler`
 
@@ -936,7 +936,7 @@ Disabling affinity removes the rescheduling overhead at the cost of the guarante
 
 ### 12.5 Scheduler Affinity
 
-The `task`'s promise type injects `affine` around every `co_await`ed sender via `await_transform`. The effect: after each `co_await`, execution resumes on the task's scheduler regardless of where the sender completed.
+The `task`'s promise type injects `affine` around every `co_await`ed sender via `await_transform`. The effect: After each `co_await`, execution resumes on the task's scheduler regardless of where the sender completed.
 
 ```cpp
 task<void> affine_demo() {
@@ -991,7 +991,7 @@ task<void> validate(request const& req) {
 }
 ```
 
-This is how a `task` delivers a typed error to the sender composition algebra without relying on exceptions. The coroutine is suspended and completes with `set_error(e)`. The downstream pipeline handles the error through `upon_error` or `let_error`. This is a feature of the design: errors can be reported precisely, with the type preserved, and the composition algebra participates.
+This is how a `task` delivers a typed error to the sender composition algebra without relying on exceptions. The coroutine is suspended and completes with `set_error(e)`. The downstream pipeline handles the error through `upon_error` or `let_error`. This is a feature of the design: Errors can be reported precisely, with the type preserved, and the composition algebra participates.
 
 ### 12.8 Cancellation
 

@@ -12,7 +12,7 @@ reply-to:
 
 Five decisions, each locally reasonable, each producing the same initial outcome under either rule set. The difference is in the aftermath. SD-4 allows individually reasonable decisions to accumulate into an irreversible trajectory that no feedback mechanism can correct. The ISO Directives do not prevent any of the five decisions examined here. They prevent the open loop.
 
-This paper applies the governance framework from [P4201R0](https://wg21.link/p4201r0)<sup>[1]</sup> to the networking timeline documented in [P4099R1](https://wg21.link/p4099r1)<sup>[2]</sup>. For each decision, it asks two questions: would the initial decision differ under the ISO Directives? Would the aftermath differ? The answers form a gradient. At the early decisions (2014, 2019), the evidence for different outcomes is weak. At the later decisions (2021-2026), it is strong. The gradient is the finding.
+This paper applies the governance framework from [P4201R0](https://wg21.link/p4201r0)<sup>[1]</sup> to the networking timeline documented in [P4099R1](https://wg21.link/p4099r1)<sup>[2]</sup>. For each decision, it asks two questions: Would the initial decision differ under the ISO Directives? Would the aftermath differ? The answers form a gradient. At the early decisions (2014, 2019), the evidence for different outcomes is weak. At the later decisions (2021-2026), it is strong. The gradient is the finding.
 
 ---
 
@@ -32,7 +32,7 @@ The author developed and maintains [Capy](https://github.com/cppalliance/capy)<s
 
 Coroutine-native I/O and `std::execution` are complementary. Each serves the domain where its design choices pay off.
 
-The author is the author of [P4201R0](https://wg21.link/p4201r0)<sup>[1]</sup>, the governance analysis this paper applies. The reader should be aware that this paper tests a framework the author constructed. If the framework fails the test, the author has an interest in not reporting that failure. The author reports the gradient honestly: the framework's predictions are weak at decisions 1-2 and strong at decisions 3-5.
+The author is the author of [P4201R0](https://wg21.link/p4201r0)<sup>[1]</sup>, the governance analysis this paper applies. The reader should be aware that this paper tests a framework the author constructed. If the framework fails the test, the author has an interest in not reporting that failure. The author reports the gradient honestly: The framework's predictions are weak at decisions 1-2 and strong at decisions 3-5.
 
 The author is a co-author of [P2469R0](https://wg21.link/p2469r0)<sup>[6]</sup>, "Response to P2464: The Networking TS is baked, P2300 Sender/Receiver is not," which argued in October 2021 that the Networking TS was more mature than P2300. The author had a prior published position on the relationship between the Networking TS and [P2300R10](https://wg21.link/p2300r10)<sup>[7]</sup>. The author no longer believes the Networking TS would have been right for C++. The author agrees with the committee's conclusion and disagrees with the rationale.
 
@@ -96,7 +96,7 @@ The procedural record from [cplusplus/papers#1113](https://github.com/cplusplus/
 - The chair - Bryce Adelstein Lelbach, a co-author of [P2300R10](https://wg21.link/p2300r10)<sup>[7]</sup> - recused from consensus determination on the subsequent polls. Ben Craig and Fabio Fracassi determined consensus.
 - Five electronic polls followed.
 
-The committee did not achieve consensus to kill the Networking TS outright (Poll 3: SF:13 / WF:13 / N:8 / WA:6 / SA:10 - no consensus). The guidance to the Networking Study Group was: before bringing networking papers back to LEWG, address TLS/DTLS and the sender/receiver model.
+The committee did not achieve consensus to kill the Networking TS outright (Poll 3: SF:13 / WF:13 / N:8 / WA:6 / SA:10 - no consensus). The guidance to the Networking Study Group was: Before bringing networking papers back to LEWG, address TLS/DTLS and the sender/receiver model.
 
 ### Would the Initial Decision Differ?
 
@@ -204,7 +204,7 @@ Ville Voutilainen stated:
 
 > "If someone finds a stinker at any point... we have the ability to fix that stinker, even if it requires removing half of the things we've adopted."
 
-The claim that the process is self-correcting. The test: five years from the "including networking" direction, no sender-based networking has shipped. The open loop persists.
+The claim that the process is self-correcting. The test: Five years from the "including networking" direction, no sender-based networking has shipped. The open loop persists.
 
 The presenter stated:
 
