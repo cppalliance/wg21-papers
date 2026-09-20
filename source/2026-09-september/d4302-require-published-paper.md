@@ -59,7 +59,7 @@ The recorded tally is the boundary because later sessions use counted results as
 
 SD-4 permits "followup papers to an on-time paper, such as late or in-meeting rebuttal/elaboration/update papers."<sup>[1]</sup> The proposed rule leaves that permission intact. Authors may circulate, present, discuss, and revise late papers. The only new condition concerns whether a counted poll on such material enters the minutes.
 
-### 3.1. Application in the Room
+### 3.1. Application in the room
 
 A mailed revision requires no additional question:
 
@@ -84,7 +84,7 @@ Chair:     Then no tally will enter the minutes. We will still take the poll to
 
 After R5 appears in the next mailing, the group can take and record the poll without asking whether anyone objects.
 
-### 3.2. Final-Meeting Exception
+### 3.2. Final-meeting exception
 
 At the last meeting before a standard's publication deadline, waiting for another mailing can cost a feature an entire release. The chair, therefore, does not sustain an objection against a wording correction that preserves the mailed design. The exception also covers a poll to remove a feature from the working draft. The exception treats removal separately so the train model can exclude a feature that is not ready for inclusion in the standard.
 
@@ -124,7 +124,7 @@ The author provides information and serves at the pleasure of the committee.
 
 This paper asks WG21 to amend SD-4 with the mailing-discipline rule in Section 6, and suggests a poll to that effect.
 
-The author is the founder of the C++ Alliance and maintains competing proposals in the `std::execution` space. They are [P4003R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4003r3.pdf)<sup>[7]</sup>, [P4007R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4007r3.pdf)<sup>[8]</sup>, [P2583R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2583r4.pdf)<sup>[9]</sup>, and [P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf)<sup>[10]</sup>, a coroutine-native model for byte-oriented I/O. His preferred asynchronous model competes with `std::execution`. Readers should weigh the argument with that conflict in mind.
+The author is the founder of the C++ Alliance and maintains competing proposals in the `std::execution` space. They are [P4003R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4003r3.pdf),<sup>[7]</sup> [P4007R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4007r3.pdf),<sup>[8]</sup> [P2583R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2583r4.pdf),<sup>[9]</sup> and [P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf),<sup>[10]</sup> a coroutine-native model for byte-oriented I/O. His preferred asynchronous model competes with `std::execution`. Readers should weigh the argument with that conflict in mind.
 
 The proposed rule applies to every paper in every feature area, including the author's own. Had it been in effect, an objection could have kept a tally on an unmailed revision of any of those papers out of the record.
 
@@ -157,7 +157,7 @@ P3100R6, "A framework for systematically addressing undefined behaviour in the C
 
 The tally was 16 strongly favor, 15 favor, 6 neutral, 2 against, and 0 strongly against, and the tracker records consensus.<sup>[22]</sup>
 
-P3100R7 carries a document date of 2026-06-01, nine days before the poll, but it did not appear in a mailing until the July 2026 post-Brno mailing<sup>[23]</sup> - the next mailing after the one delegates prepared from, published after the meeting had ended. No mailing fell between the two. The revision therefore existed, and was dated, before EWG voted. The durable point is limited to the mailing record: On the date of the poll, R6 was the last revision distributed through a WG21 mailing, yet the poll named R7. The later publication of R7 does not change what the pre-meeting mailing contained.
+P3100R7 carries a document date of 2026-06-01, nine days before the poll, but it did not appear in a mailing until the July 2026 post-Brno mailing<sup>[23]</sup>, i.e., the next mailing after the one delegates prepared from, published after the meeting had ended. No mailing fell between the two. The revision therefore existed, and was dated, before EWG voted. The durable point is limited to the mailing record: On the date of the poll, R6 was the last revision distributed through a WG21 mailing, yet the poll named R7. The later publication of R7 does not change what the pre-meeting mailing contained.
 
 The Brno poll concerned direction rather than adoption into the working draft. It nevertheless recorded a committee position and committed meeting time to line-by-line review. Later sessions can build on that result. A rule limited to wording or forwarding polls would leave this case untouched, so the proposed rule applies to every recorded poll on a paper revision, whether the poll concerns direction, design, specification, or a request to forward.
 

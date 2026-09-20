@@ -19,6 +19,8 @@ WG21 decides by consensus, which ISO defines as the reconciliation of conflictin
 
 None of this process broke a rule, which is why the working group cannot catch it from inside: a process built to produce consensus on time will produce it, whether or not the underlying design was audited. The one audit that ISO places outside the working group is the National Body ballot, and the C++ Alliance's position is that the National Bodies vote No on the C++26 DIS ballot, with technical comments, and return the draft for the evaluation it skipped, at the cost of one cycle. The same procedural maneuvers are being practiced again on a successor proposal, so the ballot check should be exercised now rather than deferred to a later cycle.
 
+The C++ Alliance maintains a governance research program that analyzes the effectiveness of WG21 C++ standardization: its procedures, its consensus practices, and its output. When the Alliance publishes an official position on committee matters, that position reflects the findings of this research program. It does not represent a poll of Alliance staff, nor does it bind the personal views of any engineer, contractor, or board member.
+
 The authors of P4238R1 request no floor time, no poll, and no committee action; they state a position and offer two recommendations to the National Bodies and the convener.
 
 ## Revision History
