@@ -262,7 +262,7 @@ The matched pair is a constructed minimal example. Nothing is measured, and no f
 
 This paper is a companion to P4255R0 and P4286R0, which also examine the boundary between coroutines and `std::execution`.
 
-This paper uses AI.
+This paper was prepared with the assistance of generative tools. The author is responsible for its content.
 
 This paper asks for nothing.
 

@@ -41,11 +41,11 @@ The pre-meeting mailing gives national body experts time to review the papers th
 
 Of the nineteen papers the author had studied in preparation for the March 2026 Croydon meeting, six changed during the week. The count is the author's own record rather than a figure the papers index yields. Some changes were necessary wording corrections. Others recorded design decisions or changed public interfaces. The proposed rule does not restrict early feedback or in-meeting revision; it gives any participant a way to keep a counted result from becoming committee precedent until the paper revision has appeared in a mailing.
 
-## 2. An Unmailed Change Flips Who Carries the Burden of Consensus
+## 2. An Unmailed Change Flips Who Has the Burden of Consensus
 
 SD-4 states the normal threshold: "A proposal normally advances if there are more than twice as many in favor of a proposal as against."<sup>[1]</sup> That threshold makes the timing of a design change consequential.
 
-Suppose an option first appears in an in-meeting revision and the group records a poll forwarding it. A stakeholder may have reviewed the mailed paper, seen no such option, and not attended the meeting. That stakeholder must later assemble the consensus needed to remove the option, because the option has become the status quo. Had the option been required to appear in the next mailing before being polled, those seeking to add it would have carried the consensus burden. The same disagreement can therefore resolve in opposite directions depending only on whether the change entered before or after national body review.
+Suppose an option first appears in an in-meeting revision and the group records a poll forwarding it. A stakeholder may have reviewed the mailed paper, seen no such option, and not attended the meeting. That stakeholder must later assemble the consensus needed to remove the option, because the option has become the status quo. Had the option been required to appear in the next mailing before being polled, those seeking to add it would have owned the consensus burden. The same disagreement can therefore resolve in opposite directions depending only on whether the change entered before or after national body review.
 
 A "forward with the following changes" poll can have the same effect. If the specified changes include a design decision absent from every mailed revision, the recorded poll establishes that decision before absent stakeholders have seen it. Requiring one mailed revision before a tally becomes part of the record keeps the burden of consensus on those proposing the change.
 
@@ -157,7 +157,7 @@ P3100R6, "A framework for systematically addressing undefined behaviour in the C
 
 The tally was 16 strongly favor, 15 favor, 6 neutral, 2 against, and 0 strongly against, and the tracker records consensus.<sup>[22]</sup>
 
-P3100R7 carries a document date of 2026-06-01, nine days before the poll, but it did not appear in a mailing until the July 2026 post-Brno mailing,<sup>[23]</sup> i.e., the next mailing after the one delegates prepared from, published after the meeting had ended. No mailing fell between the two. The revision therefore existed, and was dated, before EWG voted. The durable point is limited to the mailing record: On the date of the poll, R6 was the last revision distributed through a WG21 mailing, yet the poll named R7. The later publication of R7 does not change what the pre-meeting mailing contained.
+P3100R7 has a document date of 2026-06-01, nine days before the poll, but it did not appear in a mailing until the July 2026 post-Brno mailing,<sup>[23]</sup> i.e., the next mailing after the one delegates prepared from, published after the meeting had ended. No mailing fell between the two. The revision therefore existed, and was dated, before EWG voted. The durable point is limited to the mailing record: On the date of the poll, R6 was the last revision distributed through a WG21 mailing, yet the poll named R7. The later publication of R7 does not change what the pre-meeting mailing contained.
 
 The Brno poll concerned direction rather than adoption into the working draft. It nevertheless recorded a committee position and committed meeting time to line-by-line review. Later sessions can build on that result. A rule limited to wording or forwarding polls would leave this case untouched, so the proposed rule applies to every recorded poll on a paper revision, whether the poll concerns direction, design, specification, or a request to forward.
 
