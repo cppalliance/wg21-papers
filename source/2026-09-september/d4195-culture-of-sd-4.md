@@ -27,7 +27,7 @@ The three dynamics identified in the abstract produce a specific cultural patter
 Each participant's behavior is rational given the incentive structure. Authors optimize for adoption. Reviewers specialize in domains they care about and abstain elsewhere, because review is a public good nobody wants to provide privately. Chairs optimize for closure, because the role demands converting conflict into decisions. The minority is asked not "are you right?" but "how strongly are you willing to resist?" This question turns a technical judgment into a social one.
 
 The case histories confirm that these dynamics are equilibrium outcomes. Contracts ([P2900](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[18]</sup>) illustrates the ideal-author playbook executed through plenary adoption. Coroutines illustrates a minority partially vindicated after the fact: C++20 shipped only language-support primitives, with no high-level coroutine types. The std::execution vote ([N4985](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n4985.pdf)<sup>[2]</sup>: 57-20-27, "numerically this is a weak consensus, but it is a consensus") illustrates chair judgment at the boundary. Networking illustrates a direction poll setting the conceptual framework about fifteen months before the chosen path had a concrete proposal. Default comparisons illustrates plenary catching a design flaw that subgroup consensus missed.
-revision
+
 For the C++ community, the practical consequence is that features entering the standard reflect the priorities of funded, persistent, procedurally fluent authors. That group overlaps with, but is not identical to, the group best positioned to judge what C++ users need.
 
 ## Key Judgments
