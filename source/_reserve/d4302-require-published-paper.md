@@ -11,9 +11,17 @@ reply-to:
 
 ## Abstract
 
-WG21 sometimes records polls on paper revisions that did not appear in a pre-meeting mailing. When an in-meeting revision changes the design, recording the poll can shift the burden of achieving consensus from the author to the stakeholders before national body experts have seen the change. This paper proposes that, before such a poll is recorded, the chair ask whether anyone objects and that one objection bars the tally from being recorded in the minutes while allowing discussion, an informal poll, and a qualitative record. A narrow final-meeting exception permits wording corrections and feature removal when waiting would cost a release.
+WG21 sometimes records polls on paper revisions that did not appear in a pre-meeting mailing. When an in-meeting revision changes the design, recording the poll can shift the burden of achieving consensus from the author to the stakeholders before national body experts have seen the change. This paper proposes that, before such a poll is recorded, the chair ask whether anyone objects. An objection keeps the tally out of the minutes until the revision appears in a mailing. Discussion, an informal poll, and a qualitative record continue as usual. A narrow final-meeting exception permits wording corrections and feature removal when waiting would cost a release.
 
 ## Revision History
+
+### R3: October 2026
+
+- Stated the usual cost of an objection: a few weeks in a subgroup, through the next mailing and a telecon. Plenary is the case where it costs a full meeting.
+- Clarified that an objection delays only the counted record and decides nothing about the proposal.
+- Added that a tally recorded on mailed text is harder to challenge later.
+- Noted in Appendix A.1 that Croydon was the final C++26 meeting and that three of its cases resolved national body ballot comments, which fall under the open question in section 6.
+- Recast the suggested poll as a request to the convener and corrected it to name this revision.
 
 ### R2: September 2026
 
@@ -54,7 +62,9 @@ A "forward with the following changes" poll can have the same effect. If the spe
 
 Before taking a poll on a paper revision that did not appear in a pre-meeting mailing, the chair asks whether any participant objects to recording the poll. If anyone objects, no tally enters the record. The group may still discuss the revision, take an informal poll, and record the direction of sentiment.
 
-Mailing status is easy to verify. In the ordinary case, the paper revision was mailed and the chair proceeds normally. If the revision was not mailed, the chair asks if anyone objects to recording the poll and does not require the objector to defend a technical position. Objecting is low-cost because it answers a required procedural question and does not interrupt the discussion.
+The objection decides nothing about the proposal. It delays only the counted record, and only until the text has been mailed. Participants have the right to object but no obligation to, so when the room agrees nothing changes. The ISO/IEC Directives say a sustained opposition "is not akin to a right to veto";<sup>[24]</sup> an objection under this rule is narrower still, because it does not oppose the proposal at all.
+
+Mailing status is easy to verify. In the ordinary case, the paper revision was mailed and the chair proceeds normally. If the revision was not mailed, the chair asks if anyone objects to recording the poll and does not require the objector to defend a technical position, because the objection concerns whether the text was mailed, not its merits. Objecting is low-cost because it answers a required procedural question and does not interrupt the discussion.
 
 The recorded tally is the boundary because later sessions use counted results as evidence of committee support. A qualitative record can still say that the group discussed a revision and favored its direction. It cannot include SF/F/N/A/SA numbers or another counted result when a participant has objected.
 
@@ -93,9 +103,11 @@ The general rule uses an objective mailing-status test. This exception requires 
 
 ## 4. The Cost
 
-An objection can delay a paper's recorded poll to the next meeting. The next meeting may have different participants, the author may need to reintroduce the proposal, and repeated review consumes time that could have gone to other papers. With nine meetings in a three-year cycle, one additional meeting can also determine whether a feature reaches the next standard. These costs are real.
+In a subgroup, an objection usually delays the recorded poll by a few weeks, not a meeting. Mailings appear most months, and the evolution and wording groups hold telecons between meetings. The revision can appear in the next mailing and be polled at the next telecon. Plenary has no telecons, so there an objection delays the recorded poll to the next meeting. The next meeting may have different participants, the author may need to reintroduce the proposal, and repeated review consumes time. With nine meetings in a three-year cycle, one additional meeting can determine whether a feature reaches the next standard. These costs are real. At plenary they fall on the case this rule targets: a contested adoption whose final text no one outside the room has seen.
 
 Recording the poll over an objection also has a cost. It can establish a new status quo before absent stakeholders know that the change exists. Correcting that status later requires those stakeholders to overcome the committee's normal consensus threshold. That burden is less obvious than the cost of an extra meeting, but it affects both legitimacy and technical review.
+
+The rule also protects the poll. A tally recorded on text that national bodies never saw can be challenged at plenary or in national body comments by stakeholders who say they had no chance to review it. A tally recorded after the mailing faces no such challenge, so the recorded result is more durable.
 
 The proposed rule is intended to change author incentives before an objection occurs. A mailed revision is the only revision assured of a recorded poll, so authors who need schedule certainty have reason to make the mailing version complete. Early feedback remains valuable and can still improve the paper before or during the meeting. If that feedback produces a material design change, one participant may require the new revision to pass through the mailing before its tally becomes committee precedent.
 
@@ -117,13 +129,13 @@ WG21 has previously considered a stronger cooling period. P2138R4 proposed a "Te
 
 > **Open question.** The interaction between this rule and national body comment resolution during the CD/DIS cycle is left as an open question for committee discussion. A comment resolution can require a normative design change under an external ISO deadline. The committee is best placed to determine whether comment resolution needs a distinct exception or whether the group-boundary mechanism above provides sufficient flexibility.
 
-A poll could read: "Adopt the mailing-discipline amendment to SD-4 in P4302R2."
+A poll could read: "WG21 asks the convener to add the mailing-discipline rule in P4302R3 to SD-4."
 
 ## Disclosure
 
 The authors provide information and serve at the pleasure of the committee.
 
-This paper asks WG21 to amend SD-4 with the mailing-discipline rule in Section 6, and suggests a poll to that effect.
+This paper asks WG21 to recommend that the convener add the mailing-discipline rule in Section 6 to SD-4, and suggests a poll to that effect.
 
 Vinnie Falco is the founder of the C++ Alliance. The authors maintain competing proposals in the `std::execution` space. They are [P4003R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4003r3.pdf),<sup>[7]</sup> [P4007R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4007r3.pdf),<sup>[8]</sup> [P2583R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2583r4.pdf),<sup>[9]</sup> and [P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf),<sup>[10]</sup> a coroutine-native model for byte-oriented I/O. Their preferred asynchronous model competes with `std::execution`. Readers should weigh the argument with that conflict in mind.
 
@@ -138,6 +150,8 @@ A.1 covers the March 2026 Croydon meeting, where WG21 adopted revisions first ma
 ### A.1. Croydon
 
 The cases below were adopted at the March 2026 Croydon meeting; the related revisions were first mailed in April. That chronology establishes that the adopted revisions did not appear in a pre-meeting mailing. The open-std.org annual papers index gives a mailing date and disposition for each paper. The chronology does not establish that any individual change was mistaken.
+
+Croydon was the final meeting for C++26; its plenary directed the convener to transmit the working paper for DIS ballot.<sup>[25]</sup> The plenary polls for P3980R1, P3941R4, and P3826R5 each state that they address national body ballot comments, so those cases fall under the open question in section 6 rather than under the final-meeting exception. P4159R0 addresses no ballot comment. Because it removed public names, it is not a wording correction under section 3.2, and an objection to recording its poll would have been sustained unless the chair treated it as a feature removal.
 
 #### Selecting one of three options
 P3980R0, "Task's Allocator Use," appeared in the February mailing with three wording options.<sup>[11]</sup> Croydon selected an option and adopted P3980R1, which omitted the rejected alternatives and first appeared in the April mailing.<sup>[12]</sup> Selecting among mailed alternatives is normal design review. The process concern is narrower: The recorded adoption poll named a revision that had not passed through a mailing.
@@ -211,3 +225,7 @@ The Croydon and Brno cases show two forms of the same process gap. Croydon adopt
 [22] [cplusplus/papers #1901](https://github.com/cplusplus/papers/issues/1901) - WG21 public paper tracker issue for P3100, recording the Brno Evolution poll of 2026-06-10.
 
 [23] [P3100R7](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p3100r7.pdf) - "A framework for systematically addressing undefined behaviour in the C++ Standard" (Timur Doumler, Joshua Berne, 2026).
+
+[24] [ISO/IEC Directives, Part 1](https://www.iso.org/sites/directives/current/consolidated/index.html) - Consolidated ISO Supplement (2024), clause 2.5.6.
+
+[25] [2026-03 Croydon: Straw Polls](https://wiki.isocpp.org/index.php?title=2026-03_Croydon:StrawPolls) - WG21 wiki, revision 20812. LWG polls 28, 29, 33, and 37 and WG21 poll 3.
