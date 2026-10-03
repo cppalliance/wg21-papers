@@ -1,7 +1,7 @@
 ---
 title: "WG21 Game Theory: The Culture That Emerges From SD-4"
 document: P4195R1
-date: 2026-09-01
+date: 2026-10-03
 intent: info
 audience: WG21
 reply-to:
@@ -11,15 +11,42 @@ reply-to:
 
 ## Abstract
 
-WG21's consensus process selects for survivability through the committee's represented veto structure. It cannot certify technical quality or user welfare. The distinction is testable: Post-adoption correction rates for large contested features, compared against a baseline, would reveal whether the system's selection correlates with quality or substitutes for it. That measurement is future work. The consequence is that adoption is evidence that the proposal outlasted organized opposition, not that the design was best.
+The record SD-4 requires of a poll cannot show whether an objection was answered or outvoted.
 
-This report applies game theory to the incentive structures created by [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)<sup>[1]</sup>'s rules: consensus as chair judgment, polls that record numbers without a minutes register of opposing arguments, and repeat-player dynamics across decades of meetings. It finds that procedural fluency, asymmetric institutional memory, and path dependence are first-order determinants of which proposals enter the C++ standard. Five case histories (contracts, std::execution, networking, default comparisons, and coroutines) ground the analysis in public WG21 records. The system works well when funded advocates cross-examine each other and a capable chair reads the room; it fails when review costs are high, opposition is unfunded, and the institutional record preserves only one side of the argument.
+This paper models WG21's consensus process as a game built on stated assumptions and SD-4's text. It argues that the gap lets the process select for proposals that outlast organized opposition, whether or not they are the best design. Procedural fluency, path dependence, and asymmetric institutional memory are the mechanisms, and five case histories illustrate them. The selection claim rests on one assumption the paper does not measure, how much of a design's quality the room can see when it polls, and the paper proposes a test.
 
 ## Revision History
+
+### R1: October 2026
+
+- Added an Assumptions section. Key Judgments cite the premises they rest on.
+- Abstract restated to claim only what the premises support. Repeated passages cut.
+- Added Acknowledgments.
 
 ### R0: September 2026
 
 - Initial version.
+
+## Assumptions
+
+The analysis rests on these premises. Items 1-7 concern people, 8-11 the work, and 12-14 the rules, which can be checked against SD-4's text. "Optimizes" throughout means "acts as if optimizing"; the paper makes no claim about intent.
+
+1. Authors who keep bringing a paper forward want it adopted.
+2. Taking part costs time and money, every year.
+3. People weigh what an action costs against what it is likely to get them, which can include the satisfaction of helping others.<sup>[65]</sup>
+4. Participants expect to work with the same people for years.
+5. Chairs want the group to reach decisions.
+6. Reviewers have limited time and care more about some areas than others.
+7. Any one outside user has very little chance of changing an outcome.
+8. At the time of a poll, the room cannot fully judge how good a design is. SD-4 assumes as much when it describes a TS as an "experimental branch" that ships "to gain experience," and the removal of contracts from the C++20 draft (section 2) shows it.
+9. Reversing a decision costs more the more work has been built on it. Cost here is opportunity cost, the value of what a reversal gives up:<sup>[65]</sup> discarded wording and implementations, committee time to redo the work, schedule risk, and the standing of those who backed earlier polls. Effort already spent does not count.
+10. A later proposal is discussed relative to whatever the room already favors.
+11. Procedural knowledge comes from attending, and it improves a participant's odds.
+12. A proposal advances when the chair declares consensus.
+13. Consensus is the chair's judgment. SD-4 says a proposal "normally advances if there are more than twice as many in favor of a proposal as against."
+14. SD-4 does not require a poll's record to hold more than a tally and an outcome. A chair may ask those voting against for their reasons; nothing requires the record to say how those reasons were answered, or why the room proceeded anyway.
+
+Key Judgments cite the premises they rest on. How strongly premise 8 holds is not measured here; claims that rest on it are hypotheses, and section 14 proposes a test.
 
 ## Executive Summary
 
@@ -27,27 +54,27 @@ The three dynamics identified in the abstract produce a specific cultural patter
 
 Each participant's behavior is rational given the incentive structure. Authors optimize for adoption. Reviewers specialize in domains they care about and abstain elsewhere, because review is a public good nobody wants to provide privately. Chairs optimize for closure, because the role demands converting conflict into decisions. The minority is asked not "are you right?" but "how strongly are you willing to resist?" This question turns a technical judgment into a social one.
 
-The case histories confirm that these dynamics are equilibrium outcomes. Contracts ([P2900](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[18]</sup>) illustrates the ideal-author playbook executed through plenary adoption. Coroutines illustrates a minority partially vindicated after the fact: C++20 shipped only language-support primitives, with no high-level coroutine types. The std::execution vote ([N4985](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n4985.pdf)<sup>[2]</sup>: 57-20-27, "numerically this is a weak consensus, but it is a consensus") illustrates chair judgment at the boundary. Networking illustrates a direction poll setting the conceptual framework about fifteen months before the chosen path had a concrete proposal. Default comparisons illustrates plenary catching a design flaw that subgroup consensus missed.
+The case histories illustrate these dynamics. Contracts ([P2900](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[18]</sup>) illustrates the ideal-author playbook executed through plenary adoption. Coroutines illustrates a minority partially vindicated after the fact: C++20 shipped only language-support primitives, with no high-level coroutine types. The std::execution vote ([N4985](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n4985.pdf)<sup>[2]</sup>: 57-20-27, "numerically this is a weak consensus, but it is a consensus") illustrates chair judgment at the boundary. Networking illustrates a direction poll setting the conceptual framework about fifteen months before the chosen path had a concrete proposal. Default comparisons illustrates plenary catching a design flaw that subgroup consensus missed.
 
 For the C++ community, the practical consequence is that features entering the standard reflect the priorities of funded, persistent, procedurally fluent authors. That group overlaps with, but is not identical to, the group best positioned to judge what C++ users need.
 
 ## Key Judgments
 
-1. WG21's consensus process equilibrium selects for proposals that outlast organized opposition. This can be the best design or an inferior design, and the record SD-4 requires, typically a tally and an outcome label, does not encode which of the two occurred. Likelihood: almost certain. Confidence: high (structural analysis of SD-4 rules, corroborated by multiple case histories).
+1. WG21's consensus process equilibrium selects for proposals that outlast organized opposition. This can be the best design or an inferior design, and the record SD-4 requires does not encode which of the two occurred. Likelihood: almost certain. Confidence: high (premises 12, 14).
 
-2. Procedural fluency and technical expertise correlate over time without being identical. Expertise determines whether a participant has something worth proposing; fluency determines whether the institution can hear it. Doing the work builds fluency (section 9), which is why the system appears to select for quality. The separation produces the failure mode: A brilliant outsider with no fluency and a mediocre insider with deep fluency face radically different odds, and SD-4's gates cannot distinguish the two cases. Likelihood: almost certain. Confidence: high (structural feature of SD-4's rules).
+2. Procedural fluency and technical expertise correlate over time without being identical. Expertise determines whether a participant has something worth proposing; fluency determines whether the institution can hear it. Doing the work builds fluency (section 9), which is why the system appears to select for quality. The separation produces the failure mode: A brilliant outsider with no fluency and a mediocre insider with deep fluency face radically different odds, and SD-4's gates cannot distinguish the two cases. Likelihood: almost certain. Confidence: medium (premises 2, 8, 11).
 
-3. SD-4 does not require the minutes register in ISO/IEC Directives clause 2.5.6.<sup>[9]</sup> The record it requires is typically a tally and an outcome label. Papers on both sides preserve arguments; they are not a finding that an objection was reconciled. A later reader cannot tell from the tally whether objections were answered or outvoted, and the gap compounds as people who were in the room leave. Likelihood: almost certain. Confidence: high (structural feature of SD-4).
+3. SD-4 does not require the minutes register in ISO/IEC Directives clause 2.5.6.<sup>[9]</sup> Papers on both sides preserve arguments; they are not a finding that an objection was reconciled. A later reader cannot tell from the tally whether objections were answered or outvoted, and the gap compounds as people who were in the room leave. Likelihood: almost certain. Confidence: high (premise 14).
 
-4. SD-4 makes consensus a chair call, not a finding that the remaining objection has been answered. The chair is incentivized to produce a decision rather than to adjudicate the technical claims, so the live question often becomes how strongly the minority will resist rather than whether a defect remains. Consensus does not require persuasion. People can therefore lose a poll without being convinced, and "consensus was achieved" versus "we lost the poll" stays as institutional tension. Likelihood: very likely. Confidence: medium (chair incentives follow from SD-4; sentiment is not measured).
+4. SD-4 makes consensus a chair call, not a finding that the remaining objection has been answered. The chair is incentivized to produce a decision rather than to adjudicate the technical claims, so the live question often becomes how strongly the minority will resist rather than whether a defect remains. Consensus does not require persuasion. People can therefore lose a poll without being convinced, and "consensus was achieved" versus "we lost the poll" stays as institutional tension. Likelihood: very likely. Confidence: medium (premises 4, 5, 12, 13; sentiment is not measured).
 
-5. Path dependence governs the framing a challenger is heard in, not the merits it is judged on. Once a proposal accumulates favorable direction polls, a competitor is evaluated as an amendment or an objection to it rather than as an equal design, and must show not only that \( B > A \) but that \( B - A > C_{\text{reversal}} \), where \( C_{\text{reversal}} \) includes discarded wording, abandoned implementations, schedule risk, and reputational cost to previous decisions. Merit still decides outcomes, but accumulated state decides the terms on which merit is presented. Likelihood: likely. Confidence: high (the framing appears in the document titles and poll text of the contracts and networking cases).
+5. Path dependence governs the framing a challenger is heard in, not the merits it is judged on. Once a proposal accumulates favorable direction polls, a competitor is evaluated as an amendment or an objection to it rather than as an equal design, and must show that its advantage exceeds the cost of reversal (section 12). Merit still decides outcomes, but accumulated state decides the terms on which merit is presented. Likelihood: likely. Confidence: high (premises 9, 10; document titles and poll text in the contracts and networking cases).
 
-6. The incentive to protect an institutional investment scales with its size. A three-page paper has negligible reversal cost; a multi-year, employer-funded feature has reversal cost proportional to years of work, reputation, and coalition capital. The proposals that matter most to users are the ones whose authors are most incentivized to lock in early and resist late correction. This is rational investment protection, not moral failure. Likelihood: likely. Confidence: high (follows from the reversal-cost inequality in section 12 and the payoff functions in section 13; requires only that authors are rational).
+6. The incentive to protect an institutional investment scales with its size. A three-page paper has negligible reversal cost; a multi-year, employer-funded feature has reversal cost proportional to years of work, reputation, and coalition capital. The proposals that matter most to users are the ones whose authors are most incentivized to lock in early and resist late correction. This is rational investment protection, not moral failure. Likelihood: likely. Confidence: high (premises 1, 3, 9).
 
-7. Review is a public good: It is expensive, its benefits are diffuse, and any one reviewer's chance of changing the outcome is small. The system therefore under-produces critical scrutiny relative to the social optimum. Review cost rises with opacity, length, and entanglement with existing wording, so the proposals that need scrutiny most are the ones most likely to be under-reviewed. Likelihood: very likely. Confidence: medium (the mechanism is textbook; the magnitude in WG21 is estimated, not measured).
+7. Review is a public good: It is expensive, its benefits are diffuse, and any one reviewer's chance of changing the outcome is small. The system therefore under-produces critical scrutiny relative to the social optimum. Review cost rises with opacity, length, and entanglement with existing wording, so the proposals that need scrutiny most are the ones most likely to be under-reviewed. Likelihood: very likely. Confidence: medium (premises 3, 6, 7; the magnitude is estimated, not measured).
 
-8. Direction polls happen earliest, when design maturity is lowest. Reversal cost grows monotonically from each state transition, creating maximum lock-in at minimum information. An early architectural mistake becomes progressively harder to correct, not because it becomes less wrong, but because the institutional state surrounding it becomes more expensive to discard. The penalty for an early mistake is catastrophic for users; the incentive to make it irreversible is maximal for authors. Likelihood: likely. Confidence: high (follows from sections 10 and 12; the timing observation is structural).
+8. Direction polls happen earliest, when design maturity is lowest. Reversal cost grows monotonically from each state transition, creating maximum lock-in at minimum information. An early architectural mistake becomes progressively harder to correct, not because it becomes less wrong, but because the institutional state surrounding it becomes more expensive to discard. The penalty for an early mistake is catastrophic for users; the incentive to make it irreversible is maximal for authors. Likelihood: likely. Confidence: medium (premises 8, 9, 10).
 
 ## 1. What Reconciliation Looks Like in ISO versus SD-4
 
@@ -61,7 +88,7 @@ Clause 0.7(b) states that consensus "requires the resolution of substantial obje
 
 [SD-4](https://isocpp.org/std/standing-documents/sd-4-wg21-practices-and-procedures)<sup>[1]</sup> reprints the same Guide 2 sentence. Its next move is different. "A proposal normally advances if there are more than twice as many in favor of a proposal as against, after discussion of the concerns of those voting against and possibly a re-poll to see if opinions have improved." Consensus in a design subgroup is "as determined by the subgroup chair." "Anyone voting Against, especially Strongly Against, may be asked for their reasons by the chair. They should be prepared to articulate their rationale, including either what change(s) would address their concern and change their position, or else that they are opposed to pursuing the proposal in any form and no change would change their position." SD-4 does not require the chair to publish the strongest opposing argument, a response to it, or why consensus was declared despite it.
 
-Both texts begin from reconciliation of conflicting arguments. ISO's next sentences put opposition in the minutes and require a good-faith attempt to resolve it. SD-4's next sentences put a ratio, a chair call, and a duty on the person voting Against. Fluency, path dependence, and the cost of review are separate mechanisms. Author papers and opposition papers are advocacy. The usual inference is that because the authors responded, the objections were reconciled.
+Both texts begin from reconciliation of conflicting arguments. ISO's next sentences put opposition in the minutes and require a good-faith attempt to resolve it. SD-4's next sentences put a ratio, a chair call, and a duty on the person voting Against. Author papers and opposition papers are advocacy. The usual inference is that because the authors responded, the objections were reconciled.
 
 ISO uses the verb, not the noun. This paper uses "reconciliation" for the record state clause 2.5.6 describes, and tests it in three parts.
 
@@ -101,7 +128,7 @@ The minority may believe, "The technical problem is still there. Nothing about a
 
 SD-4 creates the conditions for this dynamic in three ways: It requires no minutes register of opposing arguments, it treats consensus as chair judgment rather than measured agreement, and it preserves poll numbers without written responses to dissent. When an outsider raises a late objection, the implicit request is to discard accumulated consensus, invalidate previous work, spend scarce meeting time reconsidering it, and trust someone who has not participated in the process that generated those decisions.
 
-The coroutines case made this concrete. The Coroutines TS ([P0057](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0057r8.pdf),<sup>[27]</sup> Gor Nishanov) was merged into C++20 via [P0912R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0912r5.html)<sup>[28]</sup> despite organized opposition. Google proposed an alternative: "Core Coroutines" ([P1063R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1063r1.pdf),<sup>[29]</sup> Romer/Dennett/Carruth). [P1329R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1329r0.pdf)<sup>[30]</sup> (Mihaylov, Vassilev) argued the TS should not be merged, citing interface, terminology, and performance, including heap allocation that relies on optimization. The merge succeeded over these objections. C++20 shipped only language-support primitives in `<coroutine>`, with no high-level coroutine types. `std::generator` did not arrive until C++23 ([P2502](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2502r2.pdf)<sup>[31]</sup>). A standard task type did not arrive until C++26, when `std::execution::task` was adopted via [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html).<sup>[7]</sup> The heap-allocation-elision concern persists: The language does not guarantee elision. The minority's concerns proved partially correct. Opposition papers exist. They are not the minutes register in section 1. The decision record does not contain that register of why they lost. What humans need most in serious disagreement is evidence that the other side actually understood the argument before rejecting it.
+The coroutines case made this concrete. The Coroutines TS ([P0057](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0057r8.pdf),<sup>[27]</sup> Gor Nishanov) was merged into C++20 via [P0912R5](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0912r5.html)<sup>[28]</sup> despite organized opposition. Google proposed an alternative: "Core Coroutines" ([P1063R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1063r1.pdf),<sup>[29]</sup> Romer/Dennett/Carruth). [P1329R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1329r0.pdf)<sup>[30]</sup> (Mihaylov, Vassilev) argued the TS should not be merged, citing interface, terminology, and performance, including heap allocation that relies on optimization. The merge succeeded over these objections. C++20 shipped only language-support primitives in `<coroutine>`, with no high-level coroutine types. `std::generator` did not arrive until C++23 ([P2502](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2022/p2502r2.pdf)<sup>[31]</sup>). A standard task type did not arrive until C++26, when `std::execution::task` was adopted via [P3552R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3552r3.html).<sup>[7]</sup> The heap-allocation-elision concern persists: The language does not guarantee elision. The minority's concerns proved partially correct. Opposition papers exist. The decision record does not say why they lost. What humans need most in serious disagreement is evidence that the other side actually understood the argument before rejecting it.
 
 ## 5. How the Authors Feel
 
@@ -149,7 +176,7 @@ For the winning coalition, that feels like mature governance. For a technically 
 
 The author has responded to feedback, revised, and obtained favorable polls. Each continued objection looks like refusal to accept legitimate institutional decisions. The author's coalition has invested more person-hours than the objectors. Progress on C++26 depends on closure. SD-4 provides no mechanism for determining whether a repeated objection reflects an unresolved technical flaw or a participant's refusal to accept the group's direction. The distinction matters enormously, and the institution cannot make it.
 
-The same P2900 case from [P3846R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3846r0.pdf)<sup>[11]</sup>'s perspective closes the circle. P3846R0/R1, "C++26 Contract Assertions, Reasserted" (Doumler, Berne, et al.), responds to NB comments by characterizing one concern as repeating "earlier objections ([P3173R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3173r0.pdf),<sup>[38]</sup> [P3506R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3506r0.pdf),<sup>[37]</sup> [P3573R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3573r0.pdf)<sup>[36]</sup>) already considered repeatedly in EWG. No new information has been presented since." EWG polled at Hagenberg on 2025-02-11: "Remove P2900 from CWG's consideration for C++26, find a different ship vehicle" (consensus against). [N5007](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5007.pdf)<sup>[3]</sup> (Hagenberg minutes): "Consensus on contracts has increased since the last meeting." From the authors' perspective: wording complete, NB comments addressed, and the same people still objecting with the same arguments. These are irreconcilable readings of the same process. P3846 is a rebuttal paper in the sense of section 1; the system provides no mechanism for determining which reading is correct. Appendix A records the complete sequence. Between January 2025 and July 2026, the P2900 author group published eight papers the record reads as rebuttals (Appendix A shows the record miscounts P2899R0 among them); each appeared after the favorable poll whose outcome it defended, timed for the meeting at which that outcome would next be challenged.
+The same P2900 case from [P3846R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3846r0.pdf)<sup>[11]</sup>'s perspective closes the circle. P3846R0/R1, "C++26 Contract Assertions, Reasserted" (Doumler, Berne, et al.), responds to NB comments by characterizing one concern as repeating "earlier objections ([P3173R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3173r0.pdf),<sup>[38]</sup> [P3506R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3506r0.pdf),<sup>[37]</sup> [P3573R0](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p3573r0.pdf)<sup>[36]</sup>) already considered repeatedly in EWG. No new information has been presented since." EWG polled at Hagenberg on 2025-02-11: "Remove P2900 from CWG's consideration for C++26, find a different ship vehicle" (consensus against). [N5007](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/n5007.pdf)<sup>[3]</sup> (Hagenberg minutes): "Consensus on contracts has increased since the last meeting." From the authors' perspective: wording complete, NB comments addressed, and the same people still objecting with the same arguments. These are irreconcilable readings of the same process. P3846 is a rebuttal paper in the sense of section 1. Appendix A records the complete sequence. Each rebuttal appeared after the favorable poll whose outcome it defended, timed for the meeting at which that outcome would next be challenged.
 
 ## 9. Procedural Fluency as Political Capital
 
@@ -181,7 +208,7 @@ The proposal itself is typically a substantial document: the author's motivation
 
 Future participants encounter the historical record as though the winning side possessed an argument and the losing side possessed votes. That is epistemically very different from what actually happened.
 
-No malign intent is required. From the author's perspective, a written chair's reconciliation creates future liabilities. Without that record, the historical fact is merely "the committee achieved consensus." The latter is much harder to reopen. Writing another paper is how SD-4 preserves dissent. It is not the minutes register in section 1. Opposition also requires authorship, time, procedural fluency, and persistence. The equilibrium gives the winning coalition little incentive to create an excellent permanent statement of the losing coalition's case.
+No malign intent is required. From the author's perspective, a written chair's reconciliation creates future liabilities. Without that record, the historical fact is merely "the committee achieved consensus." The latter is much harder to reopen. Writing another paper is how SD-4 preserves dissent. Opposition also requires authorship, time, procedural fluency, and persistence. The equilibrium gives the winning coalition little incentive to create an excellent permanent statement of the losing coalition's case.
 
 The author need not win the argument in the historical record. The author need only survive it in the room.
 
@@ -189,7 +216,7 @@ The P2300 record in section 5 shows the asymmetry. N4985 records teachability as
 
 ## 12. Path Dependence and the Burden-of-Proof Flip
 
-Assume two mutually exclusive designs, A and B, both technically credible. The actual game is sequential, not simultaneous. A acquires institutional state: three meetings of discussion, favorable direction polls, implementation work, an R7 paper, wording review, endorsements. At that point, B appears with an excellent design. The comparison becomes, "continue A" versus "reverse the accumulated decisions and adopt B." The burden shifts. B must demonstrate not merely that \( B > A \), but that \( B - A > C_{\text{reversal}} \), where \( C_{\text{reversal}} \) includes discarded wording, abandoned implementations, schedule risk, and reputational cost to previous decisions.
+Assume two mutually exclusive designs, A and B, both technically credible. The actual game is sequential, not simultaneous. A acquires institutional state: three meetings of discussion, favorable direction polls, implementation work, an R7 paper, wording review, endorsements. At that point, B appears with an excellent design. The comparison becomes, "continue A" versus "reverse the accumulated decisions and adopt B." The burden shifts. B must demonstrate not merely that \( B > A \), but that \( B - A > C_{\text{reversal}} \), where \( C_{\text{reversal}} \) includes discarded wording, abandoned implementations, committee time to redo the work, schedule risk, reputational cost to previous decisions, and antagonizing A's coalition.
 
 A four-stage linguistic transformation tracks the shift: "A and B are competing designs." Then "A is the committee direction; B is an alternative." Then "A is the proposal; B is an objection to the proposal." Then "A is the status quo; B wants to reopen the question." The technical content may not have changed at all. The institutional position has.
 
@@ -222,7 +249,7 @@ where:
 - \( C_a \): attendance and coalition cost
 - \( D \): delay cost
 
-The author enters when the expected payoff exceeds zero. \( C_a \), the attendance cost, gates entry. Only those who can absorb \( C_a \) can afford to play, because it includes travel, lodging, and the opportunity cost of weeks per year, recurring every year. An employer, one's own business, consulting or training income, a national body, or independent means all clear that threshold; the absence of any of them does not.
+The author enters when the expected payoff exceeds zero. \( C_a \), the attendance cost, gates entry. Only those who can absorb \( C_a \) can afford to play, because it includes travel, lodging, and the opportunity cost of weeks per year, recurring every year.
 
 The reviewer's payoff function:
 
@@ -269,13 +296,7 @@ where \( F \) is procedural fluency. The key partial derivatives:
 
 Fluency simultaneously increases the probability of adoption and decreases the cost of pursuing it. This double advantage is the mechanism through which the informal peerage forms. The fluent participant does not necessarily produce better designs; the fluent participant loses less energy to procedure and gets more attempts.
 
-The feedback loop is a causal chain:
-
-\[
-\text{fluency} \rightarrow \text{chair confidence} \rightarrow \text{agenda access} \rightarrow \text{successful papers} \rightarrow \text{reputation} \rightarrow \text{greater fluency}
-\]
-
-Each successful paper earned through fluency increases fluency further. The system compounds advantage for repeat players. A newcomer with a superior design faces both a lower probability of success and a higher cost of pursuit: The inequality runs on both sides of the ledger.
+A newcomer with a superior design faces both a lower probability of success and a higher cost of pursuit: The inequality runs on both sides of the ledger.
 
 ### What happens in the room
 
@@ -316,7 +337,7 @@ The full optimization target:
 \Pr(\text{chair declares consensus}) \rightarrow \max
 \]
 
-Under SD-4, author and chair tactics in the room follow from this objective. Fluency, path dependence, and the missing minutes register are separate mechanisms. The author who revises tactically, the reviewer who specializes, the chair who advances, and the repeat player who accommodates are each maximizing the probability that the chair declares consensus for their preferred outcome.
+Under SD-4, author and chair tactics in the room follow from this objective. The author who revises tactically, the reviewer who specializes, the chair who advances, and the repeat player who accommodates each behave as if maximizing the probability that the chair declares consensus for their preferred outcome.
 
 "Answering the objection" and "rendering the objection non-dispositive" are substitutes in the author's optimization. The author's response options, ranked by cost and poll effect:
 
@@ -331,20 +352,6 @@ Under SD-4, author and chair tactics in the room follow from this objective. Flu
 
 If the proposal already has 24 Favor and 2 Against, the institution gives the author surprisingly little marginal payoff for discovering whether those two people are correct.
 
-Polls function as state transitions:
-
-\[
-S_0 \xrightarrow{\text{poll}} S_1 \xrightarrow{\text{poll}} S_2 \xrightarrow{\text{poll}} S_3
-\]
-
-The reversal cost inequality:
-
-\[
-B - A > C_{\text{reversal}}
-\]
-
-where \( C_{\text{reversal}} \) includes lost committee time, discarded wording, abandoned implementations, reputational cost to previous decisions, schedule risk, reopening settled debates, and antagonizing A's coalition.
-
 Architectural objections decompose under institutional pressure:
 
 \[
@@ -352,12 +359,6 @@ Architectural objections decompose under institutional pressure:
 \]
 
 "The conceptual model is wrong" becomes "concerns about customization," then "concerns about diagnostics," then "a question regarding cancellation." Once that transformation occurs, the premise that the architecture should exist has quietly ceased to be under discussion.
-
-The advocacy equilibrium, when it works:
-
-\[
-\text{many motivated advocates} + \text{expert cross-examination} + \text{chair judgment} \approx \text{best design}
-\]
 
 The subgame-perfect equilibrium strategy profile:
 
@@ -367,13 +368,13 @@ The subgame-perfect equilibrium strategy profile:
 - Repeat players: Maintain relationships, trade concessions, avoid gratuitous opposition
 - National bodies: Intervene selectively where salient enough to justify coordination
 
-The variable they are unconsciously optimizing is \( \Pr(\text{consensus}) \): survivability through the represented veto structure. That distinction is the whole game.
+Every strategy above maximizes \( \Pr(\text{consensus}) \) (premises 3 and 12): survivability through the represented veto structure. Whether that differs from maximizing quality depends on premise 8. That distinction is the whole game.
 
 ## 14. Conclusion and Further Research
 
-SD-4 is a design. Like all rulesets it creates incentives. The culture described above is what rational actors produce under this one. This paper has identified three mechanisms: procedural fluency gating access, path dependence resisting correction, and the missing minutes register preventing the institutional record from distinguishing answered objections from outvoted ones. They are not independent pathologies. They form a single optimization surface whose equilibrium this paper has characterized.
+SD-4 is a design. Like all rulesets it creates incentives. The culture described above is what rational actors produce under this one. This paper has identified three mechanisms: procedural fluency gating access, path dependence resisting correction, and the missing minutes register preventing the institutional record from distinguishing answered objections from outvoted ones. They are not independent pathologies.
 
-The stakes of that optimization are not uniform. A small paper creates small incentives. A large, employer-funded, multi-year feature creates incentives proportional to the investment: years of work, reputation, coalition capital, and employer resources. The rational response is proportional effort to secure the outcome. A competent institutional operator will seek to control scheduling, chair confidence, direction polls, and the study group's committed time before the investment is made, not after. This is not corruption. It is the expected behavior of rational actors facing the reversal-cost inequality.
+The stakes of that optimization are not uniform. A small paper creates small incentives. A large, employer-funded, multi-year feature creates incentives proportional to the investment. A competent institutional operator will seek to control scheduling, chair confidence, direction polls, and the study group's committed time before the investment is made, not after. This is not corruption. It is the expected behavior of rational actors facing the reversal-cost inequality.
 
 Direction polls happen when designs are least mature. The author's rational strategy is to accumulate favorable state transitions as early as possible, because reversal cost grows monotonically from each transition. But early is when the design is least tested, least reviewed, and most likely to contain the architectural mistakes whose correction will later be prohibitively expensive. The system creates maximum lock-in at minimum information. The penalty for an early mistake in a large feature is enormous, and the incentive to make early lock-in irreversible is equally enormous, at the worst possible time.
 
@@ -395,13 +396,17 @@ This is a predicted equilibrium strategy. It requires no bad actors. It requires
 
 This paper shares a limitation with the system it describes. It cannot distinguish, from the outside, between a proposal that survived because it was excellent and a proposal that survived because its authors were persistent, funded, and procedurally fluent. The system cannot make that distinction either. Both observations may be true of the same proposal simultaneously. A design can be sound, its authors can be competent, and the process can be followed correctly at every stage, yet the institutional record still cannot certify that the outcome reflects quality rather than survivability.
 
-However, the distinction is not unfalsifiable. If the system selects for quality, large contested features should show post-adoption defect rates comparable to or lower than smaller, less contested features, because they received more scrutiny. If the system selects for survivability independent of quality, large contested features should show higher post-adoption correction rates, because path dependence resisted correction during development and review was under-produced relative to the stakes.
+However, the distinction is not unfalsifiable. If the system selects for quality, large contested features should show post-adoption defect rates comparable to or lower than uncontested features of similar size and novelty, because they received more scrutiny. If the system selects for survivability independent of quality, large contested features should show higher post-adoption correction rates, because path dependence resisted correction during development and review was under-produced relative to the stakes.
 
-The metric: For each large feature adopted since C++11, count the defect reports, correction papers, post-adoption revisions, and removals, normalized by feature scope. Compare contested features against uncontested features of similar size. That measurement is future work. The data exists.
+The metric: For each large feature adopted since C++11, count the defect reports, correction papers, post-adoption revisions, and removals, normalized by feature scope. Compare contested features against uncontested features of similar size and novelty. That measurement is future work. The data exists.
 
 A different design would produce a different culture. This one produces what rational actors optimizing under these rules would produce. When funded advocates cross-examine each other and a capable chair reads the room, the system delivers. Its failure mode is not that bad proposals succeed. Its failure mode is that large proposals, proposals with concentrated sponsors and diffuse costs, face structural incentives to make their own reversal impossible, and the system provides no mechanism proportional to the stakes for ensuring that early lock-in reflects early correctness.
 
 This paper asks for nothing.
+
+## Acknowledgments
+
+Criticism of R0 on the EWG reflector led to the Assumptions section and to several of its premises. Acknowledged individuals have not necessarily reviewed this paper and do not endorse its content.
 
 ## Disclosure
 
@@ -544,6 +549,8 @@ Machine-assisted drafting was used in the preparation of this paper. The incenti
 [63] [P2300R10](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p2300r10.html) - "`std::execution`" (Micha&lstrok; Dominiak, Georgy Evtushenko, Lewis Baker, Lucian Radu Teodorescu, Lee Howes, Kirk Shoop, Michael Garland, Eric Niebler, Bryce Adelstein Lelbach, 2024).
 
 [64] [N4475](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/n4475.pdf) - "Default comparisons" (Bjarne Stroustrup, 2015).
+
+[65] [Human Action](https://mises.org/online-book/human-action) - "Human Action: A Treatise on Economics" (Ludwig von Mises, 1949). Chapter I, section 2 ("On Happiness") defines the satisfaction an action seeks; chapter IV, section 4 ("Action as an Exchange") defines cost.
 
 \newpage
 
