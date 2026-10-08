@@ -54,6 +54,14 @@ var BOXES = {
     "Try This Today": {fill: "e4f4f4", rule: "0b7285", label: "0b5563"}
 };
 
+// hand fixes for single page breaks: each paragraph that starts with one of
+// these goes to the next page whole rather than split. Straight apostrophes
+// match curly ones. An edit that moves the break can make an entry stale,
+// and the run reports any entry whose paragraph is gone.
+var KEEP_WHOLE = [
+    "It's a veto over what you can use"
+];
+
 var PRINT_PRESETS = ["[PDF/X-4:2008]", "[High Quality Print]"];
 var SCREEN_PRESET = "[High Quality Print]";
 
@@ -72,6 +80,7 @@ var PARAGRAPH_STYLES = [
         leftIndent: 0, rightIndent: 0, spaceBefore: 7, spaceAfter: 0,
         hyphenation: true, hyphenateCapitalizedWords: false, hyphenateLastWord: false,
         hyphenateWordsLongerThan: 6, hyphenateAfterFirst: 3, hyphenateBeforeLast: 3, hyphenateLadderLimit: 2,
+        hyphenateAcrossColumns: false,
         keepLinesTogether: true, keepFirstLines: 2, keepLastLines: 2
     }],
     ["Body First", "Body", {spaceBefore: 0}],
@@ -301,6 +310,30 @@ function flow(doc, frame, master) {
     }
 }
 
+// a paragraph ending in a colon right before a box introduces it, like the
+// motto and the oath, so it goes to the next page with the box. The
+// KEEP_WHOLE paragraphs never split. Changing overset text can crash
+// InDesign, so this runs once the story has flowed.
+function keepTogether(doc, story, master) {
+    var paras = story.paragraphs.everyItem().getElements();
+    var styles = story.paragraphs.everyItem().appliedParagraphStyle;
+    var texts = story.paragraphs.everyItem().contents;
+    var found = [], i, j;
+    for (i = 0; i < paras.length; i++) {
+        if (i + 1 < paras.length && / Label$/.test(styles[i + 1].name) && /:\s*$/.test(texts[i])) paras[i].keepWithNext = 1;
+        var plain = String(texts[i]).replace(/[\u2018\u2019]/g, "'");
+        for (j = 0; j < KEEP_WHOLE.length; j++) {
+            if (plain.indexOf(KEEP_WHOLE[j]) != 0) continue;
+            paras[i].keepAllLinesTogether = true;
+            found[j] = true;
+        }
+    }
+    for (j = 0; j < KEEP_WHOLE.length; j++) {
+        if (!found[j]) problem("KEEP_WHOLE", "no paragraph starts with \"" + KEEP_WHOLE[j] + "\"");
+    }
+    flow(doc, story.textContainers[story.textContainers.length - 1], master);
+}
+
 // InDesign drops space before at the top of a frame, so each chapter's
 // opening frame gets a top inset instead. Each inset pushes later text down,
 // so the pages are reflowed before the next chapter's frame is looked up.
@@ -439,6 +472,8 @@ function typeset(doc, fonts, title, body, indd, out, cover) {
     story.storyPreferences.opticalMarginSize = 10.5;
     flow(doc, frame, master);
     trace("flowed");
+    keepTogether(doc, story, master);
+    trace("keeps applied");
     sinkChapters(doc, story, master);
     trace("chapters sunk");
 
