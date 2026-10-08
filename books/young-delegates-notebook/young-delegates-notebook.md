@@ -4,7 +4,7 @@
 
 A practical guide for anyone who wants to help shape C++ but has never set foot in a committee meeting. It accumulates: each chapter stands on the ones before it, and you can stop at any chapter and still have something useful to offer. Every paper number is a live link, and every named resource points somewhere real.
 
-*Assembled 2026-10-06*
+*Assembled 2026-10-08*
 
 ## Contents
 
@@ -618,7 +618,7 @@ Before you form an opinion on any paper, run it through a few questions:
 - What old code breaks, and how do users move forward?
 - Is the wording clear on the hard cases?
 
-The gaps are the red flags. Empty answers, like no implementation and no migration plan, are objections someone will raise in the room. A strong paper closes them before you ask. If one doesn't, tell the author.
+The gaps are the red flags. Empty answers, like no implementation and no migration plan, are objections someone will raise in the room. A strong paper closes them before you ask. If a paper doesn't, tell the author.
 
 <div id="try-this-today">
 
@@ -844,7 +844,7 @@ The model has a safety valve: pull what isn't ready. The committee did exactly t
 
 Taking a feature out is far harder than putting one in. Once a feature ships, real programs depend on it, and removing it breaks them. So the standard almost only grows, as chapter 1 warned.
 
-Pulling is different. It takes a feature out before it ships, the way contracts left C++20. Removing something that already shipped usually starts with *deprecation*, a formal notice in the standard that the feature may go in a later version. The actual cut comes years after that.
+Pulling is different. It takes a feature out before it ships, the way contracts left C++20. Removing something that already shipped usually starts with *deprecation*, a formal notice in the standard that the feature may be removed in a later version. The actual cut comes years after that.
 
 Take `auto_ptr`, an early smart pointer. It was deprecated in C++11 and removed in C++17, six years later. Exported templates were in the very first standard, but almost no compiler ever built them. C++11 cut them.
 
