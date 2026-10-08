@@ -13,8 +13,9 @@ work, so the run stops if InDesign is already open. Pass --reuse to run in
 that session anyway.
 
 This writes three files into indesign/: young-delegates-notebook.indd,
-young-delegates-notebook-print.pdf for the printer (no links), and
-young-delegates-notebook.pdf for screens (links and bookmarks). Each run
+young-delegates-notebook-print.pdf for the printer (no live links, but link
+text is blue), and young-delegates-notebook.pdf for screens (live links in
+blue, plus bookmarks). Each run
 starts from a blank document and overwrites them. Pass --out DIR to write
 them somewhere else.
 """

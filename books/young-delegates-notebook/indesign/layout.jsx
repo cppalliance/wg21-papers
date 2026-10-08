@@ -1,6 +1,7 @@
 // Lays out A Young Delegate's Notebook for print from the ICML stories that
 // build.py writes, saves the InDesign document, and exports two PDFs: one for
-// the printer with no links, and one for reading on screen with links.
+// the printer with no live links, and one for reading on screen with live
+// links. Link text is blue in both.
 //
 // Every run starts from a blank document, so the print look lives in the
 // spec below and nowhere else. Edits made by hand in InDesign are lost on
@@ -142,17 +143,18 @@ var BOX_PANEL = {
 var BOX_LABEL = {fontStyle: "Bold", pointSize: 7.5, leading: 11, capitalization: Capitalization.ALL_CAPS, tracking: 80, spaceBefore: 17, spaceAfter: 4, keepWithNext: 2};
 var BOX_BULLET = {leftIndent: 22, firstLineIndent: -10, bulletsAndNumberingListType: ListType.BULLET_LIST};
 
-// [name, based on, settings]. The link styles look like plain text in print,
-// so a link's code is green like any other code.
+// [name, based on, settings]. A link is blue with no underline, in print and
+// on screen. A link's code stays green in print, like any other code.
 var CHARACTER_STYLES = [
     ["Emphasis", null, {fontStyle: "Italic"}],
     ["Code", null, {font: "mono", fontStyle: "Regular", fillColor: "Code Green"}],
-    ["Link", null, {}],
+    ["Link", null, {fillColor: "Link Blue"}],
     ["Link Emphasis", "Link", {fontStyle: "Italic"}],
     ["Link Code", "Link", {font: "mono", fontStyle: "Regular", fillColor: "Code Green"}]
 ];
-// applied to every link style for the on-screen PDF only
-var SCREEN_LINK = {fillColor: "Link Blue", underline: true};
+// applied to every link style for the on-screen PDF only. Print already sets
+// links blue, so this only turns a link's code blue too.
+var SCREEN_LINK = {fillColor: "Link Blue"};
 
 // ---- layout -------------------------------------------------------------
 
