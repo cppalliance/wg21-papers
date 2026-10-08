@@ -554,7 +554,7 @@ Once you have a number, the paper is one link away.
 
 The papers all live in one official archive, [open-std.org](https://www.open-std.org/jtc1/sc22/wg21/), in a plain list by date. Every paper link in this notebook points there.
 
-You don't hunt for papers by hand. The quickest route is wg21.link, an unofficial shortcut that Mara Bos has run for years. Type a paper number after the slash, and it sends you to the copy on open-std.org. For P2300 revision 10, that's `wg21.link/p2300r10`.
+You don't hunt for papers by hand. The quickest route is wg21.link, an unofficial shortcut that Mara Bos has run for years. Type a paper number after the slash, and it sends you to the copy on [open-std.org](https://www.open-std.org/jtc1/sc22/wg21/). For P2300 revision 10, that's `wg21.link/p2300r10`.
 
 Leave off the revision, as in `wg21.link/p2300`, and you land on the newest one.
 
@@ -622,7 +622,7 @@ The gaps are the red flags. Empty answers, like no implementation and no migrati
 
 <div id="try-this-today">
 
-Open the newest mailing on open-std.org and pick one paper on something you use every day. Ask what it fixes, what it breaks, and whether anyone has built it. Write down one gap. That's how every review starts.
+Open the newest mailing on [open-std.org](https://www.open-std.org/jtc1/sc22/wg21/) and pick one paper on something you use every day. Ask what it fixes, what it breaks, and whether anyone has built it. Write down one gap. That's how every review starts.
 
 </div>
 
@@ -636,7 +636,7 @@ The roadmap is [P2000](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/
 
 <div id="short-version">
 
-No paper, no proposal. Every paper lives on open-std.org, and its number tells you its kind and history. New papers arrive in mailings, and a paper that misses the deadline waits a meeting. Most new-feature proposals never finish the years-long journey to the standard. Read the newest revision critically. Read SD-4 and P2000 first.
+No paper, no proposal. Every paper lives on [open-std.org](https://www.open-std.org/jtc1/sc22/wg21/), and its number tells you its kind and history. New papers arrive in mailings, and a paper that misses the deadline waits a meeting. Most new-feature proposals never finish the years-long journey to the standard. Read the newest revision critically. Read SD-4 and P2000 first.
 
 </div>
 
@@ -668,7 +668,7 @@ Plenty of useful work happens with no plane ticket. You can read, review, and di
 
 The lowest-effort start is reviewing a proposal. The volunteer-run [wg21.org](https://wg21.org) hosts a public [paper-review list](https://lists.wg21.org/mailman3/lists/paper-reviews.lists.wg21.org/) for exactly this. You read a paper that's coming up and post what you found, even if it's one point. A free login with a GitHub or Google account is all it takes.
 
-Each paper gets a one-week review window, and afterward the reviews go into a credited summary that's attached to the paper on wg21.org. And giving reviews earns you reviews of your own.
+Each paper gets a one-week review window, and afterward the reviews go into a credited summary that's attached to the paper on [wg21.org](https://wg21.org). And giving reviews earns you reviews of your own.
 
 Much of what follows is open to you today. The rest waits on one step: attending one meeting as a guest, in person or by video. After that, the reflector's closed lists open up.
 
@@ -678,7 +678,7 @@ Chapter 3 showed you how to find a paper, and these are the sites you'll work fr
 
 [open-std.org](https://www.open-std.org/jtc1/sc22/wg21/) is the official archive of every paper and draft, and it's where your own paper will land someday. It's sorted by date, with no search. It's the source of truth, even if it's bare.
 
-wg21.org, home of that review list, is the unofficial one. It's where you'll do most of your browsing: filter the mailing by group, search the full text, and download each group's report. The papers themselves still live on open-std.org. Don't confuse it with the wg21.link shortcut from chapter 3.
+[wg21.org](https://wg21.org), home of that review list, is the unofficial one. It's where you'll do most of your browsing: filter the mailing by group, search the full text, and download each group's report. The papers themselves still live on [open-std.org](https://www.open-std.org/jtc1/sc22/wg21/). Don't confuse it with the wg21.link shortcut from chapter 3.
 
 ### 4.3 Floating Ideas: std-proposals
 
@@ -688,7 +688,7 @@ This can save you months. People often point you to earlier papers on the same p
 
 <div id="try-this-today">
 
-Subscribe to std-proposals today and read it for a week before you post. You'll see what a warm reception looks like, and a cold one, before your own idea gets either.
+Subscribe to [std-proposals](https://lists.isocpp.org/mailman/listinfo.cgi/std-proposals) today and read it for a week before you post. You'll see what a warm reception looks like, and a cold one, before your own idea gets either.
 
 </div>
 
@@ -738,7 +738,7 @@ The committee runs its meetings off *the wiki*. It holds the agendas, schedules,
 
 It's password-protected, so ask the convener how a guest gets in. Don't edit it unless someone asks you to.
 
-When things move fast, people use chat. [Mattermost](https://chat.isocpp.org), at chat.isocpp.org, is the committee's own real-time chat, and during meetings it keeps the parallel rooms in touch. Like the wiki, it isn't public, so ask the convener about it too. Keep it open whenever a meeting is running.
+When things move fast, people use chat. [Mattermost](https://chat.isocpp.org), at [chat.isocpp.org](https://chat.isocpp.org), is the committee's own real-time chat, and during meetings it keeps the parallel rooms in touch. Like the wiki, it isn't public, so ask the convener about it too. Keep it open whenever a meeting is running.
 
 The courtesy rule from the reflector holds in every chat, too. Chat is faster than email and even easier to misread.
 
@@ -760,7 +760,7 @@ Twenty-three people took part in that round, and it sent a `std::format` paper o
 
 <div id="short-version">
 
-From home, starting today, you can review papers on wg21.org, float ideas on std-proposals, read the trip reports, and help test the Beman Project's libraries. The official sites are isocpp.org and open-std.org, and wg21.org is the unofficial one.
+From home, starting today, you can review papers on [wg21.org](https://wg21.org), float ideas on [std-proposals](https://lists.isocpp.org/mailman/listinfo.cgi/std-proposals), read the trip reports, and help test the Beman Project's libraries. The official sites are [isocpp.org](https://isocpp.org) and [open-std.org](https://www.open-std.org/jtc1/sc22/wg21/), and [wg21.org](https://wg21.org) is the unofficial one.
 
 The rest takes one step: attending one meeting as a guest, in person or by video. That opens the reflector's closed lists, whose posts stay private. Share poll questions and numbers freely, but ask before you quote anyone. Stay courteous on the lists and in chat.
 
@@ -1466,7 +1466,7 @@ Remember the basics from chapter 3. Your paper gets a P-number and a revision, a
 
 A new paper that misses the deadline waits for the next round. A late update to a paper that made the deadline can still be heard.
 
-You upload the paper at [isocpp.org/papers](https://isocpp.org/papers), which needs an isocpp.org login. The system hands you a P-number, or bumps the R on a revision, so make sure your title page matches. A saved draft is only a working copy, so submit the paper itself before the deadline.
+You upload the paper at [isocpp.org/papers](https://isocpp.org/papers), which needs an [isocpp.org](https://isocpp.org) login. The system hands you a P-number, or bumps the R on a revision, so make sure your title page matches. A saved draft is only a working copy, so submit the paper itself before the deadline.
 
 Once it's in a mailing, your paper gets an issue in the [GitHub tracker](https://github.com/cplusplus/papers) from chapter 5. Watch it to see where you stand. Some chairs schedule from that tracker, and a label on the issue shows when your paper gets a slot.
 
@@ -1494,13 +1494,13 @@ Stay with your paper the whole way, and watch for ballot comments that touch it.
 
 <div id="short-version">
 
-Float the idea on std-proposals first, and talk to anyone working on the same problem. Then build something: put your code on Compiler Explorer and GitHub so people can run it. Write it up with mpark/wg21 or Bikeshed, and make it easy to read, even on a phone.
+Float the idea on [std-proposals](https://lists.isocpp.org/mailman/listinfo.cgi/std-proposals) first, and talk to anyone working on the same problem. Then build something: put your code on Compiler Explorer and GitHub so people can run it. Write it up with [mpark/wg21](https://github.com/mpark/wg21) or [Bikeshed](https://github.com/tabatkins/bikeshed), and make it easy to read, even on a phone.
 
 Name a presenter, expect to revise again and again, and disclose any patent you know of. Submit by the SD-7 deadline, then ask the chair for agenda time. Design approval will feel like 80 percent of the job. What's left is "the other 80%."
 
 </div>
 
-That's the route, from a short post on std-proposals to a slot on a chair's schedule. Get R0 into the next mailing before its deadline. Next comes the art of championing it.
+That's the route, from a short post on [std-proposals](https://lists.isocpp.org/mailman/listinfo.cgi/std-proposals) to a slot on a chair's schedule. Get R0 into the next mailing before its deadline. Next comes the art of championing it.
 
 ---
 
