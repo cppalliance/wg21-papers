@@ -1,0 +1,89 @@
+# Agent instructions: The Room
+
+This file is the source of truth for voice, mechanics, and structure. Each act's voice card, passage map, and quote ledger live in `planning/voices/`. Where a voice file disagrees with this file, this file wins.
+
+- **What the book is.** A stylized abstraction of how WG21 chooses designs, told through six historical voices, for WG21 delegates and the C++ public. It is fiction: a sharp, crisp polemic meant to land, not an annotated edition. It is a lens, not evidence. It need not match every procedural detail, but it must not get committee procedure or committee history wrong; the narrators' own lives, achievements, and sayings may be dramatized, and their judgments may be as sharp as their originals. Meetings run Monday through Saturday, and the closing plenary is on Saturday morning, ending by early afternoon.
+- **Thesis.**
+  - The users are not in the room when the decisions are made. Some 16 million people use C++ (SlashData, early 2025: 16.3 million). A few hundred delegates decide for them, and the users meet each decision only afterward, in a national body comment, a blog post, or a compiler release.
+  - The committee asks whether a design is correct, whether the room wants it, who won the poll, and whether to forward the paper. The questions the users would ask go unasked because no one there is placed to ask them.
+  - The thesis and the 16 million figure are stated plainly only in the Preface, the Epilogue, and the back-cover blurb. The acts show the thesis, each in its own word for the users.
+- **Each act's question.** Each act asks the users' question in its narrator's idiom. At most three explicit statements per act; the questions stay distinct, no act poses another act's question, and the Epilogue gathers all six.
+  - Act One: how many users will actually benefit?
+  - Act Two: is standardizing this worth the cost?
+  - Act Three: does this solve a problem users actually have?
+  - Act Four: are the existing solutions good enough?
+  - Act Five: does this need to be in the standard at all? This is the root question.
+  - Act Six: how do we know they want it?
+- **What the book criticizes.** How the evolution groups (LEWG, EWG, and the study groups that feed them) choose designs and papers, and how the C++ public is left out. The wording groups are not the target. National body reviewers who read the wording are a positive force.
+- **Roles.**
+  - The cast are roles: composites, never single individuals, except the Builder. The roles recur but the people filling them change, so the Patron may be a woman in one act and a man in another.
+  - Each act is its own story with the same shape. No act refers to another act's events or characters. Narrators may refer to the other writers by epithet, and may quote or retell another writer's act as that writer's account (as Act Six does in XXXV and XXXVII, and Act Five does with "The clerk told his Author's story"). When one narrator mentions another act's protagonist, it is "his Author."
+  - The exception: Act Five is Act Four's meeting seen through the Newcomer. It says so, and the two acts' facts agree exactly (who, when, where, counts, and what was said).
+  - The Architect includes the founder whose creation outgrew him.
+  - The Builder appears only in Act Six. He is the book's author, not a composite, and is never called the Author. Talleyrand introduces him with the Florentine's naming device, as "the man I will call the Builder," at "Someone is already building." He is left out of the Dramatis Personae. Act Six's Author is that act's own composite engineer, who follows the Builder and begins to build in the last line.
+  - Act Six's five instruments are the Builder's real work, described (never named), praised on purpose, and presented as the users' plenipotentiaries: proxies, not the users themselves. The list and pairings live in the Act Six voice file.
+- **Voices.**
+  - Act One is Machiavelli, Two is Nietzsche, Three is Kafka, Four is Canetti, Five is Jung, and Six is Talleyrand.
+  - Jung is the unnamed sixth voice. The contents page shows "?", and the act names him only in its attribution line.
+  - Each act is narrated by its author from the first line to the last. He never names himself in the third person; the italic attribution line and epigraph citations are exempt. He refers to the others by epithet, such as the Florentine, the philosopher, the clerk, the naturalist, and the analyst.
+  - Narrative mode follows the voice card. For example, Kafka tells the Author's story in close third person, as he told K.'s, without commentary.
+  - The voice files serve the prose, and a sharp line beats a style rule. When a voice-file rule would cut or soften a line that is sharp and repeats nothing else in the book, keep the line in its sharpest wording and record the exception in that act's voice file. Repetition is a reason to cut the weaker copy, never the sharper one.
+  - Pace. The book keeps the pace and snap of a polemic.
+    - End each paragraph on its sharpest sentence, and cut whatever follows it.
+    - Use at most one quotation per paragraph, trimmed to the clause that does the work, and never two long quotations back to back. Drop citation lead-ins such as "In my definition", "In a lecture I wrote", and "I once wrote of" unless the citation is itself the point.
+    - Cut throat-clearing, restatement, and policy language. Put a particular (a number, a gesture, a name) where an abstraction stands.
+    - Short sentences and fragments, the litany, the "and ... and" chain, and the counting refrain are allowed. Use each sparingly, so it stays a device and doesn't become a tic: as a rule no more than four times per act. A narrator whose signature it is may use it more, recorded in his voice file (Machiavelli's anaphora, Jung's triads).
+    - A climax paragraph holds one scene and one judgment at most.
+    - A blurry line explains what the scene already showed, restates the sentence before it more abstractly, hedges what the structure already makes fair, or smooths a sharp contrast into a paraphrase. Cut it, or restore the sharper line it replaced.
+  - The Preface, Epilogue, and back cover are the book's author speaking plainly.
+  - Hedging. Fairness lives in the structure: the Chair is genuinely fair, his power is structural, and no one is given a clinical label. Do not stack disclaimers or apologize for the source. The one lens disclaimer lives in the Preface ("None of them ever saw the committee"), and it stands beside the Preface's "Five hundred years of independent diagnosis." Kafka's flat uncertainty of perception is voice, not hedging.
+- **Transformation.** Every section transforms an identified passage from its author's own work, recorded in the passage map. The section keeps the passage's intent and maps its scenario onto the committee in a way that supports the thesis. A beat that repeats another act's beat is retold through this author's own scenario: never cut, and never retold the same way.
+- **Quotations.**
+  - Machiavelli, Nietzsche, Kafka, and Talleyrand are quoted in the book's own translations from the public-domain originals, checked against a public-domain English translation. A narrator's quotations of himself share his voice.
+  - Canetti and Jung are quoted briefly from their published English translations, verified, and trimmed to the sentence that does the work.
+  - One exception for Nietzsche: the Genealogy's closing sentence is quoted in Francis Golffing's rendering (*The Birth of Tragedy and The Genealogy of Morals*, Doubleday Anchor, 1956), "Man would sooner have the void for his purpose than be void of purpose.", because that is the wording English readers know. It is one sentence, credited in the Act Two quote ledger like the Canetti and Jung excerpts, and Act Six may quote it as the philosopher's line.
+  - An epigraph quotes only the author it names.
+  - A narrator may voice a saying traditionally attributed to him, such as "Above all, gentlemen, no zeal."
+  - No full or substantial copy of an in-copyright work is stored anywhere.
+- **Motifs.**
+  - Acts One to Four each end with the author's line "I died in YEAR, yet the ... persists." Act Five bends it once, as the voice that enters without permission: "I died in 1961, yet the shadow I named still darkens." Act Six ends instead on "He begins to build."
+  - Each act has its own word for the users, matching the contents page in `bookmaker.py`: the uncounted, the unnamed, the unseen, the unasked, the undiscovered, the unheard. Act Six gathers the six words once, giving each to its writer and ending on "the unheard."
+  - Room counts. The design room grows act by act. Count the people in the room when the Author's paper is polled, including a few who do not vote: about 18 in Act One, 25 in Act Two, 35 in Act Three, 50 in Act Four, and the same 50 in Act Five. Act Four's Room B (six people) and the plenary (about 200) are separate. Every stated poll outcome agrees with SD-4. The Epilogue names the counts once.
+  - The moon is what the committee cannot schedule or poll.
+  - Each act ends with the Author back at his laptop, told differently each time. The payoff is "He begins to build."
+  - Endings. Cut summary, keep verdicts. A sharp one-line verdict or maxim may stand between an act's last scene and its closing line.
+  - Shared lines. When two acts once shared a line, the sharper copy stays where it lands hardest, and the other act gets a line of its own in its narrator's idiom, never a weaker placeholder.
+  - "Build" means a better process, other rooms, envoys for those not in the room, and publishing a library so adoption decides whether it belongs in the standard.
+  - Act Six quotes lines from Acts One to Five. Those lines are protected in their acts, and when one of them changes, Act Six's quotation changes with it.
+- **Boundaries.**
+  - Diagnose the institution. A narrator may say what a composite role sees, feels, or fails to notice when it sharpens a scene, but no role gets a clinical or diagnostic label, and no real person gets anything of the kind. The Architect as founder alludes to a real person, and the Builder is one.
+  - Suggest the Architect's undisclosed tradeoff through the evidence trail. Never assert what he knew.
+  - No sexual-coercion analogies.
+  - No mockery of host cities, conference attendees, implementers, or the C++ public.
+  - Disguise. Procedural specifics are encouraged. Technical specifics that identify one real proposal are not, so the Architect's tradeoff is described by its effect. Act Six's instruments are never named; Talleyrand describes each by what it does.
+  - Lanyard colors are an invented device: they sort delegates into groups whose difference nobody explains. Act Three introduces them at the Author's arrival (XIV) and pays them off with the first questioner (XIX). The book never says what a color means, and no other scene uses them.
+- **Mechanics.**
+  - No em dashes, no en dashes used as dashes, and no double dashes in prose. Use a single spaced hyphen.
+  - The one exception is the epigraph attribution line, which begins `> -- ` because `bookmaker.py` parses it.
+  - American spelling.
+  - Budgets per part, spent on the sharpest lines: "It is not X. It is Y." up to five, six in Act Three (count the strict form, a denial followed by its correction; protected lines and quotations do not count); "not because X but because Y" up to three; "precision" or "precise" at most one; "devastating" at most one. A sentence that explains a metaphor after the scene has shown it is cut. If a line would exceed any budget, merges included, raise that part's budget and record the line in the act's voice file; never cut, split, or soften the line to fit.
+  - Merges. A semicolon or colon that joins two short independent clauses, each of which could stand alone as a sentence of about a dozen words or fewer, is a merge. At most two merges per part (three in Act Four), and never when either half is a sharp standalone line: a verdict, a maxim, a punchline, or an epithet. Long periodic sentences, lists, and colons that introduce speech or a quotation are not merges. Act Three is exempt, because Kafka's voice runs on long sentences of joined clauses. In Act Six, a balanced period (parallel clauses joined by semicolons, with the judgment held to the end) is not a merge; split one only where it buries a sharp line.
+  - Protected lines. These stay word for word. No pass may cut or soften them to meet a budget, and they do not count against one.
+    - Act Two: "The lambs bear a grudge against the birds of prey. But the Author is not a lamb. He is something rarer: a bird of prey who has been told that flying is against the rules, and who must now decide whether to walk, or to find a sky the temple does not govern."
+    - Act Six: "The question is never whether the ceremonies will change. The question is whether anyone understands the ceremony well enough to build the next one."
+    - Epilogue: "Institutional innovation is not lesser creation. It is the creation that makes every other creation possible."
+    - Act One: "The Chair's scheduling was not cruel. It was orderly. The first questioner's framing was not cruel. It was reasonable. The poll result was not cruel. It was democratic."
+    - Act One: "But virtu without arms is Savonarola preaching to the masses: believed today, doubted tomorrow, burned at the stake by the end of the week."
+    - Act Six: "I spent fifty years acting. The difference is the difference between the anatomist and the surgeon. Both understand the body. Only one cuts."
+    - Preface: "Five hundred years of independent diagnosis." and "The structural dynamics persist."
+    - Epilogue: "It is better to be a Builder."
+  - "Door" is reserved for the doorkeeper motif (Act Three's legend and the Epilogue's door that was meant for you), the Newcomer's dream in Act Five, Act One's contrast between a fortress and a door (set up in VII, answered in IX), and Act Three's frame line "I knock on doors that do not open.", which foreshadows the legend.
+- **Markup contract.** Keep every marker `bookmaker.py` parses:
+  - `# Act ...` headings;
+  - each act's subtitle (`## ...`) and its italic attribution line;
+  - numbered section headings (`## <Roman numeral>. Title`) and Act Two's `### N.` subsections;
+  - epigraph blockquotes;
+  - the comments `<!-- break -->`, `<!-- recto -->`, `<!-- table -->`, `<!-- body -->`, `<!-- back-cover -->`, `<!-- back-quote -->`, and `<!-- back-author -->`;
+  - the `<br/>` line breaks in the back-cover blurb, which `bookmaker.py` sets as one paragraph;
+  - the metadata comments in `parts/00-front.md`.
+- **Structure.** `parts/00-front.md` through `parts/09-back-cover.md` hold the book in order: front matter, Preface, six acts, Epilogue, back cover. `bookmaker.py` assembles them into `the-room.md`, which is generated and must never be edited by hand, then builds `the-room.pdf`, which is gitignored. Run `uv run --no-project --with reportlab --with pyphen python bookmaker.py` from this folder. Edit the parts, then rebuild.

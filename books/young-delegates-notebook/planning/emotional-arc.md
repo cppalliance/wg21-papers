@@ -4,7 +4,7 @@ One sentence per chapter: how the reader feels entering, how they feel leaving. 
 
 - Introduction: enters curious and unsure they belong, leaves welcomed and oriented.
 - Chapter 1: enters curious about "what is this thing," leaves feeling its weight and seriousness.
-- Chapter 2: enters intimidated and doubting they can join, leaves seeing the door wide open.
+- Chapter 2: enters intimidated and doubting they can join, leaves seeing the way in wide open.
 - Chapter 3: enters confused about how the work happens, leaves understanding the paper is the unit and how to read one.
 - Chapter 4: enters assuming you must travel to matter, leaves able to contribute today from your desk.
 - Chapter 5: enters facing a blur of acronyms, leaves holding a clear map of the rooms and who decides what.
@@ -17,7 +17,7 @@ One sentence per chapter: how the reader feels entering, how they feel leaving. 
 - Chapter 12: enters wondering why good ideas die, leaves respecting the constraints that kill them.
 - Chapter 13: enters confident, leaves humble, careful, and harder to trip.
 
-## Chapters that carry a psychological-awareness note
+## Chapters with a psychological-awareness note
 
 Plain advice to the reader about their own judgment. Never jargon, never committee analysis.
 
@@ -26,5 +26,5 @@ Plain advice to the reader about their own judgment. Never jargon, never committ
 - Chapter 7: don't let the meeting cadence become its own reward; stay skeptical, question the room's priors.
 - Chapter 8: consensus is social pressure; vote your conviction, not the room's momentum; demand evidence.
 - Chapter 9: be convinced by overwhelming evidence and nothing else.
-- Chapter 11: burnout is real; the bandwidth problem is structural; set boundaries and know when to stop.
+- Chapter 11: burnout is real; the Bandwidth Gap is structural; set boundaries and know when to stop.
 - Chapter 13: don't confuse participation with impact; a proposal that never ships helped nobody.
