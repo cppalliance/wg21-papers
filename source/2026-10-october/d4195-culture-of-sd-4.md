@@ -8,6 +8,8 @@ reply-to:
   - "Vinnie Falco <vinnie.falco@gmail.com>"
   - "Mungo Gill <mungo.gill@me.com>"
 ---
+<!-- lah: A lot of "not this, but that" structure that needs to be changed; it gets old. -->
+
 
 ## Abstract
 
@@ -19,8 +21,8 @@ This paper models WG21's consensus process as a game built on stated assumptions
 
 ### R1: October 2026
 
-- Added an Assumptions section. Key Judgments cite the premises they rest on.
-- Abstract restated to claim only what the premises support. Repeated passages cut.
+- Added an Assumptions section. Key Judgments cite the assumptions they rest on. <!-- lah: Set up your terminology and then use that terminology.-->
+- Abstract restated to claim only what the assumptions support. Repeated passages cut.
 - Added Acknowledgments.
 
 ### R0: September 2026
@@ -29,7 +31,7 @@ This paper models WG21's consensus process as a game built on stated assumptions
 
 ## Assumptions
 
-The analysis rests on these premises. Items 1-7 concern people, 8-11 the work, and 12-14 the rules, which can be checked against SD-4's text. "Optimizes" throughout means "acts as if optimizing"; the paper makes no claim about intent.
+The analysis rests on these assumptions. Items 1-7 concern people, 8-11 the work, and 12-14 the rules, which can be checked against SD-4's text. "Optimizes" throughout means "acts as if optimizing"; the paper makes no claim about intent.
 
 1. Authors who keep bringing a paper forward want it adopted.
 2. Taking part costs time and money, every year.
@@ -39,42 +41,43 @@ The analysis rests on these premises. Items 1-7 concern people, 8-11 the work, a
 6. Reviewers have limited time and care more about some areas than others.
 7. Any one outside user has very little chance of changing an outcome.
 8. At the time of a poll, the room cannot fully judge how good a design is. SD-4 assumes as much when it describes a TS as an "experimental branch" that ships "to gain experience," and the removal of contracts from the C++20 draft (section 2) shows it.
-9. Reversing a decision costs more the more work has been built on it. Cost here is opportunity cost, the value of what a reversal gives up:<sup>[65]</sup> discarded wording and implementations, committee time to redo the work, schedule risk, and the standing of those who backed earlier polls. Effort already spent does not count.
+9. The more work that has been built upon a decision, the greater the cost of reversing that decision. Cost here is opportunity cost, the value of what a reversal gives up<sup>[65]</sup>: discarded wording and implementations, committee time to redo the work, schedule risk, and the standing of those who backed earlier polls. Effort already spent does not count. <!-- ;ah: that last sentence is a big assumption that would meet a lot of disagreement. -->
 10. A later proposal is discussed relative to whatever the room already favors.
 11. Procedural knowledge comes from attending, and it improves a participant's odds.
 12. A proposal advances when the chair declares consensus.
 13. Consensus is the chair's judgment. SD-4 says a proposal "normally advances if there are more than twice as many in favor of a proposal as against."
-14. SD-4 does not require a poll's record to hold more than a tally and an outcome. A chair may ask those voting against for their reasons; nothing requires the record to say how those reasons were answered, or why the room proceeded anyway.
+14. SD-4 does not require a poll's record to hold more than a tally and an outcome. A chair may ask those voting against for their reasons; nothing requires the record to say how those reasons were answered or why the room proceeded anyway.
 
-Key Judgments cite the premises they rest on. How strongly premise 8 holds is not measured here; claims that rest on it are hypotheses, and section 14 proposes a test.
+Key Judgments cite the assumptions they rest on. How strongly assumption 8 holds is not measured here; claims that rest on it are hypotheses, and section 14 proposes a test.
 
 ## Executive Summary
+<!-- lah: move the exec summary to precede the assumptions, so the assumptions and judgments are together. -->
 
-The three dynamics identified in the abstract produce a specific cultural pattern. The committee develops a collegial surface over an adversarial undercurrent. Participants remain personally cordial while conducting very long intellectual conflicts, because open confrontation is expensive in a body where you will encounter the same people for decades. Disputes end not when one side is persuaded, but when the minority's willingness to spend social capital is exhausted. The gap between "consensus was achieved" and "we lost the poll" becomes a standing source of institutional tension.
+The three dynamics identified in the abstract (procedural fluency, path dependence, and asymmetric institutional memory)produce a specific cultural pattern. The committee develops a collegial surface over an adversarial undercurrent. Participants remain personally cordial while conducting long intellectual conflicts because open confrontation is expensive in a body where you will encounter the same people for decades. Disputes end not when one side is persuaded, but when the minority's willingness to spend social capital is exhausted. <!-- lah: not universally true. Sometimes the other side *is* persuaded. --> The gap between "consensus was achieved" and "we lost the poll" becomes a standing source of institutional tension.
 
-Each participant's behavior is rational given the incentive structure. Authors optimize for adoption. Reviewers specialize in domains they care about and abstain elsewhere, because review is a public good nobody wants to provide privately. Chairs optimize for closure, because the role demands converting conflict into decisions. The minority is asked not "are you right?" but "how strongly are you willing to resist?" This question turns a technical judgment into a social one.
+Each participant's behavior is rational given the incentive structure. Authors optimize for adoption. Reviewers specialize in domains they care about and abstain elsewhere, because review is a public good nobody wants to provide privately. Chairs optimize for closure, because the role demands converting conflict into decisions. The minority is asked "how strongly are you willing to resist?" rather than "are you right?" <!--lah: We won't know who is right until years later. The winners of consensus also think they are right. No one is going into this saying "I think I'm wrong, but I'm going to dig in my heels and argue for 'wrong.'" The problem is that both groups are convinced they are right. --> This question turns a technical judgment into a social one.
 
-The case histories illustrate these dynamics. Contracts ([P2900](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[18]</sup>) illustrates the ideal-author playbook executed through plenary adoption. Coroutines illustrates a minority partially vindicated after the fact: C++20 shipped only language-support primitives, with no high-level coroutine types. The std::execution vote ([N4985](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n4985.pdf)<sup>[2]</sup>: 57-20-27, "numerically this is a weak consensus, but it is a consensus") illustrates chair judgment at the boundary. Networking illustrates a direction poll setting the conceptual framework about fifteen months before the chosen path had a concrete proposal. Default comparisons illustrates plenary catching a design flaw that subgroup consensus missed.
+The case histories illustrate these dynamics. Contracts ([P2900](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2900r14.pdf)<sup>[18]</sup>) illustrates the ideal-author playbook executed through plenary adoption. Coroutines illustrates a minority partially vindicated after the fact: C++20 shipped only language-support primitives, with no high-level coroutine types. The std::execution vote ([N4985](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/n4985.pdf)<sup>[2]</sup>: 57-20-27, "numerically this is a weak consensus, but it is a consensus") illustrates chair judgment at the boundary. Networking illustrates a direction poll setting the conceptual framework about fifteen months before the chosen path had a concrete proposal. Default comparisons illustrate plenary catching a design flaw that subgroup consensus missed.
 
-For the C++ community, the practical consequence is that features entering the standard reflect the priorities of funded, persistent, procedurally fluent authors. That group overlaps with, but is not identical to, the group best positioned to judge what C++ users need.
+For the C++ community, the practical consequence is that features entering the standard reflect the priorities of funded, persistent, procedurally fluent authors. That group overlaps with but is not identical to the group best positioned to judge what C++ users need.
 
 ## Key Judgments
 
-1. WG21's consensus process equilibrium selects for proposals that outlast organized opposition. This can be the best design or an inferior design, and the record SD-4 requires does not encode which of the two occurred. Likelihood: almost certain. Confidence: high (premises 12, 14).
+1. WG21's consensus process equilibrium selects for proposals that outlast organized opposition. This can be the best design or an inferior design, and the record SD-4 requires does not encode which of the two occurred. Likelihood: almost certain. Confidence: high (assumptions 12, 14). <!-- lah: I have no idea what this "likelihood" and "confidence" is supposed to tell me. What is your scale based on? Likelihood of what? -->
 
 2. Procedural fluency and technical expertise correlate over time without being identical. Expertise determines whether a participant has something worth proposing; fluency determines whether the institution can hear it. Doing the work builds fluency (section 9), which is why the system appears to select for quality. The separation produces the failure mode: A brilliant outsider with no fluency and a mediocre insider with deep fluency face radically different odds, and SD-4's gates cannot distinguish the two cases. Likelihood: almost certain. Confidence: medium (premises 2, 8, 11).
 
-3. SD-4 does not require the minutes register in ISO/IEC Directives clause 2.5.6.<sup>[9]</sup> Papers on both sides preserve arguments; they are not a finding that an objection was reconciled. A later reader cannot tell from the tally whether objections were answered or outvoted, and the gap compounds as people who were in the room leave. Likelihood: almost certain. Confidence: high (premise 14).
+3. SD-4 does not require the minutes register in ISO/IEC Directives clause 2.5.6.<sup>[9]</sup> Papers on both sides preserve arguments; they are not a finding that an objection was reconciled. A later reader cannot tell from the tally whether objections were answered or outvoted,<!-- lah: seems like they CAN tell if they were outvoted --> and the gap compounds as people who were in the room leave. Likelihood: almost certain. Confidence: high (premise 14).
 
-4. SD-4 makes consensus a chair call, not a finding that the remaining objection has been answered. The chair is incentivized to produce a decision rather than to adjudicate the technical claims, so the live question often becomes how strongly the minority will resist rather than whether a defect remains. Consensus does not require persuasion. People can therefore lose a poll without being convinced, and "consensus was achieved" versus "we lost the poll" stays as institutional tension. Likelihood: very likely. Confidence: medium (premises 4, 5, 12, 13; sentiment is not measured).
+4. SD-4 leaves judgment of consensus to the chair, not a finding that the remaining objection having been answered. The chair is incentivized to produce a decision rather than to adjudicate the technical claims, so the live question often <!-- lah: often? is that true? --> becomes how strongly the minority will resist rather than whether a defect remains. Consensus does not require persuasion. People can, therefore, lose a poll without being convinced, and "consensus was achieved" versus "we lost the poll" stays as institutional tension. <!-- lah: Of course they can lose a poll without being convinced. If they were convinced, then they'd be voting on the side of consensus. The poll isn't set to range from SF to A; it's SF to SA to allow for disagreement. --> Likelihood: very likely. Confidence: medium (premises 4, 5, 12, 13; sentiment is not measured).
 
-5. Path dependence governs the framing a challenger is heard in, not the merits it is judged on. Once a proposal accumulates favorable direction polls, a competitor is evaluated as an amendment or an objection to it rather than as an equal design, and must show that its advantage exceeds the cost of reversal (section 12). Merit still decides outcomes, but accumulated state decides the terms on which merit is presented. Likelihood: likely. Confidence: high (premises 9, 10; document titles and poll text in the contracts and networking cases).
+5. Path dependence governs the framing a challenger is heard in, not the merits it is judged on. Once a proposal accumulates favorable direction polls, a competitor is evaluated as an amendment or an objection to it rather than as an equal design and must show that its advantage exceeds the cost of reversal (section 12). Merit still decides outcomes, but accumulated state decides the terms on which merit is presented. Likelihood: likely. Confidence: high (premises 9, 10; document titles and poll text in the contracts and networking cases).
 
 6. The incentive to protect an institutional investment scales with its size. A three-page paper has negligible reversal cost; a multi-year, employer-funded feature has reversal cost proportional to years of work, reputation, and coalition capital. The proposals that matter most to users are the ones whose authors are most incentivized to lock in early and resist late correction. This is rational investment protection, not moral failure. Likelihood: likely. Confidence: high (premises 1, 3, 9).
 
-7. Review is a public good: It is expensive, its benefits are diffuse, and any one reviewer's chance of changing the outcome is small. The system therefore under-produces critical scrutiny relative to the social optimum. Review cost rises with opacity, length, and entanglement with existing wording, so the proposals that need scrutiny most are the ones most likely to be under-reviewed. Likelihood: very likely. Confidence: medium (premises 3, 6, 7; the magnitude is estimated, not measured).
+7. Review is a public good: It is expensive, its benefits are diffuse, and any one reviewer's chance of changing the outcome is small. The system, therefore, under-produces critical scrutiny relative to the social optimum. Review cost rises with opacity, length, and entanglement with existing wording, so the proposals that need scrutiny most are the ones most likely to be under-reviewed. Likelihood: very likely. Confidence: medium (premises 3, 6, 7; the magnitude is estimated, not measured).
 
-8. Direction polls happen earliest, when design maturity is lowest. Reversal cost grows monotonically from each state transition, creating maximum lock-in at minimum information. An early architectural mistake becomes progressively harder to correct, not because it becomes less wrong, but because the institutional state surrounding it becomes more expensive to discard. The penalty for an early mistake is catastrophic for users; the incentive to make it irreversible is maximal for authors. Likelihood: likely. Confidence: medium (premises 8, 9, 10).
+8. Direction polls happen early, when design maturity is lowest. Reversal cost grows monotonically from each state transition, creating maximum lock-in at minimum information. An early architectural mistake becomes progressively harder to correct, not because it becomes less wrong, but because the institutional state surrounding it becomes more expensive to discard. The penalty for an early mistake is catastrophic for users; the incentive to make it irreversible is maximal for authors. <!-- lah: I don't buy this. I don't think any technical author WANTS the reputational harm that would come from insisting on a design that turns out to be a huge mistake. I believe authors want to write features that are useful and beneficial, and there is disagreement over what those features are and what their design should be; the issue is more about each side being convinced it is right and the other is wrong. --> Likelihood: likely. Confidence: medium (premises 8, 9, 10).
 
 ## 1. What Reconciliation Looks Like in ISO versus SD-4
 
