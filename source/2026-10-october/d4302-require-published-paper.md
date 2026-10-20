@@ -62,9 +62,9 @@ A "forward with the following changes" poll can have the same effect. If the spe
 
 Before taking a poll on a paper revision that did not appear in a pre-meeting mailing, the chair asks whether any participant objects to recording the poll. If anyone objects, no tally enters the record. The group may still discuss the revision, take an informal poll, and record the direction of sentiment.
 
-The objection decides nothing about the proposal. It delays only the counted record, and only until the text has been mailed. Participants have the right to object but no obligation to, so when the room agrees nothing changes. The ISO/IEC Directives say a sustained opposition "is not akin to a right to veto";<sup>[24]</sup> an objection under this rule is narrower still, because it does not oppose the proposal at all.
+The objection decides nothing about the proposal. It delays only the counted record and only until the text has been mailed. Participants have the right but no obligation to object, so when the room agrees, nothing changes. The ISO/IEC Directives say a sustained opposition "is not akin to a right to veto"<sup>[24]</sup>; an objection under this rule is narrower still because it does not oppose the proposal at all.
 
-Mailing status is easy to verify. In the ordinary case, the paper revision was mailed and the chair proceeds normally. If the revision was not mailed, the chair asks if anyone objects to recording the poll and does not require the objector to defend a technical position, because the objection concerns whether the text was mailed, not its merits. Objecting is low-cost because it answers a required procedural question and does not interrupt the discussion.
+Mailing status is easy to verify. In the ordinary case, the paper revision was mailed and the chair proceeds normally. If the revision was not mailed, the chair asks if anyone objects to recording the poll and does not require the objector to defend a technical position because the objection concerns whether the text was mailed, not its merits. Objecting is low cost; it answers a required procedural question and does not interrupt the discussion.
 
 The recorded tally is the boundary because later sessions use counted results as evidence of committee support. A qualitative record can still say that the group discussed a revision and favored its direction. It cannot include SF/F/N/A/SA numbers or another counted result when a participant has objected.
 
@@ -103,7 +103,7 @@ The general rule uses an objective mailing-status test. This exception requires 
 
 ## 4. The Cost
 
-In a subgroup, an objection usually delays the recorded poll by a few weeks, not a meeting. Mailings appear most months, and the evolution and wording groups hold telecons between meetings. The revision can appear in the next mailing and be polled at the next telecon. Plenary has no telecons, so there an objection delays the recorded poll to the next meeting. The next meeting may have different participants, the author may need to reintroduce the proposal, and repeated review consumes time. With nine meetings in a three-year cycle, one additional meeting can determine whether a feature reaches the next standard. These costs are real. At plenary they fall on the case this rule targets: a contested adoption whose final text no one outside the room has seen.
+In a subgroup, an objection usually delays the recorded poll by a few weeks, not a meeting. Mailings appear most months, and the evolution and wording groups hold telecons between meetings. The revision can appear in the next mailing and be polled at the next telecon. Plenary has no telecons, so an objection there delays the recorded poll to the next meeting. The next meeting may have different participants, the author may need to reintroduce the proposal, and repeated review consumes time. With nine meetings in a three-year cycle, one additional meeting can determine whether a feature reaches the next standard. These costs are real. At plenary, they fall on the case this rule targets: a contested adoption whose final text no one outside the room has seen.
 
 Recording the poll over an objection also has a cost. It can establish a new status quo before absent stakeholders know that the change exists. Correcting that status later requires those stakeholders to overcome the committee's normal consensus threshold. That burden is less obvious than the cost of an extra meeting, but it affects both legitimacy and technical review.
 
@@ -132,14 +132,15 @@ WG21 has previously considered a stronger cooling period. P2138R4 proposed a "Te
 A poll could read: "WG21 asks the convener to add the mailing-discipline rule in P4302R3 to SD-4."
 
 ## Disclosure
+<!-- lah: Given that Disclosure is no longer numbered like it was in R2, I think it should move to follow the Appendix and precede the References; you're treating it as backmatter, so put it more toward the end. -->
 
 The authors provide information and serve at the pleasure of the committee.
 
-This paper asks WG21 to recommend that the convener add the mailing-discipline rule in Section 6 to SD-4, and suggests a poll to that effect.
+This paper asks WG21 to recommend that the convener add the mailing-discipline rule in Section 6 to SD-4 and suggests a poll to that effect.
 
 Vinnie Falco is the founder of the C++ Alliance. The authors maintain competing proposals in the `std::execution` space. They are [P4003R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4003r3.pdf),<sup>[7]</sup> [P4007R3](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4007r3.pdf),<sup>[8]</sup> [P2583R4](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p2583r4.pdf),<sup>[9]</sup> and [P4100R1](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2026/p4100r1.pdf),<sup>[10]</sup> a coroutine-native model for byte-oriented I/O. Their preferred asynchronous model competes with `std::execution`. Readers should weigh the argument with that conflict in mind.
 
-The proposed rule applies to every paper in every feature area, including the authors' own. Had it been in effect, an objection could have kept a tally on an unmailed revision of any of those papers out of the record.
+The proposed rule applies to every paper in every feature area, including the authors' own. Had it been in effect, an objection could have kept a tally on any unmailed revision of their own papers out of the record.
 
 This paper was prepared with the assistance of generative tools. The authors are responsible for its content.
 
