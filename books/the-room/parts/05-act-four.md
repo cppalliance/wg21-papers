@@ -142,7 +142,7 @@ The Author presents second. His slides are adequate - clean, but without the pol
 
 The first questioner speaks from the floor. He is a recognized name - someone the room respects, someone who has chaired a study group and authored several papers in this domain. His question to the Author is reasonable: "Who else has reviewed this?" The Author answers: a colleague at his company, and the engineers there who have used the design every day for a year. The room knows none of them.
 
-A question is a touch. "The questioner knows what there is to find, but he wants actually to touch it and bring it to light." The question touches the Author in front of the room and sorts him. The Architect's paper is the incumbent. The Author's paper is the interloper. The question does not say any of this. It does not need to. The room hears it. The crowd was to free him of the fear of being touched. The touch comes from inside it.
+A question is a touch. "The questioner knows what there is to find, but he wants actually to touch it and bring it to light." The question touches the Author in front of the room and sorts him. The Architect's paper is the incumbent. The Author's paper is the interloper. The question does not say any of this. It does not need to. The room hears it. The crowd was supposed to free him of the fear of being touched. The touch comes from inside it.
 
 The straw poll. The Chair reads the question carefully. He has worded it to be neutral - a comparison, not a verdict: "Which approach should the group pursue?" Hands rise for P-first, and the Author counts them. Twenty-eight. Then for P-second. Eighteen. Four do not vote. The Architect wins by ten.
 
@@ -154,15 +154,15 @@ The Author sits with his laptop open and watches the next presentation begin. In
 
 Meanwhile, in Room B, the Newcomer presents.
 
-Room B is a parallel session, running at the same time as the discussion in Room A. It is listed on the schedule. It has its own chair. But its topic cannot compete with the fight in Room A, and the same pull that fills Room A to capacity leaves Room B nearly empty.
+Room B is a parallel session, running at the same time as the discussion in Room A. It is listed on the schedule. It has its own chair. But it cannot compete with the fight in Room A, and the same pull that fills Room A to capacity leaves Room B nearly empty.
 
 Six people attend. The Newcomer stands at the front of a room designed for forty and speaks to six, three of whom are checking their laptops. She gives her presentation. It is good - her examples are clear, her design is practical, her English is careful. She finishes in ten minutes. There is one question: "This seems useful. Have you talked to the study group about it?" She has not. She did not know which study group to talk to. She did not know that talking to a study group was something she was supposed to do before arriving.
 
-There is no poll. The chair of Room B does not call one because the paper has not been through the study group process that would make a poll appropriate. The Newcomer thanks the six people. They nod politely. She returns to her seat and opens her laptop and stares at the screen.
+There is no poll. The chair of Room B does not call one because the paper has not been through the study group process that would make a poll appropriate. The Newcomer thanks the six people. They nod politely. She returns to her seat and opens her laptop and stares at the screen. The projector works. The printed copy stays in her bag.
 
 There is no discharge. The stagnating crowd in Room A got its discharge. The stagnating crowd in Room B was never a crowd at all. Six people in a room designed for forty are not dense enough to stagnate, not compressed enough to gather pressure, not numerous enough to discharge. They are six individuals who happened to be in the same room, and they disperse without having formed anything together.
 
-Scheduling is a form of power. A paper that never reaches the agenda never reaches a poll. The Newcomer's paper reached the agenda. It was listed, given a room and an hour, and the hour ran against the fight that drew every delegate with an opinion into Room A. No one decided to kill her paper. No one had to. The schedule killed it, and the schedule was set by people who had more important things to think about than a first-time author from a small company in a country whose national body sends one delegate to the committee.
+Scheduling is a form of power. A paper that never reaches the agenda never reaches a poll. The Newcomer's paper reached the agenda. It was listed, given a room and an hour, and the hour ran against the fight over the very problem her paper addressed. That fight drew every delegate with an opinion into Room A. No one decided to kill her paper. No one had to. The schedule killed it, and the schedule was set by people who had more important things to think about than a first-time author from a small company in a country whose national body sends one delegate to the committee.
 
 ---
 
@@ -188,7 +188,7 @@ The crystal keeps its size and its form. "Its members are trained in both action
 
 The Patron never uses the word "patron." When he speaks of the younger engineers he has helped, the word he uses is "mentor," and the help is real. But it passes through a crystal, and a crystal holds to its own form. It admits those who already move as it moves. Within any crystal, the members who know its ways rise above the members who know only the craft.
 
-Across the table from the Patron, the Author sets down his fork. He has watched the Architect and the Chair since Monday. Their closeness is visible to anyone who watches: they sit together at meals, they present together at conferences, the Chair schedules the Architect's papers favorably and words the polls in the Architect's terminology. The Architect has a patron, and the Author does not, and that weighs more than the difference between their papers. None of this is corrupt, and the crystal does not need it to be.
+Across the table from the Patron, the Author sets down his fork. He has watched the Architect and the Chair since Monday. Their closeness is visible to anyone who watches. They sit together at meals and present together at conferences. The Architect has a patron, and the Author does not, and that weighs more than the difference between their papers. None of this is corrupt, and the crystal does not need it to be.
 
 "Even when they appear separately, people always think of the rigid unit to which they belong, the monastery or the regiment." The committee never sees the Architect alone. It sees him as a member of his crystal - the cluster of delegates from his company, the co-authors on his paper, the Chair who advances his work. When he presents, the room sees the crystal behind him. When the Author presents, the room sees a man standing alone.
 
@@ -242,7 +242,7 @@ Each crowd shows the other only its front. A paper that names its tradeoffs hand
 
 The double crowd begins to turn. The Author's R3 names the same limitation. It is no longer the challenger's complaint. It is the independent confirmation of what the reviewer found. The war between the two papers moves onto the page, into the public record, where a tradeoff named in writing stays named.
 
-The Author's crowd is growing. The Architect's is not shrinking - the weight of the institution behind him remains - but it has stopped growing. The Author's camp expects the turn to take another meeting, another revision, another poll. But the direction has changed. The wind has shifted.
+The Author's crowd is growing. The Architect's is not shrinking - the weight of the institution behind him remains - but it has stopped growing. The Author's camp expects the turn to take another meeting, another revision, another poll. But among those who read, the wind has already shifted.
 
 ---
 
@@ -308,7 +308,7 @@ One comment in particular. It brings back the concern first raised on the commit
 
 Of the invisible crowds, posterity is the one we still feel. "For two, or perhaps three, generations a man can count his posterity; from then on it lies entirely in the future." The room voted for a crowd it will never see: the users who will write with this feature for decades. The engineer on the other continent is that crowd arriving while it can still be counted - one man, one benchmark, one sentence. He is the first face of the unasked.
 
-The Architect reads the comment on a Tuesday morning. He is at his desk in his employer's office, the office that paid for his flights and his hotel rooms and his fifteen years of committee attendance. He reads the benchmarks. The limitation follows from choices made early in the paper's life. No revision names it: not R1, not R3, not R5, not R6, not the wording the plenary applied. The trail lies in the archive for anyone to read.
+The Architect reads the comment on a Tuesday morning. He is at his desk in his employer's office, the office that paid for his flights and his hotel rooms and his fifteen years of committee attendance. He reads the benchmarks. The limitation follows from choices made early in the paper's life. No revision of his paper names it: not R1, not R5, not R6, not the wording the plenary applied. The trail lies in the archive for anyone to read.
 
 His response arrives within the week. It is technically adequate. He proposes a resolution - an extension point that would allow future papers to address the limitation. The comment's author accepts it. The comment is marked "resolved." But the comment has left what no plenary count could: a written record of what was not evaluated. It will be there when the correction papers come.
 
@@ -382,13 +382,9 @@ And the Delegate - one of eighty, ninety, a hundred. The Delegate who raised his
 
 Around the Author, in the open-std.org archive, the papers of every mailing settle. Most will never reach the working draft. Some were technically brilliant. Some were correct. Some were already in use. They lie in the archive as the dead lie in the earth. "The earth between them is their density and, though they lie there separately, they are felt to be close to each other." The Author walks over this ground every time he opens the mailing, stepping over the papers that did not survive, reading the numbers but not the contents, for the contents are too many and only the numbers fit in a human mind.
 
-My book ends on the survivor, and on a warning about him: "Today either everyone will survive or no-one."
+The committee produces survivors, and the survivors produce the standard. The Architect has his triumph. The Author survived without one. Like any outvoted man, he anticipates "future battles, and many of them; in none of them will he be killed." The users keep a different count. The committee's vote is preliminary. The public's adoption is final. A feature no one takes up joins the heap, whatever number it bears in the standard.
 
-The committee produces survivors, and the survivors produce the standard. A survivor measures his triumph against the dead around him. The Architect has his triumph, and the Author's paper is one of the dead it counts. The Author survived without one. Like any outvoted man, he anticipates "future battles, and many of them; in none of them will he be killed." The users keep a different count. The committee's vote is preliminary. The public's adoption is final. A feature no one takes up joins the heap, whatever number it bears in the standard.
-
-Crowds do not change their nature because a man has suffered in one. The crowd prefers the cheaper judgment, the weight of the people behind a paper, to the dearer one, the reading of it, and it will go on preferring it while reading costs more than counting. I did not propose a solution. I proposed attention. "If we would master power we must face command openly and boldly, and search for means to deprive it of its sting."
-
-A sting should sit no deeper than a burr on a sleeve, something a hand can pick off. The Author's stings sit deeper than that. They are lodged where his next paper will come from.
+Crowds do not change their nature because a man has suffered in one. I did not propose a solution. I proposed attention. "If we would master power we must face command openly and boldly, and search for means to deprive it of its sting."
 
 The Author opens his laptop. He is a survivor now, and survivors write papers. "The satisfaction in survival, which is a kind of pleasure, can become a dangerous and insatiable passion." Every mailing is another occasion to outlast someone. More than a hundred papers will arrive. His will be among them. He means to win the next one.
 

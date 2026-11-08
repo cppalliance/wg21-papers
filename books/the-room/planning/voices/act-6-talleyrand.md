@@ -40,7 +40,7 @@ AGENTS.md now overrides the global decisions G3, G6, G7, G10, and G11 wherever t
   - XXXVI: "A ceremony that produces something the unheard use is legitimate; a ceremony that produces something they ignore is merely legal."
   - XXXVI: "...and the latest in little; no treaty is ratified on the day it is signed."
   - XXXVII: "An envoy is not the people he speaks for; but a people without a plenipotentiary is better served by an envoy than by an empty chair."
-  - XXXVII: the memoir sentence, "...lives in an inn or a poor lodging; so I made use of the turn my little room gave my mind, to practice grand politics and arrange the world."
+  - XXXVII: the memoir sentence, "...lives in an inn or a poor lodging; so I made use of the turn my little room gave my mind, to practice grand politics and arrange the world." (2026-11-08, the author's decision: no longer a period. It now reads "In my American exile a little room was all the ground I controlled, and I used it to practice grand politics and arrange the world.", and the inn maxim and "the turn my little room gave my mind" are cut.)
   - XXXVII: the Vienna period in the house paragraph, "At Vienna I built new ceremonies on an old principle, legitimacy; they had only to be better than the alternative, which was Napoleon."
 - The escalating triad that closes every exit, then a short conclusion: "Ce n'est plus contre Napoléon [...]; ce n'est plus contre la France [...]; ce n'est sûrement pas contre le roi de France".
 - Reported dialogue, quick and exact, with his own reply last and shortest ("J'en réponds, Sire.").
@@ -183,7 +183,7 @@ Changes from the round-three edit plan (Act Six items 1 to 14), recorded so this
 - Maxims: "Each addressed a symptom. None addressed the architecture." (XXXV) and "The institution cannot dispute its own minutes." (XXXVII) are named exceptions to "about one per movement".
 - XXXVII, the public room: "made and not born, and it says so", with "it" for the public room, which saves one "room".
 - XXXVII, the resistance recap's new lead-in: "The committee will resist, and each of the others told us how." It makes all five quotations ways of resisting, so "The same prediction." holds. The quotations are unchanged.
-- XXXVII, the Hamilton quotation is split at its speech tag: "he would tell me. "It is the chimerical exaggeration of well-meaning people."" The memoir sentence before it stays whole, semicolon and all.
+- XXXVII, the Hamilton quotation is split at its speech tag: "he would tell me. "It is the chimerical exaggeration of well-meaning people."" The memoir sentence before it stays whole, semicolon and all. (2026-11-08: no longer; the memoir sentence is trimmed and has no semicolon. See the periods list above.)
 - XXXVII, the Author now reads the Builder's notes himself ("He reads the Builder's notes on his paper. They only confirm what he knows:"), which gives him one gesture at the payoff. The notes stay evidence, not cause, and the colon stays.
 - Budget counts after round three, replacing the counts under "Edit-pass exceptions":
   - "It is not X. It is Y.", strict form: two of five. "ceremonies are not decorations. They are the load-bearing structure of institutional life." (opening) counts, because AGENTS.md does not list it as protected, and so does "I do not find this discouraging. I find it ordinary." (XXXVII). Three near-variants put the denial second and do not count: "Resistance is the environment in which building occurs. It is not an argument against the architecture.", "A diagnosis tells you what is dying. It does not tell you what will replace it.", and "Each addressed a symptom. None addressed the architecture." The protected ceremonies pair ("The question is never...") does not count.
@@ -192,6 +192,16 @@ Changes from the round-three edit plan (Act Six items 1 to 14), recorded so this
   - "devastating": none.
   - Merges: two of two, so none is left. "They only confirm what he knows:" (XXXVII) is kept by the plan. The Vienna period stays by the plan's decision, but its two clauses are short and not parallel, so it is counted here as the second. The semicolons and colons inside quotations (the Alexander principle, the Vienna speeches) are the source's punctuation and do not count.
 
+
+## Author review notes (2026-11-08)
+
+The author reviewed the second edition and recorded these decisions. AGENTS.md ("What the book is" and "How To Review") holds the book-wide versions. Reviewers do not flag the items below as defects.
+
+- **"None of them operated. None of them built." (XXXV) refers to the five acts as texts.** They diagnosed and gave the reader nothing to do. It is not a claim about the writers' lives, which the book itself describes (Machiavelli's militia in Act One, Jung's presidency of the association in Act Five). It needs no explanation.
+- **The Builder is the author, and readers will know it.** That is intended. The self-portrait is earned by real building. The instruments are described by what they do and never named, and they are praised on purpose.
+- **The book's shared terms are fine in his mouth.** "Peerage," "bandwidth gap," and the mailing are part of the book's purpose of installing the committee's vocabulary. Use them sparingly, as the Words section already says.
+- **The Epilogue has no voice file; its decisions live here and in AGENTS.md.** Its six images are accusations on purpose. They are a prediction written to last, with a ten-year horizon. If the committee is reformed, the book records how it used to be. If it is not, the accusations land as C++ declines under a flawed process.
+- **The act may quote the void sentence as the philosopher's line** (AGENTS.md, Quotations).
 </voice-card>
 
 <passage-map>
@@ -313,7 +323,7 @@ At "The Author opens his laptop. He begins to build."
 
 - Intent: he mocks his exile's habit of drafting universal codes in a small room, a habit cut short by a working tariff that a real legislature adopted and by Hamilton's verdict on the economists' beautiful dream.
 - Committee scenario: every act ends with the Author back at his laptop, and Talleyrand's version is the man in temporary lodgings with the world to arrange. Act Six's Author, the act's own composite engineer, is introduced here in one sentence: his design works and his paper lost its poll. He knows the temptation: one more general code, one more paper for the room to poll. He reads the Builder's notes on his paper, finds that its strongest evidence is his library, which people already use, and does the other thing: not one more paper but the library itself, published where the unheard can adopt it or leave it, the working measure rather than the beautiful dream, so that adoption decides whether it belongs in the standard. Building, in this act, means following the Builder: publishing where users decide instead of queueing for the next poll.
-- Decisions: edit A6-11 ("He begins to build" is the moment the Author publishes), G13, G8 (the repeated beat retold through his own scenario), the protected line "The Author opens his laptop. He begins to build.", which now means the act's own Author and not the Builder; audit D4 (no Monday clause here). (Round three, 2026-10-16: the act splits the Hamilton quotation at its speech tag, where the translation has a semicolon, and now reads "he would tell me. "It is the chimerical exaggeration of well-meaning people."" See "Round-three exceptions".)
+- Decisions: edit A6-11 ("He begins to build" is the moment the Author publishes), G13, G8 (the repeated beat retold through his own scenario), the protected line "The Author opens his laptop. He begins to build.", which now means the act's own Author and not the Builder; audit D4 (no Monday clause here). (Round three, 2026-10-16: the act splits the Hamilton quotation at its speech tag, where the translation has a semicolon, and now reads "he would tell me. "It is the chimerical exaggeration of well-meaning people."" See "Round-three exceptions".) (2026-11-08: the memoir sentence before it no longer follows this translation word for word. It keeps the little room and "to practice grand politics and arrange the world", and drops the inn maxim and "the turn my little room gave my mind".)
 - Drift risk: casting the Author as the exile with a universal code, the very habit the passage mocks, or ending on another paper for the next mailing; calling the Builder the Author. The protected last line stays exactly as it is.
 
 </anchor>

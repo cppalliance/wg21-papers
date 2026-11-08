@@ -36,9 +36,9 @@ A sixth voice enters without the others' permission.
 
 <!-- break -->
 
-Each essay in this book adopts the literary style, vocabulary, and analytical framework of its source text. The Machiavelli essay reads like Machiavelli - strategic, analytical, concerned with force and fortune. The Nietzsche essay reads like Nietzsche - polemical, aphoristic, tracing the origin of values. The Kafka essay reads like Kafka - flat, patient, accumulating absurdity with bureaucratic exactness. The Canetti essay reads like Canetti - anthropological, observing the crowd as a naturalist observes a species. The Talleyrand essay reads like a diplomat who has seen everything and survived it - direct, unhurried, assessing the institution the way a surgeon assesses a patient he intends to operate on. The sixth voice arrives differently. The adaptation is deliberate. Each writer's voice carries frequencies that expository prose cannot reach.
+Each Act in this book adopts the literary style, vocabulary, and analytical framework of its source text. Machiavelli's voice is strategic, analytical, concerned with force and fortune. Nietzsche's is polemical, aphoristic, tracing the origin of values. Kafka's is flat, patient, accumulating absurdity with bureaucratic exactness. Canetti's is anthropological, observing the crowd as a naturalist observes a species. Talleyrand's is the voice of a diplomat who has seen everything and survived it - direct, unhurried, assessing the institution the way a surgeon assesses a patient he intends to operate on. The sixth voice arrives differently. The adaptation is deliberate. Each writer's voice carries frequencies that expository prose cannot reach.
 
-Check the committee's procedure and history in these pages against its published record - its papers, polls, rules, trip reports, and public correspondence.
+Attend a meeting. Sit through a poll. See whether your own sense of the room agrees with these pages.
 
 Reforms arrive - a three-year release cadence, new study groups. The structural dynamics persist. Those with the time to follow every paper decide for those without it. The uncommitted middle's silence counts for nothing. Social evaluation displaces technical evaluation because it is cheaper. The unheard never have the floor. Five hundred years of independent diagnosis. The same patterns.
 
@@ -55,7 +55,7 @@ The six Acts draw on the following roles. They are composites. Each Act tells it
 | **The Chair** | The working group chair. Six years in position. Controls the agenda, the poll framing, the summary before the vote. Courteous, organized, fair - and the most consequential structural power in the committee. |
 | **The Newcomer** | A young engineer from a small company in a country that sends one delegate. Her paper solves a real problem. She presents to six people. She is right about something no one wants to hear. She leaves. |
 | **The Patron** | A permanent resident of the committee who holds no current office. Was inside the system. Was shelved by it. Now mentors the Author from the margins. Knows the difference between correctness and survival. |
-| **The Delegate** | One of eighty. Votes on thirty polls, has read the papers for three. His hand does not carry his judgment. It carries the room's mood. |
+| **The Delegate** | One of eighty. Votes on thirty motions, has read the papers for three. His hand does not carry his judgment. It carries the room's mood. |
 | **The Blogger** | A senior engineer who has never attended a committee meeting. Tries to use the Architect's feature. It does not work. Writes the post that goes viral. The public's verdict, delivered outside the committee's walls. |
 
 <!-- recto -->

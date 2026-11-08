@@ -148,15 +148,15 @@ A prudent prince, I wrote, lets his wise men speak the truth only of the things 
 
 Nobody asks how many of the users would gain by the new design, and that truth, which the Author knows better than anyone in the room, is never asked for and so is never spoken.
 
+Before the hands go up, the Chair stands and sums up the discussion in thirty seconds. "It seems like we heard broad support for the existing direction, with some interest in exploring the alternative further."
+
+Then he puts the question. "Which approach should we continue to explore: the approach in P-first, the approach in P-second, or neither?"
+
 The straw poll. Six for the Author's approach. Ten for the Architect's. Two for neither.
 
 The Chair reads the numbers aloud, in the same even tone he uses for every poll. He does not comment. He does not interpret. He moves to the next agenda item. The Author sits in his chair and looks at the numbers on the screen and feels something he will later recognize as the first cut of a knife he did not see coming.
 
-The room has voted by the eyes. "Everyone sees what you seem," I wrote; "few touch what you are." One presentation late in the day, a few slides, a framed question: on these the room has judged what each paper seemed. The few who have touched the Author's design are his users, and they are not in the room. The few delegates who read both papers do not stand against the many who have the working draft behind them. Sixteen hands counted what the design seemed, and no hand was raised for the engineers who know what it is. Consensus is not correctness.
-
 The Chair's scheduling was not cruel. It was orderly. The first questioner's framing was not cruel. It was reasonable. The poll result was not cruel. It was democratic. Yet the Author lost by four, and the order of presentations, the hour, the Architect's arms in the front rows, and the frame of the first question decided it among them. The order and the hour were the Chair's.
-
-A wise prince founds himself on what is his own. The schedule, the framing, the poll question, and the summary are the Chair's own. The Author's own is his paper. They are playing different games, and the Chair's game determines the outcome of the Author's.
 
 ---
 
@@ -180,7 +180,7 @@ The Chair lives in the principality that actually exists. He promises neutrality
 
 A prince, I wrote, must be fox and lion both, for "the lion cannot defend himself from snares, and the fox cannot defend himself from wolves. One must therefore be a fox to recognize the snares and a lion to frighten the wolves." The Chair is fox and lion at once. The fox is in the schedule: quiet decisions, each defensible by procedure, that favor the incumbent and leave the challenger the worst hour of the day. The lion is in the summary spoken from the front of the room, at the moment the room is readiest to be told.
 
-The Author does not play the fox. He does not play the lion. He plays only the man, who fights with laws, as the beasts fight with force: honest, open, technically able, and trusting that if he presents his work clearly and answers questions honestly the institution will do the rest. Of such a man I wrote that he "must come to ruin among so many who are not good." The snares in this room are laid by its order, and not by its men.
+The Author does not play the fox. He does not play the lion. He plays only the man: honest, open, technically able, and trusting that if he presents his work clearly and answers questions honestly the institution will do the rest. Of such a man I wrote that he "must come to ruin among so many who are not good." The snares in this room are laid by its order, and not by its men.
 
 The Author does not want to "learn to be able not to be good." He should not have to. The institution's promise tells him that being good is enough. The promise is the trap. The man who keeps his promises in a world of fox and lion is the man who loses, not because he is wrong but because he is fighting on a field that does not exist.
 
@@ -202,9 +202,9 @@ The first fortress is the agenda. It is the outermost wall. The agenda is publis
 
 The second fortress is the study group routing. Before a paper reaches the working group, it often passes first through a study group - a smaller body with its own chair, its own agenda, its own politics. The working group chair does not control the study group, but he influences it. He and the study group chair talk. They coordinate. They agree on which papers are "ready" for the working group and which need "more incubation." A paper that the working group chair considers premature will be sent back to the study group for further work, and the study group, as I judge, will accept this guidance, because its chair respects the working group chair and shares his assumptions. The routing is invisible to the one it routes. On Wednesday the Newcomer, the woman from the registration line, presents her paper to a study group of twelve. Three of them tell her afterward that they liked it, and the study group sends it back for "more incubation." She sees only that her paper will not reach the working group this week. She does not see the conversation that preceded the decision.
 
-The third fortress is the poll question. A fortress exists to make attack costly, and the poll question does the same: it raises the cost of the Author's challenge by building in assumptions that favor the incumbent. "Who is in favor of continuing to explore the approach in P-first?" is a fortress. The word "continuing" tells the room that this approach has been explored before - that it has history, momentum, and weight. The Author's paper has no such word. It is new. There is nothing to "continue."
+The third fortress is the poll question. A fortress exists to make attack costly, and the poll question does the same: it raises the cost of the Author's challenge by building in assumptions that favor the incumbent. The Chair's question at 4:30 was one. The word "continue" in it tells the room that this approach has been explored before - that it has history, momentum, and weight. The Author's paper has no such word. It is new. There is nothing to "continue."
 
-The fourth fortress is the summary before the vote. The Chair summarizes the discussion in thirty seconds, standing at the front of the room, speaking from the only position of institutional authority. "It seems like we heard broad support for the existing direction, with some interest in exploring the alternative further." This sentence is a fortress. It frames the existing direction as the consensus and the Author's paper as the alternative. It frames "broad support" as belonging to the incumbent and "some interest" as belonging to the challenger. The words are accurate - there was broad support for the existing direction, and there was some interest in the alternative. But accuracy is not neutrality, and the summary's frame will be the last thing the uncommitted middle hears before it raises its hands.
+The fourth fortress is the summary before the vote. The Chair summarizes the discussion in thirty seconds, standing at the front of the room, speaking from the only position of institutional authority. The sentence he spoke at 4:30 is a fortress. It frames the existing direction as the consensus and the Author's paper as the alternative. It frames "broad support" as belonging to the incumbent and "some interest" as belonging to the challenger. The words are accurate - there was broad support for the existing direction, and there was some interest in the alternative. But accuracy is not neutrality, and the summary's frame will be the last thing the uncommitted middle hears before it raises its hands.
 
 Near the end of my chapter on fortresses I judged that "the best fortress there is, is not to be hated by the people; for though you may have fortresses, if the people hold you in hatred they will not save you, since a people that has taken up arms never lacks foreigners to come to its aid." I wrote that sentence in 1513. In 1526 I was chancellor of the five citizens charged with fortifying the walls of Florence, and the walls I kept were the Medici's; so I have kept a prince's fortresses myself, and I know which way they face.
 
@@ -284,9 +284,7 @@ The Author sits back from his laptop. Outside, his own city is dark. He remember
 
 No one told her. The institution does not tell anyone. It promises meritocracy and delivers principality, and the distance between the promise and the delivery is the space in which careers are made and broken.
 
-I have one more thing to say. Of the founders of new orders I wrote that "without that occasion the virtu of their spirit would have been spent, and without that virtu the occasion would have come in vain." The Author's virtu is his library, needed and proven before it ever reached the room. The occasion is a committee that asks whether a design is correct and whether the room wants it, and never how many users will benefit. Out of that occasion have come a standard with a flaw, correction papers, a blog post, and an engineer who now understands how the room is held.
-
-Whether that understanding is a victory or a defeat depends on what he does with it.
+Whether what he now understands of this room is a victory or a defeat depends on what he does with it.
 
 The mailing deadline is in six weeks. He begins to write.
 
